@@ -1,0 +1,3 @@
+# Rohmaterial (Briefings, Videos, Print-PNGs, Inspiration) - nicht fuer die Website noetig.
+# Bleibt im Git-Repo, wird aber nicht mit auf Vercel deployed.
+uploads/

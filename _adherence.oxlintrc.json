@@ -1,0 +1,411 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/core/**",
+              "components/forms/**",
+              "components/glass/**",
+              "ui_kits/homepage/**",
+              "ui_kits/property/**",
+              "ui_kits/social/**",
+              "uploads/Unio Homepage/_src/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Power Grotesk|JetBrains Mono))/i]",
+        "message": "Font not provided by the design system. Available: Power Grotesk, JetBrains Mono."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|tone|glyph|knob|disabled|style|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, tone, glyph, knob, disabled, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:paper|solid|signal|glass|ghost)$/]",
+        "message": "<Button> variant must be one of 'paper' | 'solid' | 'signal' | 'glass' | 'ghost'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Button> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Checkbox'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|checked|onChange|tone|style|key|ref|className|style|children)$/]",
+        "message": "<Checkbox> doesn't accept that prop. Declared props: label, checked, onChange, tone, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Checkbox'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Checkbox> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Chip'] > JSXAttribute > JSXIdentifier[name!=/^(?:selected|tone|onToggle|style|children|key|ref|className|style|children)$/]",
+        "message": "<Chip> doesn't accept that prop. Declared props: selected, tone, onToggle, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Chip'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Chip> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataLabel'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|marker|style|children|key|ref|className|style|children)$/]",
+        "message": "<DataLabel> doesn't accept that prop. Declared props: tone, marker, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataLabel'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<DataLabel> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataOverlay'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|tone|label|metric|cells|rows|animate|style|children|key|ref|className|style|children)$/]",
+        "message": "<DataOverlay> doesn't accept that prop. Declared props: variant, tone, label, metric, cells, rows, animate, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataOverlay'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:editorial|dashboard)$/]",
+        "message": "<DataOverlay> variant must be one of 'editorial' | 'dashboard'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataOverlay'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<DataOverlay> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='FlutedGlass'] > JSXAttribute > JSXIdentifier[name!=/^(?:reveal|side|fluteWidth|strength|radius|style|children|key|ref|className|style|children)$/]",
+        "message": "<FlutedGlass> doesn't accept that prop. Declared props: reveal, side, fluteWidth, strength, radius, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='FlutedGlass'] > JSXAttribute[name.name='side'] > Literal[value!=/^(?:left|right)$/]",
+        "message": "<FlutedGlass> side must be one of 'left' | 'right'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|solid|media|mediaAlt|mediaHeight|label|title|tags|data|price|cta|onCta|style|children|key|ref|className|style|children)$/]",
+        "message": "<GlassCard> doesn't accept that prop. Declared props: tone, solid, media, mediaAlt, mediaHeight, label, title, tags, data, price, cta, onCta, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<GlassCard> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassPanel'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|blur|radius|hairline|grain|shadow|padding|style|className|children|key|ref|className|style|children)$/]",
+        "message": "<GlassPanel> doesn't accept that prop. Declared props: tone, blur, radius, hairline, grain, shadow, padding, style, className, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassPanel'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<GlassPanel> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:glyph|label|tone|size|variant|style|key|ref|className|style|children)$/]",
+        "message": "<IconButton> doesn't accept that prop. Declared props: glyph, label, tone, size, variant, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<IconButton> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:glass|solid)$/]",
+        "message": "<IconButton> variant must be one of 'glass' | 'solid'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|tone|glass|style|fieldStyle|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: label, tone, glass, style, fieldStyle."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Input> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Radio'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|checked|onSelect|name|tone|style|key|ref|className|style|children)$/]",
+        "message": "<Radio> doesn't accept that prop. Declared props: label, checked, onSelect, name, tone, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Radio'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Radio> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Select'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|tone|glass|options|style|fieldStyle|key|ref|className|style|children)$/]",
+        "message": "<Select> doesn't accept that prop. Declared props: label, tone, glass, options, style, fieldStyle."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Select'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Select> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatBlock'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|unit|label|delta|tone|size|animate|key|ref|className|style|children)$/]",
+        "message": "<StatBlock> doesn't accept that prop. Declared props: value, unit, label, delta, tone, size, animate."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatBlock'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<StatBlock> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Switch'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|checked|onChange|tone|style|key|ref|className|style|children)$/]",
+        "message": "<Switch> doesn't accept that prop. Declared props: label, checked, onChange, tone, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Switch'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Switch> tone must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Tag'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|signal|style|children|key|ref|className|style|children)$/]",
+        "message": "<Tag> doesn't accept that prop. Declared props: tone, signal, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Tag'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<Tag> tone must be one of 'dark' | 'light'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Button": {
+        "replaces": []
+      },
+      "Checkbox": {
+        "replaces": []
+      },
+      "Chip": {
+        "replaces": []
+      },
+      "DataLabel": {
+        "replaces": []
+      },
+      "DataOverlay": {
+        "replaces": []
+      },
+      "FlutedGlass": {
+        "replaces": []
+      },
+      "GlassCard": {
+        "replaces": []
+      },
+      "GlassPanel": {
+        "replaces": []
+      },
+      "IconButton": {
+        "replaces": []
+      },
+      "Input": {
+        "replaces": []
+      },
+      "Radio": {
+        "replaces": []
+      },
+      "Select": {
+        "replaces": []
+      },
+      "StatBlock": {
+        "replaces": []
+      },
+      "Switch": {
+        "replaces": []
+      },
+      "Tag": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--attention",
+      "--blur-card",
+      "--blur-heavy",
+      "--blur-panel",
+      "--container",
+      "--dur-base",
+      "--dur-fast",
+      "--dur-slow",
+      "--ease-unio",
+      "--flute-width",
+      "--font-display",
+      "--font-mono",
+      "--glass-dark",
+      "--glass-dark-2",
+      "--glass-light",
+      "--glass-light-2",
+      "--grain",
+      "--grain-opacity",
+      "--gutter",
+      "--hairline-dark",
+      "--hairline-light",
+      "--hairline-light-strong",
+      "--ink",
+      "--ink-2",
+      "--ink-3",
+      "--leading-body",
+      "--leading-display",
+      "--on-signal",
+      "--paper",
+      "--paper-2",
+      "--paper-3",
+      "--positive",
+      "--r-card",
+      "--r-inner",
+      "--r-panel",
+      "--r-pill",
+      "--shadow-float",
+      "--shadow-soft",
+      "--signal",
+      "--signal-deep",
+      "--signal-press",
+      "--signal-soft",
+      "--size-body",
+      "--size-data",
+      "--size-h1",
+      "--size-h2",
+      "--size-h3",
+      "--size-hero",
+      "--size-label",
+      "--size-metric",
+      "--size-small",
+      "--sp-1",
+      "--sp-10",
+      "--sp-2",
+      "--sp-3",
+      "--sp-4",
+      "--sp-5",
+      "--sp-6",
+      "--sp-7",
+      "--sp-8",
+      "--sp-9",
+      "--steel",
+      "--steel-soft",
+      "--surface-page",
+      "--surface-page-dark",
+      "--surface-raised",
+      "--text-body",
+      "--text-inverse",
+      "--text-inverse-muted",
+      "--text-muted",
+      "--text-strong",
+      "--track-display",
+      "--track-label",
+      "--weight-book",
+      "--weight-display",
+      "--weight-light",
+      "--weight-medium",
+      "--world",
+      "--world-deep",
+      "--world-soft"
+    ],
+    "tokenKinds": {
+      "--paper": "color",
+      "--paper-2": "color",
+      "--paper-3": "color",
+      "--ink": "color",
+      "--ink-2": "color",
+      "--ink-3": "color",
+      "--signal": "color",
+      "--signal-deep": "color",
+      "--signal-press": "color",
+      "--signal-soft": "color",
+      "--on-signal": "color",
+      "--steel": "color",
+      "--steel-soft": "color",
+      "--text-strong": "font",
+      "--text-body": "font",
+      "--text-muted": "font",
+      "--text-inverse": "font",
+      "--text-inverse-muted": "font",
+      "--surface-page": "color",
+      "--surface-page-dark": "color",
+      "--surface-raised": "color",
+      "--glass-dark": "color",
+      "--glass-dark-2": "color",
+      "--glass-light": "color",
+      "--glass-light-2": "color",
+      "--hairline-light": "color",
+      "--hairline-light-strong": "color",
+      "--hairline-dark": "color",
+      "--positive": "color",
+      "--attention": "color",
+      "--world": "color",
+      "--world-deep": "color",
+      "--world-soft": "color",
+      "--font-display": "font",
+      "--font-mono": "font",
+      "--size-hero": "spacing",
+      "--size-h1": "spacing",
+      "--size-h2": "spacing",
+      "--size-h3": "spacing",
+      "--size-body": "spacing",
+      "--size-small": "spacing",
+      "--size-label": "spacing",
+      "--size-data": "spacing",
+      "--size-metric": "spacing",
+      "--track-display": "spacing",
+      "--track-label": "spacing",
+      "--leading-display": "font",
+      "--leading-body": "font",
+      "--weight-display": "font",
+      "--weight-medium": "font",
+      "--weight-book": "font",
+      "--weight-light": "font",
+      "--blur-card": "spacing",
+      "--blur-panel": "spacing",
+      "--blur-heavy": "spacing",
+      "--r-panel": "spacing",
+      "--r-card": "spacing",
+      "--r-inner": "spacing",
+      "--r-pill": "spacing",
+      "--shadow-soft": "shadow",
+      "--shadow-float": "shadow",
+      "--grain": "other",
+      "--grain-opacity": "other",
+      "--flute-width": "spacing",
+      "--ease-unio": "other",
+      "--dur-fast": "other",
+      "--dur-base": "other",
+      "--dur-slow": "other",
+      "--sp-1": "spacing",
+      "--sp-2": "spacing",
+      "--sp-3": "spacing",
+      "--sp-4": "spacing",
+      "--sp-5": "spacing",
+      "--sp-6": "spacing",
+      "--sp-7": "spacing",
+      "--sp-8": "spacing",
+      "--sp-9": "spacing",
+      "--sp-10": "spacing",
+      "--container": "spacing",
+      "--gutter": "spacing"
+    },
+    "fontFamilies": [
+      "JetBrains Mono",
+      "Power Grotesk"
+    ]
+  }
+}
