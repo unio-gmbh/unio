@@ -429,7 +429,7 @@ function AdminMk() {
             </div>
           </div>
           {/* Panel B — Objektanlage: Animation LINKS, Headline RECHTS. Läuft in-place per oaP */}
-          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw" }}>
+          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw", overflow: mob ? "hidden" : "visible" }}>
             {/* Bühne */}
             <div style={{ position: "relative", height: mob ? "38svh" : "72svh", gridRow: mob ? 2 : "auto" }}>
               <div style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) scale(${0.7 + 0.3 * ph2})`, width: 150, height: 150, borderRadius: 16, overflow: "hidden", opacity: Math.max(0.25, Math.max(1 - ph1, ph2)), boxShadow: ph2 > 0.2 && ph3 < 0.9 ? "0 0 0 5px var(--signal-soft)" : "none", transition: "box-shadow 400ms" }}>
@@ -611,26 +611,39 @@ function BeteiligungMk() {
 function BewegungMk() {
   const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-02.jpg", "portrait-03.jpg"];
   const ref = React.useRef(null);
+  const circWrapRef = React.useRef(null);
+  const mob = window.useMobile();
   const [cp, setCp] = React.useState(BT_RM ? 1 : 0);
+  const [cpm, setCpm] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
     if (BT_RM) return;
     const on = () => {
-      const el = ref.current; if (!el) return;
-      const r = el.getBoundingClientRect();
-      setCp(oaClamp((innerHeight * 0.9 - r.top) / (r.height + innerHeight * 0.35)));
+      const el = ref.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setCp(oaClamp((innerHeight * 0.9 - r.top) / (r.height + innerHeight * 0.35)));
+      }
+      const cw = circWrapRef.current;
+      if (cw) {
+        // Mobil: Kreis ist sticky gepinnt, Fortschritt laeuft ueber die Wrapper-Hoehe
+        const rw = cw.getBoundingClientRect();
+        const total = Math.max(1, cw.offsetHeight - innerHeight);
+        setCpm(oaClamp((innerHeight * 0.55 - rw.top) / total));
+      }
     };
     on();
     addEventListener("scroll", on, { passive: true });
-    return () => removeEventListener("scroll", on);
-  }, []);
+    addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
+  }, [mob]);
+  const prog = mob ? cpm : cp;
   const R = 128, C = 2 * Math.PI * R;
   const N = faces.length + 1; // + Du
   const pos = (i) => {
     const a = (-90 + (i * 360) / N) * (Math.PI / 180);
     return [160 + R * Math.cos(a), 160 + R * Math.sin(a)];
   };
-  const duOn = cp > 0.96;
-  const mob = window.useMobile();
+  const duOn = prog > 0.96;
   return (
     <section ref={ref} data-track="chapter_view_08" data-screen-label="Bewegung" className="u-grain" style={{ position: "relative", zIndex: 8, background: "var(--signal)", padding: mob ? "96px 6vw" : "clamp(96px, 13vh, 150px) 7vw", color: "#FFFFFF", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.35)" }}>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: mob ? 48 : 56, alignItems: "center", position: "relative", width: "100%" }}>
@@ -649,19 +662,22 @@ function BewegungMk() {
             ))}
           </div>
         </div>
-        {/* Der Kreis schließt sich: SVG-Bahn zeichnet sich, Porträts docken an */}
+        {/* Der Kreis schließt sich: SVG-Bahn zeichnet sich, Porträts docken an.
+            Mobil: hoher Wrapper + sticky, damit die Animation komplett sichtbar bleibt. */}
+        <div ref={circWrapRef} style={mob ? { height: "220vh" } : undefined}>
+        <div style={mob ? { position: "sticky", top: "calc(50vh - min(44vw, 180px))" } : undefined}>
         <div style={{ position: "relative", width: "min(100%, 360px)", aspectRatio: "1", margin: "0 auto" }}>
           <svg viewBox="0 0 320 320" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }} aria-hidden="true">
-            <circle cx="160" cy="160" r={R} fill="none" stroke="rgba(255,245,239,0.9)" strokeWidth="1.5" strokeDasharray={C} strokeDashoffset={(1 - Math.min(1, cp * 1.04)) * C} transform="rotate(-90 160 160)" strokeLinecap="round" />
+            <circle cx="160" cy="160" r={R} fill="none" stroke="rgba(255,245,239,0.9)" strokeWidth="1.5" strokeDasharray={C} strokeDashoffset={(1 - Math.min(1, prog * 1.04)) * C} transform="rotate(-90 160 160)" strokeLinecap="round" />
             {faces.map((_, i) => {
               const [x1, y1] = pos(i), [x2, y2] = pos(i + 1);
-              const on = cp > (i + 1.6) / (N + 1);
+              const on = prog > (i + 1.6) / (N + 1);
               return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,245,239,0.45)" strokeWidth="1" style={{ opacity: on ? 1 : 0, transition: "opacity 500ms" }} />;
             })}
           </svg>
           {faces.map((f, i) => {
             const [x, y] = pos(i);
-            const on = cp > (i + 1) / (N + 1);
+            const on = prog > (i + 1) / (N + 1);
             return (
               <span key={i} style={{ position: "absolute", left: (x / 320) * 100 + "%", top: (y / 320) * 100 + "%", transform: `translate(-50%, -50%) scale(${on ? 1 : 0.4})`, opacity: on ? 1 : 0, transition: `all 500ms ${BT_EASE}`, width: 58, height: 58, borderRadius: "50%", overflow: "hidden", boxShadow: "0 0 0 3px var(--signal), inset 0 0 0 1px rgba(255,255,255,0.5)" }}>
                 <img src={"../../assets/team/" + f} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 22%" }} />
@@ -672,6 +688,8 @@ function BewegungMk() {
             <span style={{ position: "absolute", left: (x / 320) * 100 + "%", top: (y / 320) * 100 + "%", transform: `translate(-50%, -50%) scale(${duOn ? 1 : 0.4})`, opacity: duOn ? 1 : 0, transition: `all 500ms ${BT_EASE}`, width: 58, height: 58, borderRadius: "50%", background: "#FFFFFF", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 13px var(--font-display)", color: "var(--signal-deep)", animation: duOn && !BT_RM ? "uPulseInv 2s var(--ease-unio) infinite" : "none" }}>+ Du</span>
           ); })()}
           <span className="u-label" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", fontSize: 10, color: "rgba(255,245,239,0.9)", textAlign: "center" }}>Der Kreis<br />schließt sich.</span>
+        </div>
+        </div>
         </div>
       </div>
       {/* Zweiter Teil: Gesichter des CIRCLE */}
