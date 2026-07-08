@@ -429,7 +429,7 @@ function AdminMk() {
             </div>
           </div>
           {/* Panel B — Objektanlage: Animation LINKS, Headline RECHTS. Läuft in-place per oaP */}
-          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw", overflow: mob ? "hidden" : "visible" }}>
+          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw", overflow: "hidden" }}>
             {/* Bühne */}
             <div style={{ position: "relative", height: mob ? "38svh" : "72svh", gridRow: mob ? 2 : "auto" }}>
               <div style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) scale(${0.7 + 0.3 * ph2})`, width: 150, height: 150, borderRadius: 16, overflow: "hidden", opacity: Math.max(0.25, Math.max(1 - ph1, ph2)), boxShadow: ph2 > 0.2 && ph3 < 0.9 ? "0 0 0 5px var(--signal-soft)" : "none", transition: "box-shadow 400ms" }}>
@@ -613,30 +613,22 @@ function BewegungMk() {
   const ref = React.useRef(null);
   const circWrapRef = React.useRef(null);
   const mob = window.useMobile();
-  const [cp, setCp] = React.useState(BT_RM ? 1 : 0);
-  const [cpm, setCpm] = React.useState(BT_RM ? 1 : 0);
+  const [prog, setProg] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
     if (BT_RM) return;
     const on = () => {
-      const el = ref.current;
-      if (el) {
-        const r = el.getBoundingClientRect();
-        setCp(oaClamp((innerHeight * 0.9 - r.top) / (r.height + innerHeight * 0.35)));
-      }
+      // Kreis ist sticky gepinnt, Fortschritt laeuft ueber die Wrapper-Hoehe
       const cw = circWrapRef.current;
-      if (cw) {
-        // Mobil: Kreis ist sticky gepinnt, Fortschritt laeuft ueber die Wrapper-Hoehe
-        const rw = cw.getBoundingClientRect();
-        const total = Math.max(1, cw.offsetHeight - innerHeight);
-        setCpm(oaClamp((innerHeight * 0.55 - rw.top) / total));
-      }
+      if (!cw) return;
+      const rw = cw.getBoundingClientRect();
+      const total = Math.max(1, cw.offsetHeight - innerHeight);
+      setProg(oaClamp((innerHeight * 0.55 - rw.top) / total));
     };
     on();
     addEventListener("scroll", on, { passive: true });
     addEventListener("resize", on);
     return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
   }, [mob]);
-  const prog = mob ? cpm : cp;
   const R = 128, C = 2 * Math.PI * R;
   const N = faces.length + 1; // + Du
   const pos = (i) => {
@@ -646,8 +638,9 @@ function BewegungMk() {
   const duOn = prog > 0.96;
   return (
     <section ref={ref} data-track="chapter_view_08" data-screen-label="Bewegung" className="u-grain" style={{ position: "relative", zIndex: 8, background: "var(--signal)", padding: mob ? "96px 6vw" : "clamp(96px, 13vh, 150px) 7vw", color: "#FFFFFF", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.35)" }}>
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: mob ? 48 : 56, alignItems: "center", position: "relative", width: "100%" }}>
-        <div>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: mob ? 48 : 56, alignItems: "start", position: "relative", width: "100%" }}>
+        {/* Desktop: Text pinnt parallel zum Kreis */}
+        <div style={mob ? undefined : { position: "sticky", top: "calc(50vh - 150px)" }}>
           <Fx>
             <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.6vw, 58px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em" }}>
               Eine Bewegung.<br />Kein Maklerpool.
@@ -663,9 +656,9 @@ function BewegungMk() {
           </div>
         </div>
         {/* Der Kreis schließt sich: SVG-Bahn zeichnet sich, Porträts docken an.
-            Mobil: hoher Wrapper + sticky, damit die Animation komplett sichtbar bleibt. */}
-        <div ref={circWrapRef} style={mob ? { height: "220vh" } : undefined}>
-        <div style={mob ? { position: "sticky", top: "calc(50vh - min(44vw, 180px))" } : undefined}>
+            Hoher Wrapper + sticky, damit die Animation komplett sichtbar bleibt. */}
+        <div ref={circWrapRef} style={{ height: "220vh" }}>
+        <div style={{ position: "sticky", top: mob ? "calc(50vh - min(44vw, 180px))" : "calc(50vh - 180px)" }}>
         <div style={{ position: "relative", width: "min(100%, 360px)", aspectRatio: "1", margin: "0 auto" }}>
           <svg viewBox="0 0 320 320" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }} aria-hidden="true">
             <circle cx="160" cy="160" r={R} fill="none" stroke="rgba(255,245,239,0.9)" strokeWidth="1.5" strokeDasharray={C} strokeDashoffset={(1 - Math.min(1, prog * 1.04)) * C} transform="rotate(-90 160 160)" strokeLinecap="round" />
