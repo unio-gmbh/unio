@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNIO Hero v3 — Top-Nav über Bild, Pille beim Scroll</title>
+<style>
+  :root{
+    --base:#F2EFE9; --card:#FBFAF6; --ink:#141210; --orange:#E96F2B;
+    --g1:#FFAA09; --g2:#FFDB57; --hair:rgba(20,18,16,.12);
+    --ease:cubic-bezier(.32,.72,0,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--base);color:var(--ink);font-family:'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  .ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--orange);border-right-color:transparent;transform:rotate(-45deg);flex:none;}
+
+  /* ---------- NAV: full-width row over the image (like v1) ---------- */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:60;padding:22px 40px;transition:padding .55s var(--ease);}
+  .nav-inner{width:100%;max-width:none;margin:0 auto;display:flex;align-items:center;
+    padding:0;border-radius:12px;background:transparent;border:0.5px solid transparent;
+    backdrop-filter:blur(0);
+    transition:background .55s var(--ease),border-color .55s var(--ease),padding .55s var(--ease),
+               backdrop-filter .55s var(--ease),max-width .55s var(--ease),box-shadow .55s var(--ease);}
+  .logo{display:flex;align-items:center;gap:8px;font-family:ui-monospace,monospace;font-weight:500;letter-spacing:.18em;font-size:15px;color:var(--ink);}
+  .links{display:flex;gap:26px;margin-left:38px;font-size:14px;color:rgba(20,18,16,.6);}
+  .links a{color:inherit;text-decoration:none;transition:color .3s;}
+  .links a.active,.links a:hover{color:var(--ink);}
+  .demo{margin-left:auto;font-size:13px;color:var(--ink);border:0.5px solid rgba(20,18,16,.28);padding:9px 18px;border-radius:8px;background:rgba(255,255,255,.4);transition:all .4s var(--ease);cursor:pointer;}
+
+  /* scrolled: collapse into a floating pill with LESS rounded corners */
+  .nav.scrolled{padding:16px 40px;}
+  .nav.scrolled .nav-inner{max-width:760px;background:rgba(242,239,233,.55);border-color:var(--hair);
+    backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);
+    padding:9px 10px 9px 22px;border-radius:12px;box-shadow:0 8px 30px rgba(20,18,16,.08);}
+  .nav.scrolled .links{gap:22px;margin-left:30px;font-size:13px;}
+  .nav.scrolled .demo{background:var(--ink);color:var(--base);border-color:var(--ink);}
+
+  /* ---------- HERO: framed image, inset from edges, rounded ---------- */
+  .hero{padding:0 40px 40px;}
+  .hero-spacer{height:98px;}
+  .frame{position:relative;width:100%;height:calc(100vh - 138px);min-height:520px;
+    border-radius:22px;overflow:hidden;border:0.5px solid var(--hair);box-shadow:0 1px 0 rgba(255,255,255,.6) inset;}
+  .frame .bg{position:absolute;inset:0;background:
+      radial-gradient(120% 95% at 100% 0%, rgba(255,170,9,.42) 0%, rgba(255,219,87,.30) 26%, rgba(255,219,87,.10) 48%, rgba(242,239,233,0) 72%),
+      radial-gradient(85% 70% at 108% -6%, rgba(255,170,9,.30) 0%, rgba(242,239,233,0) 55%),var(--card);}
+  .frame .content{position:absolute;inset:0;padding:56px 60px;display:flex;flex-direction:column;justify-content:flex-end;}
+  .eyebrow-mono{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(20,18,16,.5);margin-bottom:20px;}
+  .title{font-family:'Cabinet Grotesk','Familjen Grotesk',Georgia,serif;font-weight:500;font-size:clamp(48px,8vw,104px);line-height:.9;letter-spacing:-.015em;}
+  .title .dot{color:var(--orange);}
+  .sub{max-width:440px;margin-top:22px;font-size:15px;line-height:1.55;color:rgba(20,18,16,.62);}
+  .actions{display:flex;align-items:center;gap:14px;margin-top:34px;}
+  .cta{display:inline-flex;align-items:center;gap:14px;background:var(--ink);color:var(--base);border-radius:99px;padding:12px 8px 12px 22px;font-size:14px;cursor:pointer;}
+  .cta .node{width:28px;height:28px;border-radius:50%;background:var(--base);color:var(--ink);display:flex;align-items:center;justify-content:center;}
+  .ghost{font-size:14px;padding:12px 8px;cursor:pointer;}
+  .preview{position:absolute;right:28px;bottom:28px;width:230px;background:rgba(251,250,246,.72);backdrop-filter:blur(12px);border:0.5px solid var(--hair);border-radius:14px;padding:10px;box-shadow:0 12px 30px rgba(20,18,16,.12);}
+  .preview .mini{height:96px;border-radius:9px;background:radial-gradient(120% 120% at 100% 0%,rgba(255,170,9,.5),rgba(255,219,87,.2) 50%,rgba(242,239,233,0));border:0.5px solid var(--hair);}
+  .preview .row{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding:0 3px;}
+  .preview .lbl{font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;color:rgba(20,18,16,.55);}
+  .preview .pulse{display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,monospace;font-size:10.5px;color:#8a5a22;}
+  .preview .pulse i{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pl 1.8s var(--ease) infinite;}
+  @keyframes pl{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.8);}}
+  .slider{position:absolute;left:28px;bottom:32px;display:flex;align-items:center;gap:16px;}
+  .arrow{width:36px;height:36px;border-radius:50%;border:0.5px solid rgba(20,18,16,.3);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.35);cursor:pointer;}
+  .ticks{display:flex;gap:6px;} .ticks i{width:20px;height:2px;background:rgba(20,18,16,.22);border-radius:2px;} .ticks i.on{background:var(--orange);width:30px;}
+
+  /* generous whitespace after hero + subpages */
+  .section{max-width:960px;margin:0 auto;padding:200px 40px;}
+  .section + .section{padding-top:0;}
+  .kicker{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(20,18,16,.45);margin-bottom:28px;}
+  .section h2{font-family:'Cabinet Grotesk',Georgia,serif;font-weight:500;font-size:clamp(36px,5vw,60px);line-height:1;letter-spacing:-.01em;margin-bottom:32px;}
+  .section p{font-size:17px;line-height:1.8;color:rgba(20,18,16,.62);max-width:560px;}
+  .placeholder{height:56vh;border-radius:18px;border:0.5px solid var(--hair);background:var(--card);margin-top:88px;}
+
+  @media(max-width:720px){
+    .nav{padding:16px 18px;} .nav .links{display:none;}
+    .nav.scrolled .nav-inner{max-width:none;}
+    .hero{padding:0 16px 20px;} .frame{height:calc(100svh - 120px);} .frame .content{padding:28px 24px;}
+    .preview{display:none;} .section{padding:120px 20px;}
+  }
+</style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <div class="logo"><span class="ring"></span>UNIO</div>
+      <div class="links"><a href="#" class="active">Immobilien</a><a href="#">Bauträger</a><a href="#">Makler</a><a href="#">Story</a></div>
+      <span class="demo">Demo buchen</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-spacer"></div>
+    <div class="frame">
+      <div class="bg"></div>
+      <div class="content">
+        <div class="eyebrow-mono">Betriebssystem für Immobilienvertrieb · Wien</div>
+        <h1 class="title">Der Markt<br>wird lesbar<span class="dot">.</span></h1>
+        <p class="sub">Live-Daten statt Blackbox, Backoffice statt Papierkram — ein System, das den Markt lesbar macht.</p>
+        <div class="actions"><span class="cta">Immobilie finden <span class="node">→</span></span><span class="ghost">Wie es funktioniert</span></div>
+      </div>
+      <div class="preview"><div class="mini"></div><div class="row"><span class="lbl">ECOLUXE · 282</span><span class="pulse"><i></i>LIVE · LENS</span></div></div>
+      <div class="slider"><span class="arrow">←</span><span class="arrow">→</span><span class="ticks"><i class="on"></i><i></i><i></i><i></i></span></div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="kicker">02 — Erkenntnis</div>
+    <h2>Genügend Raum,<br>damit Inhalt atmet.</h2>
+    <p>Nach dem Hero folgt bewusst viel Weißraum. Jede Sektion auf den Subseiten bekommt großzügigen vertikalen Rhythmus — die Aussage steht frei, statt gegen die nächste zu drängen.</p>
+    <div class="placeholder"></div>
+  </section>
+  <section class="section">
+    <div class="kicker">03 — Beweis</div>
+    <h2>Eine Sektion pro Gedanke.</h2>
+    <p>Scroll nach oben und wieder herunter — die Kopfzeile über dem Bild zieht sich beim Scrollen zur schwebenden Pille mit weniger runden Ecken zusammen und bleibt oben stehen.</p>
+    <div class="placeholder"></div>
+  </section>
+
+<script>
+  var nav=document.getElementById('nav');
+  function onScroll(){ if(window.scrollY>60){nav.classList.add('scrolled');}else{nav.classList.remove('scrolled');} }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+</script>
+</body>
+</html>

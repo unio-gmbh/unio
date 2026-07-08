@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNIO Bauträger — Funnel scroll-scrubbed</title>
+<style>
+:root{--base:#F2EFE9;--card:#FBFAF6;--ink:#141210;--orange:#E96F2B;--hair:rgba(20,18,16,.1);--ease:cubic-bezier(.34,1.3,.5,1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--ink);font-family:'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+/* pinned scroll stage: tall wrapper, sticky inner */
+.pin-wrap{height:260vh;position:relative;}
+.pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;overflow:hidden;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px;position:relative;width:100%;}
+.ghost{position:absolute;top:8px;left:32px;font-family:'Cabinet Grotesk',Georgia,serif;font-weight:600;
+  font-size:clamp(90px,16vw,220px);line-height:.8;letter-spacing:-.03em;
+  color:transparent;-webkit-text-stroke:1.2px rgba(20,18,16,.13);pointer-events:none;user-select:none;z-index:0;white-space:nowrap;}
+.legend{display:flex;gap:26px;align-items:center;margin:0 0 40px auto;justify-content:flex-end;position:relative;z-index:2;}
+.lg{display:flex;align-items:center;gap:9px;font-size:13px;color:rgba(20,18,16,.7);}
+.sw{width:16px;height:16px;border-radius:4px;border:0.5px solid var(--hair);}
+.sw.o{background:var(--orange);border-color:var(--orange);}
+.sw.w{background:var(--card);}
+.lg b{color:var(--orange);font-weight:400;}
+.funnel{position:relative;z-index:1;display:flex;align-items:flex-end;gap:0;height:380px;}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 6px;}
+.cap{margin-bottom:14px;}
+.cap .val{font-family:'Cabinet Grotesk',Georgia,serif;font-weight:500;font-size:clamp(28px,3.2vw,48px);line-height:1;}
+.cap .plus{font-family:ui-monospace,monospace;font-size:12px;color:var(--orange);letter-spacing:.04em;margin-top:5px;font-weight:600;}
+.bar{width:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:12px 12px 0 0;height:0;position:relative;}
+.wrapclip{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:12px 12px 0 0;overflow:hidden;border:0.5px solid var(--hair);border-bottom:none;}
+.part{width:100%;flex:0 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;overflow:hidden;}
+.p-orange{background:var(--orange);color:#fff;}
+.p-white{background:var(--card);}
+.p-lbl{font-size:12px;} .p-orange .p-lbl{color:#fff;} .p-white .p-lbl{color:var(--ink);}
+.p-pc{font-family:ui-monospace,monospace;font-size:10.5px;} .p-orange .p-pc{color:rgba(255,255,255,.9);} .p-white .p-pc{color:rgba(20,18,16,.5);}
+.o2{background:#f0873f;}
+.w2{background:#F2EFE9;}
+.baseline{position:absolute;left:-6px;right:-6px;border-top:1.5px dashed rgba(20,18,16,.4);pointer-events:none;}
+.baseline .tag{position:absolute;right:0;top:-9px;background:var(--base);padding:0 6px;font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.06em;color:rgba(20,18,16,.5);}
+.foot{border-top:1.5px solid var(--ink);padding-top:12px;}
+.col.last .foot{border-top-color:var(--orange);}
+.foot .lbl{font-size:14px;font-weight:500;letter-spacing:-.005em;}
+.foot .eff{font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.05em;color:rgba(20,18,16,.5);margin-top:8px;}
+@media(max-width:720px){.pin-wrap{height:auto;}.pin{position:static;height:auto;padding:120px 0;}.funnel{height:auto;flex-direction:column;gap:8px;}.wrapclip{min-height:64px;}.ghost{font-size:64px;}}
+</style></head><body>
+  <div style="height:40vh"></div>
+  <div class="pin-wrap" id="pinwrap">
+    <div class="pin">
+      <div class="wrap">
+        <div class="ghost">Vertrieb</div>
+        <div class="legend"><div class="lg"><span class="sw o"></span><b>Durch UNIO</b> — der Zuwachs</div><div class="lg"><span class="sw w"></span>Basis</div></div>
+        <div class="funnel" id="funnel">
+          <div class="col">
+            <div class="cap"><div class="val" data-pct="100">0%</div><div class="plus">+75% via Meta &amp; Google</div></div>
+            <div class="bar" data-h="380">
+              <div class="wrapclip">
+                <div class="part p-orange" data-basis="56"><span class="p-lbl">Meta</span><span class="p-pc">56%</span></div>
+                <div class="part p-orange o2" data-basis="19"><span class="p-lbl">Google</span><span class="p-pc">19%</span></div>
+                <div class="part p-white" data-basis="19"><span class="p-lbl">willhaben</span><span class="p-pc">19%</span></div>
+                <div class="part p-white w2" data-basis="6"><span class="p-lbl">ImmoScout24</span><span class="p-pc">6%</span></div>
+              </div>
+              <div class="baseline" style="bottom:25%"><span class="tag">Basis</span></div>
+            </div>
+            <div class="foot"><div class="lbl">Angefragt</div><div class="eff">Meta &amp; Google</div></div>
+          </div>
+          <div class="col">
+            <div class="cap"><div class="val" data-pct="64">0%</div><div class="plus">+38%</div></div>
+            <div class="bar" data-h="186"><div class="wrapclip"><div class="part p-orange" data-basis="38"></div><div class="part p-white" data-basis="62"></div></div><div class="baseline" style="bottom:62%"><span class="tag">Basis</span></div></div>
+            <div class="foot"><div class="lbl">Qualifiziert</div><div class="eff">Iteratives Testing</div></div>
+          </div>
+          <div class="col">
+            <div class="cap"><div class="val" data-pct="41">0%</div><div class="plus">+44%</div></div>
+            <div class="bar" data-h="124"><div class="wrapclip"><div class="part p-orange" data-basis="44"></div><div class="part p-white" data-basis="56"></div></div><div class="baseline" style="bottom:56%"><span class="tag">Basis</span></div></div>
+            <div class="foot"><div class="lbl">Besichtigt</div><div class="eff">CIRCLE-Community</div></div>
+          </div>
+          <div class="col">
+            <div class="cap"><div class="val" data-pct="23">0%</div><div class="plus">+48%</div></div>
+            <div class="bar" data-h="82"><div class="wrapclip"><div class="part p-orange" data-basis="48"></div><div class="part p-white" data-basis="52"></div></div><div class="baseline" style="bottom:52%"><span class="tag">Basis</span></div></div>
+            <div class="foot"><div class="lbl">Angebot gelegt</div><div class="eff">CIRCLE-Community</div></div>
+          </div>
+          <div class="col last">
+            <div class="cap"><div class="val" data-pct="14">0%</div><div class="plus">+52%</div></div>
+            <div class="bar" data-h="62"><div class="wrapclip"><div class="part p-orange" data-basis="52"></div><div class="part p-white" data-basis="48"></div></div><div class="baseline" style="bottom:48%"><span class="tag">Basis</span></div></div>
+            <div class="foot"><div class="lbl">Kaufvertrag</div><div class="eff">CIRCLE-Community</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height:40vh"></div>
+<script>
+  var pinwrap=document.getElementById('pinwrap');
+  var funnel=document.getElementById('funnel');
+  var cols=[].slice.call(funnel.querySelectorAll('.col'));
+  var N=cols.length;
+  function easeOutBack(x){var c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);}
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function render(p){ // p in 0..1 overall scroll progress through the pinned stage
+    // distribute progress across columns: each column gets a window; slight overlap
+    cols.forEach(function(col,i){
+      var start=i*(1/N)*0.8;         // staggered starts
+      var end=start+ (1/N)*1.2;
+      var local=clamp((p-start)/(end-start),0,1);
+      var e=easeOutBack(local);      // non-linear tip
+      var bar=col.querySelector('.bar');
+      var h=parseFloat(bar.dataset.h);
+      bar.style.height=(h*clamp(e,0,1))+'px';
+      // grow inner parts proportionally with same local progress (bottom-up already by flex order)
+      col.querySelectorAll('.part').forEach(function(pt){
+        pt.style.flexBasis=(parseFloat(pt.dataset.basis)*clamp(local,0,1))+'%';
+      });
+      // percentage count-up on the big value
+      var val=col.querySelector('.val');
+      var target=parseFloat(val.dataset.pct);
+      val.textContent=Math.round(target*clamp(local,0,1))+'%';
+    });
+  }
+  function onScroll(){
+    var rect=pinwrap.getBoundingClientRect();
+    var total=pinwrap.offsetHeight-window.innerHeight;
+    var scrolled=clamp(-rect.top,0,total);
+    var p=total>0?scrolled/total:0;
+    render(p);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  render(0); onScroll();
+</script>
+</body></html>

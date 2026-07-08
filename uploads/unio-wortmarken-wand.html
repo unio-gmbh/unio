@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIO — Projekt-Laufband</title>
+<!--
+  UNIO PROJEKT-LAUFBAND (Zwischenkapitel der horizontalen Projekt-Strecke, auch solo einsetzbar)
+  Hybrid-Marquee: langsamer Eigen-Drift + Scroll-Velocity-Kopplung (Scrollen beschleunigt/kehrt um).
+  Nur Typografie, nie Zahlen. Zeilen gegenläufig. Hover pausiert die Zeile.
+  prefers-reduced-motion: Drift aus, rein scroll-gekoppelt.
+-->
+<style>
+  :root{ --bg:#F7F5F1; --ink:#0B0A09; --cream:#F3F0EA; --fg3:#98928A; --orange:#FF7A29; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,'Helvetica Neue',Helvetica,sans-serif;overflow-x:hidden;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:.035;z-index:60;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* Kontext-Dummies, damit der Übergang spürbar ist */
+  .dummy{height:70vh;display:flex;align-items:center;justify-content:center;}
+  .dummy p{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--fg3);}
+
+  /* ===== Die Wand ===== */
+  .wall{background:var(--ink);padding:clamp(56px,9vh,110px) 0;position:relative;overflow:hidden;}
+  .wall::before,.wall::after{content:'';position:absolute;top:0;bottom:0;width:12vw;z-index:5;pointer-events:none;}
+  .wall::before{left:0;background:linear-gradient(90deg,var(--ink),transparent);}
+  .wall::after{right:0;background:linear-gradient(-90deg,var(--ink),transparent);}
+
+  .row{white-space:nowrap;will-change:transform;display:flex;align-items:center;
+    padding:clamp(4px,1vh,12px) 0;}
+  .row .set{display:flex;align-items:center;flex-shrink:0;}
+  .word{font-size:clamp(52px,9.5vw,140px);font-weight:800;letter-spacing:-.035em;line-height:.98;
+    color:var(--cream);padding:0 .35em;}
+  .word.ghost{color:transparent;-webkit-text-stroke:1.5px rgba(243,240,234,.85);}
+  .sep{width:clamp(10px,1.3vw,18px);height:clamp(10px,1.3vw,18px);flex-shrink:0;
+    clip-path:polygon(50% 100%,0 0,100% 0);background:var(--orange);}
+  .row:hover{cursor:grab}
+
+  /* Claim-Zeile */
+  .claimrow{border-top:1px solid rgba(243,240,234,.14);border-bottom:1px solid rgba(243,240,234,.14);
+    margin:clamp(8px,1.6vh,18px) 0;}
+  .claim{font-family:'SF Mono',ui-monospace,'JetBrains Mono',monospace;
+    font-size:clamp(11px,1.15vw,14px);letter-spacing:.34em;text-transform:uppercase;
+    color:var(--fg3);padding:14px .9em;}
+  .claim b{color:var(--orange);font-weight:500;}
+
+  .foot{position:absolute;left:clamp(18px,4vw,56px);bottom:18px;z-index:6;
+    font-family:'SF Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:rgba(243,240,234,.4);}
+</style>
+</head>
+<body>
+
+<div class="dummy"><p>… vorheriges Projekt-Kapitel …</p></div>
+
+<section class="wall" id="wall">
+  <div class="row" data-dir="1"  data-speed="1"></div>
+  <div class="row" data-dir="-1" data-speed="0.75"></div>
+  <div class="row claimrow" data-dir="1" data-speed="0.45" data-claim="1"></div>
+  <div class="row" data-dir="-1" data-speed="0.9"></div>
+  <div class="row" data-dir="1"  data-speed="0.65"></div>
+  <div class="foot">Referenzen · Wien · 2024–2026</div>
+</section>
+
+<div class="dummy"><p>… nächstes Projekt-Kapitel …</p></div>
+
+<script>
+const NAMES=['Ecoluxe','Origins','Albrecht','ObenZwei','Das Beheim','Das Wimmer','Jardin Hermes'];
+const CLAIM='Echte Deals durch echte Daten';
+
+/* Zeilen befüllen: Namen rotiert je Zeile, abwechselnd gefüllt/Outline, Dreieck-Separator (Signal-Raster-Zitat) */
+document.querySelectorAll('.row').forEach((row,r)=>{
+  const isClaim=row.dataset.claim==='1';
+  const mkSet=()=>{
+    const set=document.createElement('div');set.className='set';
+    if(isClaim){
+      for(let i=0;i<4;i++){
+        const s=document.createElement('span');s.className='claim';
+        s.innerHTML=CLAIM+'&nbsp;&nbsp;<b>▲</b>';
+        set.appendChild(s);
+      }
+    }else{
+      NAMES.forEach((n,i)=>{
+        const idx=(i+r*2)%NAMES.length;               // Rotation je Zeile → andere Reihenfolge
+        const w=document.createElement('span');
+        w.className='word'+(((i+r)%2===0)?'':' ghost');
+        w.textContent=NAMES[idx];
+        set.appendChild(w);
+        const sep=document.createElement('i');sep.className='sep';
+        set.appendChild(sep);
+      });
+    }
+    return set;
+  };
+  row.appendChild(mkSet());row.appendChild(mkSet());row.appendChild(mkSet()); // 3 Sets für nahtlosen Loop
+});
+
+/* Hybrid-Drift: Eigen-Geschwindigkeit + Scroll-Velocity */
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lastY=scrollY,vel=0;
+addEventListener('scroll',()=>{vel+= (scrollY-lastY)*0.08; lastY=scrollY;},{passive:true});
+
+const rows=[...document.querySelectorAll('.row')].map(el=>({
+  el,dir:+el.dataset.dir,speed:+el.dataset.speed,x:0,
+  w:0,hover:false
+}));
+rows.forEach(r=>{
+  r.el.addEventListener('pointerenter',()=>r.hover=true);
+  r.el.addEventListener('pointerleave',()=>r.hover=false);
+});
+function measure(){rows.forEach(r=>{r.w=r.el.querySelector('.set').getBoundingClientRect().width;});}
+addEventListener('resize',measure);measure();
+
+let last=performance.now();
+function tick(now){
+  const dt=Math.min(50,now-last)/16.6;last=now;
+  vel*=0.92;                                            // Velocity klingt weich ab
+  rows.forEach(r=>{
+    const base=reduced?0:(r.hover?0.12:0.55);           // Eigen-Drift px/frame (ruhig!)
+    r.x+=r.dir*(base+vel)*r.speed*dt;
+    if(r.w>0){ r.x=((r.x % r.w)+r.w)%r.w; }
+    r.el.style.transform='translate3d('+(-r.x)+'px,0,0)';
+  });
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
