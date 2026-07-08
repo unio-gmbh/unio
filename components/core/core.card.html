@@ -1,0 +1,69 @@
+<!-- @dsCard group="Komponenten" viewport="700x380" name="Core UI" subtitle="Button · IconButton · Chip · Tag" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  html, body { margin: 0; }
+  .paper { width: 700px; padding: 20px 24px; background: var(--paper); }
+  .photo {
+    width: 700px; padding: 20px 24px;
+    background: url("../../assets/photos/kueche-schwarz.jpg") center / cover;
+  }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .caption { margin: 0 0 10px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, IconButton, Chip, Tag, DataLabel } = window.UNIODesignSystem_b6216a;
+
+function Demo() {
+  const [sel, setSel] = React.useState("14. Bezirk");
+  return (
+    <div>
+      <div className="paper">
+        <p className="u-label caption" style={{ color: "var(--text-muted)" }}>Auf Papier</p>
+        <div className="row">
+          <Button variant="paper" knob>Demo buchen</Button>
+          <Button variant="signal" knob="›">Objekt anfragen</Button>
+          <Button>Solid</Button>
+          <Button variant="ghost" size="sm">Abbrechen</Button>
+          <Button disabled>Inaktiv</Button>
+          <IconButton variant="solid" glyph="→" label="Weiter" />
+        </div>
+        <div className="row" style={{ marginTop: 14 }}>
+          <Tag tone="light">1140 Wien</Tag>
+          <Tag tone="light" signal>Aktiv</Tag>
+          <Tag tone="light">Pipeline — Q3</Tag>
+        </div>
+      </div>
+      <div className="photo u-grain">
+        <p className="u-label caption" style={{ color: "var(--text-inverse-muted)" }}>Auf Bild</p>
+        <div className="row">
+          <Button variant="glass" tone="dark" glyph="▷">Video ansehen</Button>
+          <Button variant="glass" tone="dark" knob>Exposé</Button>
+          <Button variant="glass" tone="light">Rückruf</Button>
+          <IconButton glyph="↗" label="Öffnen" />
+          <IconButton glyph="×" label="Schließen" size={36} />
+        </div>
+        <div className="row" style={{ marginTop: 14 }}>
+          {["14. Bezirk", "Terrasse", "Erstbezug"].map((c) => (
+            <Chip key={c} selected={sel === c} onToggle={() => setSel(c)}>{c}</Chip>
+          ))}
+          <Tag>Lage A</Tag>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

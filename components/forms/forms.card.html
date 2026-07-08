@@ -1,0 +1,55 @@
+<!-- @dsCard group="Komponenten" viewport="700x420" name="Formulare" subtitle="Input · Select · Checkbox · Radio · Switch" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  html, body { margin: 0; }
+  .wrap { width: 700px; display: grid; grid-template-columns: 1fr 1fr; }
+  .paper { padding: 22px 24px; background: var(--paper); }
+  .photo {
+    padding: 22px 24px;
+    background: url("../../assets/photos/schlafzimmer-gruen.jpg") center / cover;
+  }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Input, Select, Checkbox, Radio, Switch } = window.UNIODesignSystem_b6216a;
+
+function Demo() {
+  const [chk, setChk] = React.useState(true);
+  const [typ, setTyp] = React.useState("e");
+  const [live, setLive] = React.useState(true);
+  return (
+    <div className="wrap">
+      <div className="paper stack">
+        <Input label="E-Mail" placeholder="name@firma.at" />
+        <Select label="Bezirk" options={["1140 Wien", "1190 Wien", "2100 Korneuburg"]} />
+        <Checkbox label="Exposé per E-Mail" checked={chk} onChange={setChk} />
+        <div style={{ display: "flex", gap: 20 }}>
+          <Radio name="typ" label="Eigentümer:in" checked={typ === "e"} onSelect={() => setTyp("e")} />
+          <Radio name="typ" label="Makler:in" checked={typ === "m"} onSelect={() => setTyp("m")} />
+        </div>
+        <Switch label="Live-Daten" checked={live} onChange={setLive} />
+      </div>
+      <div className="photo stack u-grain">
+        <Input label="Budget" glass tone="light" placeholder="€ 800.000" />
+        <Select label="Objekttyp" glass tone="light" options={["Penthouse", "Reihenhaus", "Grundstück"]} />
+        <Checkbox label="Benachrichtigen" checked={chk} onChange={setChk} tone="light" />
+        <Switch label="Matching aktiv" checked={live} onChange={setLive} tone="light" />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

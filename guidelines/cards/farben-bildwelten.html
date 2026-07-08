@@ -1,0 +1,31 @@
+<!-- @dsCard group="Farben" viewport="700x190" name="Bildfarbwelten" subtitle="Token-Scopes: data-palette = terra / stahl / gruen" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { display: flex; width: 700px; height: 190px; gap: 1px; background: var(--ink); }
+  .world { flex: 1; display: flex; flex-direction: column; }
+  .world > div { flex: 1; display: flex; align-items: flex-end; padding: 8px 14px; }
+  .lbl { font: 11px var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <div class="world" data-palette="terra">
+    <div style="background: var(--world-soft);"><span class="lbl" style="color: var(--world-deep);">terra · soft</span></div>
+    <div style="background: var(--world);"><span class="lbl" style="color: #FFF3EA;">--world #B4633C</span></div>
+    <div style="background: var(--world-deep);"><span class="lbl" style="color: #FFF3EA;">deep</span></div>
+  </div>
+  <div class="world" data-palette="stahl">
+    <div style="background: var(--world-soft);"><span class="lbl" style="color: var(--world-deep);">stahl · soft</span></div>
+    <div style="background: var(--world);"><span class="lbl" style="color: #EFF4F8;">--world #5E7A8E</span></div>
+    <div style="background: var(--world-deep);"><span class="lbl" style="color: #EFF4F8;">deep</span></div>
+  </div>
+  <div class="world" data-palette="gruen">
+    <div style="background: var(--world-soft);"><span class="lbl" style="color: var(--world-deep);">gruen · soft</span></div>
+    <div style="background: var(--world);"><span class="lbl" style="color: #EFF6EF;">--world #48684E</span></div>
+    <div style="background: var(--world-deep);"><span class="lbl" style="color: #EFF6EF;">deep</span></div>
+  </div>
+</body>
+</html>

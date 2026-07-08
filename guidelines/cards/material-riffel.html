@@ -1,0 +1,23 @@
+<!-- @dsCard group="Material" viewport="700x210" name="Riffelglas" subtitle="Symbol für Intransparenz — immer mit teilweiser Auflösung" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 210px; position: relative; overflow: hidden; }
+  img { display: block; width: 700px; height: 210px; object-fit: cover; }
+  .flutes { position: absolute; inset: 0; display: flex; clip-path: inset(0 38% 0 0); pointer-events: none; }
+  .flutes span { flex: none; width: 14px; backdrop-filter: blur(11px) saturate(1.05); -webkit-backdrop-filter: blur(11px) saturate(1.05); background: linear-gradient(90deg, rgba(255,255,255,0.16) 0, rgba(255,255,255,0.02) 2px, rgba(10,9,8,0.1) 55%, rgba(255,255,255,0.05) 100%); }
+  .flutes span:nth-child(2n) { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .lbl { position: absolute; right: 16px; bottom: 12px; color: var(--text-inverse); text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+  <img src="../../assets/photos/fassade-historisch.png" alt="">
+  <div class="flutes">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <span class="u-label lbl">opak → transparent · --flute-width 14px</span>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/* UNIO — Material: Glas, Riffelung, Grain, Schatten, Radius, Motion. */
+:root {
+  /* Blur-Stufen (backdrop-filter) — Glas nur über echtem Bild */
+  --blur-card: 20px;
+  --blur-panel: 28px;
+  --blur-heavy: 40px;
+
+  /* Radien: Doppelrand-Architektur = konzentrisch (innen = außen − padding) */
+  --r-panel: 24px;
+  --r-card: 20px;
+  --r-inner: 12px;
+  --r-pill: 999px;
+
+  /* Sehr weiche, diffuse Schatten — keine shadow-md-Ästhetik */
+  --shadow-soft: 0 30px 80px -20px rgba(12, 11, 9, 0.35);
+  --shadow-float: 0 12px 44px -14px rgba(12, 11, 9, 0.28);
+
+  /* Film-Grain als Overlay (Opazität 2–4 %) */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); /* @kind other */
+  --grain-opacity: 0.03; /* @kind other */
+
+  /* Riffelglas */
+  --flute-width: 14px;
+
+  /* Motion: träge, physikalisch. Nie linear / ease-in-out. */
+  --ease-unio: cubic-bezier(0.32, 0.72, 0, 1); /* @kind other */
+  --dur-fast: 450ms; /* @kind other */
+  --dur-base: 800ms; /* @kind other */
+  --dur-slow: 1100ms; /* @kind other */
+}

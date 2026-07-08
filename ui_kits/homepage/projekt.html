@@ -1,0 +1,677 @@
+<!-- @dsCard group="Homepage" viewport="1440x900" name="Projekt-Detailseite" subtitle="1:1 nach Prototyp: Kennzahlen · Raumprofil · Marktdaten · Galerie-Overlay" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Traum Penthouse in Hernals — UNIO</title>
+<link rel="stylesheet" href="../../styles.css">
+<!--
+  1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
+  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler-Foto Platzhalter.
+  Inhalte: app.unio.at/property/2 · Marktdaten Demo · [Makler-Name] Platzhalter.
+-->
+<style>
+  :root{ --bg:#F2EFE9; --card:#FBFAF6; --ink:#141210; --fg2:#6E6862; --fg3:#A19A91;
+    --orange:#FFAA09; --hair:rgba(20,18,16,.1); --ease:cubic-bezier(.32,.72,0,1);}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);
+    font-family:var(--font-display),'Helvetica Neue',Helvetica,sans-serif;-webkit-font-smoothing:antialiased;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:.03;z-index:99;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+  svg{display:block}
+  .mono{font-family:var(--font-mono),'SF Mono',ui-monospace,monospace;font-size:10.5px;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--fg3);}
+  .shell{max-width:1140px;margin:0 auto;padding:0 20px 40px;}
+
+  .top{position:sticky;top:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding:14px 0;background:linear-gradient(rgba(242,239,233,.92),rgba(242,239,233,.75));
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+  .topnav{display:flex;gap:24px;font-weight:500;font-size:14px;}
+  .topnav a{color:var(--fg2);text-decoration:none;padding-bottom:3px;border-bottom:1px solid transparent;transition:color .3s var(--ease);}
+  .topnav a:hover{color:var(--ink);}
+  .topnav a.on{color:var(--ink);border-bottom-color:var(--orange);}
+  @media (max-width:860px){.topnav{display:none;}}
+  .cir{width:44px;height:44px;border-radius:99px;display:grid;place-items:center;cursor:pointer;
+    background:var(--card);border:1px solid var(--hair);color:var(--ink);transition:transform .3s var(--ease);}
+  .cir:active{transform:scale(.92)}
+  .cir.liked{color:var(--orange)}
+  .brand{font-weight:500;font-size:15px;letter-spacing:-.02em;display:flex;align-items:center;}
+  .brand img{height:15px;width:auto;display:block;}
+  .toprow{display:flex;gap:8px;}
+
+  .hero{border-radius:22px;overflow:hidden;position:relative;background:var(--card);cursor:pointer;}
+  .hero img{display:block;width:100%;aspect-ratio:16/9.4;object-fit:cover;
+    transition:transform .6s var(--ease);}
+  .hero:hover img{transform:scale(1.015)}
+  .hero .count{position:absolute;right:14px;bottom:14px;padding:8px 14px;border-radius:99px;
+    background:rgba(20,18,16,.5);color:#fff;font-size:12px;font-weight:600;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.18);}
+  .trow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;}
+  .trow .t{border-radius:14px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;}
+  .trow img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+  .trow .t:hover img{transform:scale(1.04)}
+
+  .cols{display:grid;grid-template-columns:1fr;margin-top:36px;}
+  .content{min-width:0;max-width:660px;}
+  .sec{padding:26px 0;}
+  .sec + .sec{border-top:1px solid var(--hair);}
+  h2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:18px;}
+
+  .headrow{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 28px;flex-wrap:wrap;}
+  h1{font-size:clamp(30px,4.2vw,48px);font-weight:600;letter-spacing:-.03em;line-height:1.04;}
+  h1 em{font-style:normal;color:var(--orange);}
+  .headmeta{display:flex;align-items:center;gap:14px;padding-bottom:7px;}
+  .pillstat{padding:7px 14px;border-radius:99px;background:rgba(255,170,9,.12);
+    color:var(--orange);font-size:12px;font-weight:700;}
+  .figs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:28px;}
+  .fg{border:1px solid var(--hair);background:var(--card);border-radius:16px;padding:15px 16px 14px;}
+  .fg .r1{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .fg .r1 b{font-size:12.5px;font-weight:600;letter-spacing:-.005em;}
+  .fg i{font-style:normal;display:block;margin-top:18px;
+    font-size:clamp(23px,2.4vw,30px);font-weight:600;letter-spacing:-.03em;line-height:1;}
+  .fg.dark{background:var(--ink);border-color:var(--ink);color:#F3F0EA;}
+  .fg.dark .mono{color:rgba(243,240,234,.4);}
+  .desc p{font-size:15px;line-height:1.7;color:var(--fg2);}
+  .desc p + p{margin-top:14px;}
+  .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:14px;
+    font-weight:600;color:var(--ink);cursor:pointer;background:none;border:none;font-family:inherit;}
+
+  .hl div{display:flex;justify-content:space-between;gap:16px;padding:13px 0;font-size:14.5px;
+    border-bottom:1px solid var(--hair);}
+  .hl div:last-child{border-bottom:none;}
+  .hl span{color:var(--fg2);}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;}
+  .kv div{display:flex;justify-content:space-between;gap:14px;padding:12px 0;font-size:14px;
+    border-bottom:1px solid var(--hair);}
+  .kv div span{color:var(--fg3);}
+  .kv div b{font-weight:600;text-align:right;}
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .plan{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:16px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;
+    transition:transform .3s var(--ease);}
+  .plan:hover{transform:translateY(-1px)}
+  .plan b{font-size:13.5px;font-weight:600;display:block;}
+  .plan span{display:block;margin-top:4px;}
+  .arrbtn{width:36px;height:36px;border-radius:99px;border:1px solid var(--hair);
+    display:grid;place-items:center;flex-shrink:0;color:var(--ink);}
+  .energy{display:flex;align-items:center;gap:18px;}
+  .badge{width:56px;height:56px;border-radius:18px;border:1.5px solid var(--ink);
+    display:grid;place-items:center;font-size:22px;font-weight:700;flex-shrink:0;}
+  .energy .mono{display:block;margin-top:5px;}
+  .energy p{font-size:14.5px;font-weight:600;}
+
+  /* ===== RAUMPROFIL (berechnet) — Lineal-Skalen im Radio-Dial-Stil ===== */
+  .rp{display:flex;flex-direction:column;gap:26px;}
+  .rpitem{display:grid;grid-template-columns:1fr auto;gap:6px 28px;align-items:end;}
+  .rpitem .lab{font-size:13.5px;font-weight:600;}
+  .rpitem .val{font-size:clamp(23px,2.4vw,30px);font-weight:600;letter-spacing:-.03em;line-height:1;
+    grid-row:1 / span 2;align-self:center;text-align:right;}
+  .rpitem .val em{font-style:normal;font-size:.5em;font-weight:600;color:var(--fg3);margin-left:2px;}
+  .rpscale{grid-column:1;position:relative;height:30px;margin-top:4px;}
+  .rpscale .ticks{position:absolute;inset:8px 0 0;border-top:1px solid var(--hair);
+    background:repeating-linear-gradient(90deg,rgba(20,18,16,.2) 0 1px,transparent 1px calc((100% - 1px)/24));
+    background-size:100% 7px;background-repeat:no-repeat;}
+  .rpscale .ind{position:absolute;top:4px;width:2.5px;height:18px;border-radius:99px;
+    background:var(--orange);transform:translateX(-50%);
+    transition:left 1s var(--ease);}
+  .rppoles{grid-column:1;display:flex;justify-content:space-between;margin-top:2px;}
+  .rpnote{grid-column:1 / -1;font-size:13px;color:var(--fg2);line-height:1.55;margin-top:2px;}
+  .rpprice{grid-column:1 / -1;margin-top:2px;}
+
+  .rail{margin-top:8px;}
+  .price{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;}
+  .price .mono{display:block;}
+  .price b{font-size:clamp(26px,2.6vw,32px);font-weight:600;letter-spacing:-.02em;display:block;margin-top:8px;}
+  .price .sub{font-size:13px;color:var(--fg2);margin-top:6px;}
+  .btn{display:flex;align-items:center;justify-content:center;width:100%;margin-top:20px;
+    background:var(--ink);color:#F3F0EA;border:none;border-radius:99px;padding:16px;
+    font-weight:600;font-size:14.5px;cursor:pointer;font-family:inherit;transition:transform .3s var(--ease);}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:scale(.98)}
+  .ghost{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;
+    background:none;border:none;padding:10px;font-size:13.5px;font-weight:600;color:var(--ink);
+    cursor:pointer;font-family:inherit;}
+
+  /* ===== MARKTDATEN — hell, Orange als Akzent ===== */
+  .stat{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;
+    position:relative;margin-top:12px;}
+  .stat .shead2{display:flex;align-items:center;gap:10px;}
+  .livepill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;
+    border:1px solid rgba(255,170,9,.35);color:var(--orange);
+    font-family:var(--font-mono),ui-monospace,monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;}
+  .livepill i{width:6px;height:6px;border-radius:99px;background:var(--orange);
+    animation:lp 2.2s infinite;}
+  @keyframes lp{0%,100%{opacity:1}50%{opacity:.25}}
+  .stat .arr{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:99px;
+    border:1px solid var(--hair);display:grid;place-items:center;color:var(--ink);}
+  .bignum{display:flex;align-items:baseline;gap:10px;margin-top:18px;}
+  .bignum b{font-size:46px;font-weight:600;letter-spacing:-.03em;line-height:1;}
+  .bignum b .ghost{color:rgba(20,18,16,.14);font-weight:600;}
+  .delta{padding:5px 10px;border-radius:99px;background:rgba(255,170,9,.12);color:var(--orange);
+    font-size:12px;font-weight:700;}
+  .bignum + .mono{display:block;margin-top:8px;}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:20px;padding:0 1px;}
+  .bars i{flex:1;max-width:10px;border-radius:99px;background:rgba(20,18,16,.1);
+    transition:background .25s var(--ease);min-height:10%;}
+  .bars i.on{background:var(--orange);}
+  .ruler{position:relative;margin-top:10px;height:26px;}
+  .ruler .ticks{position:absolute;inset:0 1px;border-top:1px solid var(--hair);
+    background:repeating-linear-gradient(90deg,rgba(20,18,16,.22) 0 1px,transparent 1px calc((100% - 1px)/13));
+    background-size:100% 8px;background-repeat:no-repeat;background-position:0 0;}
+  .scrub{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:100%;
+    background:transparent;cursor:pointer;margin:0;}
+  .scrub::-webkit-slider-runnable-track{height:100%;background:transparent;}
+  .scrub::-webkit-slider-thumb{-webkit-appearance:none;width:2.5px;height:22px;border-radius:99px;
+    background:var(--orange);margin-top:2px;box-shadow:none;}
+  .scrub::-moz-range-track{height:100%;background:transparent;}
+  .scrub::-moz-range-thumb{width:2.5px;height:22px;border-radius:99px;background:var(--orange);border:none;}
+  .scrubcap{display:block;margin-top:4px;min-height:14px;color:var(--fg2);}
+  .srows{margin-top:16px;}
+  .srows div{display:flex;justify-content:space-between;gap:12px;padding:11px 0;font-size:13px;
+    border-bottom:1px solid var(--hair);}
+  .srows div:last-child{border-bottom:none;}
+  .srows span{color:var(--fg3);}
+  .srows b{font-weight:600;}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+  .tile{background:rgba(20,18,16,.035);border-radius:14px;padding:14px;position:relative;}
+  .tile b{font-size:22px;font-weight:600;letter-spacing:-.02em;display:block;}
+  .tile b em{font-style:normal;color:var(--orange);}
+  .tile span{display:block;margin-top:6px;font-size:11px;color:var(--fg2);line-height:1.45;}
+  .tile .ta{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:99px;
+    border:1px solid var(--hair);display:grid;place-items:center;color:var(--fg2);}
+  .agent{display:flex;gap:13px;align-items:center;background:var(--card);border:1px solid var(--hair);
+    border-radius:20px;padding:16px;margin-top:12px;}
+  .agent img{width:50px;height:50px;border-radius:14px;object-fit:cover;object-position:center 20%;}
+  .agent b{display:block;font-size:14px;font-weight:600;}
+  .agent .mono{display:block;margin-top:3px;}
+  .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
+  .ctabar{display:none;}
+  .foot{margin-top:34px;text-align:center;}
+
+  /* ===== GALERIE-OVERLAY ===== */
+  .ov{position:fixed;inset:0;z-index:200;display:none;}
+  .ov.open{display:block;animation:ovin .45s var(--ease);}
+  .ov.open .bgimg{animation:bgz 1.1s var(--ease);}
+  @keyframes bgz{from{transform:scale(1.06)}to{transform:scale(1)}}
+  .ov.open .strip{animation:supi .55s var(--ease) .1s backwards;}
+  .ov.open .obar{animation:supi .5s var(--ease) backwards;}
+  @keyframes supi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes ovin{from{opacity:0}to{opacity:1}}
+  .ov .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transition:opacity .5s var(--ease);}
+  .ov .tint{position:absolute;inset:0;background:rgba(14,12,10,.42);
+    backdrop-filter:blur(26px) saturate(1.2);-webkit-backdrop-filter:blur(26px) saturate(1.2);}
+  .ov .inner{position:absolute;inset:0;display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) 18px calc(env(safe-area-inset-bottom,0px) + 16px);}
+  .ov .obar{display:flex;justify-content:space-between;align-items:center;color:#fff;}
+  .ov .obar .t b{font-size:14.5px;font-weight:600;display:block;}
+  .ov .obar .t span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:rgba(255,255,255,.5);display:block;margin-top:3px;}
+  .gcir{width:46px;height:46px;border-radius:99px;display:grid;place-items:center;cursor:pointer;
+    background:rgba(20,18,16,.4);border:1px solid rgba(255,255,255,.22);color:#fff;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .3s var(--ease);}
+  .gcir:active{transform:scale(.9)}
+  .ov .mid{flex:1;display:flex;align-items:center;justify-content:center;}
+  .deck{position:relative;width:min(82vw,380px);aspect-ratio:3/4;
+    transition:opacity .6s var(--ease),transform .6s var(--ease);}
+  @media (min-width:740px){.deck{width:min(64vw,560px);aspect-ratio:4/3;}}
+  @media (min-width:1000px){.deck{width:min(52vw,680px);aspect-ratio:16/10;}}
+  .dcard{position:absolute;inset:0;border-radius:20px;overflow:hidden;cursor:pointer;
+    border:1px solid rgba(255,255,255,.3);box-shadow:0 26px 60px -20px rgba(0,0,0,.6);
+    transition:transform .5s var(--ease),opacity .5s var(--ease);background:#111;}
+  .dcard img{width:100%;height:100%;object-fit:cover;}
+  .dcard .cap{position:absolute;left:12px;bottom:12px;padding:6px 12px;border-radius:99px;
+    background:rgba(20,18,16,.45);border:1px solid rgba(255,255,255,.2);color:#fff;
+    font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .ov .strip{display:flex;gap:8px;justify-content:center;padding:6px;border-radius:18px;
+    background:rgba(20,18,16,.4);border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    margin:0 auto;max-width:100%;overflow-x:auto;scrollbar-width:none;}
+  .ov .strip::-webkit-scrollbar{display:none}
+  .ov .strip .st{flex:0 0 auto;width:64px;height:48px;border-radius:12px;overflow:hidden;
+    cursor:pointer;border:1.5px solid transparent;transition:border-color .3s var(--ease);}
+  .ov .strip .st img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ov .strip .st.on{border-color:#fff;}
+
+  @media (min-width:1000px){
+    .cols{grid-template-columns:1fr 340px;gap:56px;}
+    .rail{position:sticky;top:80px;align-self:start;margin-top:26px;}
+  }
+  @media (max-width:999px){
+    .rail .price .btn,.rail .price .ghost{display:none;}
+    .ctabar{display:flex;position:fixed;left:12px;right:12px;
+      bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:50;border-radius:22px;
+      padding:10px 10px 10px 20px;align-items:center;justify-content:space-between;gap:12px;
+      background:rgba(20,18,16,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      box-shadow:0 18px 50px -16px rgba(20,18,16,.5);}
+    .ctabar .l b{display:block;font-size:15px;font-weight:700;color:#fff;}
+    .ctabar .l span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9px;letter-spacing:.12em;
+      text-transform:uppercase;color:rgba(255,255,255,.5);}
+    .ctabar button{background:#F3F0EA;color:var(--ink);border:none;border-radius:16px;
+      padding:14px 20px;font-weight:700;font-size:13.5px;font-family:inherit;white-space:nowrap;}
+    body{padding-bottom:90px;}
+  }
+  @media (max-width:720px){
+    .hero img{aspect-ratio:4/3;}
+    .kv{grid-template-columns:1fr;}
+    .plans{grid-template-columns:1fr;}
+    .figs{grid-template-columns:1fr 1fr;}
+    .headmeta{padding-bottom:0;flex-wrap:wrap;gap:10px 14px;}
+    .tiles{grid-template-columns:1fr 1fr;}
+  }
+  /* Scroll-Reveals */
+  .rv{opacity:0;transform:translateY(18px);}
+  .rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .hero img{opacity:0;transform:scale(1.05);}
+  .hero img.ld{opacity:1;transform:scale(1);transition:opacity .9s var(--ease),transform 1.2s var(--ease);}
+  .hero:hover img.ld{transform:scale(1.015);}
+  .bars i{transform:scaleY(.06);transform-origin:bottom;
+    transition:transform .7s var(--ease),background .25s var(--ease);}
+  .stat.grown .bars i{transform:scaleY(1);}
+  .delta{opacity:0;transform:scale(.7);}
+  .stat.grown .delta{opacity:1;transform:scale(1);transition:opacity .4s var(--ease) .5s,transform .4s var(--ease) .5s;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+    .rv,.hero img,.bars i,.delta{opacity:1!important;transform:none!important}}
+
+  /* ===== Footer (Site-konform, Ember-Glow) ===== */
+  .pfoot{position:relative;overflow:hidden;background:#F0EDE6;margin-top:34px;padding:110px 20px 44px;}
+  .pfoot-glow{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(60% 62% at 86% 26%, rgba(184,116,0,.30) 0%, transparent 62%),
+      radial-gradient(46% 54% at 82% 30%, rgba(255,170,9,.42) 0%, rgba(255,170,9,.12) 42%, transparent 70%);
+    -webkit-mask-image:radial-gradient(120% 120% at 86% 26%, #000 40%, transparent 78%);
+    mask-image:radial-gradient(120% 120% at 86% 26%, #000 40%, transparent 78%);
+    animation:pglow 14s var(--ease) infinite alternate;}
+  @keyframes pglow{from{transform:translate3d(-2%,-2%,0) scale(1)}to{transform:translate3d(3%,3%,0) scale(1.1)}}
+  .pfoot-in{position:relative;z-index:1;max-width:1140px;margin:0 auto;}
+  .pfoot h2{font-size:clamp(44px,5.4vw,88px);font-weight:500;letter-spacing:-.03em;line-height:.98;}
+  .pfoot-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px;}
+  .pfoot-btn{display:inline-flex;align-items:center;gap:12px;background:var(--card);color:var(--ink);
+    text-decoration:none;font-weight:500;font-size:15px;padding:14px 14px 14px 24px;border-radius:99px;
+    box-shadow:0 12px 44px -14px rgba(20,18,16,.28);}
+  .pfoot-btn span{width:30px;height:30px;border-radius:99px;background:var(--ink);color:var(--card);
+    display:grid;place-items:center;font-family:var(--font-mono),monospace;font-size:13px;}
+  .pfoot-ghost{display:inline-flex;align-items:center;text-decoration:none;font-weight:500;font-size:15px;
+    color:var(--ink);padding:14px 24px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--hair);}
+  .pfoot-links{display:flex;flex-wrap:wrap;gap:12px 40px;margin-top:72px;font-size:14.5px;}
+  .pfoot-links a{color:var(--fg2);text-decoration:none;}
+  .pfoot-bar{display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--hair);margin-top:56px;padding-top:24px;}
+  .pfoot-bar img{height:18px;width:auto;}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="top">
+    <div class="cir" onclick="history.length>1?history.back():location.assign('immobilien.html')"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg></div>
+    <div class="brand"><img src="../../assets/logo/unio-logo-black.svg" alt="UNIO"></div>
+    <nav class="topnav">
+      <a href="bautraeger.html">Bauträger</a>
+      <a href="makler.html">Makler</a>
+      <a href="immobilien.html" class="on">Immobilien</a>
+      <a href="story.html">Story</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+    <div class="toprow">
+      <div class="cir" id="like"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M10 16.5S3 12.5 3 7.8C3 5.5 4.8 4 6.7 4c1.4 0 2.6.8 3.3 2 .7-1.2 1.9-2 3.3-2C15.2 4 17 5.5 17 7.8c0 4.7-7 8.7-7 8.7Z"/></svg></div>
+      <div class="cir"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h-.5A1.5 1.5 0 0 0 3 6.5v7A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V13M8 10 15 3m0 0h-4.2M15 3v4.2"/></svg></div>
+    </div>
+  </div>
+
+  <div class="hero" id="heroBtn">
+    <img src="../../assets/photos/skyline-terrasse.png" alt="Dachterrasse mit Blick über Wien" id="heroimg">
+    <span class="count">1 / 33 · Galerie öffnen</span>
+  </div>
+  <div class="trow" id="trow"></div>
+
+  <div class="cols">
+    <div class="content">
+      <div class="sec head" style="padding-top:6px">
+        <div class="headrow">
+          <h1>Traum Penthouse<br>in Hernals<em>.</em></h1>
+          <div class="headmeta">
+            <span class="pillstat">Aktiv</span>
+            <span class="mono">Zum Verkauf · Wohnung · Top 29 · 1170 Wien</span>
+          </div>
+        </div>
+        <div class="figs">
+          <div class="fg dark">
+            <div class="r1"><b>Wohnfläche</b><span class="mono">m²</span></div>
+            <i>140,95</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Zimmer</b><span class="mono">Gesamt</span></div>
+            <i>3</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Bäder</b><span class="mono">+ 2 WC</span></div>
+            <i>2</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Baujahr</b><span class="mono">Erstbezug</span></div>
+            <i>2025</i>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec desc">
+        <h2>Über dieses Objekt</h2>
+        <p>Dieses außergewöhnliche Penthouse in Hernals vereint großzügigen Wohnkomfort mit
+        spektakulären Außenflächen und unverbaubarem Blick auf Kahlenberg und Stephansdom.
+        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen — inklusive
+        direktem Liftzugang in die Wohnung.</p>
+        <p>Das Raumkonzept umfasst ein großzügiges Wohnzimmer mit Kamin, einen Masterbereich
+        mit freistehender Badewanne sowie ein Gästezimmer. Bei Bedarf lassen sich zwei
+        weitere Schlafzimmer realisieren.</p>
+        <button class="more">Vollständige Beschreibung
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5 7 9.5l4-4"/></svg></button>
+      </div>
+
+      <div class="sec">
+        <h2>Raumprofil</h2>
+        <div class="rp">
+          <div class="rpitem">
+            <div class="lab">Fläche je Zimmer</div>
+            <div class="val" id="rpv1">47<em>m²</em></div>
+            <div class="rpscale"><div class="ticks"></div><div class="ind" id="rpi1" style="left:0%"></div></div>
+            <div class="rppoles"><span class="mono">Effizient</span><span class="mono">Großzügig</span></div>
+            <p class="rpnote" id="rpn1"></p>
+          </div>
+          <div class="rpitem">
+            <div class="lab">Außenflächen-Anteil</div>
+            <div class="val" id="rpv2">36<em>%</em></div>
+            <div class="rpscale"><div class="ticks"></div><div class="ind" id="rpi2" style="left:0%"></div></div>
+            <div class="rppoles"><span class="mono">Innenorientiert</span><span class="mono">Außenorientiert</span></div>
+            <p class="rpnote" id="rpn2"></p>
+            <span class="rpprice mono" id="rpp"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Highlights</h2>
+        <div class="hl">
+          <div>Terrassen- &amp; Balkonflächen<span>ca. 51,28 m²</span></div>
+          <div>Direkter Liftzugang<span>in die Wohnung</span></div>
+          <div>Kamin, Fußbodenheizung &amp; Klimaanlage<span>Vorhanden</span></div>
+          <div>Erstbezug<span>Baujahr 2025</span></div>
+          <div>Kellerabteil<span>Inklusive</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Ausstattung</h2>
+        <div class="kv">
+          <div><span>Etage</span><b>2. DG</b></div>
+          <div><span>Heizung</span><b>Zentralheizung</b></div>
+          <div><span>Energieträger</span><b>Luftwärmepumpe</b></div>
+          <div><span>Ausrichtung</span><b>Nord / Süd</b></div>
+          <div><span>Außenbereiche</span><b>Dachterrasse, Balkon</b></div>
+          <div><span>Klimaanlage</span><b>Vorhanden</b></div>
+          <div><span>Zustand</span><b>Erstbezug</b></div>
+          <div><span>Verfügbar ab</span><b>11.05.2026</b></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Grundrisse</h2>
+        <div class="plans">
+          <div class="plan"><div><b>Ebene 1 · Wohngeschoß</b><span class="mono">PDF · Grundriss</span></div>
+            <span class="arrbtn"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+          <div class="plan"><div><b>Ebene 2 · Dachterrasse</b><span class="mono">PDF · Grundriss</span></div>
+            <span class="arrbtn"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Energieausweis</h2>
+        <div class="energy">
+          <div class="badge">B</div>
+          <div><p>Bedarfsausweis</p>
+            <span class="mono">fGEE 0,73 · HWB ca. 25 kWh/m²a</span></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="price">
+        <span class="mono">Kaufpreis</span>
+        <b>€ 1.749.000</b>
+        <p class="sub">Verfügbar ab 11.05.2026 · Doppelmakler: Boom Living GmbH &amp; Co KG</p>
+        <button class="btn">Besichtigung anfragen</button>
+        <button class="ghost">Exposé erhalten
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
+      </div>
+
+      <!-- Marktdaten: hell mit Orange-Akzent -->
+      <div class="stat">
+        <div class="shead2"><span class="mono">Marktdaten</span>
+          <span class="livepill"><i></i>Live</span></div>
+        <span class="arr"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span>
+        <div class="bignum"><b><span class="ghost">0</span><span id="bn">18</span></b><span class="delta">+6</span></div>
+        <span class="mono">Anfragen · letzte 7 Tage</span>
+        <div class="bars" id="bars"></div>
+        <div class="ruler">
+          <div class="ticks"></div>
+          <input class="scrub" id="scrub" type="range" min="0" max="13" value="13">
+        </div>
+        <span class="mono scrubcap" id="scap"></span>
+        <div class="srows">
+          <div><span>Besichtigungen geplant</span><b>12</b></div>
+          <div><span>Ø Antwortzeit</span><b>&lt; 24 h</b></div>
+          <div><span>Exposé-Abrufe</span><b>118</b></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><b>72<em> %</em></b><span>Nachfrage über Bezirksschnitt 1170</span>
+            <span class="ta"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+          <div class="tile"><b>46</b><span>Auf Merklisten vorgemerkt</span>
+            <span class="ta"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+        </div>
+      </div>
+
+      <div class="agent">
+        <img src="../../assets/team/portrait-02.jpg" alt="">
+        <div><b>[Makler-Name]</b>
+          <span class="mono">UNIO Partner · Boom Living</span></div>
+      </div>
+      <p class="lock">Kontaktdaten geschützt — nach Login sichtbar.</p>
+    </aside>
+  </div>
+
+  <p class="foot mono">Demo-Ansicht · Fotos Platzhalter · Marktdaten Demo · Objektdaten: app.unio.at/property/2</p>
+</div>
+
+<footer class="pfoot">
+  <div class="pfoot-glow" aria-hidden="true"></div>
+  <div class="pfoot-in">
+    <h2>Raum. Technologie.<br>Mensch.</h2>
+    <div class="pfoot-cta">
+      <a class="pfoot-btn" href="kontakt.html">Demo buchen <span>→</span></a>
+      <a class="pfoot-ghost" href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="pfoot-links">
+      <a href="bautraeger.html">Bauträger</a><a href="makler.html">Makler</a><a href="immobilien.html">Immobilien</a><a href="story.html">Story</a><a href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="pfoot-bar">
+      <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO">
+      <span class="mono">© 2026 UNIO · Wien · Arbeitsstand</span>
+    </div>
+  </div>
+</footer>
+
+<div class="ctabar">
+  <div class="l"><b>€ 1.749.000</b><span>Verfügbar ab 11.05.2026</span></div>
+  <button>Besichtigung anfragen</button>
+</div>
+
+<!-- Galerie-Overlay -->
+<div class="ov" id="ov">
+  <img class="bgimg" id="ovbg" src="../../assets/photos/skyline-terrasse.png" alt="">
+  <div class="tint"></div>
+  <div class="inner">
+    <div class="obar">
+      <div class="t"><b>Traum Penthouse in Hernals</b><span id="ovcount">1 / 5 · Demo-Galerie</span></div>
+      <div class="gcir" id="ovclose"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></div>
+    </div>
+    <div class="mid"><div class="deck" id="deck"></div></div>
+    <div class="strip" id="strip"></div>
+  </div>
+</div>
+
+<script>
+const HERO='../../assets/photos/skyline-terrasse.png',
+      THUMBS=['../../assets/img/int-kitchen.jpg','../../assets/img/int-bath.jpg',
+              '../../assets/photos/dachlounge.jpg','../../assets/img/vienna-facades.jpg'];
+const ALL=[HERO,...THUMBS];
+const CAPS=['Dachterrasse','Küche','Bad','Dachlounge','Umgebung'];
+
+/* Thumbs auf der Seite */
+const trow=document.getElementById('trow'),heroimg=document.getElementById('heroimg');
+THUMBS.forEach((s,i)=>{
+  const t=document.createElement('div');t.className='t';
+  t.innerHTML='<img src="'+s+'" alt="">';
+  t.addEventListener('click',e=>{e.stopPropagation();openOv(i+1);});
+  trow.appendChild(t);
+});
+
+/* Marktdaten-Chart + Scrubber */
+const VALS=[1,2,1,3,2,2,3,1,2,4,2,3,4,5];
+const DAYS=['Fr','Sa','So','Mo','Di','Mi','Do','Fr','Sa','So','Mo','Di','Mi','Do'];
+const bars=document.getElementById('bars'),scrub=document.getElementById('scrub'),
+      scap=document.getElementById('scap');
+const mx=Math.max(...VALS);
+VALS.forEach(v=>{const i=document.createElement('i');i.style.height=(v/mx*100)+'%';bars.appendChild(i);});
+function setBar(k){
+  bars.querySelectorAll('i').forEach((b,j)=>b.classList.toggle('on',j===k));
+  scap.textContent=DAYS[k]+' · '+VALS[k]+' Anfragen';
+}
+scrub.addEventListener('input',()=>setBar(+scrub.value));
+setBar(13);
+
+/* Galerie-Overlay mit Foto-Stack */
+const ov=document.getElementById('ov'),ovbg=document.getElementById('ovbg'),
+      ovcount=document.getElementById('ovcount'),deck=document.getElementById('deck'),
+      strip=document.getElementById('strip');
+let order=[...ALL.keys()], built=false;
+function build(){
+  ALL.forEach((s,i)=>{
+    const c=document.createElement('div');c.className='dcard';c.dataset.i=i;
+    c.innerHTML='<img src="'+s+'" alt=""><span class="cap">'+CAPS[i]+'</span>';
+    c.addEventListener('click',()=>{order.push(order.shift());layout();});
+    deck.appendChild(c);
+    const t=document.createElement('div');t.className='st';
+    t.innerHTML='<img src="'+s+'" alt="">';
+    t.addEventListener('click',()=>{while(order[0]!==i)order.push(order.shift());layout();});
+    strip.appendChild(t);
+  });
+  built=true;
+}
+const ROT=[0,-4.5,3.5,-2,5],OX=[0,-12,14,-6,8],OY=[0,10,7,14,4];
+function layout(){
+  order.forEach((idx,pos)=>{
+    const c=deck.querySelector('[data-i="'+idx+'"]');
+    const p=Math.min(pos,ROT.length-1);
+    c.style.zIndex=String(20-pos);
+    c.style.opacity=pos>3?0:1;
+    c.style.transform='translate('+OX[p]+'px,'+OY[p]+'px) rotate('+ROT[p]+'deg) scale('+(1-pos*0.03)+')';
+  });
+  ovbg.style.opacity=0;
+  setTimeout(()=>{ovbg.src=ALL[order[0]];ovbg.style.opacity=1;},220);
+  ovcount.textContent=(order[0]+1)+' / '+ALL.length+' · Demo-Galerie';
+  strip.querySelectorAll('.st').forEach((t,j)=>t.classList.toggle('on',j===order[0]));
+}
+let openOv=function(start=0){
+  if(!built)build();
+  while(order[0]!==start)order.push(order.shift());
+  ov.classList.add('open');document.body.style.overflow='hidden';layout();
+}
+document.getElementById('ovclose').addEventListener('click',()=>{
+  ov.classList.remove('open');document.body.style.overflow='';});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.classList.contains('open')){
+  ov.classList.remove('open');document.body.style.overflow='';}});
+
+/* ===== Raumprofil: automatische Kalkulation ===== */
+const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,gewicht:0.3};
+(function(){
+  const P=PROP, eur=n=>'€ '+Math.round(n).toLocaleString('de-AT');
+  if(P.zimmer>0&&P.wohnflaeche>0){
+    const v=P.wohnflaeche/P.zimmer, pos=Math.max(0,Math.min(1,(v-15)/(50-15)));
+    document.getElementById('rpv1').innerHTML=Math.round(v)+'<em>m²</em>';
+    document.getElementById('rpi1').dataset.pos=(pos*100).toFixed(1);
+    document.getElementById('rpn1').textContent=
+      v<25?'Effiziente Grundrisse — viel Raumprogramm auf kompakter Fläche.'
+      :v<=35?'Ausgewogenes Verhältnis von Fläche und Zimmern.'
+      :'Sehr großzügige Raumzuschnitte.';
+  }
+  if(P.wohnflaeche>0){
+    const a=(P.aussenflaeche||0)/P.wohnflaeche*100, pos=Math.max(0,Math.min(1,a/50));
+    document.getElementById('rpv2').innerHTML=Math.round(a)+'<em>%</em>';
+    document.getElementById('rpi2').dataset.pos=(pos*100).toFixed(1);
+    document.getElementById('rpn2').textContent=
+      (P.aussenflaeche||0)===0?'Keine eigenen Freiflächen.'
+      :a<10?'Geringer Freiflächenanteil.'
+      :a<=25?'Solider Freiflächenanteil.'
+      :'Außergewöhnlich viel Freifläche — hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
+    if(P.kaufpreis>0){
+      const p1=P.kaufpreis/P.wohnflaeche,
+            p2=P.kaufpreis/(P.wohnflaeche+(P.aussenflaeche||0)*P.gewicht);
+      document.getElementById('rpp').textContent=
+        'Preis je m² Wohnfläche '+eur(p1)+' · inkl. gewichteter Freiflächen (0,3) '+eur(p2);
+    }
+  }
+  const rio=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.ind').forEach(i=>{
+      requestAnimationFrame(()=>i.style.left=(i.dataset.pos||0)+'%');});
+    rio.unobserve(e.target);
+  }),{threshold:.4});
+  document.querySelectorAll('.rpscale').forEach(el=>rio.observe(el.closest('.rpitem')));
+})();
+
+/* ===== Animationen ===== */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if(heroimg.complete)heroimg.classList.add('ld');
+else heroimg.addEventListener('load',()=>heroimg.classList.add('ld'));
+
+const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .agent, .lock')];
+rvEls.forEach(el=>el.classList.add('rv'));
+document.querySelectorAll('.trow .t').forEach((el,i)=>el.style.transitionDelay=(i*70)+'ms');
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+rvEls.forEach(el=>io.observe(el));
+
+const statEl=document.querySelector('.stat'),bn=document.getElementById('bn');
+bars.querySelectorAll('i').forEach((b,i)=>b.style.transitionDelay=(i*45)+'ms');
+const sio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  statEl.classList.add('grown');sio.unobserve(statEl);
+  setTimeout(()=>bars.querySelectorAll('i').forEach(b=>b.style.transitionDelay='0ms'),1400);
+  if(RM)return;
+  const T=900,t0=performance.now(),target=18;
+  (function cu(now){const k=Math.min(1,(now-t0)/T),e2=1-Math.pow(1-k,3);
+    bn.textContent=String(Math.round(target*e2));
+    if(k<1)requestAnimationFrame(cu);})(t0);
+}),{threshold:.35});
+sio.observe(statEl);
+
+const _openOv=openOv;
+openOv=function(start=0){
+  _openOv(start);
+  if(RM)return;
+  deck.style.opacity='0';deck.style.transform='translateY(34px) scale(.96)';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    deck.style.opacity='1';deck.style.transform='none';}));
+};
+document.getElementById('heroBtn').onclick=null;
+document.getElementById('heroBtn').addEventListener('click',()=>openOv(0));
+
+const like=document.getElementById('like');
+like.addEventListener('click',()=>{like.classList.toggle('liked');
+  like.querySelector('path').setAttribute('fill',like.classList.contains('liked')?'currentColor':'none');});
+</script>
+</body>
+</html>

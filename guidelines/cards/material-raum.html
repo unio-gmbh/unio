@@ -1,0 +1,36 @@
+<!-- @dsCard group="Material" viewport="700x200" name="Raum & Radien" subtitle="Spacing-Skala 4→144 · Radien 24/20/12/999" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 200px; background: var(--paper); padding: 20px 28px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 80px; }
+  .bars div { width: 26px; background: var(--ink); border-radius: 2px; position: relative; }
+  .bars span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 5px; font: 9px var(--font-mono); color: var(--text-muted); }
+  .radii { display: flex; gap: 14px; align-items: center; }
+  .radii div { height: 44px; background: transparent; box-shadow: inset 0 0 0 1px var(--hairline-dark); display: flex; align-items: center; justify-content: center; font: 10px var(--font-mono); color: var(--text-muted); padding: 0 16px; }
+</style>
+</head>
+<body>
+  <div class="bars">
+    <div style="height: 4%;"><span>4</span></div>
+    <div style="height: 7%;"><span>8</span></div>
+    <div style="height: 10%;"><span>12</span></div>
+    <div style="height: 13%;"><span>16</span></div>
+    <div style="height: 18%;"><span>24</span></div>
+    <div style="height: 24%;"><span>32</span></div>
+    <div style="height: 36%;"><span>48</span></div>
+    <div style="height: 47%;"><span>64</span></div>
+    <div style="height: 70%;"><span>96</span></div>
+    <div style="height: 100%;"><span>144</span></div>
+  </div>
+  <div class="radii">
+    <div style="border-radius: var(--r-panel);">panel 24</div>
+    <div style="border-radius: var(--r-card);">card 20</div>
+    <div style="border-radius: var(--r-inner);">kern 12</div>
+    <div style="border-radius: var(--r-pill);">pill 999</div>
+  </div>
+</body>
+</html>

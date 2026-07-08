@@ -1,0 +1,58 @@
+/* UNIO — Farbsystem. Warmes Off-White + warmes Tiefschwarz, EIN Akzent: Brand-Orange (aus der Wortmarke). */
+:root {
+  /* Basis (nie Reinweiß / Reinschwarz) — Werte lt. Arbeitsauftrag Juli 2026 */
+  --paper: #F7F5F1;
+  --paper-2: #F0EDE6;
+  --paper-3: #E7E2D8;
+  --ink: #0B0A09;
+  --ink-2: #1B1A16;
+  --ink-3: #383429;
+
+  /* Der eine Akzent: UNIO Brand-Orange #FFAA09 (Feedback 06.07. — systemweit). */
+  --signal: #FFAA09;
+  --signal-deep: #B87400;   /* dunkles Amber für Text auf hellen Flächen (Kontrast) */
+  --signal-press: #E69600;
+  --signal-soft: rgba(255, 170, 9, 0.16);
+  --on-signal: #1A1305;     /* dunkler Text auf Amber-Flächen */
+
+  /* Kühles Hellgrau als Flächen-Ergänzung (EcoSoft #D1D3D5) */
+  --steel: #D1D3D5;
+  --steel-soft: #ECEDEB;
+
+  /* Text (semantisch) */
+  --text-strong: var(--ink);
+  --text-body: var(--ink-2);
+  --text-muted: rgba(27, 26, 22, 0.6);
+  --text-inverse: #F7F5F1;
+  --text-inverse-muted: rgba(247, 245, 241, 0.64);
+
+  /* Flächen (semantisch) */
+  --surface-page: var(--paper);
+  --surface-page-dark: var(--ink);
+  --surface-raised: #FDFCFA;
+
+  /* Glas-Tints — immer ÜBER echtem Bildmaterial einsetzen */
+  --glass-dark: rgba(10, 9, 8, 0.42);
+  --glass-dark-2: rgba(10, 9, 8, 0.64);
+  --glass-light: rgba(247, 245, 241, 0.42);
+  --glass-light-2: rgba(247, 245, 241, 0.72);
+
+  /* Hairlines statt Borders */
+  --hairline-light: rgba(255, 255, 255, 0.16);
+  --hairline-light-strong: rgba(255, 255, 255, 0.3);
+  --hairline-dark: rgba(11, 10, 9, 0.14);
+
+  /* Status (Arbeitswerte für Mock-UIs: Pipeline, Lead-Qualität) */
+  --positive: #3F7A52;
+  --attention: var(--signal-deep);
+
+  /* Bildfarbwelten (Default: Terra) */
+  --world: #B4633C;
+  --world-deep: #7E3E22;
+  --world-soft: #E9CDBB;
+}
+
+/* Bildfarbwelt-Varianten — auf Sektions-/Seitenebene setzen */
+[data-palette="terra"] { --world: #B4633C; --world-deep: #7E3E22; --world-soft: #E9CDBB; }
+[data-palette="stahl"] { --world: #5E7A8E; --world-deep: #2C4250; --world-soft: #C9D6DE; }
+[data-palette="gruen"] { --world: #48684E; --world-deep: #21402C; --world-soft: #C8D6C5; }

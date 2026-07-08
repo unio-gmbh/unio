@@ -1,0 +1,23 @@
+<!-- @dsCard group="Brand" viewport="700x170" name="Wortmarke" subtitle="Echte UNIO-Wortmarke — schwarz auf Paper, weiß auf Ink" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 170px; display: flex; }
+  .half { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 32px; gap: 14px; }
+  img { height: 34px; width: auto; align-self: flex-start; }
+</style>
+</head>
+<body>
+  <div class="half" style="background: var(--paper);">
+    <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="u-label" style="color: var(--text-muted); font-size: 10px;">assets/logo/unio-logo-black.svg · Icon: unio-icon.png</span>
+  </div>
+  <div class="half u-grain" style="background: var(--ink);">
+    <img src="../../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="u-label" style="color: var(--text-inverse-muted); font-size: 10px;">Raum. Technologie. Mensch.</span>
+  </div>
+</body>
+</html>

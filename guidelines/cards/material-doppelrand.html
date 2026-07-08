@@ -1,0 +1,29 @@
+<!-- @dsCard group="Material" viewport="700x230" name="Doppelrand-Karte" subtitle="Äußere Shell + innerer Kern, konzentrische Radien" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 230px; background: url("../../assets/photos/wohnen-beige.jpg") center / cover; display: flex; align-items: center; justify-content: center; gap: 28px; }
+  .anno { font: 10px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-inverse); text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+  <div style="width: 250px; border-radius: var(--r-card); padding: 8px; background: var(--glass-dark); backdrop-filter: blur(var(--blur-card)); -webkit-backdrop-filter: blur(var(--blur-card)); box-shadow: inset 0 0 0 1px var(--hairline-light), var(--shadow-float); color: var(--text-inverse);">
+    <div style="border-radius: calc(var(--r-card) - 8px); overflow: hidden;">
+      <img src="../../assets/photos/dachlounge.jpg" alt="" style="display: block; width: 100%; height: 108px; object-fit: cover;">
+    </div>
+    <div style="padding: 12px 12px 8px;">
+      <span class="u-label" style="color: var(--text-inverse-muted); font-size: 10px;">Objekt 042</span>
+      <div style="font: 500 17px var(--font-display); letter-spacing: -0.02em; margin-top: 3px;">Dachgeschoß, 1020</div>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <span class="anno">r außen = 20 (--r-card)</span>
+    <span class="anno">r innen = 20 − padding 8 = 12</span>
+    <span class="anno">hairline 1px rgba(255,255,255,.16)</span>
+    <span class="anno">blur 20 · grain 3 % · shadow soft</span>
+  </div>
+</body>
+</html>

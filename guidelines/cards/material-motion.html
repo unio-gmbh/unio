@@ -1,0 +1,22 @@
+<!-- @dsCard group="Material" viewport="700x160" name="Motion" subtitle="cubic-bezier(.32,.72,0,1) · 700–1200 ms · träge & gewichtig" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 160px; background: var(--ink); color: var(--text-inverse); padding: 22px 28px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+  .track { position: relative; height: 2px; background: rgba(255,255,255,0.12); }
+  .dot { position: absolute; top: -5px; left: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--signal); animation: run 2.6s var(--ease-unio) infinite alternate; }
+  .blur { font: 500 30px var(--font-display); letter-spacing: -0.03em; animation: sharpen 2.6s var(--ease-unio) infinite alternate; }
+  @keyframes run { from { left: 0; } to { left: calc(100% - 12px); } }
+  @keyframes sharpen { from { filter: blur(14px); opacity: 0.35; } to { filter: blur(0); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .dot, .blur { animation: none; } }
+</style>
+</head>
+<body class="u-grain">
+  <span class="blur">6 240 €/m²</span>
+  <div class="track"><span class="dot"></span></div>
+  <span class="u-label" style="color: var(--text-inverse-muted);">nur transform · opacity · filter — nie linear, nie zappelig</span>
+</body>
+</html>

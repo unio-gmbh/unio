@@ -1,0 +1,27 @@
+<!-- @dsCard group="Farben" viewport="700x160" name="Signal" subtitle="EIN Akzent: Datenpunkte, Marker, aktive Zustände" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { display: flex; width: 700px; height: 160px; }
+  .main { flex: 1.6; background: var(--signal); padding: 14px 16px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .use { flex: 2; background: var(--ink); color: var(--text-inverse); padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); }
+  .bar { height: 2px; flex: 1; background: linear-gradient(90deg, var(--signal) 64%, rgba(255,255,255,0.14) 64%); }
+</style>
+</head>
+<body>
+  <div class="main" style="color: var(--on-signal);">
+    <span style="font: 500 15px var(--font-display);">--signal</span>
+    <span style="font: 11px var(--font-mono); opacity: 0.8;">#FB6221 · deep #C2410C · soft 12 %</span>
+  </div>
+  <div class="use">
+    <div class="row"><span class="dot"></span><span class="u-label" style="color: var(--text-inverse-muted);">Marker-Punkt = das UNIO-„Icon"</span></div>
+    <div class="row"><span class="u-label" style="color: var(--text-inverse-muted);">Abverkauf</span><span class="bar"></span><span style="font: 13px var(--font-mono); color: var(--signal);">64 %</span></div>
+    <div class="row"><span class="u-label" style="color: var(--signal);">● Aktiv</span><span class="u-label" style="color: var(--text-inverse-muted);">— nie für Flächen, nie zwei Akzente</span></div>
+  </div>
+</body>
+</html>

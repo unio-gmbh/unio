@@ -1,0 +1,19 @@
+<!-- @dsCard group="Material" viewport="700x160" name="Film-Grain" subtitle="Fixer Overlay, 2–4 % Opazität, pointer-events: none" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { width: 700px; height: 160px; display: flex; }
+  .half { flex: 1; display: flex; align-items: flex-end; padding: 14px 18px; box-sizing: border-box; }
+  .k { font: 10px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; }
+  .grain8::after { opacity: 0.09; }
+</style>
+</head>
+<body>
+  <div class="half" style="background: var(--paper);"><span class="k" style="color: var(--text-muted);">ohne Grain — steril</span></div>
+  <div class="half u-grain" style="background: var(--paper);"><span class="k" style="color: var(--text-muted);">--grain @ 3 %</span></div>
+  <div class="half u-grain grain8" style="background: var(--ink); color: var(--text-inverse);"><span class="k" style="color: var(--text-inverse-muted);">auf Ink (Demo 9 %)</span></div>
+</body>
+</html>
