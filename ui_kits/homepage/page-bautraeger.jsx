@@ -33,34 +33,36 @@ function DockPoint({ top, right, label, show, delay }) {
 function HeroBt() {
   const [reveal, setReveal] = React.useState(window.BT.BT_RM ? 1 : 0.06);
   const [docked, setDocked] = React.useState(window.BT.BT_RM);
+  const mob = window.useMobile();
   React.useEffect(() => {
     if (window.BT.BT_RM) return;
     const t1 = setTimeout(() => setReveal(1), 400);
     const t2 = setTimeout(() => setDocked(true), 1700);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
+  const statSize = mob ? "clamp(60px, 16vw, 80px)" : "clamp(84px, 8.4vw, 148px)";
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: "relative", background: "var(--paper)", padding: "98px 40px 0" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 52fr) minmax(0, 48fr)", minHeight: "calc(100svh - 120px)", borderRadius: 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
+    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: "relative", background: "var(--paper)", padding: mob ? "82px 14px 0" : "98px 40px 0" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         {/* Links: Off-White, Treppen-Satz */}
-        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: "175px 4vw 120px 7vw" }}>
+        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "175px 4vw 120px 7vw" }}>
           <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-14%", top: "8%", width: "60%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.18) 0%, rgba(255,219,87,.09) 44%, transparent 72%)", animation: BT_RM ? "none" : "heroGlowDrift 30s ease-in-out infinite alternate" }}></div>
           <GridLines />
-          <h1 style={{ margin: 0, font: "500 clamp(40px, 4.4vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(32px, 8.6vw, 42px)" : "clamp(40px, 4.4vw, 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
             <span style={{ display: "block" }}>Wissen, was funktioniert</span>
-            <span style={{ display: "block", marginLeft: "8%", color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>bevor</span>
-            <span style={{ display: "block", marginLeft: "16%" }}>gebaut wird<span style={{ color: "var(--signal)" }}>.</span></span>
+            <span style={{ display: "block", marginLeft: mob ? "4%" : "8%", color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>bevor</span>
+            <span style={{ display: "block", marginLeft: mob ? "8%" : "16%" }}>gebaut wird<span style={{ color: "var(--signal)" }}>.</span></span>
           </h1>
-          <p style={{ margin: "24px 0 0 16%", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 380, position: "relative" }}>
+          <p style={{ margin: mob ? "20px 0 0" : "24px 0 0 16%", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 380, position: "relative" }}>
             Markttest, Marketing und Vertrieb als ein datengesteuertes System.
           </p>
-          <div style={{ display: "flex", gap: 12, marginTop: 30, marginLeft: "16%", alignItems: "center", position: "relative" }}>
+          <div style={{ display: "flex", gap: 12, marginTop: mob ? 24 : 30, marginLeft: mob ? 0 : "16%", alignItems: "center", position: "relative", flexWrap: "wrap" }}>
             <Bb size="lg" knob data-track="hero_cta_primary" onClick={() => (location.hash = "funnel")}>Projekt prüfen lassen</Bb>
             <Bb size="lg" variant="ghost" data-track="hero_cta_secondary" onClick={() => (location.hash = "system")}>So arbeiten wir</Bb>
           </div>
         </div>
         {/* Rechts: Projektfoto, Reveal-Choreografie */}
-        <div style={{ position: "relative", overflow: "hidden", minHeight: 480 }}>
+        <div style={{ position: "relative", overflow: "hidden", minHeight: mob ? 380 : 480 }}>
           <FGb reveal={reveal} side="left" strength={13} style={{ position: "absolute", inset: 0 }}>
             <img src="../../assets/img/albrecht.jpg" alt="Das Albrecht — Townhäuser, Wien 1170" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </FGb>
@@ -70,10 +72,10 @@ function HeroBt() {
         </div>
       </div>
       {/* Kennzahlen-Reihe (StatBlock-Stil, groß & zentriert) */}
-      <div style={{ position: "relative", zIndex: 5, margin: "150px auto 130px", paddingTop: 60, borderTop: "1px solid var(--hairline-dark)", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 48, maxWidth: 1200 }}>
-        <SBb value="1 Mrd" label="Projektvolumen in der Pipeline" tone="light" size="clamp(84px, 8.4vw, 148px)" />
-        <SBb value={100} unit="%" label="Transparenz durch UNIO Lens" tone="light" size="clamp(84px, 8.4vw, 148px)" />
-        <SBb value="1 Mrd" label="Reichweite mit unseren Kampagnen" tone="light" size="clamp(84px, 8.4vw, 148px)" />
+      <div style={{ position: "relative", zIndex: 5, margin: mob ? "72px auto 80px" : "150px auto 130px", paddingTop: mob ? 44 : 60, borderTop: "1px solid var(--hairline-dark)", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 36 : 48, maxWidth: 1200 }}>
+        <SBb value="1 Mrd" label="Projektvolumen in der Pipeline" tone="light" size={statSize} />
+        <SBb value={100} unit="%" label="Transparenz durch UNIO Lens" tone="light" size={statSize} />
+        <SBb value="1 Mrd" label="Reichweite mit unseren Kampagnen" tone="light" size={statSize} />
       </div>
     </section>
   );
@@ -87,9 +89,10 @@ const PROBLEME = [
   ["04", "Dashboard & Data Intelligence", "Live-Pipeline, Unit-Status und Predictions in Echtzeit — plus Data Engine, die aus Projekten lernt und jedes nächste Launch besser macht."],
 ];
 function ProblemBt() {
+  const mob = window.useMobile();
   return (
-    <section data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "185px 7vw 160px" }}>
-      <div style={{ maxWidth: 640, marginBottom: 100, position: "relative" }}>
+    <section data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "110px 6vw 100px" : "185px 7vw 160px" }}>
+      <div style={{ maxWidth: 640, marginBottom: mob ? 52 : 100, position: "relative" }}>
         <h2 style={{ margin: 0, font: "500 clamp(34px, 4vw, 64px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
         </h2>
@@ -100,9 +103,9 @@ function ProblemBt() {
       <div style={{ position: "relative" }}>
         {PROBLEME.map(([nr, t, m], i) => (
           <Fx key={nr} delay={i * 90}>
-            <div style={{ display: "grid", gridTemplateColumns: "64px minmax(0, 1.2fr) minmax(0, 1fr)", gap: "0 40px", padding: "48px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "start" }}>
-              <span style={{ font: "14px var(--font-mono)", color: "var(--signal-deep)", paddingTop: 6 }}>{nr}</span>
-              <h3 style={{ margin: 0, font: "500 clamp(24px, 2.6vw, 38px)/1.1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "64px minmax(0, 1.2fr) minmax(0, 1fr)", gap: mob ? "10px 0" : "0 40px", padding: mob ? "32px 0" : "48px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "start" }}>
+              <span style={{ font: "14px var(--font-mono)", color: "var(--signal-deep)", paddingTop: mob ? 0 : 6 }}>{nr}</span>
+              <h3 style={{ margin: 0, font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(24px, 2.6vw, 38px)"}/1.1 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
               <p style={{ margin: 0, font: "400 15px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 380 }}>{m}</p>
             </div>
           </Fx>
@@ -115,33 +118,38 @@ function ProblemBt() {
 /* ===== 03 · DER BEWEIS — Formora-Slide + Treppen-Stats ===== */
 function ProofBt() {
   const [ref, run] = useOnceInView(0.3);
+  const mob = window.useMobile();
   const stats = [
     { v: 61, k: "Anfragen / 2 Wo. · Das Albrecht", off: 0 },
     { v: 27, k: "Anfragen / 2 Wo. · Beheim", off: 44 },
     { v: 40, k: "Anfragen nach Übernahme · Penthouse € 4 Mio", off: 88 },
     { v: 25, k: "hochqual. Anfragen / Wo. · ObenZwei", off: 132 },
   ];
+  const edge = mob ? 20 : 38;
+  const labels = mob
+    ? [["Case", "Villa Ecoluxe", { top: 22, left: edge }], ["Status", "Verkauft", { top: 22, right: edge, textAlign: "right" }, true]]
+    : [["Case", "Villa Ecoluxe", { top: 34, left: edge }], ["Status", "Verkauft", { top: 34, right: edge, textAlign: "right" }, true], ["Vermarktung", "Vor Baustart getestet", { bottom: 34, left: edge }], ["Steuerung", "Live · LENS", { bottom: 34, right: edge, textAlign: "right" }]];
   return (
-    <section data-track="chapter_view_03" data-screen-label="Beweis" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: "175px 7vw 175px" }}>
+    <section data-track="chapter_view_03" data-screen-label="Beweis" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "175px 7vw 175px" }}>
       <GridLines />
       <Kap nr="03" label="Beweis" />
       <div style={{ position: "relative", borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "var(--shadow-soft)" }}>
-        <img src="../../assets/img/ecoluxe-wide.jpg" alt="Villa Ecoluxe" style={{ display: "block", width: "100%", height: "min(70vh, 620px)", objectFit: "cover" }} />
+        <img src="../../assets/img/ecoluxe-wide.jpg" alt="Villa Ecoluxe" style={{ display: "block", width: "100%", height: mob ? "min(64vh, 480px)" : "min(70vh, 620px)", objectFit: "cover" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.34), transparent 36%, transparent 58%, rgba(11,10,9,0.5))" }}></div>
-        <div aria-hidden="true" style={{ position: "absolute", inset: 18, border: "1px solid rgba(255,255,255,0.34)", borderRadius: 14, pointerEvents: "none" }}></div>
-        {[["Case", "Villa Ecoluxe", { top: 34, left: 38 }], ["Status", "Verkauft", { top: 34, right: 38, textAlign: "right" }, true], ["Vermarktung", "Vor Baustart getestet", { bottom: 34, left: 38 }], ["Steuerung", "Live · LENS", { bottom: 34, right: 38, textAlign: "right" }]].map(([k, v, posi, sig]) => (
+        <div aria-hidden="true" style={{ position: "absolute", inset: mob ? 10 : 18, border: "1px solid rgba(255,255,255,0.34)", borderRadius: 14, pointerEvents: "none" }}></div>
+        {labels.map(([k, v, posi, sig]) => (
           <div key={k} style={{ position: "absolute", color: "var(--text-inverse)", ...posi }}>
             <span className="u-label" style={{ color: "var(--text-inverse-muted)" }}>{k}</span>
-            <div style={{ font: "16px var(--font-mono)", marginTop: 4, color: sig ? "var(--signal)" : "inherit" }}>{v}</div>
+            <div style={{ font: `${mob ? 13 : 16}px var(--font-mono)`, marginTop: 4, color: sig ? "var(--signal)" : "inherit" }}>{v}</div>
           </div>
         ))}
-        <div style={{ position: "absolute", left: 38, right: 38, top: "45%", color: "var(--text-inverse)" }}>
-          <h2 style={{ margin: 0, font: "500 clamp(32px, 4vw, 64px)/1 var(--font-display)", letterSpacing: "-0.03em", textShadow: "0 2px 40px rgba(0,0,0,0.45)" }}>
+        <div style={{ position: "absolute", left: edge, right: edge, top: "45%", color: "var(--text-inverse)" }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(32px, 4vw, 64px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", textShadow: "0 2px 40px rgba(0,0,0,0.45)" }}>
             Verkauft, bevor der<br />Markt es glaubte.
           </h2>
         </div>
       </div>
-      <a href="#funnel" data-track="inline_cta_beweis" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 72, font: "500 16px var(--font-display)", color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 4, position: "relative" }}>
+      <a href="#funnel" data-track="inline_cta_beweis" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: mob ? 44 : 72, font: "500 16px var(--font-display)", color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 4, position: "relative" }}>
         Ihr Projekt so prüfen lassen <span style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>→</span>
       </a>
     </section>
@@ -158,6 +166,7 @@ const FUNNEL = [
 ];
 function FunnelGraphBt() {
   const secRef = React.useRef(null);
+  const mob = window.useMobile();
   const [p, setP] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
     if (BT_RM) return;
@@ -172,33 +181,33 @@ function FunnelGraphBt() {
   const back = (x) => { const c = 1.7; return x < 0 ? 0 : x > 1 ? 1 : 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
   return (
     <section ref={secRef} data-track="chapter_view_03b" data-screen-label="Funnel" style={{ height: BT_RM ? "auto" : "250vh", position: "relative", background: "var(--paper-2)" }}>
-      <div className="u-grain" style={{ position: BT_RM ? "relative" : "sticky", top: 0, minHeight: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "150px 7vw 90px" }}>
+      <div className="u-grain" style={{ position: BT_RM ? "relative" : "sticky", top: 0, minHeight: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "96px 5vw 56px" : "150px 7vw 90px" }}>
         <span aria-hidden="true" style={{ position: "absolute", right: "3%", top: "12%", font: "500 clamp(120px, 20vw, 300px)/0.8 var(--font-display)", letterSpacing: "-0.05em", color: "transparent", WebkitTextStroke: "1px rgba(11,10,9,0.06)", pointerEvents: "none", userSelect: "none" }}>Vertrieb</span>
-        <div style={{ position: "relative", maxWidth: 640, marginBottom: 56 }}>
-          <h2 style={{ margin: 0, font: "500 clamp(30px, 3.4vw, 54px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Performance Marketing & Demand</h2>
-          <p style={{ margin: "18px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
+        <div style={{ position: "relative", maxWidth: 640, marginBottom: mob ? 32 : 56 }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7vw, 32px)" : "clamp(30px, 3.4vw, 54px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>Performance Marketing & Demand</h2>
+          <p style={{ margin: "18px 0 0", font: `400 ${mob ? 14.5 : 16}px/1.7 var(--font-display)`, color: "var(--text-muted)", maxWidth: 520, display: mob ? "none" : "block" }}>
             Skalierbare Leadgenerierung über die relevanten Kanäle — mit sauberem Tracking, kreativer Iteration und einem Setup, das Nachfrage in planbaren Vertrieb übersetzt.
           </p>
         </div>
         {/* Legende */}
-        <div style={{ position: "relative", display: "flex", gap: 22, justifyContent: "flex-end", marginBottom: 40 }}>
+        <div style={{ position: "relative", display: "flex", gap: mob ? 14 : 22, justifyContent: mob ? "flex-start" : "flex-end", flexWrap: "wrap", marginBottom: mob ? 24 : 40 }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "11px var(--font-mono)", letterSpacing: "0.06em", color: "var(--signal-deep)" }}><span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--signal)" }}></span>Durch UNIO — der Zuwachs</span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "11px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}><span style={{ width: 12, height: 12, borderRadius: 3, background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}></span>Basis</span>
         </div>
         {/* Balken */}
-        <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "clamp(12px, 2vw, 28px)", alignItems: "end", height: "clamp(300px, 44vh, 460px)" }}>
+        <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: mob ? 6 : "clamp(12px, 2vw, 28px)", alignItems: "end", height: mob ? "clamp(220px, 36vh, 320px)" : "clamp(300px, 44vh, 460px)" }}>
           {FUNNEL.map((f, i) => {
             const win = BT_RM ? 1 : back(Math.max(0, Math.min(1, (p - i * 0.13) / 0.5)));
             const h = (f.conv / 100) * 100 * win;
             const orangeH = f.orange;
             return (
               <div key={f.n} style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
-                <div style={{ font: "500 12px var(--font-mono)", color: "var(--signal-deep)", marginBottom: 8, opacity: win }}>{f.up}</div>
-                <div style={{ font: "500 clamp(28px, 3.4vw, 52px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginBottom: 12 }}>{Math.round(f.conv * win)}<span style={{ fontSize: "0.4em" }}>%</span></div>
+                <div style={{ font: `500 ${mob ? 10 : 12}px var(--font-mono)`, color: "var(--signal-deep)", marginBottom: mob ? 5 : 8, opacity: win }}>{f.up}</div>
+                <div style={{ font: `500 ${mob ? "clamp(17px, 4.6vw, 24px)" : "clamp(28px, 3.4vw, 52px)"}/1 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", marginBottom: mob ? 8 : 12 }}>{Math.round(f.conv * win)}<span style={{ fontSize: "0.4em" }}>%</span></div>
                 <div style={{ position: "relative", width: "100%", height: h + "%", minHeight: win > 0.02 ? 6 : 0, borderRadius: "8px 8px 0 0", overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", transition: BT_RM ? "none" : "height 80ms linear", display: "flex", flexDirection: "column" }}>
                   {/* Orange (UNIO-Zuwachs) oben */}
                   <div style={{ height: orangeH + "%", background: "var(--signal)", position: "relative" }}>
-                    {i === 0 && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
+                    {i === 0 && !mob && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
                       <div style={{ flex: 56, background: "#E8971A", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "#fff" }}><span>Meta</span><span>56%</span></div>
                       <div style={{ flex: 19, background: "#F0A83F", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "#fff" }}><span>Google</span><span>19%</span></div>
                     </div>}
@@ -207,14 +216,14 @@ function FunnelGraphBt() {
                   <div style={{ borderTop: "1.5px dashed rgba(11,10,9,0.4)" }}></div>
                   {/* Weiß (Basis) unten */}
                   <div style={{ flex: 1, background: "#FFFFFF", position: "relative" }}>
-                    {i === 0 && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
+                    {i === 0 && !mob && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
                       <div style={{ flex: 19, borderBottom: "1px solid var(--hairline-dark)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "var(--text-muted)" }}><span>willhaben</span><span>19%</span></div>
                       <div style={{ flex: 6, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "var(--text-muted)" }}><span>ImmoScout24</span><span>6%</span></div>
                     </div>}
                   </div>
                 </div>
-                <div style={{ font: "500 14px var(--font-display)", color: "var(--ink)", marginTop: 14 }}>{f.n}</div>
-                <div style={{ font: "9.5px var(--font-mono)", letterSpacing: "0.08em", color: "var(--text-muted)", marginTop: 5 }}>{f.drv}</div>
+                <div style={{ font: `500 ${mob ? 10.5 : 14}px var(--font-display)`, color: "var(--ink)", marginTop: mob ? 9 : 14, textAlign: "center" }}>{f.n}</div>
+                <div style={{ font: "9.5px var(--font-mono)", letterSpacing: "0.08em", color: "var(--text-muted)", marginTop: 5, display: mob ? "none" : "block" }}>{f.drv}</div>
               </div>
             );
           })}
@@ -227,11 +236,12 @@ function FunnelGraphBt() {
 
 /* ===== 06 · NUTZEN-BENTO (der einzige Karten-Moment) ===== */
 function NCard({ span = 2, tone = "light", title, copy, children }) {
+  const mob = window.useMobile();
   const bg = tone === "dark" ? "var(--ink)" : tone === "orange" ? "var(--signal)" : "#FFFFFF";
   const fg = tone === "dark" ? "var(--text-inverse)" : tone === "orange" ? "#FFFFFF" : "var(--ink)";
   const muted = tone === "dark" ? "var(--text-inverse-muted)" : tone === "orange" ? "rgba(255,245,239,0.85)" : "var(--text-muted)";
   return (
-    <div style={{ gridColumn: `span ${span}`, background: bg, borderRadius: "var(--r-card)", padding: "24px 24px 22px", boxShadow: tone === "light" ? "inset 0 0 0 1px var(--hairline-dark)" : "var(--shadow-float)", display: "flex", flexDirection: "column", gap: 10, minHeight: 230 }}>
+    <div style={{ gridColumn: mob ? "auto" : `span ${span}`, background: bg, borderRadius: "var(--r-card)", padding: "24px 24px 22px", boxShadow: tone === "light" ? "inset 0 0 0 1px var(--hairline-dark)" : "var(--shadow-float)", display: "flex", flexDirection: "column", gap: 10, minHeight: mob ? 0 : 230 }}>
       <div style={{ font: "500 19px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: fg }}>{title}</div>
       {copy && <p style={{ margin: 0, font: "400 13.5px/1.55 var(--font-display)", color: muted, maxWidth: "40ch" }}>{copy}</p>}
       <div style={{ marginTop: "auto", paddingTop: 12 }}>{children}</div>
@@ -242,17 +252,18 @@ const nChip = { font: "500 12px var(--font-display)", padding: "6px 11px", borde
 
 function BentoBt() {
   const [ref, run] = useOnceInView(0.2);
+  const mob = window.useMobile();
   return (
-    <section ref={ref} data-track="chapter_view_06" data-screen-label="Nutzen" style={{ position: "relative", background: "#FFFFFF", padding: "175px 7vw 175px" }}>
+    <section ref={ref} data-track="chapter_view_06" data-screen-label="Nutzen" style={{ position: "relative", background: "#FFFFFF", padding: mob ? "100px 6vw 110px" : "175px 7vw 175px" }}>
       <Kap nr="06" label="Nutzen" />
-      <div style={{ maxWidth: 760, marginBottom: 80 }}>
+      <div style={{ maxWidth: 760, marginBottom: mob ? 44 : 80 }}>
         <Fx>
-          <h2 style={{ margin: 0, font: "500 clamp(36px, 3.8vw, 64px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(36px, 3.8vw, 64px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Was Sie davon haben.
           </h2>
         </Fx>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 14 }}>
         <NCard span={4} tone="orange" title="Schneller zur Vorverwertungsquote." copy="Vorgemerkte Nachfrage zahlt direkt auf die von Banken geforderte Vorverkaufsquote ein — frühere Finanzierungsfreigabe, früherer Baustart.">
           <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
             <span style={{ font: "500 52px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>
@@ -340,19 +351,20 @@ function SimulatorBt() {
   const kaufMonat = leads * 0.025;
   const monate = Math.max(1, Math.ceil(einheiten / kaufMonat));
   const mstr = String(monate);
+  const mob = window.useMobile();
   return (
-    <section id="simulator" data-track="chapter_view_08" data-screen-label="Simulator" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: "175px 7vw 175px" }}>
+    <section id="simulator" data-track="chapter_view_08" data-screen-label="Simulator" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "175px 7vw 175px" }}>
       <GridLines />
       <Kap nr="08" label="Simulator" />
-      <div style={{ maxWidth: 640, marginBottom: 76, position: "relative" }}>
+      <div style={{ maxWidth: 640, marginBottom: mob ? 40 : 76, position: "relative" }}>
         <Fx>
-          <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 56px)/1.03 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.4vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Rechnen Sie es<br />selbst durch.
           </h2>
         </Fx>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.15fr)", gap: 14, position: "relative" }}>
-        <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "28px 30px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1.15fr)", gap: 14, position: "relative" }}>
+        <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: mob ? "22px 20px" : "28px 30px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
           {[["Einheiten im Projekt", einheiten, 4, 60, 1, setEinheiten], ["Leads / Monat (Kampagne)", leads, 100, 1200, 50, setLeads]].map(([l, val, min, max, step, set]) => (
             <div key={l} style={{ marginBottom: 24 }} data-track="simulator_interact">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -364,7 +376,7 @@ function SimulatorBt() {
           ))}
           <div style={{ borderTop: "1px solid var(--hairline-dark)", paddingTop: 16 }}>
             {RATES.map(([n, r], i) => (
-              <div key={n} style={{ display: "grid", gridTemplateColumns: "175px 1fr 64px", gap: 12, alignItems: "center", padding: "7px 0" }}>
+              <div key={n} style={{ display: "grid", gridTemplateColumns: mob ? "88px 1fr 44px" : "175px 1fr 64px", gap: 12, alignItems: "center", padding: "7px 0" }}>
                 <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>{n}</span>
                 <div style={{ height: 8, borderRadius: 4, background: "var(--paper-3)", overflow: "hidden" }}>
                   <div style={{ height: "100%", width: Math.max(3, r * 100) + "%", background: i === RATES.length - 1 ? "var(--signal)" : "var(--ink-3)", borderRadius: 4, transition: `width 400ms ${BT_EASE}` }}></div>
@@ -443,6 +455,8 @@ function EinwaendeBt() {
 /* ===== 10 · FUNNEL — 3 Felder + Reassurance ===== */
 function FunnelBt() {
   const [sent, setSent] = React.useState(false);
+  const mob = window.useMobile();
+  const twoCol = { display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 12 };
   const feld = { font: "400 15px var(--font-display)", padding: "15px 17px", borderRadius: "var(--r-inner)", border: "none", outline: "none", background: "#FFFFFF", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", width: "100%" };
   const selFeld = { ...feld, appearance: "none", WebkitAppearance: "none", cursor: "pointer", paddingRight: 40, fontFamily: "var(--font-display)", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5A54' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" };
   return (
@@ -467,15 +481,15 @@ function FunnelBt() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <input placeholder="Name" style={feld} />
                 <input placeholder="E-Mail" style={feld} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <input placeholder="Firma (optional)" style={feld} />
                 <input placeholder="Telefon (optional)" style={feld} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <input placeholder="Projekt-Standort — Bezirk oder Adresse" style={feld} />
                 <select defaultValue="" style={selFeld}>
                   <option value="" disabled>Projektphase</option>
@@ -485,7 +499,7 @@ function FunnelBt() {
                   <option>Fertiggestellt</option>
                 </select>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <select defaultValue="" style={selFeld}>
                   <option value="" disabled>Einheiten im Projekt</option>
                   <option>Unter 10</option>

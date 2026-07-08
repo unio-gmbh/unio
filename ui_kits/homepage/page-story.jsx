@@ -10,7 +10,7 @@ const stC = (v) => Math.min(1, Math.max(0, v));
 /* Kapitel-Marker mit vertikaler Hairline */
 function KapSt({ nr, label, dark = false }) {
   return (
-    <div aria-hidden="true" style={{ position: "absolute", left: "2.4vw", top: 96, zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+    <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 96, zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
       <span style={{ font: "11px var(--font-mono)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{nr}</span>
       <span style={{ width: 1, height: 54, background: dark ? "var(--hairline-light)" : "var(--hairline-dark)" }}></span>
       <span className="u-label" style={{ fontSize: 8, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
@@ -31,19 +31,20 @@ function HeroSt() {
     return () => cancelAnimationFrame(raf);
   }, []);
   const reveal = RMs ? 1 : stC((t - 700) / 1600);
+  const mob = window.useMobile();
   return (
-    <section id="top" data-screen-label="Hero" style={{ position: "sticky", top: 0, zIndex: 0, background: "var(--paper)", padding: "98px 40px 0" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 52fr) minmax(0, 48fr)", minHeight: "calc(100svh - 120px)", borderRadius: 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
-        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: "185px 4vw 120px 7vw" }}>
-          <h1 style={{ margin: 0, font: "500 clamp(40px, 4.4vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+    <section id="top" data-screen-label="Hero" style={{ position: mob ? "relative" : "sticky", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : "98px 40px 0" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
+        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "185px 4vw 120px 7vw" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.2vw, 40px)" : "clamp(40px, 4.4vw, 76px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Der Markt war eine Blackbox.<br />Also bauten wir<br />Klarheit<span style={{ color: "var(--signal)" }}>.</span>
           </h1>
           <p className="u-label" style={{ margin: "26px 0 0", color: "var(--text-muted)" }}>Die Geschichte hinter UNIO · Wien</p>
-          <p style={{ margin: "18px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 420 }}>
+          <p style={{ margin: "18px 0 0", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
             Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie ein Unternehmen.
           </p>
         </div>
-        <div style={{ position: "relative", overflow: "hidden", background: "var(--paper-3)" }}>
+        <div style={{ position: "relative", overflow: "hidden", background: "var(--paper-3)", minHeight: mob ? 340 : undefined }}>
           <img src="../../assets/img/vienna-facade.jpg" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", filter: "sepia(0.5) saturate(0.7)", opacity: 1 - reveal * 0.9, transition: "opacity 300ms linear" }} />
           <FGs reveal={reveal} side="left" strength={13} style={{ position: "absolute", inset: 0 }}>
             <img src="../../assets/img/albrecht.jpg" alt="Das Albrecht — Gegenwart" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -173,13 +174,14 @@ function FusionFlow() {
   const srcY = (i) => 72 + i * 64;
   const nodeY = (i) => 96 + i * 104;
   const draw = (k, len) => ({ strokeDasharray: len, strokeDashoffset: (1 - k) * len });
+  const mob = window.useMobile();
   return (
-    <section data-screen-label="Fusion" className="u-grain" style={{ ...stackCard(4, "var(--paper-2)"), padding: "150px 7vw 175px" }}>
+    <section data-screen-label="Fusion" className="u-grain" style={{ ...stackCard(4, "var(--paper-2)"), padding: mob ? "96px 6vw 110px" : "150px 7vw 175px" }}>
       <KapSt nr="03" label="Fusion" />
-      <Chapter title={<span>Fünf Unternehmen.<br />Eine Mission.</span>} copy="2026 — Die Fusion: Drei Disziplinen verschmelzen zu einer Kategorie, die es so nicht gab." style={{ marginBottom: 76 }} />
-      <div ref={ref} style={{ position: "relative" }}>
+      <Chapter title={<span>Fünf Unternehmen.<br />Eine Mission.</span>} copy="2026 — Die Fusion: Drei Disziplinen verschmelzen zu einer Kategorie, die es so nicht gab." style={{ marginBottom: mob ? 44 : 76 }} />
+      <div ref={ref} style={{ position: "relative", overflowX: mob ? "auto" : "visible", WebkitOverflowScrolling: "touch" }}>
         <span aria-hidden="true" style={{ position: "absolute", right: "4%", top: "8%", font: "500 clamp(120px, 20vw, 300px)/0.8 var(--font-display)", letterSpacing: "-0.05em", color: "rgba(255,170,9,0.07)", pointerEvents: "none", userSelect: "none" }}>1</span>
-        <svg viewBox="0 0 800 400" style={{ width: "100%", display: "block", overflow: "visible", position: "relative" }} aria-label="Fusions-Fluss: fünf Unternehmen fließen in drei Disziplinen und weiter in UNIO">
+        <svg viewBox="0 0 800 400" style={{ width: "100%", minWidth: mob ? 620 : 0, display: "block", overflow: "visible", position: "relative" }} aria-label="Fusions-Fluss: fünf Unternehmen fließen in drei Disziplinen und weiter in UNIO">
           {FIRMEN.map(([f, k], i) => (
             <g key={f}>
               <line x1="150" y1={srcY(i)} x2="400" y2={nodeY(k)} stroke="var(--hairline-dark)" strokeWidth="1.2" style={draw(stC(l1 * 1.35 - i * 0.07), 320)} />
@@ -201,7 +203,7 @@ function FusionFlow() {
           <text x="700" y="238" textAnchor="middle" style={{ font: "12px var(--font-mono)", letterSpacing: "0.14em", fill: "var(--signal-deep)", opacity: fin ? 1 : 0, transition: "opacity 400ms" }}>UNIO · 2026</text>
         </svg>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginTop: 80 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 24, marginTop: mob ? 44 : 80 }}>
         {DISZ_KARTEN.map(([t, firms, ptxt], i) => (
           <Reveal key={t} delay={i * 100}>
             <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "26px 28px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minHeight: 210 }}>
@@ -226,6 +228,7 @@ const CIRCLE_COPY = [
 ];
 function GoldenCircle() {
   const [ref, p] = usePinProgress();
+  const mob = window.useMobile();
   const seg = (a, b) => stC((p - a) / (b - a));
   const r1 = seg(0.04, 0.3), r2 = seg(0.32, 0.58), r3 = seg(0.6, 0.88);
   const R = [74, 128, 182];
@@ -239,9 +242,9 @@ function GoldenCircle() {
   };
   return (
     <section ref={ref} data-screen-label="Warum" style={{ height: "260vh", ...stackCard(5, "var(--paper-2)") }}>
-      <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 0.9fr)", alignItems: "center", padding: "0 6vw", gap: 24 }}>
+      <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", alignItems: "center", alignContent: mob ? "center" : undefined, padding: mob ? "80px 6vw 30px" : "0 6vw", gap: mob ? 20 : 24 }}>
         <KapSt nr="04" label="Warum · Wie · Was" />
-        <div style={{ position: "relative", width: "min(100%, 62svh)", aspectRatio: "1", margin: "0 auto" }}>
+        <div style={{ position: "relative", width: mob ? "min(78vw, 42svh)" : "min(100%, 62svh)", aspectRatio: "1", margin: "0 auto" }}>
           <svg viewBox="0 0 420 420" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }} aria-hidden="true">
             {ring(R[0], r1)}{ring(R[1], r2)}{ring(R[2], r3)}
           </svg>
@@ -272,10 +275,10 @@ function GoldenCircle() {
           })}
         </div>
         {/* Copy rechts, vertikal mittig, wechselt pro Ring */}
-        <div style={{ alignSelf: "center" }}>
+        <div style={{ alignSelf: "center", textAlign: mob ? "center" : "left" }}>
           <span style={{ font: "12px var(--font-mono)", letterSpacing: "0.18em", color: "var(--signal-deep)" }}>{copy[0]}</span>
-          <h2 style={{ margin: "14px 0 0", font: "500 clamp(28px, 2.8vw, 46px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", minHeight: "2.2em" }}>{copy[1]}</h2>
-          <p style={{ margin: "16px 0 0", font: "400 16px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 380 }}>{copy[2]}</p>
+          <h2 style={{ margin: "14px 0 0", font: `500 ${mob ? "clamp(21px, 5.8vw, 27px)" : "clamp(28px, 2.8vw, 46px)"}/1.1 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", minHeight: "2.2em" }}>{copy[1]}</h2>
+          <p style={{ margin: "16px 0 0", font: `400 ${mob ? 14 : 16}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 380, marginLeft: mob ? "auto" : 0, marginRight: mob ? "auto" : 0 }}>{copy[2]}</p>
         </div>
       </div>
     </section>
@@ -331,6 +334,7 @@ function PortraitSt({ p, delay }) {
 }
 function TeamSt() {
   const [fun, setFun] = React.useState(false);
+  const mob = window.useMobile();
   return (
     <section data-screen-label="Menschen" className="u-grain" style={{ ...stackCard(6, "var(--paper)"), padding: 0, overflow: "hidden" }}>
       <KapSt nr="05" label="Menschen" />
@@ -351,8 +355,8 @@ function TeamSt() {
           {fun ? "…und so wirklich." : "So sehen wir offiziell aus —"}
         </span>
       </div>
-      <div style={{ padding: "72px 7vw 175px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+      <div style={{ padding: mob ? "48px 6vw 110px" : "72px 7vw 175px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: mob ? 12 : 14 }}>
           {TEAM_PORTRAITS.map((p, i) => <PortraitSt key={p.src} p={p} delay={(i % 4) * 80} />)}
         </div>
       </div>
@@ -379,6 +383,8 @@ function marker(m) {
 }
 function SkalaSt() {
   const [ref, p] = usePinProgress();
+  const mob = window.useMobile();
+  const W = mob ? 88 : 42; // Breite pro Meilenstein in vw-Prozent des Tracks
   const shift = stC(p / 0.9);
   if (RMs) {
     return (
@@ -409,7 +415,7 @@ function SkalaSt() {
         {/* Lineal-Track */}
         <div style={{ position: "relative", marginTop: "6vh" }}>
           <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: 30, height: 14, backgroundImage: "repeating-linear-gradient(90deg, var(--hairline-dark) 0 1px, transparent 1px 24px)", borderBottom: "1.5px solid var(--ink-3)" }}></div>
-          <div style={{ display: "flex", width: MEILEN.length * 42 + "%", transform: `translateX(${-shift * (MEILEN.length * 42 - 100) * (100 / (MEILEN.length * 42))}%)`, transition: "none", paddingLeft: "7vw" }}>
+          <div style={{ display: "flex", width: MEILEN.length * W + "%", transform: `translateX(${-shift * (MEILEN.length * W - 100) * (100 / (MEILEN.length * W))}%)`, transition: "none", paddingLeft: mob ? "6vw" : "7vw" }}>
             {MEILEN.map((m, i) => (
               <div key={i} style={{ width: (100 / MEILEN.length) + "%", flex: "none", display: "flex", flexDirection: "column", gap: 14, paddingRight: "4vw" }}>
                 <span style={marker(m)}></span>

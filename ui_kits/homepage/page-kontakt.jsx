@@ -7,11 +7,12 @@ const { SiteNav, SiteFooter, Chapter } = window;
 function KontaktForm() {
   const [sent, setSent] = React.useState(false);
   const [einverst, setEinverst] = React.useState(false);
+  const mob = window.useMobile();
   return (
-    <section className="u-grain" style={{ background: "var(--paper)", padding: "180px 6vw 120px", minHeight: "100vh" }}>
-      <Chapter title={<span>Sprechen wir.<br />Mit Daten, nicht Floskeln.</span>} copy="Wir antworten innerhalb von 48 Stunden — mit einer ersten Einschätzung, nicht mit einem Newsletter." style={{ marginBottom: 84 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: 48, alignItems: "start" }}>
-        <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "34px 36px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
+    <section className="u-grain" style={{ background: "var(--paper)", padding: mob ? "120px 6vw 90px" : "180px 6vw 120px", minHeight: "100vh" }}>
+      <Chapter title={<span>Sprechen wir.<br />Mit Daten, nicht Floskeln.</span>} copy="Wir antworten innerhalb von 48 Stunden — mit einer ersten Einschätzung, nicht mit einem Newsletter." style={{ marginBottom: mob ? 44 : 84 }} />
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: mob ? 28 : 48, alignItems: "start" }}>
+        <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: mob ? "24px 22px" : "34px 36px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
           {sent ? (
             <div style={{ padding: "30px 0", textAlign: "center" }}>
               <span style={{ display: "inline-flex", width: 64, height: 64, borderRadius: "50%", background: "var(--signal-soft)", color: "var(--signal-deep)", alignItems: "center", justifyContent: "center", font: "26px var(--font-mono)" }}>✓</span>
@@ -20,7 +21,7 @@ function KontaktForm() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+              <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 18 : 24 }}>
                 <Ink label="Name" placeholder="Vor- und Nachname" />
                 <Ink label="E-Mail" placeholder="name@firma.at" />
               </div>

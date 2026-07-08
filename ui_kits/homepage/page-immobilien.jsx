@@ -29,14 +29,15 @@ function SucheIm() {
       <span aria-hidden="true" style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", font: "11px var(--font-mono)", color: "var(--text-muted)", pointerEvents: "none" }}>▾</span>
     </span>
   );
+  const mob = window.useMobile();
   return (
-    <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: "175px 6vw 175px" }}>
-      <Chapter title={<span>Ich suche.</span>} copy="Der aktuelle UNIO-Bestand — jedes Objekt live und transparent vermarktet." style={{ marginBottom: 72 }} />
+    <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: mob ? "100px 6vw 110px" : "175px 6vw 175px" }}>
+      <Chapter title={<span>Ich suche.</span>} copy="Der aktuelle UNIO-Bestand — jedes Objekt live und transparent vermarktet." style={{ marginBottom: mob ? 40 : 72 }} />
       {/* Suchfeld */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Bezirk, Projekt oder Objektart"
-          style={{ flex: 1, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }} />
+          style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }} />
         <Bi variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL, "_blank")}>Zur App</Bi>
       </div>
       {/* Filterleiste */}
@@ -50,14 +51,14 @@ function SucheIm() {
         <span className="u-label" style={{ marginLeft: "auto", color: "var(--text-muted)", fontSize: 10 }}>{treffer.length} von {OBJEKT_DB.length} Objekten</span>
       </div>
       {/* Ergebnis-Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginTop: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24, marginTop: 28 }}>
         {treffer.map((o, i) => (
           <Reveal key={o.t} delay={(i % 3) * 70}>
             <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
           </Reveal>
         ))}
         {treffer.length === 0 && (
-          <div style={{ gridColumn: "span 3", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
+          <div style={{ gridColumn: mob ? "auto" : "span 3", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
             Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
           </div>
         )}
@@ -79,10 +80,11 @@ const NUTZEN = [
   ["06", "Sicher bis zum Notar", "Ein Ansprechpartner von der Bewertung bis zur Übergabe."],
 ];
 function VerkaufenIm() {
+  const mob = window.useMobile();
   return (
-    <section id="verkaufen" style={{ background: "var(--paper-2)", padding: "175px 6vw 175px" }} className="u-grain">
-      <Chapter title={<span>Ich verkaufe.</span>} copy="Sechs Gründe, warum Eigentümer:innen mit UNIO verkaufen — jeder davon belegbar." style={{ marginBottom: 84 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+    <section id="verkaufen" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "175px 6vw 175px" }} className="u-grain">
+      <Chapter title={<span>Ich verkaufe.</span>} copy="Sechs Gründe, warum Eigentümer:innen mit UNIO verkaufen — jeder davon belegbar." style={{ marginBottom: mob ? 44 : 84 }} />
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 24 }}>
         {NUTZEN.map(([n, t, p], i) => (
           <Reveal key={n} delay={(i % 3) * 90}>
             <div style={{ borderRadius: "var(--r-card)", padding: "26px 28px", background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minHeight: 200 }}>
@@ -127,7 +129,7 @@ function App() {
         headline={<span>Suchen oder verkaufen</span>}
         sub="Kuratierte Objekte für Suchende. Volle Transparenz für Eigentümer:innen."
       >
-        <div style={{ display: "flex", gap: 12, marginTop: 28 }}>
+        <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap" }}>
           <Bi size="lg" variant="paper" knob onClick={() => window.open(window.UNIO_BEWERTUNG_URL, "_blank")}>Immobilie bewerten</Bi>
           <Bi size="lg" variant="glass" tone="dark" onClick={() => (location.hash = "suche")}>Objekte ansehen</Bi>
         </div>

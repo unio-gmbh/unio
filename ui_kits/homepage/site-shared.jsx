@@ -10,6 +10,23 @@ const BEWERTUNG_URL = "https://bewertung.unio.at";
 const SEARCH_URL = "https://app.unio.at/listing?listingType=SALE";
 const PROJEKT_URL = "projekt.html";
 
+/* Mobile-Breakpoint: eine Quelle für alle Seiten (< 900px = mobil/klein) */
+const U_MQ_MOBILE = window.matchMedia ? window.matchMedia("(max-width: 899px)") : null;
+function useMobile() {
+  const [m, setM] = React.useState(U_MQ_MOBILE ? U_MQ_MOBILE.matches : false);
+  React.useEffect(() => {
+    if (!U_MQ_MOBILE) return;
+    const on = (e) => setM(e.matches);
+    if (U_MQ_MOBILE.addEventListener) U_MQ_MOBILE.addEventListener("change", on);
+    else U_MQ_MOBILE.addListener(on);
+    return () => {
+      if (U_MQ_MOBILE.removeEventListener) U_MQ_MOBILE.removeEventListener("change", on);
+      else U_MQ_MOBILE.removeListener(on);
+    };
+  }, []);
+  return m;
+}
+
 /* Loop-Ticker für Bento-Animationen */
 function useTick(steps, ms) {
   const [t, setT] = React.useState(0);
@@ -58,12 +75,85 @@ function NavLink({ href, label, on, solid }) {
 function SiteNav({ active, cta }) {
   const c = cta || { label: "Login", onClick: () => window.open("https://app.unio.at", "_blank") };
   const [pill, setPill] = React.useState(false);
+  const mob = useMobile();
+  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const on = () => setPill(window.scrollY > 60);
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
+  React.useEffect(() => {
+    document.documentElement.style.overflow = open && mob ? "hidden" : "";
+    return () => { document.documentElement.style.overflow = ""; };
+  }, [open, mob]);
+  React.useEffect(() => { if (!mob) setOpen(false); }, [mob]);
+  if (mob) {
+    const line = (r) => ({ display: "block", width: 18, height: 1.5, background: "var(--ink)", borderRadius: 2, transition: "transform 400ms var(--ease-unio), opacity 300ms", transformOrigin: "center", transform: r });
+    return (
+      <React.Fragment>
+        {/* Overlay-Menü */}
+        <div aria-hidden={!open} style={{
+          position: "fixed", inset: 0, zIndex: 59,
+          background: "rgba(247,245,241,0.9)",
+          WebkitBackdropFilter: "blur(28px) saturate(1.6)", backdropFilter: "blur(28px) saturate(1.6)",
+          opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none",
+          transition: "opacity 450ms var(--ease-unio)",
+          display: "flex", flexDirection: "column", padding: "110px 28px 34px",
+        }}>
+          <nav style={{ display: "flex", flexDirection: "column" }}>
+            {NAV_LINKS.map(([l, href], i) => (
+              <a key={href} href={href} onClick={() => setOpen(false)} style={{
+                display: "flex", alignItems: "baseline", gap: 14, textDecoration: "none",
+                padding: "16px 0", borderBottom: "1px solid var(--hairline-dark)",
+                font: "500 30px/1 var(--font-display)", letterSpacing: "-0.02em",
+                color: active === href ? "var(--ink)" : "var(--ink-2)",
+                opacity: open ? 1 : 0, transform: open ? "none" : "translateY(16px)",
+                transition: `opacity 500ms var(--ease-unio) ${80 + i * 60}ms, transform 550ms var(--ease-unio) ${80 + i * 60}ms`,
+              }}>
+                <span style={{ font: "11px var(--font-mono)", color: active === href ? "var(--signal-deep)" : "var(--text-muted)" }}>0{i + 1}</span>
+                {l}
+                {active === href && <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", alignSelf: "center" }}></span>}
+              </a>
+            ))}
+          </nav>
+          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 14, opacity: open ? 1 : 0, transform: open ? "none" : "translateY(16px)", transition: "opacity 500ms var(--ease-unio) 420ms, transform 550ms var(--ease-unio) 420ms" }}>
+            <button onClick={() => { setOpen(false); if (c.onClick) c.onClick(); }} style={{
+              cursor: "pointer", fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 500,
+              padding: "16px 24px", borderRadius: 12, border: "none",
+              background: "var(--signal)", color: "var(--on-signal)", width: "100%",
+            }}>{c.label}</button>
+            <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 9 }}>UNIO · Wien · app.unio.at</span>
+          </div>
+        </div>
+        {/* Leiste */}
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "10px 14px" : "14px 16px", transition: "padding .55s var(--ease-unio)" }}>
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "9px 9px 9px 18px", borderRadius: pill ? 12 : 14,
+            background: "rgba(247,245,241,0.62)",
+            border: "0.5px solid rgba(20,18,16,0.12)",
+            WebkitBackdropFilter: "blur(24px) saturate(1.8)", backdropFilter: "blur(24px) saturate(1.8)",
+            boxShadow: "0 8px 30px rgba(20,18,16,.1), inset 0 1px 0 rgba(255,255,255,.6)",
+            transition: "border-radius .55s var(--ease-unio)",
+          }}>
+            <a href="index.html" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 16, width: "auto", display: "block" }} />
+            </a>
+            <button aria-label={open ? "Menü schließen" : "Menü öffnen"} aria-expanded={open} onClick={() => setOpen((o) => !o)} style={{
+              cursor: "pointer", border: "none", background: open ? "var(--ink)" : "rgba(255,255,255,0.55)",
+              width: 40, height: 40, borderRadius: 10, display: "inline-flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 4.5, transition: "background 400ms var(--ease-unio)",
+              boxShadow: "inset 0 0 0 0.5px rgba(20,18,16,0.18)",
+            }}>
+              <span aria-hidden="true" style={{ ...line(open ? "translateY(3px) rotate(45deg)" : "none"), background: open ? "var(--paper)" : "var(--ink)" }}></span>
+              <span aria-hidden="true" style={{ ...line(open ? "translateY(-3px) rotate(-45deg)" : "none"), background: open ? "var(--paper)" : "var(--ink)" }}></span>
+            </button>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
       <div style={{
@@ -106,6 +196,7 @@ function SiteNav({ active, cta }) {
 /* Seiten-Hero mit Riffelglas-Streifen (Transparenz-Motiv) */
 function PageHero({ img, pos = "center", headline, sub, children, height = "88vh", reveal = 0.55, glow = false }) {
   const [p, setP] = React.useState(0);
+  const mob = useMobile();
   React.useEffect(() => {
     const on = () => setP(Math.min(1, window.scrollY / (window.innerHeight * 0.7)));
     on();
@@ -113,16 +204,16 @@ function PageHero({ img, pos = "center", headline, sub, children, height = "88vh
     return () => window.removeEventListener("scroll", on);
   }, []);
   return (
-    <section data-screen-label="Hero" style={{ position: "relative", background: "var(--paper)", padding: "98px 40px 0", overflow: "hidden" }}>
+    <section data-screen-label="Hero" style={{ position: "relative", background: "var(--paper)", padding: mob ? "82px 14px 0" : "98px 40px 0", overflow: "hidden" }}>
       {glow && <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-10%", top: "10%", width: "55%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.20) 0%, rgba(255,219,87,.10) 42%, transparent 72%)", animation: p !== undefined ? "heroGlowDrift 30s ease-in-out infinite alternate" : "none" }}></div>}
-      <div style={{ position: "relative", height, minHeight: 520, overflow: "hidden", borderRadius: 22, border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset", background: "var(--ink)" }}>
+      <div style={{ position: "relative", height: mob ? "78svh" : height, minHeight: mob ? 440 : 520, overflow: "hidden", borderRadius: mob ? 18 : 22, border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset", background: "var(--ink)" }}>
         <FlutedGlass reveal={reveal + p * (1 - reveal)} side="left" strength={12} style={{ position: "absolute", inset: 0 }}>
           <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: pos, display: "block" }} />
         </FlutedGlass>
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.3), transparent 34%, transparent 52%, rgba(11,10,9,0.62))", pointerEvents: "none" }}></div>
-        <div style={{ position: "absolute", left: "clamp(28px, 4vw, 60px)", right: "clamp(28px, 4vw, 60px)", bottom: "clamp(40px, 6vh, 60px)", color: "var(--text-inverse)" }}>
-          <h1 style={{ margin: 0, font: "500 clamp(44px, 5.6vw, 96px)/1 var(--font-display)", letterSpacing: "-0.03em", textShadow: "0 2px 40px rgba(0,0,0,0.4)", maxWidth: 980 }}>{headline}</h1>
-          {sub && <p style={{ margin: "22px 0 0", maxWidth: 500, font: "400 18px/1.55 var(--font-display)", color: "var(--text-inverse-muted)" }}>{sub}</p>}
+        <div style={{ position: "absolute", left: mob ? 20 : "clamp(28px, 4vw, 60px)", right: mob ? 20 : "clamp(28px, 4vw, 60px)", bottom: mob ? 24 : "clamp(40px, 6vh, 60px)", color: "var(--text-inverse)" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(34px, 9.4vw, 44px)" : "clamp(44px, 5.6vw, 96px)"}/1.02 var(--font-display)`, letterSpacing: "-0.03em", textShadow: "0 2px 40px rgba(0,0,0,0.4)", maxWidth: 980 }}>{headline}</h1>
+          {sub && <p style={{ margin: mob ? "14px 0 0" : "22px 0 0", maxWidth: 500, font: `400 ${mob ? 15.5 : 18}px/1.55 var(--font-display)`, color: "var(--text-inverse-muted)" }}>{sub}</p>}
           {children}
         </div>
       </div>
@@ -133,6 +224,7 @@ function PageHero({ img, pos = "center", headline, sub, children, height = "88vh
 /* Kapitel-Header (nr nur bei echten Aufzählungen setzen) */
 function Chapter({ nr, title, copy, tone = "light", style }) {
   const dark = tone === "dark";
+  const mob = useMobile();
   const ref = React.useRef(null);
   const [seen, setSeen] = React.useState(U_RM);
   React.useEffect(() => {
@@ -143,10 +235,10 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
   }, []);
   const rev = (d) => ({ opacity: seen ? 1 : 0, filter: seen ? "blur(0)" : "blur(8px)", transform: seen ? "none" : "translateY(20px)", transition: `opacity 900ms var(--ease-unio) ${d}ms, filter 900ms var(--ease-unio) ${d}ms, transform 950ms var(--ease-unio) ${d}ms` });
   return (
-    <div ref={ref} style={{ display: "grid", gridTemplateColumns: nr ? "64px minmax(0, 1.35fr) minmax(0, 1fr)" : "minmax(0, 1.35fr) minmax(0, 1fr)", gap: 44, alignItems: "end", ...style }}>
-      {nr ? <span style={{ font: "14px var(--font-mono)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", paddingBottom: 8, ...rev(0) }}>{nr}</span> : null}
-      <h2 style={{ margin: 0, font: "500 clamp(34px, 3.6vw, 60px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: dark ? "var(--text-inverse)" : "var(--ink)", ...rev(90) }}>{title}</h2>
-      {copy ? <p style={{ margin: 0, font: "400 17px/1.8 var(--font-display)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", maxWidth: 440, ...rev(180) }}>{copy}</p> : <span></span>}
+    <div ref={ref} style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (nr ? "64px minmax(0, 1.35fr) minmax(0, 1fr)" : "minmax(0, 1.35fr) minmax(0, 1fr)"), gap: mob ? 16 : 44, alignItems: mob ? "start" : "end", ...style }}>
+      {nr ? <span style={{ font: "14px var(--font-mono)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", paddingBottom: mob ? 0 : 8, ...rev(0) }}>{nr}</span> : null}
+      <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: dark ? "var(--text-inverse)" : "var(--ink)", ...rev(90) }}>{title}</h2>
+      {copy ? <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", maxWidth: 440, ...rev(180) }}>{copy}</p> : <span></span>}
     </div>
   );
 }
@@ -194,27 +286,28 @@ const OBJEKT_DB = [
 
 /* Footer */
 function SiteFooter() {
+  const mob = useMobile();
   return (
-    <footer data-screen-label="Footer" className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", color: "var(--ink-2)", padding: "175px 6vw 44px" }}>
+    <footer data-screen-label="Footer" className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", color: "var(--ink-2)", padding: mob ? "110px 6vw 36px" : "175px 6vw 44px" }}>
       <EmberGlow variant="still" corner="86% 88%" />
       <div style={{ position: "relative", zIndex: 1 }}>
-      <h2 style={{ margin: 0, font: "500 clamp(44px, 5.4vw, 92px)/0.98 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+      <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(36px, 10vw, 48px)" : "clamp(44px, 5.4vw, 92px)"}/0.98 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
         Raum. Technologie.<br />Mensch.
       </h2>
-      <div style={{ display: "flex", gap: 12, marginTop: 36, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 12, marginTop: mob ? 28 : 36, flexWrap: "wrap" }}>
         <Button size="lg" variant="paper" knob>Demo buchen</Button>
         <Button size="lg" variant="ghost" onClick={() => (location.href = "kontakt.html")}>Kontakt</Button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, auto)", justifyContent: "start", gap: "12px 48px", marginTop: 72, font: "400 14.5px var(--font-display)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, auto)" : "repeat(4, auto)", justifyContent: "start", gap: mob ? "14px 40px" : "12px 48px", marginTop: mob ? 52 : 72, font: "400 14.5px var(--font-display)" }}>
         {NAV_LINKS.map(([l, href]) => (
           <a key={href} href={href} style={{ color: "var(--text-muted)", textDecoration: "none" }}>{l}</a>
         ))}
         <a href={APP_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Login ↗</a>
         <a href={BEWERTUNG_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Bewertung ↗</a>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--hairline-dark)", marginTop: 56, paddingTop: 24, gap: 20, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--hairline-dark)", marginTop: mob ? 40 : 56, paddingTop: 24, gap: 20, flexWrap: "wrap" }}>
         <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18, width: "auto" }} />
-        <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: mob ? 18 : 28, alignItems: "center", flexWrap: "wrap" }}>
           <a href="#" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Impressum</a>
           <a href="#" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Datenschutz</a>
           <span className="u-label" style={{ color: "var(--text-muted)" }}>© 2026 UNIO · Wien</span>
@@ -255,9 +348,9 @@ const U_RM = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce
   else addEventListener("DOMContentLoaded", boot);
 })();
 (() => {
-  if (document.getElementById("u-shared-anim")) return;
+  if (document.getElementById("u-shared-anim-site")) return;
   const s = document.createElement("style");
-  s.id = "u-shared-anim";
+  s.id = "u-shared-anim-site";
   s.textContent = [
     "@keyframes uPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,170,9,.55)}70%{box-shadow:0 0 0 7px rgba(255,170,9,0)}}",
     "@keyframes uPulseInv{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}70%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}",
@@ -270,6 +363,10 @@ const U_RM = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce
     "@media (prefers-reduced-motion: reduce){.u-herglow{animation:none!important}}",
     "@media (prefers-reduced-motion: reduce){.u-ember{animation:none!important}}",
     "@media (prefers-reduced-motion: reduce){.u-marquee{animation:none!important}}",
+    /* Mobile: dekorative Kapitel-Marker ausblenden, iOS-Zoom auf Formularfeldern verhindern */
+    "@media (max-width:899px){.u-kap{display:none!important}}",
+    "@media (max-width:899px){input,select,textarea{font-size:16px!important}}",
+    "html{-webkit-text-size-adjust:100%}",
   ].join("\n");
   document.head.appendChild(s);
 })();
@@ -420,6 +517,7 @@ function StatFrame({ value, unit, label, caption, graph = "spark", children, spa
    FAQPage-JSON-LD wortgleich, natives button[aria-expanded]-Akkordeon. */
 function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anchor, defaultOpen = 0 }) {
   const [open, setOpen] = React.useState(defaultOpen);
+  const mob = useMobile();
   const ref = React.useRef(null);
   const [seen, setSeen] = React.useState(U_RM);
   React.useEffect(() => {
@@ -442,13 +540,13 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
     return () => io.disconnect();
   }, []);
   return (
-    <section ref={ref} data-track={"chapter_view_" + nr} data-screen-label={label} className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "175px 7vw 175px" }}>
-      <div aria-hidden="true" style={{ position: "absolute", left: "2.4vw", top: 96, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+    <section ref={ref} data-track={"chapter_view_" + nr} data-screen-label={label} className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "110px 6vw 110px" : "175px 7vw 175px" }}>
+      <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 96, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
         <span style={{ font: "11px var(--font-mono)", color: "var(--text-muted)" }}>{nr}</span>
         <span style={{ width: 1, height: 54, background: "var(--hairline-dark)" }}></span>
         <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: 48, position: "relative" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: mob ? 36 : 48, position: "relative" }}>
         <div style={{ alignSelf: "start", opacity: seen ? 1 : 0, transform: seen ? "none" : "translateY(18px)", transition: "all 700ms var(--ease-unio)" }}>
           <h2 style={{ margin: 0, font: "500 clamp(30px, 3vw, 48px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{title}</h2>
           {subline && <p style={{ margin: "16px 0 0", font: "400 16px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 340 }}>{subline}</p>}
@@ -494,6 +592,6 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
 
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
-  useTick, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
+  useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
 });

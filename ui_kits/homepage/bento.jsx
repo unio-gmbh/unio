@@ -3,9 +3,10 @@
    Benötigt site-shared.jsx (window.useTick). */
 /* ---------- System-Bento (weiß, animiert) ---------- */
 function BCard({ span = 2, orange = false, title, copy, children, style }) {
+  const mob = window.useMobile();
   return (
     <div style={{
-      gridColumn: `span ${span}`,
+      gridColumn: mob ? "auto" : `span ${span}`,
       background: orange ? "var(--signal)" : "#FFFFFF",
       color: orange ? "var(--on-signal)" : "var(--ink-2)",
       borderRadius: "var(--r-card)",
@@ -230,10 +231,11 @@ function AnsprechTile() {
 
 function SystemBento({ makler = false }) {
   const Kap = makler && window.BT ? window.BT.Kap : null;
+  const mob = window.useMobile();
   return (
-    <section id="system" data-screen-label="System" data-track={makler ? "chapter_view_04" : null} style={{ background: "#FFFFFF", padding: "120px 5vw 130px", position: "relative" }}>
+    <section id="system" data-screen-label="System" data-track={makler ? "chapter_view_04" : null} style={{ background: "#FFFFFF", padding: mob ? "96px 6vw 100px" : "120px 5vw 130px", position: "relative" }}>
       {Kap ? <Kap nr="04" label="System" /> : null}
-      <div style={{ maxWidth: 760, marginBottom: 88 }}>
+      <div style={{ maxWidth: 760, marginBottom: mob ? 52 : 88 }}>
         {(() => { const R = window.Reveal; const H = (
         <h2 style={{ margin: 0, font: "500 clamp(38px, 4.2vw, 72px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Ein System für deinen<br />gesamten Verkauf.
@@ -243,7 +245,7 @@ function SystemBento({ makler = false }) {
           Von der KI-Suche über abgesicherte Leads bis zum Portal-Export — jede Funktion arbeitet für dich, damit du dich auf Abschlüsse konzentrierst.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 16 }}>
         <BCard span={4} title="KI-Suche & Lead-Inbox" copy="Frag in natürlicher Sprache nach Objekten oder Käufern — die Plattform versteht dich und liefert sofort passende Treffer."><AnimSuche text={makler ? "Penthouse mit Terrasse, 1190 Wien" : "Penthouse mit Terrasse, Hernals"} /></BCard>
         <BCard span={2} orange title="Provisionssicherung" copy="Jeder Lead wird automatisch abgesichert — bevor du Zeit investierst."><AnimSchutz /></BCard>
         <BCard span={2} title="Suggested Actions" copy="Das System sagt dir den nächsten Schritt — priorisiert nach Wirkung."><AnimActions /></BCard>

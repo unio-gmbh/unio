@@ -53,23 +53,24 @@ function MkDock({ top, label, show, delay }) {
 
 function HeroMk() {
   const [docked, setDocked] = React.useState(BT_RM);
+  const mob = window.useMobile();
   React.useEffect(() => {
     if (BT_RM) return;
     const t = setTimeout(() => setDocked(true), 900);
     return () => clearTimeout(t);
   }, []);
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: "sticky", top: 0, zIndex: 0, background: "var(--paper)", padding: "98px 40px 0" }}>
+    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: mob ? "relative" : "sticky", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : "98px 40px 0" }}>
       <style>{`@keyframes mkDrift { from { transform: translateY(-4px); } to { transform: translateY(5px); } }`}</style>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 52fr) minmax(0, 48fr)", minHeight: "calc(100svh - 120px)", borderRadius: 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         {/* Links: Off-White, Headline + verankerte CTAs */}
-        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: "185px 4vw 120px 7vw" }}>
+        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "185px 4vw 120px 7vw" }}>
           <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-14%", top: "8%", width: "60%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.18) 0%, rgba(255,219,87,.09) 44%, transparent 72%)", animation: BT_RM ? "none" : "heroGlowDrift 30s ease-in-out infinite alternate" }}></div>
           <GridLines />
-          <h1 style={{ margin: 0, font: "500 clamp(40px, 4.4vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(31px, 8.4vw, 40px)" : "clamp(40px, 4.4vw, 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
             Agent-First beginnt hier.<br />Werde UNIO Partner<span style={{ color: "var(--signal)" }}>.</span>
           </h1>
-          <p style={{ margin: "24px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 430, position: "relative" }}>
+          <p style={{ margin: mob ? "18px 0 0" : "24px 0 0", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 430, position: "relative" }}>
             CIRCLE ist die Agent-First Community für Top-Makler: mehr Netto, konstanter Dealflow, Personal Brand Growth und echte Ownership.
           </p>
           <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", position: "relative" }}>
@@ -79,8 +80,8 @@ function HeroMk() {
         </div>
         {/* Rechts: Porträt, rechter Rand löst sich ins Raster auf — Gesicht bleibt scharf */}
         {/* Rechts: Gruppenbild des Gründerteams — vollständig sichtbar, saubere Fakten-Leiste */}
-        <div style={{ position: "relative", minHeight: 480, background: "var(--paper-2)", display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 32px 32px 0" }}>
-          <div style={{ position: "relative", width: "100%", height: "100%", minHeight: 420, borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "var(--shadow-float)" }}>
+        <div style={{ position: "relative", minHeight: mob ? 380 : 480, background: "var(--paper-2)", display: "flex", alignItems: "center", justifyContent: "center", padding: mob ? "0 16px 16px" : "32px 32px 32px 0" }}>
+          <div style={{ position: "relative", width: "100%", height: "100%", minHeight: mob ? 360 : 420, borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "var(--shadow-float)" }}>
             <img src="../../assets/team/gruppe-serioes.jpg" alt="Das UNIO Gründerteam" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
             <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 45%, rgba(11,10,9,0.55))" }}></div>
             {/* saubere Fakten-Leiste am unteren Rand, nichts abgeschnitten */}
@@ -113,31 +114,32 @@ const PILLARS_MK = [
   ["05", "Deine Marketing-Superpower", "CIRCLE ist für Makler, die nicht „mitlaufen\" wollen. Individuelle Markenstrategie, Personal Branding und volle Content-Produktion unter deinem Namen.", [["3", "Kurzvideos / Monat"], ["10", "Fotos / Monat"]]],
 ];
 function FragenMk() {
+  const mob = window.useMobile();
   return (
-    <section data-track="chapter_view_02" data-screen-label="Vorteile" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: "150px 7vw 160px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+    <section data-track="chapter_view_02" data-screen-label="Vorteile" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "96px 6vw 100px" : "150px 7vw 160px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
       <GridLines />
       <Kap nr="02" label="Vorteile" />
-      <div style={{ maxWidth: 900, marginBottom: 80 }}>
-        <h2 style={{ margin: 0, font: "500 clamp(34px, 3.8vw, 64px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+      <div style={{ maxWidth: 900, marginBottom: mob ? 44 : 80 }}>
+        <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.8vw, 64px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Fünf Hebel, die dich<br />skalieren lassen.
         </h2>
-        <p style={{ margin: "22px 0 0", font: "400 17px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
+        <p style={{ margin: "22px 0 0", font: `400 ${mob ? 15 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)", maxWidth: 520 }}>
           CIRCLE kombiniert Einkommen, Dealflow, Growth und Ownership in einem Operating Model — damit du wie ein Unternehmer wächst, ohne deine Unabhängigkeit zu verlieren.
         </p>
       </div>
       <div style={{ position: "relative" }}>
         {PILLARS_MK.map(([nr, t, c, stats], i) => (
           <Fx key={nr} delay={i * 80}>
-            <div style={{ display: "grid", gridTemplateColumns: "64px minmax(0, 1.5fr) minmax(0, 1fr)", gap: "0 40px", padding: "56px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "start" }}>
-              <span style={{ font: "14px var(--font-mono)", color: "var(--signal-deep)", paddingTop: 6 }}>{nr}</span>
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "64px minmax(0, 1.5fr) minmax(0, 1fr)", gap: mob ? "12px 0" : "0 40px", padding: mob ? "36px 0" : "56px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "start" }}>
+              <span style={{ font: "14px var(--font-mono)", color: "var(--signal-deep)", paddingTop: mob ? 0 : 6 }}>{nr}</span>
               <div>
-                <h3 style={{ margin: 0, font: "500 clamp(22px, 2.2vw, 30px)/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
+                <h3 style={{ margin: 0, font: `500 ${mob ? "clamp(21px, 5.6vw, 26px)" : "clamp(22px, 2.2vw, 30px)"}/1.15 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
                 <p style={{ margin: "14px 0 0", font: "400 15px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 460 }}>{c}</p>
               </div>
-              <div style={{ display: "flex", gap: 36, justifyContent: "flex-end", alignItems: "baseline", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: mob ? 28 : 36, justifyContent: mob ? "flex-start" : "flex-end", alignItems: "baseline", flexWrap: "wrap", marginTop: mob ? 8 : 0 }}>
                 {stats.map(([v, k]) => (
-                  <div key={k} style={{ textAlign: "right" }}>
-                    <div style={{ font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--signal)" }}>{v}</div>
+                  <div key={k} style={{ textAlign: mob ? "left" : "right" }}>
+                    <div style={{ font: `500 ${mob ? "clamp(26px, 7vw, 34px)" : "clamp(30px, 3vw, 46px)"}/1 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--signal)" }}>{v}</div>
                     <div className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 8, maxWidth: 140 }}>{k}</div>
                   </div>
                 ))}
@@ -197,19 +199,20 @@ const MK_FACES = [
 ];
 
 function GesichterMk() {
+  const mob = window.useMobile();
   return (
-    <section data-track="chapter_view_03" data-screen-label="Gesichter" className="u-grain" style={{ position: "relative", zIndex: 3, background: "var(--paper-2)", padding: "150px 7vw 175px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+    <section data-track="chapter_view_03" data-screen-label="Gesichter" className="u-grain" style={{ position: "relative", zIndex: 3, background: "var(--paper-2)", padding: mob ? "96px 6vw 110px" : "150px 7vw 175px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
       <Kap nr="03" label="Gesichter" />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 20, flexWrap: "wrap", marginBottom: 80 }}>
-        <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 56px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 20, flexWrap: "wrap", marginBottom: mob ? 40 : 80 }}>
+        <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.4vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Gesichter des CIRCLE.
         </h2>
         <span className="u-label" style={{ color: "var(--text-muted)" }}>Kuratiert · Wien zuerst</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: mob ? 12 : 16, alignItems: "start" }}>
         {MK_FACES.map((f, i) => (
           <Fx key={f.stat} delay={i * 100}>
-            <div style={{ marginTop: f.off, position: "relative", aspectRatio: "3 / 4", borderRadius: "var(--r-card)", overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+            <div style={{ marginTop: mob ? 0 : f.off, position: "relative", aspectRatio: "3 / 4", borderRadius: "var(--r-card)", overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
               <img src={f.img} alt="CIRCLE-Partner:in" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: f.pos }} />
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.05), transparent 42%, rgba(11,10,9,0.5))" }}></div>
               <div style={{ position: "absolute", left: 12, right: 12, bottom: 12, borderRadius: "var(--r-inner)", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", padding: "12px 14px", color: "var(--text-inverse)" }}>
@@ -221,7 +224,7 @@ function GesichterMk() {
           </Fx>
         ))}
         <Fx delay={300}>
-          <div style={{ marginTop: 56, aspectRatio: "3 / 4", borderRadius: "var(--r-card)", background: "var(--signal)", color: "#FFFFFF", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "22px 22px 20px" }}>
+          <div style={{ marginTop: mob ? 0 : 56, aspectRatio: "3 / 4", borderRadius: "var(--r-card)", background: "var(--signal)", color: "#FFFFFF", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "22px 22px 20px" }}>
             <span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: "50%", background: "#FFFFFF", marginBottom: 16 }}></span>
             <div style={{ font: "500 20px/1.25 var(--font-display)", letterSpacing: "-0.02em" }}>Die ersten Plätze im CIRCLE werden gerade vergeben — deiner?</div>
             <a href="#bewerben" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 16, font: "500 14px var(--font-display)", color: "#FFFFFF", textDecoration: "none" }}>Bewerben <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>→</span></a>
@@ -354,6 +357,7 @@ function ObjektanlageMk() {
 /* ===== 05 · 80 % WENIGER ADMIN — Porträt-Moment mit Glas-Chips ===== */
 function AdminMk() {
   const [ref, p] = window.usePinProgress();
+  const mob = window.useMobile();
   const chips = ["Exposé", "CRM", "Termine", "Closing", "Abrechnung"];
   const scatter = [[8, 8, -7], [52, 4, 5], [64, 40, 9], [6, 48, -4], [34, 26, 3]];
   const k = BT_RM ? 1 : oaClamp(p / 0.16 * 1.4);          // 0–0.16: Chips sortieren
@@ -388,17 +392,17 @@ function AdminMk() {
         {/* Horizontaler Zwei-Panel-Track: Admin → Objektanlage-Auftakt */}
         <div style={{ position: "absolute", inset: 0, display: "flex", width: "200%", transform: `translateX(${-slide * 50}%)` }}>
           {/* Panel A — Admin */}
-          <div style={{ width: "50%", flex: "none", display: "flex", alignItems: "center", padding: "175px 11vw 110px 7vw" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 56, alignItems: "center", width: "100%" }}>
+          <div style={{ width: "50%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
+            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1fr)", gap: mob ? 24 : 56, alignItems: "center", width: "100%" }}>
               <div>
-                <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 54px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+                <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(27px, 7.2vw, 34px)" : "clamp(32px, 3.4vw, 54px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
                   80 % weniger Admin.<br />100 % mehr Makeln.
                 </h2>
-                <p style={{ margin: "20px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 460 }}>
+                <p style={{ margin: "16px 0 0", font: `400 ${mob ? 15 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 460 }}>
                   Die Plattform räumt sichtbar weg, was dich vom Gespräch abhält — scroll, und der Stapel sortiert sich.
                 </p>
               </div>
-              <div style={{ position: "relative", height: 400, borderRadius: "var(--r-panel)", overflow: "hidden" }}>
+              <div style={{ position: "relative", height: mob ? 300 : 400, borderRadius: "var(--r-panel)", overflow: "hidden" }}>
                 <img src="../../assets/photos/lifestyle-paar.jpg" alt="[PLATZHALTER: Partner:in im Gespräch]" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 25%" }} />
                 <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.18), rgba(11,10,9,0.42))" }}></div>
                 <span className="u-label" style={{ position: "absolute", left: 16, top: 14, fontSize: 9, color: "var(--text-inverse)", textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>[PLATZHALTER: Partner:in im Gespräch]</span>
@@ -425,9 +429,9 @@ function AdminMk() {
             </div>
           </div>
           {/* Panel B — Objektanlage: Animation LINKS, Headline RECHTS. Läuft in-place per oaP */}
-          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: 32, padding: "0 7vw 0 11vw" }}>
+          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw" }}>
             {/* Bühne */}
-            <div style={{ position: "relative", height: "72svh" }}>
+            <div style={{ position: "relative", height: mob ? "38svh" : "72svh", gridRow: mob ? 2 : "auto" }}>
               <div style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) scale(${0.7 + 0.3 * ph2})`, width: 150, height: 150, borderRadius: 16, overflow: "hidden", opacity: Math.max(0.25, Math.max(1 - ph1, ph2)), boxShadow: ph2 > 0.2 && ph3 < 0.9 ? "0 0 0 5px var(--signal-soft)" : "none", transition: "box-shadow 400ms" }}>
                 <window.SignalRaster cols={5} rows={5} pulse={ph2 > 0.3 && ph3 < 0.6} style={{ position: "absolute", inset: 0 }} />
               </div>
@@ -448,20 +452,20 @@ function AdminMk() {
                 const kk = oaClamp(ph3 * 1.5 - i * 0.14);
                 const on = kk > 0.12;
                 return (
-                  <div key={a} style={{ position: "absolute", left: "56%", top: 14 + i * 19 + "%", transform: on ? "translateX(0)" : "translateX(-28px)", opacity: on ? 1 : 0, transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 10, padding: "13px 17px", borderRadius: 10, background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", font: "10px var(--font-mono)", letterSpacing: "0.1em", color: "var(--ink-2)", whiteSpace: "nowrap" }}>
+                  <div key={a} style={{ position: "absolute", left: mob ? "34%" : "56%", top: 14 + i * 19 + "%", transform: on ? "translateX(0)" : "translateX(-28px)", opacity: on ? 1 : 0, transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 10, padding: mob ? "10px 13px" : "13px 17px", borderRadius: 10, background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", font: `${mob ? 9 : 10}px var(--font-mono)`, letterSpacing: "0.1em", color: "var(--ink-2)", whiteSpace: "nowrap" }}>
                     {a}
                     <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", color: "var(--signal-deep)", font: "9px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 350ms ${BT_EASE} 180ms` }}>✓</span>
                   </div>
                 );
               })}
-              <div style={{ position: "absolute", left: "56%", top: "90%", opacity: ph3 > 0.8 ? 1 : 0, transform: ph3 > 0.8 ? "none" : "translateX(-28px)", transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 9, padding: "11px 16px", borderRadius: "var(--r-pill)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.4)", font: "500 13px var(--font-display)", color: "var(--signal-deep)", whiteSpace: "nowrap" }}>
+              <div style={{ position: "absolute", left: mob ? "34%" : "56%", top: "90%", opacity: ph3 > 0.8 ? 1 : 0, transform: ph3 > 0.8 ? "none" : "translateX(-28px)", transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 9, padding: "11px 16px", borderRadius: "var(--r-pill)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.4)", font: `500 ${mob ? 12 : 13}px var(--font-display)`, color: "var(--signal-deep)", whiteSpace: "nowrap" }}>
                 <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Passender Käufer gefunden
               </div>
             </div>
-            {/* Headline rechts */}
-            <div style={{ position: "relative" }}>
-              <h2 style={{ margin: 0, font: "500 clamp(28px, 3vw, 50px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", minHeight: "2.2em" }}>{oaHead}</h2>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 44 }}>
+            {/* Headline rechts (mobil oben) */}
+            <div style={{ position: "relative", gridRow: mob ? 1 : "auto" }}>
+              <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(28px, 3vw, 50px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", minHeight: "2.2em" }}>{oaHead}</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: mob ? 16 : 44 }}>
                 <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
                   <circle cx="17" cy="17" r="14" fill="none" stroke="var(--hairline-dark)" strokeWidth="1.5" />
                   <circle cx="17" cy="17" r="14" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={(1 - oaP) * 2 * Math.PI * 14} transform="rotate(-90 17 17)" strokeLinecap="round" />
@@ -513,13 +517,14 @@ function RechnerMk() {
     return () => clearTimeout(id);
   }, [delta]);
   const fmt = (n) => "€ " + Math.round(n).toLocaleString("de-AT");
+  const mob = window.useMobile();
   return (
-    <section id="rechner" data-track="chapter_view_06" data-screen-label="Rechner" className="u-grain" style={{ position: "relative", zIndex: 6, background: "var(--paper)", padding: "150px 7vw 175px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+    <section id="rechner" data-track="chapter_view_06" data-screen-label="Rechner" className="u-grain" style={{ position: "relative", zIndex: 6, background: "var(--paper)", padding: mob ? "96px 6vw 110px" : "150px 7vw 175px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
       <GridLines />
       <Kap nr="06" label="Rechner" />
-      <div style={{ maxWidth: 640, marginBottom: 80, position: "relative" }}>
+      <div style={{ maxWidth: 640, marginBottom: mob ? 40 : 80, position: "relative" }}>
         <Fx>
-          <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 56px)/1.03 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.4vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Ein Modell, das<br />Leistung belohnt.
           </h2>
           <p style={{ margin: "18px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 440 }}>
@@ -528,8 +533,8 @@ function RechnerMk() {
           </p>
         </Fx>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.15fr)", gap: 14, position: "relative" }}>
-        <div style={{ borderRadius: "var(--r-card)", padding: "28px 30px", background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }} data-track="rechner_interact">
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1.15fr)", gap: 14, position: "relative" }}>
+        <div style={{ borderRadius: "var(--r-card)", padding: mob ? "22px 20px" : "28px 30px", background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }} data-track="rechner_interact">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <span className="u-label" style={{ color: "var(--text-muted)" }}>Dein Provisionsumsatz / Jahr</span>
             <span style={{ font: "500 26px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{fmt(umsatz)}</span>
@@ -625,12 +630,13 @@ function BewegungMk() {
     return [160 + R * Math.cos(a), 160 + R * Math.sin(a)];
   };
   const duOn = cp > 0.96;
+  const mob = window.useMobile();
   return (
-    <section ref={ref} data-track="chapter_view_08" data-screen-label="Bewegung" className="u-grain" style={{ position: "relative", zIndex: 8, background: "var(--signal)", padding: "clamp(96px, 13vh, 150px) 7vw", color: "#FFFFFF", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.35)" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: 56, alignItems: "center", position: "relative", width: "100%" }}>
+    <section ref={ref} data-track="chapter_view_08" data-screen-label="Bewegung" className="u-grain" style={{ position: "relative", zIndex: 8, background: "var(--signal)", padding: mob ? "96px 6vw" : "clamp(96px, 13vh, 150px) 7vw", color: "#FFFFFF", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.35)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: mob ? 48 : 56, alignItems: "center", position: "relative", width: "100%" }}>
         <div>
           <Fx>
-            <h2 style={{ margin: 0, font: "500 clamp(32px, 3.6vw, 58px)/1.03 var(--font-display)", letterSpacing: "-0.03em" }}>
+            <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.6vw, 58px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em" }}>
               Eine Bewegung.<br />Kein Maklerpool.
             </h2>
             <p style={{ margin: "20px 0 0", font: "400 17px/1.6 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: 460 }}>
@@ -674,7 +680,7 @@ function BewegungMk() {
           <h3 style={{ margin: 0, font: "500 clamp(26px, 2.8vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF" }}>Gesichter des CIRCLE.</h3>
           <span className="u-label" style={{ color: "rgba(255,245,239,0.82)" }}>Kuratiert · Wien zuerst</span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 20 }}>
           {MK_FACES.map((f, i) => (
             <Fx key={f.stat} delay={i * 100}>
               <div style={{ position: "relative", aspectRatio: "3 / 4", borderRadius: "var(--r-card)", overflow: "hidden", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.28)" }}>
@@ -695,13 +701,15 @@ function BewegungMk() {
 }
 function SchritteMk() {
   const [sent, setSent] = React.useState(false);
+  const mob = window.useMobile();
+  const twoCol = { display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 12 };
   const feld = { font: "400 15px var(--font-display)", padding: "15px 17px", borderRadius: "var(--r-inner)", border: "none", outline: "none", background: "#FFFFFF", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", width: "100%", fontFamily: "inherit" };
   const selFeld = { ...feld, appearance: "none", WebkitAppearance: "none", cursor: "pointer", paddingRight: 40, backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5A54' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" };
   return (
-    <section id="bewerben" data-track="chapter_view_09" data-screen-label="Bewerbung" className="u-grain" style={{ position: "relative", zIndex: 9, background: "var(--paper)", padding: "150px 7vw 185px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+    <section id="bewerben" data-track="chapter_view_09" data-screen-label="Bewerbung" className="u-grain" style={{ position: "relative", zIndex: 9, background: "var(--paper)", padding: mob ? "96px 6vw 120px" : "150px 7vw 185px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
       <GridLines />
       <Kap nr="09" label="Bewerben" />
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 16, position: "relative", alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 16, position: "relative", alignItems: "start" }}>
         {/* Schritte */}
         <div style={{ borderRadius: "var(--r-card)", padding: "clamp(24px, 3vw, 34px)", background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
           <div style={{ font: "500 22px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Jetzt bewerben</div>
@@ -734,11 +742,11 @@ function SchritteMk() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ font: "500 22px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginBottom: 6 }}>Deine Bewerbung</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <input placeholder="Name" style={feld} />
                 <input placeholder="E-Mail" style={feld} />
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <select defaultValue="" style={selFeld}>
                   <option value="" disabled>Spezialisierung</option>
                   <option>Wohnimmobilien</option>
@@ -755,7 +763,7 @@ function SchritteMk() {
                   <option>Quereinstieg</option>
                 </select>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={twoCol}>
                 <select defaultValue="" style={selFeld}>
                   <option value="" disabled>Provisionsumsatz / Jahr</option>
                   <option>Unter € 100K</option>
@@ -800,12 +808,13 @@ const MK_MENSCHEN = [
 ];
 function MkRow({ items, reverse, hov, dur }) {
   const [tip, setTip] = React.useState(-1);
+  const mob = window.useMobile();
   return (
     <div style={{ overflow: "hidden" }}>
       <div style={{ display: "flex", gap: hov ? 30 : 16, width: "max-content", animation: BT_RM ? "none" : `bMarquee ${dur}s linear infinite`, animationDirection: reverse ? "reverse" : "normal", animationPlayState: hov ? "paused" : "running", transition: "gap .5s cubic-bezier(.32,.72,0,1)" }}>
         {items.concat(items).map((m, i) => (
           <div key={i} onMouseEnter={() => setTip(i)} onMouseLeave={() => setTip(-1)}
-            style={{ flex: "none", width: "clamp(300px, 30vw, 420px)", aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", boxShadow: "inset 0 0 0 0.5px var(--hairline-dark)", padding: tip === i ? 10 : 0, background: "var(--paper-2)", transition: "padding .5s cubic-bezier(.32,.72,0,1)" }}>
+            style={{ flex: "none", width: mob ? "min(64vw, 260px)" : "clamp(300px, 30vw, 420px)", aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", boxShadow: "inset 0 0 0 0.5px var(--hairline-dark)", padding: tip === i ? 10 : 0, background: "var(--paper-2)", transition: "padding .5s cubic-bezier(.32,.72,0,1)" }}>
             <img src={m.src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: tip === i ? 8 : 0, transition: "border-radius .5s" }} />
           </div>
         ))}
@@ -815,14 +824,15 @@ function MkRow({ items, reverse, hov, dur }) {
 }
 function MarkeAssetMk() {
   const [mqHov, setMqHov] = React.useState(false);
+  const mob = window.useMobile();
   const dur = 58;
   const stats = [["116.525", "Aufrufe · 1 Reel · 16 Sek."], ["4.391", "Follower organisch"], ["541", "Saves = warme Leads"], ["173", "Profil-Klicks aus 1 Reel"]];
   return (
-    <section data-screen-label="Marke" className="u-grain" style={{ position: "relative", zIndex: 7, background: "var(--paper-2)", padding: "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 56, alignItems: "center" }}>
+    <section data-screen-label="Marke" className="u-grain" style={{ position: "relative", zIndex: 7, background: "var(--paper-2)", padding: mob ? "100px 6vw" : "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: mob ? 32 : 56, alignItems: "center" }}>
         <div>
           <span className="u-label" style={{ color: "var(--signal-deep)" }}>Personal Brand in Aktion</span>
-          <h2 style={{ margin: "22px 0 0", font: "500 clamp(34px, 4.2vw, 68px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          <h2 style={{ margin: "22px 0 0", font: `500 ${mob ? "clamp(29px, 7.8vw, 38px)" : "clamp(34px, 4.2vw, 68px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Deine Marke.<br /><span style={{ color: "var(--signal)" }}>Dein Asset. Lebenslang.</span>
           </h2>
           <p style={{ margin: "24px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 440 }}>
@@ -874,29 +884,50 @@ const VERGLEICH = [
   ["Passives Einkommen", "Keine Quellen", "Referral + Gewinn-Ausschüttung"],
 ];
 function VergleichMk() {
+  const mob = window.useMobile();
   return (
-    <section data-screen-label="Vergleich" className="u-grain" style={{ position: "relative", zIndex: 9, background: "var(--paper)", padding: "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
-      <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto 80px" }}>
+    <section data-screen-label="Vergleich" className="u-grain" style={{ position: "relative", zIndex: 9, background: "var(--paper)", padding: mob ? "100px 6vw" : "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+      <div style={{ textAlign: "center", maxWidth: 820, margin: mob ? "0 auto 44px" : "0 auto 80px" }}>
         <span className="u-label" style={{ color: "var(--signal-deep)" }}>Der Unterschied</span>
-        <h2 style={{ margin: "22px 0 0", font: "500 clamp(34px, 4.2vw, 68px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+        <h2 style={{ margin: "22px 0 0", font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(34px, 4.2vw, 68px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Der klassische Makler<br />vs. UNIO CIRCLE.
         </h2>
       </div>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr)", gap: 24, padding: "0 0 16px", borderBottom: "1px solid var(--hairline-dark)" }}>
-          <span></span>
-          <span className="u-label" style={{ color: "var(--text-muted)", textAlign: "right" }}>Klassischer Makler</span>
-          <span className="u-label" style={{ color: "var(--signal-deep)", textAlign: "right" }}>UNIO CIRCLE</span>
-        </div>
+        {!mob && (
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr)", gap: 24, padding: "0 0 16px", borderBottom: "1px solid var(--hairline-dark)" }}>
+            <span></span>
+            <span className="u-label" style={{ color: "var(--text-muted)", textAlign: "right" }}>Klassischer Makler</span>
+            <span className="u-label" style={{ color: "var(--signal-deep)", textAlign: "right" }}>UNIO CIRCLE</span>
+          </div>
+        )}
         {VERGLEICH.map(([k, a, b], i) => (
           <Fx key={k} delay={i * 60}>
-            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr)", gap: 24, padding: "26px 0", borderBottom: "1px solid var(--hairline-dark)", alignItems: "center" }}>
-              <span style={{ font: "500 17px var(--font-display)", color: "var(--ink)" }}>{k}</span>
-              <span style={{ font: "400 14.5px/1.5 var(--font-display)", color: "var(--text-muted)", textAlign: "right" }}>{a}</span>
-              <span style={{ font: "500 14.5px/1.5 var(--font-display)", color: "var(--signal-deep)", textAlign: "right", display: "inline-flex", gap: 8, justifyContent: "flex-end", alignItems: "baseline" }}>
-                <span aria-hidden="true" style={{ color: "var(--signal)" }}>✓</span>{b}
-              </span>
-            </div>
+            {mob ? (
+              <div style={{ padding: "22px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
+                <span style={{ font: "500 17px var(--font-display)", color: "var(--ink)", display: "block" }}>{k}</span>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 12 }}>
+                  <div>
+                    <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5, display: "block", marginBottom: 6 }}>Klassisch</span>
+                    <span style={{ font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)" }}>{a}</span>
+                  </div>
+                  <div>
+                    <span className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5, display: "block", marginBottom: 6 }}>UNIO CIRCLE</span>
+                    <span style={{ font: "500 13.5px/1.5 var(--font-display)", color: "var(--signal-deep)", display: "inline-flex", gap: 6, alignItems: "baseline" }}>
+                      <span aria-hidden="true" style={{ color: "var(--signal)" }}>✓</span>{b}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr)", gap: 24, padding: "26px 0", borderBottom: "1px solid var(--hairline-dark)", alignItems: "center" }}>
+                <span style={{ font: "500 17px var(--font-display)", color: "var(--ink)" }}>{k}</span>
+                <span style={{ font: "400 14.5px/1.5 var(--font-display)", color: "var(--text-muted)", textAlign: "right" }}>{a}</span>
+                <span style={{ font: "500 14.5px/1.5 var(--font-display)", color: "var(--signal-deep)", textAlign: "right", display: "inline-flex", gap: 8, justifyContent: "flex-end", alignItems: "baseline" }}>
+                  <span aria-hidden="true" style={{ color: "var(--signal)" }}>✓</span>{b}
+                </span>
+              </div>
+            )}
           </Fx>
         ))}
       </div>
@@ -931,20 +962,21 @@ function BenefitsMk() {
     ["Bereits aufbereitete Projekte", "Alle Projekte werden vom UNIO Team aufbereitet und gepflegt. Marketingunterlagen werden erstellt und das Inhouse Marketing Team rückt das Projekt für dich ins richtige Licht."],
     ["Leadflow für UNIO Projekte", "Profitiere vom Inhouse Vertriebsteam von UNIO. Du bekommst bereits vorqualifizierte Leads und kannst dich ausschließlich auf den Verkauf konzentrieren."],
   ];
+  const mob = window.useMobile();
   return (
-    <section data-screen-label="Benefits" className="u-grain" style={{ position: "relative", zIndex: 6, background: "var(--paper)", padding: "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
-      <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto 88px" }}>
+    <section data-screen-label="Benefits" className="u-grain" style={{ position: "relative", zIndex: 6, background: "var(--paper)", padding: mob ? "100px 6vw" : "175px 7vw", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+      <div style={{ textAlign: "center", maxWidth: 820, margin: mob ? "0 auto 48px" : "0 auto 88px" }}>
         <span className="u-label" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "8px 16px", borderRadius: "var(--r-pill)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--text-muted)" }}>
           <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid var(--signal)", borderRightColor: "transparent", transform: "rotate(-45deg)" }}></span>Benefits
         </span>
-        <h2 style={{ margin: "26px 0 0", font: "500 clamp(34px, 4.2vw, 68px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+        <h2 style={{ margin: "26px 0 0", font: `500 ${mob ? "clamp(27px, 7.4vw, 34px)" : "clamp(34px, 4.2vw, 68px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Eine ständige Pipeline<br />ohne deine Freiheit zu verlieren.
         </h2>
-        <p style={{ margin: "26px auto 0", font: "400 17px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>
+        <p style={{ margin: "26px auto 0", font: `400 ${mob ? 15 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)", maxWidth: 560 }}>
           Alleine eine große Pipeline aufzubauen ist nahezu unmöglich: Beziehungen brauchen Zeit, Portfolios gehören oft großen Agenturen. UNIO öffnet den Zugang, damit dein Dealflow konstant bleibt und du unabhängig skalierst.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 24 }}>
         {cards.map(([t, c], i) => (
           <Fx key={t} delay={i * 100}>
             <div style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "34px 32px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minHeight: 200 }}>

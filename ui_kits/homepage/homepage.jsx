@@ -10,6 +10,7 @@ const { useTick, Reveal, SiteNav, Chapter, PropCard, OBJEKT_DB, SiteFooter, U_RM
 function Hero() {
   const [t, setT] = React.useState(RMx ? 99999 : 0);
   const [sy, setSy] = React.useState(0);
+  const mob = window.useMobile();
   const vidRef = React.useRef(null);
   React.useEffect(() => {
     const v = vidRef.current;
@@ -67,7 +68,7 @@ function Hero() {
       <div className="u-grain" style={{ position: "absolute", inset: 0 }}></div>
 
       <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 clamp(24px, 5vw, 96px)", opacity: 1 - bleed * 1.4 }}>
-        <h1 style={{ margin: 0, font: "500 clamp(56px, 9vw, 168px)/0.92 var(--font-display)", letterSpacing: "-0.04em", color: "#FFFFFF", maxWidth: 1200 }}>
+        <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(40px, 11.5vw, 56px)" : "clamp(56px, 9vw, 168px)"}/0.94 var(--font-display)`, letterSpacing: "-0.04em", color: "#FFFFFF", maxWidth: 1200 }}>
           <span style={{ display: "block", ...lineStyle(0) }}>Real Estate</span>
           <span style={{ display: "block", ...lineStyle(1) }}>Finally Simple<span style={{ display: "inline-block", width: "0.14em", height: "0.14em", borderRadius: 4, background: "var(--signal)", marginLeft: "0.08em", verticalAlign: "baseline" }}></span></span>
         </h1>
@@ -87,33 +88,34 @@ function Hero() {
 function SucheHighlights() {
   const [q, setQ] = React.useState("");
   const [hov, setHov] = React.useState(-1);
+  const mob = window.useMobile();
   const treffer = OBJEKT_DB.filter((o) => !q.trim() || (o.q + " " + o.t + " " + o.loc).toLowerCase().includes(q.trim().toLowerCase()));
   const shown = treffer.slice(0, 3);
   return (
-    <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: "150px 6vw 185px" }}>
+    <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: mob ? "96px 6vw 120px" : "150px 6vw 185px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
-      <Chapter title={<span>Finden Sie Ihr<br />nächstes Zuhause.</span>} copy="Kuratierte Wiener Projekte und Einzelobjekte — jedes davon live und transparent vermarktet." style={{ marginBottom: 72 }} />
+      <Chapter title={<span>Finden Sie Ihr<br />nächstes Zuhause.</span>} copy="Kuratierte Wiener Projekte und Einzelobjekte — jedes davon live und transparent vermarktet." style={{ marginBottom: mob ? 44 : 72 }} />
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 680, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Bezirk, Projekt oder Objektart — z. B. Penthouse 1020"
-          style={{ flex: 1, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }}
+          placeholder={mob ? "Bezirk, Projekt, Objektart" : "Bezirk, Projekt oder Objektart — z. B. Penthouse 1020"}
+          style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }}
         />
         <Bx variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL + (q ? "&search=" + encodeURIComponent(q) : ""), "_blank")}>Suchen</Bx>
       </div>
       {q.trim() ? (
         <div className="u-label" style={{ marginTop: 14, color: "var(--text-muted)", fontSize: 10 }}>{treffer.length} Treffer im Bestand</div>
       ) : null}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginTop: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24, marginTop: 24 }}>
         {shown.map((o, i) => (
           <Reveal key={o.t} delay={i * 90}>
             <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
           </Reveal>
         ))}
         {shown.length === 0 && (
-          <div style={{ gridColumn: "span 3", padding: "40px 0", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
+          <div style={{ gridColumn: mob ? "auto" : "span 3", padding: "40px 0", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
             Kein Treffer im kuratierten Bestand — starten Sie die Suche im Dashboard <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener" style={{ color: "var(--signal-deep)" }}>app.unio.at ↗</a>
           </div>
         )}
@@ -129,20 +131,22 @@ function SucheHighlights() {
 
 /* ---------- Statement + Zahlen ---------- */
 function Markt() {
+  const mob = window.useMobile();
+  const statSize = mob ? "clamp(64px, 17vw, 84px)" : "clamp(84px, 8.4vw, 148px)";
   return (
-    <section id="markt" data-screen-label="Markt" className="u-grain" style={{ background: "var(--paper-2)", padding: "160px 6vw 160px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)", gap: 64, alignItems: "end" }}>
-        <Reveal><h2 style={{ margin: 0, font: "500 clamp(40px, 4.4vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+    <section id="markt" data-screen-label="Markt" className="u-grain" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 100px" : "160px 6vw 160px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.4fr) minmax(0, 1fr)", gap: mob ? 24 : 64, alignItems: mob ? "start" : "end" }}>
+        <Reveal><h2 style={{ margin: 0, font: `500 ${mob ? "clamp(34px, 9vw, 44px)" : "clamp(40px, 4.4vw, 76px)"}/1.02 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
           Echte Deals<br />durch echte Daten.
         </h2></Reveal>
-        <p style={{ margin: 0, font: "400 18px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 420 }}>
+        <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 18}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
           Der Immobilienmarkt ist fragmentiert, analog, intransparent. UNIO legt eine Schicht Klarheit darüber — Marktdaten werden Entscheidungen, Entscheidungen werden Abverkauf.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 48, marginTop: 120, borderTop: "1px solid var(--hairline-dark)", paddingTop: 60 }}>
-        <SBx value={94} label="Nachfrage-Score · Median" tone="light" size="clamp(84px, 8.4vw, 148px)" />
-        <SBx value={38} unit="Tage" label="bis Abverkauf · Ø Pilotprojekte" tone="light" size="clamp(84px, 8.4vw, 148px)" delta="−41 %" />
-        <SBx value={1240} label="Käuferprofile im Matching" tone="light" size="clamp(84px, 8.4vw, 148px)" />
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 36 : 48, marginTop: mob ? 64 : 120, borderTop: "1px solid var(--hairline-dark)", paddingTop: mob ? 44 : 60 }}>
+        <SBx value={94} label="Nachfrage-Score · Median" tone="light" size={statSize} />
+        <SBx value={38} unit="Tage" label="bis Abverkauf · Ø Pilotprojekte" tone="light" size={statSize} delta="−41 %" />
+        <SBx value={1240} label="Käuferprofile im Matching" tone="light" size={statSize} />
       </div>
     </section>
   );
@@ -150,10 +154,11 @@ function Markt() {
 
 /* ---------- Bauträger & CIRCLE abholen ---------- */
 function Zielgruppen() {
+  const mob = window.useMobile();
   return (
-    <section id="zielgruppen" data-screen-label="Zielgruppen" className="u-grain" style={{ background: "var(--paper-2)", padding: "160px 5vw 180px" }}>
-      <Chapter title={<span>Für die, die den Markt<br />bewegen.</span>} style={{ marginBottom: 76 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+    <section id="zielgruppen" data-screen-label="Zielgruppen" className="u-grain" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "160px 5vw 180px" }}>
+      <Chapter title={<span>Für die, die den Markt<br />bewegen.</span>} style={{ marginBottom: mob ? 44 : 76 }} />
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 16 : 24 }}>
         {/* Bauträger — Orange-Panel, Sie */}
         <div className="u-grain" style={{ background: "var(--signal)", borderRadius: "var(--r-panel)", padding: "clamp(32px, 4vw, 52px)", color: "#FFFFFF", display: "flex", flexDirection: "column", minHeight: 420 }}>
           <span className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 10 }}>Für Bauträger</span>
@@ -206,8 +211,9 @@ const PRODUKTE = [
 ];
 function Produkte() {
   const [hov, setHov] = React.useState(-1);
+  const mob = window.useMobile();
   return (
-    <section id="produkte" data-screen-label="Produkte" className="u-grain" style={{ background: "var(--paper)", padding: "175px 6vw" }}>
+    <section id="produkte" data-screen-label="Produkte" className="u-grain" style={{ background: "var(--paper)", padding: mob ? "110px 6vw" : "175px 6vw" }}>
       <div style={{ textAlign: "center", maxWidth: 900, margin: "0 auto 80px" }}>
         <span className="u-label" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "8px 16px", borderRadius: "var(--r-pill)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--text-muted)" }}>
           <span aria-hidden="true" style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid var(--signal)", borderRightColor: "transparent", transform: "rotate(-45deg)" }}></span>Produkte
@@ -219,7 +225,7 @@ function Produkte() {
           Eine Plattform, die Daten, Workflows und ein Broker-Netzwerk verbindet — für planbaren Abverkauf und messbare Performance.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, 1fr)", gap: mob ? 14 : 20 }}>
         {PRODUKTE.map(([t, c], i) => (
           <Reveal key={t} delay={i * 90}>
             <div onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}

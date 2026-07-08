@@ -56,7 +56,7 @@ function Fx({ children, delay = 0, y = 26, style }) {
 /* Kapitel-Marker (RIVVA): Mono + vertikale Hairline am Sektionsrand */
 function Kap({ nr, label, dark }) {
   return (
-    <div aria-hidden="true" style={{ position: "absolute", left: "2.4vw", top: 60, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, zIndex: 3 }}>
+    <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 60, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, zIndex: 3 }}>
       <span style={{ width: 1, height: 46, background: dark ? "var(--hairline-light)" : "var(--hairline-dark)" }}></span>
       <span className="u-label" style={{ writingMode: "vertical-rl", fontSize: 9, letterSpacing: "0.18em", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{nr} — {label}</span>
     </div>
@@ -205,6 +205,7 @@ const BT_STATIONEN = [
 
 function SystemLine() {
   const secRef = React.useRef(null);
+  const mob = window.useMobile();
   const [p, setP] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
     if (BT_RM) return;
@@ -219,24 +220,35 @@ function SystemLine() {
     return () => removeEventListener("scroll", on);
   }, []);
   return (
-    <section ref={secRef} id="system" data-track="chapter_view_04" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "185px 7vw 185px" }}>
+    <section ref={secRef} id="system" data-track="chapter_view_04" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "110px 6vw 110px" : "185px 7vw 185px" }}>
       <GridLines />
       <Kap nr="04" label="System" />
       <div style={{ maxWidth: 620, position: "relative" }}>
         <Fx>
-          <h2 style={{ margin: 0, font: "500 clamp(34px, 3.6vw, 60px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Ein System.<br />Vier Stationen.
           </h2>
         </Fx>
       </div>
-      <div style={{ position: "relative", marginTop: 120 }}>
-        {/* durchgehende, scrollgetriebene Linie */}
-        <div aria-hidden="true" style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 1, background: "rgba(11,10,9,0.12)" }}>
+      <div style={{ position: "relative", marginTop: mob ? 56 : 120 }}>
+        {/* durchgehende, scrollgetriebene Linie: mobil links, Desktop mittig */}
+        <div aria-hidden="true" style={{ position: "absolute", left: mob ? 5 : "50%", top: 0, bottom: 0, width: 1, background: "rgba(11,10,9,0.12)" }}>
           <div style={{ position: "absolute", left: 0, top: 0, width: "100%", height: (p * 100) + "%", background: "var(--signal)" }}></div>
         </div>
         {BT_STATIONEN.map((s, i) => {
-          const [ref, run] = useOnceInView(0.4);
+          const [ref, run] = useOnceInView(mob ? 0.2 : 0.4);
           const left = i % 2 === 0;
+          if (mob) {
+            return (
+              <div key={s.mod} ref={ref} style={{ position: "relative", padding: "44px 0 44px 34px" }}>
+                <span aria-hidden="true" style={{ position: "absolute", left: 5, top: 52, transform: "translateX(-50%)", width: 11, height: 11, borderRadius: "50%", background: run ? "var(--signal)" : "var(--paper-3)", boxShadow: run ? "0 0 0 5px var(--signal-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transition: `all 500ms ${BT_EASE}` }}></span>
+                <span style={{ font: "11px var(--font-mono)", letterSpacing: "0.18em", color: "var(--signal-deep)" }}>{s.mod}</span>
+                <h3 style={{ margin: "12px 0 0", font: "500 22px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{s.t}</h3>
+                <p style={{ margin: "10px 0 0", font: "400 14.5px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 380 }}>{s.p}</p>
+                <div style={{ marginTop: 24 }}><s.A run={run} /></div>
+              </div>
+            );
+          }
           return (
             <div key={s.mod} ref={ref} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 60px", padding: "80px 0", position: "relative" }}>
               <span aria-hidden="true" style={{ position: "absolute", left: "50%", top: 94, transform: "translateX(-50%)", width: 11, height: 11, borderRadius: "50%", background: run ? "var(--signal)" : "var(--paper-3)", boxShadow: run ? "0 0 0 5px var(--signal-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transition: `all 500ms ${BT_EASE}` }}></span>
@@ -266,6 +278,7 @@ const LK_BARS = [3, 4, 3, 5, 6, 5, 7, 6, 8, 9, 8, 10, 11, 12];
 
 function Lernkurve() {
   const secRef = React.useRef(null);
+  const mob = window.useMobile();
   const [p, setP] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
     if (BT_RM) return;
@@ -281,21 +294,21 @@ function Lernkurve() {
   const stage = p < 0.34 ? 0 : p < 0.67 ? 1 : 2;
   const barsOn = [5, 10, 14][stage];
   return (
-    <section ref={secRef} data-track="chapter_view_05" data-screen-label="Lernkurve" style={{ height: "250vh", position: "relative", background: "var(--signal)" }}>
-      <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 7vw" }}>
+    <section ref={secRef} data-track="chapter_view_05" data-screen-label="Lernkurve" style={{ height: mob ? "280vh" : "250vh", position: "relative", background: "var(--signal)" }}>
+      <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: mob ? "auto" : "hidden", display: "flex", flexDirection: "column", justifyContent: mob ? "flex-start" : "center", padding: mob ? "84px 6vw 40px" : "0 7vw" }}>
         <Kap nr="05" label="Lernkurve" dark />
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr) 56px", gap: "clamp(28px, 4vw, 64px)", alignItems: "center" }}>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr) 56px", gap: mob ? 28 : "clamp(28px, 4vw, 64px)", alignItems: "center" }}>
           <div>
             <span className="u-label" style={{ color: "rgba(255,245,239,0.85)" }}>Ein Dashboard, das voller wird</span>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 4, marginTop: 14 }}>
-              <span style={{ font: "500 clamp(80px, 9vw, 150px)/0.86 var(--font-display)", letterSpacing: "-0.05em", color: "transparent", WebkitTextStroke: "1.5px rgba(255,245,239,0.7)" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(0, -2)}</span>
-              <span style={{ font: "500 clamp(80px, 9vw, 150px)/0.86 var(--font-display)", letterSpacing: "-0.05em", color: "#FFFFFF" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(-2)}</span>
-              <span style={{ font: "500 clamp(20px, 2.2vw, 34px) var(--font-display)", letterSpacing: "-0.02em", color: "#FFFFFF", paddingBottom: "0.18em", marginLeft: 6 }}>Tage</span>
+              <span style={{ font: `500 ${mob ? "clamp(56px, 16vw, 80px)" : "clamp(80px, 9vw, 150px)"}/0.86 var(--font-display)`, letterSpacing: "-0.05em", color: "transparent", WebkitTextStroke: "1.5px rgba(255,245,239,0.7)" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(0, -2)}</span>
+              <span style={{ font: `500 ${mob ? "clamp(56px, 16vw, 80px)" : "clamp(80px, 9vw, 150px)"}/0.86 var(--font-display)`, letterSpacing: "-0.05em", color: "#FFFFFF" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(-2)}</span>
+              <span style={{ font: "500 clamp(18px, 2.2vw, 34px) var(--font-display)", letterSpacing: "-0.02em", color: "#FFFFFF", paddingBottom: "0.18em", marginLeft: 6 }}>Tage</span>
             </div>
-            <h2 style={{ margin: "18px 0 0", font: "500 clamp(26px, 2.6vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF" }}>
+            <h2 style={{ margin: "18px 0 0", font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(26px, 2.6vw, 42px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "#FFFFFF" }}>
               {LK_STAGES[stage].t}.
             </h2>
-            <p style={{ margin: "16px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(255,245,239,0.92)", maxWidth: 380 }}>
+            <p style={{ margin: "16px 0 0", font: `400 ${mob ? 14.5 : 16}px/1.6 var(--font-display)`, color: "rgba(255,245,239,0.92)", maxWidth: 380 }}>
               Jede Kampagnen-Runde und jedes Makler-Feedback macht die Leads besser und die Zielgruppen schärfer.
             </p>
           </div>
@@ -326,8 +339,8 @@ function Lernkurve() {
               </div>
             </div>
           </div>
-          {/* Tag-Skala (Lineal) */}
-          <div aria-hidden="true" style={{ position: "relative", height: 320, alignSelf: "center" }}>
+          {/* Tag-Skala (Lineal), nur Desktop */}
+          <div aria-hidden="true" style={{ position: "relative", height: 320, alignSelf: "center", display: mob ? "none" : "block" }}>
             <div style={{ position: "absolute", right: 26, top: 0, bottom: 0, width: 1, borderLeft: "1px solid rgba(255,255,255,0.45)", background: "repeating-linear-gradient(180deg, rgba(255,255,255,0.55) 0 1px, transparent 1px 20px)", backgroundSize: "8px 100%", backgroundRepeat: "no-repeat" }}></div>
             <span style={{ position: "absolute", right: 22, top: `calc(${p * 100}% - 9px)`, width: 18, height: 2.5, borderRadius: 99, background: "var(--ink)", transition: BT_RM ? "none" : "top 120ms linear" }}></span>
             {[["30", 20], ["90", 52], ["180", 88]].map(([d, y]) => (
