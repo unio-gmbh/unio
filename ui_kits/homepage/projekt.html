@@ -6,6 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Traum Penthouse in Hernals — UNIO</title>
 <link rel="stylesheet" href="../../styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/favicon-192.png">
+<link rel="apple-touch-icon" href="../../assets/favicon/apple-touch-icon.png">
+<meta name="theme-color" content="#F7F5F1">
+<script defer src="/_vercel/insights/script.js"></script>
+
 <!--
   1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
   Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler-Foto Platzhalter.
@@ -297,6 +303,24 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
     .rv,.hero img,.bars i,.delta{opacity:1!important;transform:none!important}}
 
+  /* ===== Ähnliche Objekte + Eigentümer-Hook ===== */
+  .similar{max-width:1140px;margin:64px auto 0;padding:0 20px;}
+  .similar h2{font-size:clamp(24px,3vw,34px);font-weight:500;letter-spacing:-.02em;margin-bottom:22px;}
+  .simgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media (max-width:720px){.simgrid{grid-template-columns:1fr;}}
+  .simcard{display:block;position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3;text-decoration:none;background:var(--card);}
+  .simcard img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+  .simcard:hover img{transform:scale(1.03);}
+  .simcard .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,16,.05),transparent 40%,rgba(20,18,16,.55));}
+  .simcard .cap{position:absolute;left:16px;right:16px;bottom:14px;color:#fff;}
+  .simcard .cap b{display:block;font-size:17px;font-weight:500;letter-spacing:-.01em;}
+  .simcard .cap span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .ownerhook{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px;
+    background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:20px 22px;}
+  .ownerhook p{font-size:15px;color:var(--fg2);margin:0;}
+  .ownerhook a{display:inline-flex;align-items:center;gap:9;white-space:nowrap;background:var(--ink);color:#F3F0EA;text-decoration:none;
+    border-radius:99px;padding:12px 20px;font-weight:500;font-size:13.5px;}
+
   /* ===== Footer (Site-konform, Ember-Glow) ===== */
   .pfoot{position:relative;overflow:hidden;background:#F0EDE6;margin-top:34px;padding:110px 20px 44px;}
   .pfoot-glow{position:absolute;inset:0;z-index:0;pointer-events:none;
@@ -532,12 +556,37 @@
   <p class="foot mono">Demo-Ansicht · Fotos Platzhalter · Marktdaten Demo · Objektdaten: app.unio.at/property/2</p>
 </div>
 
+<section class="similar">
+  <h2>Ähnliche Objekte</h2>
+  <div class="simgrid">
+    <a class="simcard" href="immobilien.html#suche">
+      <img src="../../assets/img/obenzwei.jpg" alt="ObenZwei — Penthouse, Wien 1020" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>ObenZwei — Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
+    </a>
+    <a class="simcard" href="immobilien.html#suche">
+      <img src="../../assets/img/beheim.jpg" alt="Penthouse Beheim, Wien 1170" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>Penthouse Beheim</b><span>Wien · 1170 · € 1,7 Mio</span></span>
+    </a>
+    <a class="simcard" href="immobilien.html#suche">
+      <img src="../../assets/img/penthouse.jpg" alt="Penthouse über den Dächern, Wien Innenstadt" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>Penthouse über den Dächern</b><span>Wien · Innenstadt · € 4 Mio</span></span>
+    </a>
+  </div>
+  <div class="ownerhook">
+    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist — kostenlos, datenbasiert, in 48 Stunden.</p>
+    <a href="https://bewertung.unio.at" rel="noopener">Immobilie bewerten <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
 <footer class="pfoot">
   <div class="pfoot-glow" aria-hidden="true"></div>
   <div class="pfoot-in">
     <h2>Raum. Technologie.<br>Mensch.</h2>
     <div class="pfoot-cta">
-      <a class="pfoot-btn" href="kontakt.html">Demo buchen <span>→</span></a>
+      <a class="pfoot-btn" href="kontakt.html?demo=1">Demo buchen <span>→</span></a>
       <a class="pfoot-ghost" href="kontakt.html">Kontakt</a>
     </div>
     <div class="pfoot-links">
@@ -545,7 +594,11 @@
     </div>
     <div class="pfoot-bar">
       <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO">
-      <span class="mono">© 2026 UNIO · Wien · Arbeitsstand</span>
+      <span style="display:inline-flex;gap:24px;align-items:center;">
+        <a href="impressum.html" style="color:var(--fg2);text-decoration:none;font-size:13px;">Impressum</a>
+        <a href="datenschutz.html" style="color:var(--fg2);text-decoration:none;font-size:13px;">Datenschutz</a>
+        <span class="mono">© 2026 UNIO · Wien · Arbeitsstand</span>
+      </span>
     </div>
   </div>
 </footer>

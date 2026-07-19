@@ -16,7 +16,7 @@ function BCard({ span = 2, orange = false, title, copy, children, style }) {
       ...style,
     }}>
       <div style={{ font: "500 20px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: orange ? "#FFFFFF" : "var(--ink)" }}>{title}</div>
-      <p style={{ margin: 0, font: "400 14.5px/1.55 var(--font-display)", color: orange ? "rgba(255,245,239,0.85)" : "var(--text-muted)", maxWidth: "36ch" }}>{copy}</p>
+      <p style={{ margin: 0, font: "400 14.5px/1.55 var(--font-display)", color: orange ? "rgba(255,245,239,0.92)" : "var(--text-muted)", maxWidth: "36ch" }}>{copy}</p>
       <div style={{ marginTop: "auto", paddingTop: 16 }}>{children}</div>
     </div>
   );
@@ -76,7 +76,7 @@ function AnimActions() {
         const on = t > i;
         return (
           <div key={txt} style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--paper)", borderRadius: 10, padding: "9px 13px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", opacity: on ? (i === 0 ? 1 : 0.75) : 0, transform: on ? "none" : "translateY(10px)", transition: "all 450ms var(--ease-unio)" }}>
-            <span style={{ width: 16, height: 16, borderRadius: "50%", flex: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "9px var(--font-mono)", background: t > i + 3 ? "var(--signal)" : "var(--signal-soft)", color: t > i + 3 ? "#FFFFFF" : "transparent", transition: "all 350ms var(--ease-unio)" }}>✓</span>
+            <span style={{ width: 16, height: 16, borderRadius: "50%", flex: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", background: t > i + 3 ? "var(--signal)" : "var(--signal-soft)", color: t > i + 3 ? "#FFFFFF" : "transparent", transition: "all 350ms var(--ease-unio)" }}>✓</span>
             <span style={{ font: "500 13px var(--font-display)", color: "var(--ink-2)" }}>{txt}</span>
             <span style={{ marginLeft: "auto", font: "10.5px var(--font-mono)", color: i === 0 ? "var(--signal-deep)" : "var(--text-muted)", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{w}</span>
           </div>
@@ -148,7 +148,7 @@ function AnimLead() {
         const on = t > i;
         return (
           <div key={n} style={{ display: "grid", gridTemplateColumns: "84px 1fr 34px", gap: 10, alignItems: "center" }}>
-            <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>{n}</span>
+            <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>{n}</span>
             <span style={{ height: 8, borderRadius: 4, background: "var(--paper-3)", overflow: "hidden" }}>
               <span style={{ display: "block", height: "100%", width: on ? w + "%" : "0%", background: i === stages.length - 1 ? "var(--signal)" : "var(--ink-3)", borderRadius: 4, transition: "width 500ms var(--ease-unio)" }}></span>
             </span>
@@ -172,12 +172,12 @@ function AnimBautraeger() {
           return (
             <div key={n} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
               <span style={{ width: "100%", height: on ? (v / 9 * 40) : 0, background: "#FFFFFF", borderRadius: 2, transition: "height 500ms var(--ease-unio)" }}></span>
-              <span style={{ font: "7.5px var(--font-mono)", letterSpacing: "0.06em", color: "rgba(255,245,239,0.8)" }}>{n}</span>
+              <span style={{ font: "10px var(--font-mono)", letterSpacing: "0.06em", color: "rgba(255,245,239,0.8)" }}>{n}</span>
             </div>
           );
         })}
       </div>
-      <div className="u-label" style={{ fontSize: 8.5, color: "rgba(255,245,239,0.85)", marginTop: 10 }}>Channel Performance · High-End-Kampagne</div>
+      <div className="u-label" style={{ fontSize: 10, color: "rgba(255,245,239,0.92)", marginTop: 10 }}>Channel Performance · High-End-Kampagne</div>
     </div>
   );
 }
@@ -206,7 +206,7 @@ function AnimAnlage({ pct = 90 }) {
   return (
     <div>
       <span style={{ font: "500 56px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>{val} %</span>
-      <div className="u-label" style={{ color: "rgba(255,245,239,0.85)", marginTop: 10 }}>weniger Tipparbeit pro Objekt</div>
+      <div className="u-label" style={{ color: "rgba(255,245,239,0.92)", marginTop: 10 }}>weniger Tipparbeit pro Objekt</div>
       <div style={{ height: 3, background: "rgba(255,255,255,0.3)", borderRadius: 2, marginTop: 16, overflow: "hidden" }}>
         <div style={{ height: "100%", width: (val / pct) * 100 + "%", background: "#FFFFFF", borderRadius: 2, transition: "width 250ms linear" }}></div>
       </div>
@@ -219,10 +219,10 @@ function AnsprechTile() {
   return (
     <BCard span={2} title="Dein Ansprechpartner im CIRCLE" copy="Software automatisiert die Prozesse — entschieden und begleitet wird von Menschen.">
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <span style={{ width: 54, height: 54, borderRadius: "50%", flex: "none", border: "1px dashed var(--hairline-dark)", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "8px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}>FOTO</span>
+        <span style={{ width: 54, height: 54, borderRadius: "50%", flex: "none", border: "1px dashed var(--hairline-dark)", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}>FOTO</span>
         <div>
           <div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>[PLATZHALTER: Name]</div>
-          <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>Partner-Management · Wien</span>
+          <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>Partner-Management · Wien</span>
         </div>
       </div>
     </BCard>
@@ -242,7 +242,7 @@ function SystemBento({ makler = false }) {
         </h2>
         ); return R ? <R>{H}</R> : H; })()}
         <p style={{ margin: "20px 0 0", font: "400 18px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>
-          Von der KI-Suche über abgesicherte Leads bis zum Portal-Export — jede Funktion arbeitet für dich, damit du dich auf Abschlüsse konzentrierst.
+          Jede Funktion hier hat denselben Job: dir Verwaltungszeit abzunehmen, damit du sie Menschen gibst. Mehr Gespräche, mehr Besichtigungen, mehr Abschlüsse.
         </p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 16 }}>

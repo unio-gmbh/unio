@@ -232,6 +232,17 @@ function SeqPinned({ mobile }) {
         <div style={{ position: "absolute", left: mobile ? "6vw" : "7vw", right: mobile ? "6vw" : "7vw", bottom: mobile ? 16 : 22, height: 1.5, background: "rgba(11,10,9,0.14)", zIndex: 20 }}>
           <i ref={railRef} style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 0, background: "var(--signal)", display: "block" }}></i>
         </div>
+        {/* Skip-Affordanz: oben rechts unter der Nav (unten rechts sitzt der Sticky-CTA) */}
+        <button
+          onClick={() => { const el = seqRef.current; if (el) window.scrollTo({ top: el.offsetTop + el.offsetHeight - innerHeight + 2, behavior: "smooth" }); }}
+          style={{
+            position: "absolute", right: mobile ? "6vw" : 40, top: mobile ? 78 : 96, zIndex: 21,
+            cursor: "pointer", border: "none", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em",
+            textTransform: "uppercase", padding: "9px 15px", borderRadius: "var(--r-pill)",
+            background: "rgba(253,252,250,0.85)", WebkitBackdropFilter: "blur(10px)", backdropFilter: "blur(10px)",
+            boxShadow: "inset 0 0 0 1px rgba(11,10,9,0.18)", color: "var(--ink-2)",
+          }}
+        >Überspringen ↓</button>
       </div>
     </section>
   );
@@ -286,8 +297,8 @@ function ImmoGalerie({ items }) {
         <a key={o.t} href="projekt.html" style={{ scrollSnapAlign: "start", position: "relative", width: "min(72vw, 860px)", height: "min(62vh, 560px)", flex: "none", overflow: "hidden", borderRadius: "var(--r-card)", textDecoration: "none" }}>
           <img src={o.img} alt={o.t} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
           <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.22), transparent 34%, transparent 58%, rgba(11,10,9,0.55))" }}></div>
-          <span className="u-label" style={{ position: "absolute", top: 22, left: 26, color: "var(--text-inverse)", fontSize: 10, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>{o.loc}</span>
-          <span className="u-label" style={{ position: "absolute", top: 22, right: 26, color: "var(--text-inverse)", fontSize: 10, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>{o.live ? "LIVE VERMARKTET" : o.price}</span>
+          <span className="u-label" style={{ position: "absolute", top: 22, left: 26, color: "var(--text-inverse)", fontSize: 10, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>{o.adr}</span>
+          <span className="u-label" style={{ position: "absolute", top: 22, right: 26, color: "var(--text-inverse)", fontSize: 10, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>{o.price}</span>
           <div style={{ position: "absolute", left: 26, bottom: 24, right: 26, display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 16 }}>
             <span style={{ font: "500 clamp(26px, 3vw, 44px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--text-inverse)", textShadow: "0 2px 30px rgba(0,0,0,0.4)" }}>{o.t}</span>
             <span style={{ font: "14px var(--font-mono)", color: "var(--text-inverse)", flex: "none" }}>↗</span>

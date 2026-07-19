@@ -58,7 +58,7 @@ function Kap({ nr, label, dark }) {
   return (
     <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 60, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, zIndex: 3 }}>
       <span style={{ width: 1, height: 46, background: dark ? "var(--hairline-light)" : "var(--hairline-dark)" }}></span>
-      <span className="u-label" style={{ writingMode: "vertical-rl", fontSize: 9, letterSpacing: "0.18em", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{nr} — {label}</span>
+      <span className="u-label" style={{ writingMode: "vertical-rl", fontSize: 10, letterSpacing: "0.18em", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{nr} — {label}</span>
     </div>
   );
 }
@@ -74,20 +74,40 @@ function GridLines() {
   );
 }
 
-/* Sticky Micro-CTA: Glas-Pill ab 50 % Scrolltiefe, Desktop, nicht am Funnel */
+/* Sticky Micro-CTA ab 50 % Scrolltiefe, nicht am Funnel.
+   Desktop: Glas-Pill rechts unten · Mobil: Bottom-Bar (Muster der Projekt-Seite). */
 function StickyCTA() {
   const [show, setShow] = React.useState(false);
+  const mob = window.useMobile();
   React.useEffect(() => {
     const on = () => {
       const max = document.body.scrollHeight - innerHeight;
       const p = max > 0 ? scrollY / max : 0;
-      setShow(innerWidth >= 900 && p > 0.5 && p < 0.93);
+      setShow(p > 0.5 && p < 0.93);
     };
     on();
     addEventListener("scroll", on, { passive: true });
     addEventListener("resize", on);
     return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
   }, []);
+  const vis = { opacity: show ? 1 : 0, transform: show ? "none" : "translateY(14px)", pointerEvents: show ? "auto" : "none", transition: `all var(--dur-fast) ${BT_EASE}` };
+  if (mob) {
+    return (
+      <a href="#funnel" data-track="sticky_cta" style={{
+        position: "fixed", left: 12, right: 12, bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)", zIndex: 70,
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+        padding: "10px 10px 10px 20px", borderRadius: 20, textDecoration: "none",
+        background: "rgba(20,18,16,0.9)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)",
+        boxShadow: "0 18px 50px -16px rgba(20,18,16,.5)", ...vis,
+      }}>
+        <span>
+          <b style={{ display: "block", font: "500 15px var(--font-display)", color: "#fff" }}>Projekt prüfen lassen</b>
+          <span className="u-label" style={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }}>Vertraulich · Antwort in 48 h</span>
+        </span>
+        <span style={{ flex: "none", background: "#F3F0EA", color: "var(--ink)", borderRadius: 14, padding: "13px 18px", font: "500 13.5px var(--font-display)" }}>Los →</span>
+      </a>
+    );
+  }
   return (
     <a href="#funnel" data-track="sticky_cta" style={{
       position: "fixed", right: 20, bottom: 20, zIndex: 70, height: 44,
@@ -95,10 +115,7 @@ function StickyCTA() {
       borderRadius: "var(--r-pill)", textDecoration: "none",
       background: "var(--glass-dark-2)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)",
       boxShadow: "inset 0 0 0 1px var(--hairline-light), var(--shadow-float)",
-      color: "var(--text-inverse)", font: "500 14px var(--font-display)",
-      opacity: show ? 1 : 0, transform: show ? "none" : "translateY(14px)",
-      pointerEvents: show ? "auto" : "none",
-      transition: `all var(--dur-fast) ${BT_EASE}`,
+      color: "var(--text-inverse)", font: "500 14px var(--font-display)", ...vis,
     }}>Projekt prüfen <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>→</span></a>
   );
 }
@@ -137,7 +154,7 @@ function St2Funnel({ run }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 9, maxWidth: 360 }}>
       {rows.map(([n, w], i) => (
         <div key={n} style={{ display: "grid", gridTemplateColumns: "104px 1fr", gap: 12, alignItems: "center" }}>
-          <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 9 }}>{n}</span>
+          <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>{n}</span>
           <div style={{ height: 8, borderRadius: 4, background: "rgba(11,10,9,0.08)", overflow: "hidden" }}>
             <div style={{ height: "100%", borderRadius: 4, width: run ? w * 100 + "%" : "3%", background: i === rows.length - 1 ? "var(--signal)" : "var(--ink-3)", transition: `width 900ms ${BT_EASE} ${i * 120}ms` }}></div>
           </div>
@@ -165,8 +182,8 @@ function St3Matching({ run }) {
         <circle key={"r" + y} cx="300" cy={y} r="5" fill={y === 66 ? "var(--signal)" : "rgba(11,10,9,0.3)"}
           style={{ opacity: run ? 1 : 0, transition: `opacity 400ms ${BT_EASE} ${200 + i * 90}ms` }} />
       ))}
-      <text x="14" y="150" fill="rgba(11,10,9,0.5)" style={{ font: "9px var(--font-mono)", letterSpacing: "0.14em" }}>EINHEITEN</text>
-      <text x="236" y="150" fill="rgba(11,10,9,0.5)" style={{ font: "9px var(--font-mono)", letterSpacing: "0.14em" }}>KÄUFERPROFILE</text>
+      <text x="14" y="150" fill="rgba(11,10,9,0.5)" style={{ font: "10px var(--font-mono)", letterSpacing: "0.14em" }}>EINHEITEN</text>
+      <text x="236" y="150" fill="rgba(11,10,9,0.5)" style={{ font: "10px var(--font-mono)", letterSpacing: "0.14em" }}>KÄUFERPROFILE</text>
     </svg>
   );
 }
@@ -177,7 +194,7 @@ function St4Lens({ run }) {
       <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 12px", background: "var(--paper-2)", borderBottom: "1px solid var(--hairline-dark)" }}>
         {[0, 1, 2].map((k) => <span key={k} style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--paper-3)" }}></span>)}
         <span style={{ marginLeft: 8, font: "10px var(--font-mono)", color: "var(--text-muted)" }}>app.unio.at</span>
-        <span className="u-label" style={{ marginLeft: "auto", fontSize: 8, color: "var(--signal-deep)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+        <span className="u-label" style={{ marginLeft: "auto", fontSize: 10, color: "var(--signal-deep)", display: "inline-flex", alignItems: "center", gap: 5 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Anfragen · live
         </span>
       </div>
@@ -228,6 +245,9 @@ function SystemLine() {
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             Ein System.<br />Vier Stationen.
           </h2>
+          <p style={{ margin: "20px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 480 }}>
+            Vier Module, ein Zweck: dass dein Projekt die Menschen erreicht, für die es gebaut ist, und du jeden Schritt dahin siehst.
+          </p>
         </Fx>
       </div>
       <div style={{ position: "relative", marginTop: mob ? 56 : 120 }}>
@@ -299,7 +319,7 @@ function Lernkurve() {
         <Kap nr="05" label="Lernkurve" dark />
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr) 56px", gap: mob ? 28 : "clamp(28px, 4vw, 64px)", alignItems: "center" }}>
           <div>
-            <span className="u-label" style={{ color: "rgba(255,245,239,0.85)" }}>Ein Dashboard, das voller wird</span>
+            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)" }}>Ein Dashboard, das voller wird</span>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 4, marginTop: 14 }}>
               <span style={{ font: `500 ${mob ? "clamp(56px, 16vw, 80px)" : "clamp(80px, 9vw, 150px)"}/0.86 var(--font-display)`, letterSpacing: "-0.05em", color: "transparent", WebkitTextStroke: "1.5px rgba(255,245,239,0.7)" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(0, -2)}</span>
               <span style={{ font: `500 ${mob ? "clamp(56px, 16vw, 80px)" : "clamp(80px, 9vw, 150px)"}/0.86 var(--font-display)`, letterSpacing: "-0.05em", color: "#FFFFFF" }}>{String(LK_STAGES[stage].tag).padStart(3, "0").slice(-2)}</span>
@@ -317,7 +337,7 @@ function Lernkurve() {
             <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", background: "var(--paper-2)", borderBottom: "1px solid var(--hairline-dark)" }}>
               {[0, 1, 2].map((k) => <span key={k} style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--paper-3)" }}></span>)}
               <span style={{ marginLeft: 8, font: "11px var(--font-mono)", color: "var(--text-muted)" }}>LENS · Performance</span>
-              <span className="u-label" style={{ marginLeft: "auto", fontSize: 9, color: "var(--signal-deep)" }}>Tag {LK_STAGES[stage].tag}</span>
+              <span className="u-label" style={{ marginLeft: "auto", fontSize: 10, color: "var(--signal-deep)" }}>Tag {LK_STAGES[stage].tag}</span>
             </div>
             <div style={{ padding: "18px 18px 16px" }}>
               <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 64 }}>
@@ -331,7 +351,7 @@ function Lernkurve() {
                     {st.rows.map((r) => (
                       <div key={r} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "9px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
                         <span style={{ font: "400 13.5px var(--font-display)", color: "var(--ink-2)" }}>{r}</span>
-                        <span className="u-label" style={{ fontSize: 9, color: stage >= si ? "var(--signal-deep)" : "var(--text-muted)" }}>Tag {st.tag}</span>
+                        <span className="u-label" style={{ fontSize: 10, color: stage >= si ? "var(--signal-deep)" : "var(--text-muted)" }}>Tag {st.tag}</span>
                       </div>
                     ))}
                   </div>

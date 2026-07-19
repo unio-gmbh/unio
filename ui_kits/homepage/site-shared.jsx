@@ -10,6 +10,34 @@ const BEWERTUNG_URL = "https://bewertung.unio.at";
 const SEARCH_URL = "https://app.unio.at/listing?listingType=SALE";
 const PROJEKT_URL = "projekt.html";
 
+/* Lead-Submission: zentraler Handler für alle Formulare.
+   Endpoint ist eine Vercel Function (api/lead.js). Dort muss noch ein
+   Mail-/CRM-Provider angebunden werden; bis dahin landen Leads im
+   Vercel-Log der Function. */
+const LEAD_ENDPOINT = "/api/lead";
+async function submitLead(type, data) {
+  try {
+    const res = await fetch(LEAD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: type, page: location.pathname, ts: new Date().toISOString(), ...data }),
+    });
+    return res.ok;
+  } catch (e) {
+    return false;
+  }
+}
+const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || "").trim());
+/* Sanfter Fehlerhinweis unter Formularen, mit E-Mail-Ausweg */
+function LeadError({ show }) {
+  if (!show) return null;
+  return (
+    <p role="alert" style={{ margin: "10px 0 0", font: "400 13.5px/1.5 var(--font-display)", color: "var(--signal-deep)" }}>
+      Senden hat nicht geklappt. Bitte direkt an <a href="mailto:office@unio.at" style={{ color: "var(--signal-deep)" }}>office@unio.at</a> schreiben.
+    </p>
+  );
+}
+
 /* Mobile-Breakpoint: eine Quelle für alle Seiten (< 900px = mobil/klein) */
 const U_MQ_MOBILE = window.matchMedia ? window.matchMedia("(max-width: 899px)") : null;
 function useMobile() {
@@ -88,10 +116,16 @@ function SiteNav({ active, cta }) {
     return () => { document.documentElement.style.overflow = ""; };
   }, [open, mob]);
   React.useEffect(() => { if (!mob) setOpen(false); }, [mob]);
+  const skipLink = (
+    <a className="u-skip" href="#main" onClick={(e) => { e.preventDefault(); const s = document.querySelector("section"); if (s) { s.setAttribute("tabindex", "-1"); s.focus({ preventScroll: true }); s.scrollIntoView(); } }}>
+      Zum Inhalt springen
+    </a>
+  );
   if (mob) {
     const line = (r) => ({ display: "block", width: 18, height: 1.5, background: "var(--ink)", borderRadius: 2, transition: "transform 400ms var(--ease-unio), opacity 300ms", transformOrigin: "center", transform: r });
     return (
       <React.Fragment>
+        {skipLink}
         {/* Overlay-Menü */}
         <div aria-hidden={!open} style={{
           position: "fixed", inset: 0, zIndex: 59,
@@ -123,7 +157,7 @@ function SiteNav({ active, cta }) {
               padding: "16px 24px", borderRadius: 12, border: "none",
               background: "var(--signal)", color: "var(--on-signal)", width: "100%",
             }}>{c.label}</button>
-            <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 9 }}>UNIO · Wien · app.unio.at</span>
+            <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>UNIO · Wien · app.unio.at</span>
           </div>
         </div>
         {/* Leiste */}
@@ -155,7 +189,9 @@ function SiteNav({ active, cta }) {
     );
   }
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 6vw", transition: "padding .55s var(--ease-unio)" }}>
+    <React.Fragment>
+    {skipLink}
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
       <div style={{
         width: "100%", maxWidth: pill ? 760 : "none", margin: "0 auto",
         display: "flex", alignItems: "center",
@@ -190,6 +226,7 @@ function SiteNav({ active, cta }) {
         </div>
       </div>
     </div>
+    </React.Fragment>
   );
 }
 
@@ -243,45 +280,60 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
   );
 }
 
-/* Objektkarte (Endkunde — ohne B2B-Metriken) */
+/* Objektkarte: Nachfrage-Badge + Partner-Avatar im Bild, Aktiv-Pill,
+   Adresszeile, Mono-Datenzeile (m² · Zi · Preis) */
+const PIcon = ({ d }) => (
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--text-muted)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "none" }}>
+    <path d={d}></path>
+  </svg>
+);
 function PropCard({ o, hov, onHov }) {
   return (
     <a href={PROJEKT_URL}
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
       style={{ textDecoration: "none", display: "block", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
       <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
-        <img src={o.img} alt={o.t} style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-        <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 6 }}>
-          {o.tags.map((t) => (
-            <span key={t} className="u-label" style={{ fontSize: 10, padding: "5px 10px", borderRadius: "var(--r-pill)", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>{t}</span>
-          ))}
-        </div>
+        <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
+        {/* Partner-Avatar im Bild, rechts oben */}
+        <span
+          role="link" tabIndex={0} title="Persönlich betreut · UNIO Partner:in"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); location.assign("makler.html"); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); location.assign("makler.html"); } }}
+          style={{ position: "absolute", top: 12, right: 12, cursor: "pointer", display: "block", width: 36, height: 36, borderRadius: "50%", overflow: "hidden", boxShadow: "0 0 0 2px rgba(253,252,250,0.95), 0 4px 14px rgba(11,10,9,0.3)" }}>
+          <img src={o.agentImg || "../../assets/team/portrait-01.jpg"} alt="UNIO Partner:in" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 22%" }} />
+        </span>
+        {/* Nachfrage-Badge unten links */}
+        {o.score && (
+          <span className="u-label" style={{ position: "absolute", left: 12, bottom: 12, fontSize: 10, padding: "7px 13px", borderRadius: 8, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>Nachfrage {o.score}</span>
+        )}
       </div>
       <div style={{ padding: "16px 16px 14px" }}>
-        <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>{o.loc}</span>
-        <div style={{ font: "500 20px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 6 }}>{o.t}</div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, borderTop: "1px solid var(--hairline-dark)", paddingTop: 12 }}>
-          {o.live ? (
-            <span className="u-label" style={{ fontSize: 10, color: "var(--signal-deep)", display: "inline-flex", alignItems: "center", gap: 7 }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Live vermarktet
-            </span>
-          ) : (
-            <span style={{ font: "14px var(--font-mono)", color: "var(--ink-2)" }}>{o.price}</span>
-          )}
-          <span style={{ font: "13px var(--font-mono)", color: "var(--text-muted)" }}>↗</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <span style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", minWidth: 0 }}>{o.t}</span>
+          <span className="u-label" style={{ flex: "none", fontSize: 9.5, color: "var(--signal-deep)", background: "var(--signal-soft)", padding: "6px 12px", borderRadius: "var(--r-pill)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Aktiv
+          </span>
+        </div>
+        <div style={{ font: "400 15px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{o.adr}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, font: "13px var(--font-mono)", color: "var(--ink-2)" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M2.5 2.5h11v11h-11zM10 2.5 2.5 10" />{o.qm} m²</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M4 13.5V4a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 12 4v9.5M4 13.5h8M9.8 8.2h.01" />{o.zi} Zi.</span>
+          <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7, font: "500 15.5px var(--font-display)", color: "var(--ink)" }}><PIcon d="M8.6 2.5H13.5v4.9L7.4 13.5a1 1 0 0 1-1.4 0L2.5 10a1 1 0 0 1 0-1.4zM11 5h.01" />{o.price}</span>
         </div>
       </div>
     </a>
   );
 }
 
+/* ll = ungefähre Lage (Bezirks-Ebene) für die Kartenansicht — keine Adressen.
+   qm/zi/score: Demo-Werte (Arbeitsstand). */
 const OBJEKT_DB = [
-  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht — Townhäuser", loc: "Wien · 1170", tags: ["Neubau", "8 Einheiten"], live: true, q: "albrecht townhaus neubau 1170 hernals haus" },
-  { img: "../../assets/img/obenzwei.jpg", t: "Obenzwei — Penthouse", loc: "Wien · 2. Bezirk", tags: ["Penthouse", "Bestlage"], price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung" },
-  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", loc: "Wien · 1170", tags: ["2 Penthäuser", "Erstbezug"], price: "€ 1,7 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse" },
-  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium Wienerwald", loc: "Wien-Umland", tags: ["Haus", "Pool"], price: "€ 1,9 Mio", q: "haus garten pool gruen wienerwald refugium" },
-  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", loc: "Wien · Innenstadt", tags: ["Penthouse", "Dachterrasse"], price: "€ 4 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus" },
-  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", loc: "Wien · 1040", tags: ["Altbau", "Saniert"], price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche" },
+  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], agentImg: "../../assets/team/portrait-01.jpg" },
+  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg" },
+  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], agentImg: "../../assets/team/portrait-03.jpg" },
+  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], agentImg: "../../assets/team/portrait-04.jpg" },
+  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], agentImg: "../../assets/team/portrait-05.jpg" },
+  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg" },
 ];
 
 /* Footer */
@@ -295,21 +347,22 @@ function SiteFooter() {
         Raum. Technologie.<br />Mensch.
       </h2>
       <div style={{ display: "flex", gap: 12, marginTop: mob ? 28 : 36, flexWrap: "wrap" }}>
-        <Button size="lg" variant="paper" knob>Demo buchen</Button>
+        <Button size="lg" variant="paper" knob onClick={() => (location.href = "kontakt.html?demo=1")}>Demo buchen</Button>
         <Button size="lg" variant="ghost" onClick={() => (location.href = "kontakt.html")}>Kontakt</Button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, auto)" : "repeat(4, auto)", justifyContent: "start", gap: mob ? "14px 40px" : "12px 48px", marginTop: mob ? 52 : 72, font: "400 14.5px var(--font-display)" }}>
         {NAV_LINKS.map(([l, href]) => (
           <a key={href} href={href} style={{ color: "var(--text-muted)", textDecoration: "none" }}>{l}</a>
         ))}
+        <a href="/wissen" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Wissen</a>
         <a href={APP_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Login ↗</a>
         <a href={BEWERTUNG_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Bewertung ↗</a>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--hairline-dark)", marginTop: mob ? 40 : 56, paddingTop: 24, gap: 20, flexWrap: "wrap" }}>
         <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18, width: "auto" }} />
         <div style={{ display: "flex", gap: mob ? 18 : 28, alignItems: "center", flexWrap: "wrap" }}>
-          <a href="#" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Impressum</a>
-          <a href="#" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Datenschutz</a>
+          <a href="impressum.html" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Impressum</a>
+          <a href="datenschutz.html" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Datenschutz</a>
           <span className="u-label" style={{ color: "var(--text-muted)" }}>© 2026 UNIO · Wien</span>
         </div>
       </div>
@@ -367,8 +420,33 @@ const U_RM = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce
     "@media (max-width:899px){.u-kap{display:none!important}}",
     "@media (max-width:899px){input,select,textarea{font-size:16px!important}}",
     "html{-webkit-text-size-adjust:100%}",
+    /* Hover-Feedback für alle Buttons und CTA-Links: dezente Aufhellung + Lift,
+       Press bleibt das bestehende scale(0.985) */
+    "@media (hover:hover){",
+    "button{transition:filter .35s var(--ease-unio),transform .35s var(--ease-unio),box-shadow .35s var(--ease-unio)}",
+    "button:hover:not(:disabled){filter:brightness(1.06)}",
+    "button:active:not(:disabled){transform:scale(.985)}",
+    "a[data-track]:hover{filter:brightness(1.08)}",
+    "}",
+    /* Tastatur-Navigation: sichtbarer Fokus im Signal-Stil */
+    "a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--signal)!important;outline-offset:3px;}",
+    /* Skip-Link: unsichtbar bis fokussiert */
+    ".u-skip{position:fixed;left:16px;top:-64px;z-index:120;background:var(--ink);color:var(--paper);font:500 14px var(--font-display);padding:12px 18px;border-radius:10px;text-decoration:none;transition:top .25s ease;}",
+    ".u-skip:focus{top:16px;}",
   ].join("\n");
   document.head.appendChild(s);
+})();
+
+/* Tracking: data-track-Klicks an Vercel Web Analytics weiterreichen.
+   (Web Analytics muss im Vercel-Dashboard des Projekts aktiviert sein.) */
+(() => {
+  if (window.__uTrack) return;
+  window.__uTrack = true;
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  document.addEventListener("click", (e) => {
+    const el = e.target && e.target.closest ? e.target.closest("[data-track]") : null;
+    if (el) window.va("event", { name: el.getAttribute("data-track") });
+  }, true);
 })();
 
 /* Live-Signal: Pill mit pulsierendem Orange-Punkt */
@@ -408,7 +486,7 @@ function Annotation({ top, left, right, bottom, label, value, show = true, delay
     <div style={{ position: "absolute", top, left, right, bottom, display: "flex", alignItems: "center", zIndex: 5, opacity: show ? 1 : 0, transform: show ? "none" : "translateY(10px)", transition: `all 650ms var(--ease-unio) ${delay}ms`, pointerEvents: "none", ...style }}>
       {lineSide === "left" && line}
       <span style={{ background: dark ? "var(--glass-dark)" : "rgba(253,252,250,0.9)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", boxShadow: `inset 0 0 0 1px ${dark ? "var(--hairline-light)" : "var(--hairline-dark)"}`, borderRadius: 10, padding: "8px 12px", color: dark ? "var(--text-inverse)" : "var(--ink-2)" }}>
-        <span className="u-label" style={{ display: "block", fontSize: 9, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{label}</span>
+        <span className="u-label" style={{ display: "block", fontSize: 10, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{label}</span>
         {value && <span style={{ font: "13px var(--font-mono)", display: "block", marginTop: 3 }}>{value}</span>}
       </span>
       {lineSide === "right" && line}
@@ -443,7 +521,7 @@ function UIMiniLens({ width = 200, play = true, style }) {
       <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "7px 10px", background: "var(--paper-2)", borderBottom: "1px solid var(--hairline-dark)" }}>
         <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--paper-3)" }}></span>
         <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--paper-3)" }}></span>
-        <span style={{ font: "8px var(--font-mono)", color: "var(--text-muted)", marginLeft: 5, letterSpacing: "0.06em" }}>app.unio.at · LENS</span>
+        <span style={{ font: "10px var(--font-mono)", color: "var(--text-muted)", marginLeft: 5, letterSpacing: "0.06em" }}>app.unio.at · LENS</span>
         <span style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", background: "var(--signal)", animation: U_RM ? "none" : "uPulse 2.2s var(--ease-unio) infinite" }}></span>
       </div>
       <div style={{ padding: "10px 10px 8px" }}>
@@ -453,8 +531,8 @@ function UIMiniLens({ width = 200, play = true, style }) {
             style={{ strokeDasharray: 150, strokeDashoffset: U_RM || !play ? 0 : 150, animation: U_RM || !play ? "none" : "uDraw 1.8s var(--ease-unio) 300ms forwards" }} />
         </svg>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-          <span style={{ font: "8px var(--font-mono)", letterSpacing: "0.1em", color: "var(--text-muted)", textTransform: "uppercase" }}>Anfragen</span>
-          <span style={{ font: "9px var(--font-mono)", color: "var(--signal-deep)" }}>↗</span>
+          <span style={{ font: "10px var(--font-mono)", letterSpacing: "0.1em", color: "var(--text-muted)", textTransform: "uppercase" }}>Anfragen</span>
+          <span style={{ font: "10px var(--font-mono)", color: "var(--signal-deep)" }}>↗</span>
         </div>
       </div>
     </div>
@@ -493,7 +571,7 @@ function StatFrame({ value, unit, label, caption, graph = "spark", children, spa
           {value}{unit && <span style={{ fontSize: "0.5em", fontWeight: 400, marginLeft: 3 }}>{unit}</span>}
           <span style={{ font: "12px var(--font-mono)", marginLeft: 7, verticalAlign: "6px" }}>↗</span>
         </span>
-        <div className="u-label" style={{ fontSize: 9.5, marginTop: 7, color: "rgba(255,255,255,0.92)", maxWidth: "14ch", lineHeight: 1.5 }}>{label}</div>
+        <div className="u-label" style={{ fontSize: 10, marginTop: 7, color: "rgba(255,255,255,0.92)", maxWidth: "14ch", lineHeight: 1.5 }}>{label}</div>
       </div>
       <div style={{ transform: show ? "none" : "translateY(8px)", transition: `transform 800ms var(--ease-unio) ${delay}ms` }}>
         {children}
@@ -503,7 +581,7 @@ function StatFrame({ value, unit, label, caption, graph = "spark", children, spa
               <polyline points={pts.join(" ")} fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.1" vectorEffect="non-scaling-stroke" />
             </svg>
             <div style={{ display: "flex", justifyContent: "space-between", margin: "4px 2px 0" }}>
-              {marks.map((m) => <span key={m} style={{ font: "7.5px var(--font-mono)", letterSpacing: "0.08em", color: "rgba(255,255,255,0.7)", textTransform: "uppercase" }}>{m}</span>)}
+              {marks.map((m) => <span key={m} style={{ font: "10px var(--font-mono)", letterSpacing: "0.08em", color: "rgba(255,255,255,0.7)", textTransform: "uppercase" }}>{m}</span>)}
             </div>
           </div>
         )}
@@ -544,7 +622,7 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
       <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 96, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
         <span style={{ font: "11px var(--font-mono)", color: "var(--text-muted)" }}>{nr}</span>
         <span style={{ width: 1, height: 54, background: "var(--hairline-dark)" }}></span>
-        <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
+        <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: mob ? 36 : 48, position: "relative" }}>
         <div style={{ alignSelf: "start", opacity: seen ? 1 : 0, transform: seen ? "none" : "translateY(18px)", transition: "all 700ms var(--ease-unio)" }}>
@@ -570,7 +648,14 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
                 <div id={"faq-" + nr + "-" + i} role="region" aria-labelledby={"faqq-" + nr + "-" + i}
                   style={{ display: "grid", gridTemplateRows: isOpen ? "1fr" : "0fr", opacity: isOpen ? 1 : 0, transition: "grid-template-rows 360ms var(--ease-unio), opacity 360ms var(--ease-unio)" }}>
                   <div style={{ overflow: "hidden" }}>
-                    <p style={{ margin: "0 0 22px", font: "400 15.5px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 600 }}>{a}</p>
+                    <p style={{ margin: "0 0 22px", font: "400 15.5px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 600 }}>
+                      {a}
+                      {items[i][2] && (
+                        <a href={items[i][2].href} style={{ display: "inline-flex", alignItems: "center", gap: 6, marginLeft: 10, font: "500 14.5px var(--font-display)", color: "var(--signal-deep)", textDecoration: "none", borderBottom: "1px solid var(--signal)", paddingBottom: 1 }}>
+                          {items[i][2].label} <span style={{ font: "11px var(--font-mono)" }}>→</span>
+                        </a>
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -594,4 +679,5 @@ Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
+  submitLead, validEmail, LeadError,
 });

@@ -13,20 +13,40 @@ for (let c = 0; c < 6; c++) for (let r = 0; r < 11; r++) {
   if (h < ((c + 1) / 6) * 0.9) MK_CELLS.push([c, r, (r + c) % 2 === 0, (r * 5 + c * 3) % 19 === 0, (r + c) % 3]);
 }
 
-/* Sticky Micro-Pill „Bewerben" ab 50 % Scrolltiefe (Desktop) */
+/* Sticky Micro-CTA „Bewerben" ab 50 % Scrolltiefe.
+   Desktop: Glas-Pill rechts unten · Mobil: Bottom-Bar. */
 function MkSticky() {
   const [show, setShow] = React.useState(false);
+  const mob = window.useMobile();
   React.useEffect(() => {
     const on = () => {
       const max = document.body.scrollHeight - innerHeight;
       const p = max > 0 ? scrollY / max : 0;
-      setShow(innerWidth >= 900 && p > 0.5 && p < 0.92);
+      setShow(p > 0.5 && p < 0.92);
     };
     on();
     addEventListener("scroll", on, { passive: true });
     addEventListener("resize", on);
     return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
   }, []);
+  const vis = { opacity: show ? 1 : 0, transform: show ? "none" : "translateY(14px)", pointerEvents: show ? "auto" : "none", transition: `all var(--dur-fast) ${BT_EASE}` };
+  if (mob) {
+    return (
+      <a href="#bewerben" data-track="sticky_cta" style={{
+        position: "fixed", left: 12, right: 12, bottom: "calc(env(safe-area-inset-bottom, 0px) + 12px)", zIndex: 70,
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+        padding: "10px 10px 10px 20px", borderRadius: 20, textDecoration: "none",
+        background: "rgba(20,18,16,0.9)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)",
+        boxShadow: "0 18px 50px -16px rgba(20,18,16,.5)", ...vis,
+      }}>
+        <span>
+          <b style={{ display: "block", font: "500 15px var(--font-display)", color: "#fff" }}>CIRCLE Partner werden</b>
+          <span className="u-label" style={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }}>Persönliches Gespräch · 48 h</span>
+        </span>
+        <span style={{ flex: "none", background: "#F3F0EA", color: "var(--ink)", borderRadius: 14, padding: "13px 18px", font: "500 13.5px var(--font-display)" }}>Bewerben →</span>
+      </a>
+    );
+  }
   return (
     <a href="#bewerben" data-track="sticky_cta" style={{
       position: "fixed", right: 20, bottom: 20, zIndex: 70, height: 44,
@@ -34,9 +54,7 @@ function MkSticky() {
       borderRadius: "var(--r-pill)", textDecoration: "none",
       background: "var(--glass-dark-2)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)",
       boxShadow: "inset 0 0 0 1px var(--hairline-light), var(--shadow-float)",
-      color: "var(--text-inverse)", font: "500 14px var(--font-display)",
-      opacity: show ? 1 : 0, transform: show ? "none" : "translateY(14px)", pointerEvents: show ? "auto" : "none",
-      transition: `all var(--dur-fast) ${BT_EASE}`,
+      color: "var(--text-inverse)", font: "500 14px var(--font-display)", ...vis,
     }}>Bewerben <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>→</span></a>
   );
 }
@@ -89,7 +107,7 @@ function HeroMk() {
               {[["100 %", "Provision"], ["Deine", "Marke"], ["Beteiligung", "möglich"]].map(([v, k], i) => (
                 <div key={k} style={{ flex: 1, padding: "14px 16px", borderLeft: i === 0 ? "none" : "1px solid var(--hairline-light)", color: "var(--text-inverse)" }}>
                   <div style={{ font: "500 18px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{v}</div>
-                  <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-inverse-muted)", marginTop: 5 }}>{k}</div>
+                  <div className="u-label" style={{ fontSize: 10, color: "var(--text-inverse-muted)", marginTop: 5 }}>{k}</div>
                 </div>
               ))}
             </div>
@@ -109,9 +127,9 @@ const FRAGEN_MK = [
 const PILLARS_MK = [
   ["01", "Ownership statt Abhängigkeit", "CIRCLE dreht das alte Margensystem um: Deine Provision gehört dir — und über das UNIO Share-Modell partizipierst du am Netzwerk, das du selbst mit aufbaust.", [["100 %", "Provision ab €150K p.a."], ["85 %", "Provision bis €150K p.a."]]],
   ["02", "Enablement durch Infrastruktur & Tech", "Statt Kontrolle: Enablement. Digitales Backoffice, KI-Portfoliomanagement, immersive Exposés, Smart Matching, intelligentes Lead Management, digitales Closing und KI-Telefonassistent.", [["8+", "Tech-Module"], ["~80 %", "weniger Admin"]]],
-  ["03", "Unternehmertum mit Community-Power", "Du bleibst unabhängig und baust deine eigene Marke auf — aber nicht allein. Austausch, Standards, Zusammenarbeit und gemeinsames Momentum statt Einzelkämpfer-Modus.", [["20 %", "Gewinn-Ausschüttung"], ["49 %", "Share an Top-Performer"]]],
-  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Das UNIO-Akquise-Team holt exklusive, kuratierte Projekte. Alle Projekte werden aufbereitet, vom Inhouse-Marketing ins richtige Licht gerückt — und du bekommst vorqualifizierte Leads.", [["exklusiv", "kuratierter Dealflow"], ["25 %", "passiv aus Recruits"]]],
-  ["05", "Deine Marketing-Superpower", "CIRCLE ist für Makler, die nicht „mitlaufen\" wollen. Individuelle Markenstrategie, Personal Branding und volle Content-Produktion unter deinem Namen.", [["3", "Kurzvideos / Monat"], ["10", "Fotos / Monat"]]],
+  ["03", "Unternehmertum mit Community-Power", "Du bleibst unabhängig und baust deine eigene Marke auf — aber nicht allein. Austausch, Standards, Zusammenarbeit und gemeinsames Momentum statt Einzelkämpfer-Modus.", [["25 %", "Referral aus geworbenen Deals"], ["49 %", "Share an Top-Performer"]]],
+  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Das UNIO-Akquise-Team holt exklusive, kuratierte Projekte. Alle Projekte werden aufbereitet, vom Inhouse-Marketing ins richtige Licht gerückt — und du bekommst vorqualifizierte Leads.", [["exklusiv", "kuratierter Dealflow aus dem UNIO-Akquise-Team"]]],
+  ["05", "Deine Marketing-Superpower", "CIRCLE ist für Makler, die nicht „mitlaufen\" wollen. Individuelle Markenstrategie, Personal Branding und volle Content-Produktion unter deinem Namen.", [["Content", "Video · Foto · Grafik unter deinem Namen"], ["Website", "Personal Brand & Funnel inklusive"]]],
 ];
 function FragenMk() {
   const mob = window.useMobile();
@@ -140,7 +158,7 @@ function FragenMk() {
                 {stats.map(([v, k]) => (
                   <div key={k} style={{ textAlign: mob ? "left" : "right" }}>
                     <div style={{ font: `500 ${mob ? "clamp(26px, 7vw, 34px)" : "clamp(30px, 3vw, 46px)"}/1 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--signal)" }}>{v}</div>
-                    <div className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 8, maxWidth: 140 }}>{k}</div>
+                    <div className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8, maxWidth: 140 }}>{k}</div>
                   </div>
                 ))}
               </div>
@@ -218,7 +236,7 @@ function GesichterMk() {
               <div style={{ position: "absolute", left: 12, right: 12, bottom: 12, borderRadius: "var(--r-inner)", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", padding: "12px 14px", color: "var(--text-inverse)" }}>
                 <div style={{ font: "500 20px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{f.stat}<span style={{ font: "11px var(--font-mono)", marginLeft: 6, color: "var(--signal)" }}>↗</span></div>
                 <MkSpark pts={f.spark} />
-                <span className="u-label" style={{ fontSize: 8, color: "var(--text-inverse-muted)" }}>{f.sub}</span>
+                <span className="u-label" style={{ fontSize: 10, color: "var(--text-inverse-muted)" }}>{f.sub}</span>
               </div>
             </div>
           </Fx>
@@ -291,7 +309,7 @@ function ObjektanlageMk() {
             <div className="u-label" style={{ color: "var(--text-muted)", marginTop: 6 }}>weniger Tipparbeit pro Objekt</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 18, flexWrap: "wrap" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: "var(--r-pill)", background: "var(--ink)", color: "var(--paper)", font: "500 13.5px var(--font-display)" }}>
-                <span style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "9px var(--font-mono)", color: "#FFF" }}>✓</span>
+                <span style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", color: "#FFF" }}>✓</span>
                 Freigeben
               </span>
               <span style={{ font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: "26ch" }}>Du prüfst und gibst frei — den Rest macht das System.</span>
@@ -340,7 +358,7 @@ function ObjektanlageMk() {
                 font: "10px var(--font-mono)", letterSpacing: "0.1em", color: "var(--ink-2)", whiteSpace: "nowrap",
               }}>
                 {a}
-                <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", color: "var(--signal-deep)", font: "9px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 350ms ${BT_EASE} 180ms` }}>✓</span>
+                <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", color: "var(--signal-deep)", font: "10px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 350ms ${BT_EASE} 180ms` }}>✓</span>
               </div>
             );
           })}
@@ -389,6 +407,11 @@ function AdminMk() {
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "var(--paper-2)", opacity: 1 - slide }}></div>
         <GridLines />
         <Kap nr="05" label={slide > 0.5 ? "Objektanlage" : "Entlastung"} />
+        {/* Richtungs-Hinweis: kündigt den horizontalen Kapitelwechsel an */}
+        <div aria-hidden="true" style={{ position: "absolute", right: mob ? 14 : 28, top: "50%", transform: "translateY(-50%)", zIndex: 6, display: "flex", alignItems: "center", gap: 10, opacity: !BT_RM && p > 0.2 && p < 0.46 ? 1 : 0, transition: "opacity 500ms var(--ease-unio)", pointerEvents: "none" }}>
+          <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>Weiter</span>
+          <span style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(253,252,250,0.9)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "14px var(--font-mono)", color: "var(--ink)" }}>→</span>
+        </div>
         {/* Horizontaler Zwei-Panel-Track: Admin → Objektanlage-Auftakt */}
         <div style={{ position: "absolute", inset: 0, display: "flex", width: "200%", transform: `translateX(${-slide * 50}%)` }}>
           {/* Panel A — Admin */}
@@ -405,7 +428,7 @@ function AdminMk() {
               <div style={{ position: "relative", height: mob ? 300 : 400, borderRadius: "var(--r-panel)", overflow: "hidden" }}>
                 <img src="../../assets/photos/lifestyle-paar.jpg" alt="[PLATZHALTER: Partner:in im Gespräch]" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 25%" }} />
                 <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.18), rgba(11,10,9,0.42))" }}></div>
-                <span className="u-label" style={{ position: "absolute", left: 16, top: 14, fontSize: 9, color: "var(--text-inverse)", textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>[PLATZHALTER: Partner:in im Gespräch]</span>
+                <span className="u-label" style={{ position: "absolute", left: 16, top: 14, fontSize: 10, color: "var(--text-inverse)", textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>[PLATZHALTER: Partner:in im Gespräch]</span>
                 {chips.map((c, i) => {
                   const [sx, sy, rot] = scatter[i];
                   const ki = oaClamp(k * 1.4 - i * 0.09);
@@ -420,7 +443,7 @@ function AdminMk() {
                       display: "inline-flex", alignItems: "center", gap: 9, whiteSpace: "nowrap",
                     }}>
                       {c}
-                      <span style={{ width: 16, height: 16, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "9px var(--font-mono)", background: ki > 0.92 ? "var(--signal)" : "rgba(255,255,255,0.15)", color: ki > 0.92 ? "#FFFFFF" : "transparent", transition: `all 300ms ${BT_EASE}` }}>✓</span>
+                      <span style={{ width: 16, height: 16, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", background: ki > 0.92 ? "var(--signal)" : "rgba(255,255,255,0.15)", color: ki > 0.92 ? "#FFFFFF" : "transparent", transition: `all 300ms ${BT_EASE}` }}>✓</span>
                     </div>
                   );
                 })}
@@ -454,7 +477,7 @@ function AdminMk() {
                 return (
                   <div key={a} style={{ position: "absolute", left: mob ? "34%" : "56%", top: 14 + i * 19 + "%", transform: on ? "translateX(0)" : "translateX(-28px)", opacity: on ? 1 : 0, transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 10, padding: mob ? "10px 13px" : "13px 17px", borderRadius: 10, background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", font: `${mob ? 9 : 10}px var(--font-mono)`, letterSpacing: "0.1em", color: "var(--ink-2)", whiteSpace: "nowrap" }}>
                     {a}
-                    <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", color: "var(--signal-deep)", font: "9px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 350ms ${BT_EASE} 180ms` }}>✓</span>
+                    <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", color: "var(--signal-deep)", font: "10px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 350ms ${BT_EASE} 180ms` }}>✓</span>
                   </div>
                 );
               })}
@@ -477,7 +500,7 @@ function AdminMk() {
                 <div className="u-label" style={{ color: "var(--text-muted)", marginTop: 6 }}>weniger Tipparbeit pro Objekt</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 18, flexWrap: "wrap" }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: "var(--r-pill)", background: "var(--ink)", color: "var(--paper)", font: "500 13.5px var(--font-display)" }}>
-                    <span style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "9px var(--font-mono)", color: "#FFF" }}>✓</span>
+                    <span style={{ width: 16, height: 16, borderRadius: "50%", background: "var(--signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", color: "#FFF" }}>✓</span>
                     Freigeben
                   </span>
                   <span style={{ font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: "24ch" }}>Du prüfst und gibst frei — den Rest macht das System.</span>
@@ -566,7 +589,7 @@ function RechnerMk() {
           </p>
         </div>
         <div className="u-grain" style={{ borderRadius: "var(--r-card)", padding: "clamp(28px, 3vw, 40px)", background: "var(--signal)", color: "#FFFFFF", display: "flex", flexDirection: "column", boxShadow: "var(--shadow-soft)" }}>
-          <span className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 10 }}>Dein Vorsprung / Jahr</span>
+          <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Dein Vorsprung / Jahr</span>
           <div style={{ font: "500 clamp(48px, 5vw, 84px)/1 var(--font-display)", letterSpacing: "-0.03em", marginTop: 18, fontVariantNumeric: "tabular-nums" }}>{fmt(disp)}</div>
           <p style={{ margin: "18px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: 380 }}>
             Gleiche Deals, gleiche Arbeit — aber deine Marke, deine Provision, dein Anteil an dem, was du aufbaust.
@@ -593,7 +616,7 @@ function BeteiligungMk() {
           </h2>
         </Fx>
         <div style={{ width: "100%", maxWidth: 720, marginTop: 84 }}>
-          {[["Unternehmensbeteiligung", "für Top-Performer"], ["Gewinnbeteiligung", "für die Community"], ["Details", "im persönlichen Gespräch"]].map(([k, v], i) => (
+          {[["Unternehmensbeteiligung", "für Top-Performer"], ["Referral-Programm", "25 % aus geworbenen Deals"], ["Details", "im persönlichen Gespräch"]].map(([k, v], i) => (
             <Fx key={k} delay={i * 100}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 24, padding: "18px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
                 <span className="u-label" style={{ color: "var(--text-muted)" }}>{k}</span>
@@ -689,7 +712,10 @@ function BewegungMk() {
       <div style={{ marginTop: 120, borderTop: "1px solid rgba(255,255,255,0.28)", paddingTop: 72 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 20, flexWrap: "wrap", marginBottom: 56 }}>
           <h3 style={{ margin: 0, font: "500 clamp(26px, 2.8vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF" }}>Gesichter des CIRCLE.</h3>
-          <span className="u-label" style={{ color: "rgba(255,245,239,0.82)" }}>Kuratiert · Wien zuerst</span>
+          <span style={{ display: "inline-flex", alignItems: "baseline", gap: 24, flexWrap: "wrap" }}>
+            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)" }}>Kuratiert · Wien zuerst</span>
+            <a href="story.html" style={{ font: "500 14.5px var(--font-display)", color: "#FFFFFF", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.5)", paddingBottom: 2 }}>Die Menschen hinter UNIO →</a>
+          </span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 20 }}>
           {MK_FACES.map((f, i) => (
@@ -700,7 +726,7 @@ function BewegungMk() {
                 <div style={{ position: "absolute", left: 12, right: 12, bottom: 12, borderRadius: "var(--r-inner)", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", padding: "12px 14px", color: "var(--text-inverse)" }}>
                   <div style={{ font: "500 20px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{f.stat}<span style={{ font: "11px var(--font-mono)", marginLeft: 6, color: "var(--signal)" }}>↗</span></div>
                   <MkSpark pts={f.spark} />
-                  <span className="u-label" style={{ fontSize: 8, color: "var(--text-inverse-muted)" }}>{f.sub}</span>
+                  <span className="u-label" style={{ fontSize: 10, color: "var(--text-inverse-muted)" }}>{f.sub}</span>
                 </div>
               </div>
             </Fx>
@@ -712,7 +738,20 @@ function BewegungMk() {
 }
 function SchritteMk() {
   const [sent, setSent] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState(false);
+  const [einverst, setEinverst] = React.useState(false);
+  const fRef = React.useRef(null);
   const mob = window.useMobile();
+  const send = async () => {
+    const f = fRef.current;
+    if (!f || !f.reportValidity() || !einverst || busy) return;
+    const data = Object.fromEntries(new FormData(f).entries());
+    setBusy(true); setErr(false);
+    const ok = await window.submitLead("bewerbung", data);
+    setBusy(false);
+    if (ok) setSent(true); else setErr(true);
+  };
   const twoCol = { display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 12 };
   const feld = { font: "400 15px var(--font-display)", padding: "15px 17px", borderRadius: "var(--r-inner)", border: "none", outline: "none", background: "#FFFFFF", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", width: "100%", fontFamily: "inherit" };
   const selFeld = { ...feld, appearance: "none", WebkitAppearance: "none", cursor: "pointer", paddingRight: 40, backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5A54' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" };
@@ -733,7 +772,7 @@ function SchritteMk() {
                 {human && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12 }}>
                     <span style={{ width: 40, height: 40, borderRadius: "50%", flex: "none", border: "1px dashed var(--hairline-dark)", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "7px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}>FOTO</span>
-                    <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", lineHeight: 1.5 }}>[PLATZHALTER: wer das Gespräch führt — Name, Rolle]<br />Du sprichst mit einem Menschen, nicht mit einem Funnel.</span>
+                    <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", lineHeight: 1.5 }}>[PLATZHALTER: wer das Gespräch führt — Name, Rolle]<br />Du sprichst mit einem Menschen, nicht mit einem Funnel.</span>
                   </div>
                 )}
               </div>
@@ -751,14 +790,14 @@ function SchritteMk() {
               <p style={{ margin: "8px 0 0", font: "400 14px var(--font-display)", color: "var(--text-muted)" }}>Antwort in 48 h.</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <form ref={fRef} onSubmit={(e) => { e.preventDefault(); send(); }} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ font: "500 22px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginBottom: 6 }}>Deine Bewerbung</div>
               <div style={twoCol}>
-                <input placeholder="Name" style={feld} />
-                <input placeholder="E-Mail" style={feld} />
+                <input name="name" placeholder="Name" required autoComplete="name" style={feld} />
+                <input name="email" type="email" placeholder="E-Mail" required autoComplete="email" style={feld} />
               </div>
               <div style={twoCol}>
-                <select defaultValue="" style={selFeld}>
+                <select name="spezialisierung" defaultValue="" style={selFeld}>
                   <option value="" disabled>Spezialisierung</option>
                   <option>Wohnimmobilien</option>
                   <option>Anlage / Zinshaus</option>
@@ -766,7 +805,7 @@ function SchritteMk() {
                   <option>Luxus / Penthouse</option>
                   <option>Gewerbe</option>
                 </select>
-                <select defaultValue="" style={selFeld}>
+                <select name="anstellung" defaultValue="" style={selFeld}>
                   <option value="" disabled>Bisheriges Anstellungsverhältnis</option>
                   <option>Angestellt in Maklerbüro</option>
                   <option>Selbstständig / eigene Firma</option>
@@ -775,20 +814,26 @@ function SchritteMk() {
                 </select>
               </div>
               <div style={twoCol}>
-                <select defaultValue="" style={selFeld}>
+                <select name="umsatz" defaultValue="" style={selFeld}>
                   <option value="" disabled>Provisionsumsatz / Jahr</option>
                   <option>Unter € 100K</option>
                   <option>€ 100K–150K</option>
                   <option>€ 150K–300K</option>
                   <option>Über € 300K</option>
                 </select>
-                <input placeholder="Fokus-Bezirke — z. B. 1020–1220" style={feld} />
+                <input name="bezirke" placeholder="Fokus-Bezirke — z. B. 1020–1220" style={feld} />
               </div>
-              <textarea placeholder="Was treibt dich persönlich an? — zwei Zeilen genügen." rows={3} style={{ ...feld, resize: "vertical" }}></textarea>              <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", marginTop: 6 }}>
-                <Bm variant="signal" size="lg" knob onClick={() => setSent(true)}>Als CIRCLE Partner bewerben</Bm>
+              <textarea name="motivation" placeholder="Was treibt dich persönlich an? — zwei Zeilen genügen." rows={3} style={{ ...feld, resize: "vertical" }}></textarea>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>
+                <input type="checkbox" checked={einverst} onChange={(e) => setEinverst(e.target.checked)} style={{ marginTop: 2, accentColor: "#FFAA09" }} />
+                <span>Ich bin einverstanden, dass UNIO mich zu meiner Bewerbung kontaktiert. Details in der <a href="datenschutz.html" style={{ color: "var(--signal-deep)" }}>Datenschutzerklärung</a>.</span>
+              </label>
+              <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", marginTop: 6 }}>
+                <Bm variant="signal" size="lg" knob disabled={!einverst || busy} onClick={send}>{busy ? "Wird gesendet …" : "Als CIRCLE Partner bewerben"}</Bm>
               </div>
               <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>Persönliches Gespräch statt Auswahlverfahren · Antwort in 48 h</span>
-            </div>
+              <window.LeadError show={err} />
+            </form>
           )}
         </div>
       </div>
@@ -847,7 +892,7 @@ function MarkeAssetMk() {
             Deine Marke.<br /><span style={{ color: "var(--signal)" }}>Dein Asset. Lebenslang.</span>
           </h2>
           <p style={{ margin: "24px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 440 }}>
-            Ein Inhouse-Team produziert unter deinem Namen: 3 Kurzvideos, 10 Fotos und 2 Grafiken im Monat — inkl. deiner eigenen Personal-Brand-Website. Volle IP-Rechte ab Produktion. Verlässt du UNIO, nimmst du alles mit.
+            Ein Inhouse-Team produziert unter deinem Namen: Kurzvideos, Fotografie und Grafik — inkl. deiner eigenen Personal-Brand-Website und Funnel-Integration. Volle IP-Rechte ab Produktion. Verlässt du UNIO, nimmst du alles mit.
           </p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 28 }}>
             {["Markenstrategie", "Content-Produktion", "Funnel-Integration", "Deine Website"].map((c) => (
@@ -860,19 +905,19 @@ function MarkeAssetMk() {
             <span style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--ink)", color: "var(--paper)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 13px var(--font-display)", flex: "none" }}>LV</span>
             <div style={{ flex: 1 }}>
               <div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>@linda.vienna</div>
-              <div className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 3 }}>Top-Maklerin im UNIO-Netzwerk · Wien</div>
+              <div className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 3 }}>Top-Maklerin im UNIO-Netzwerk · Wien</div>
             </div>
-            <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Live</span>
+            <span className="u-label" style={{ fontSize: 10, color: "var(--signal-deep)", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Live</span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 20 }}>
             {stats.map(([v, k]) => (
               <div key={k} style={{ background: "var(--paper-2)", borderRadius: "var(--r-inner)", padding: "16px 18px" }}>
                 <div style={{ font: "500 26px/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--signal)" }}>{v}</div>
-                <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 8 }}>{k}</div>
+                <div className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>{k}</div>
               </div>
             ))}
           </div>
-          <p className="u-label" style={{ margin: "18px 0 0", fontSize: 9, color: "var(--text-muted)" }}>✳ Reichweite als Resultat eines Systems — kein Glücksfall.</p>
+          <p className="u-label" style={{ margin: "18px 0 0", fontSize: 10, color: "var(--text-muted)" }}>✳ Reichweite als Resultat eines Systems — kein Glücksfall.</p>
         </div>
       </div>
       {/* Zwei-Reihen-Bild-Marquee: oben Marketing (→), unten Menschen (←) */}
@@ -892,7 +937,7 @@ const VERGLEICH = [
   ["Dealflow", "Zufällig, Portfolios bei Agenturen", "Kontinuierlich & kuratiert"],
   ["Infrastruktur", "Fragmentiert und veraltet", "Integrierte High-End-Plattform"],
   ["Unternehmenswert", "Kein Anteil am Wachstum", "Echte Unternehmensbeteiligung"],
-  ["Passives Einkommen", "Keine Quellen", "Referral + Gewinn-Ausschüttung"],
+  ["Passives Einkommen", "Keine Quellen", "Referral-Programm: 25 % aus geworbenen Deals"],
 ];
 function VergleichMk() {
   const mob = window.useMobile();
@@ -919,11 +964,11 @@ function VergleichMk() {
                 <span style={{ font: "500 17px var(--font-display)", color: "var(--ink)", display: "block" }}>{k}</span>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 12 }}>
                   <div>
-                    <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5, display: "block", marginBottom: 6 }}>Klassisch</span>
+                    <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10, display: "block", marginBottom: 6 }}>Klassisch</span>
                     <span style={{ font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)" }}>{a}</span>
                   </div>
                   <div>
-                    <span className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5, display: "block", marginBottom: 6 }}>UNIO CIRCLE</span>
+                    <span className="u-label" style={{ color: "var(--signal-deep)", fontSize: 10, display: "block", marginBottom: 6 }}>UNIO CIRCLE</span>
                     <span style={{ font: "500 13.5px/1.5 var(--font-display)", color: "var(--signal-deep)", display: "inline-flex", gap: 6, alignItems: "baseline" }}>
                       <span aria-hidden="true" style={{ color: "var(--signal)" }}>✓</span>{b}
                     </span>
@@ -953,10 +998,10 @@ function FaqMk() {
       title={<span>Was du<br />wissen willst.</span>}
       subline="Ehrliche Antworten — kein Kleingedrucktes."
       items={[
-        ["Was kostet mich UNIO?", "Ein Software-Beitrag von € 599/Monat — dafür behältst du 85 % Provision ab dem ersten Deal und 100 % ab € 150k Track-Record. Keine versteckten Gebühren."],
+        ["Was kostet mich UNIO?", "Ein Software-Beitrag von € 599/Monat — dafür behältst du 85 % Provision ab dem ersten Deal und 100 % ab € 150k Track-Record. Keine versteckten Gebühren.", { href: "#rechner", label: "Zum Rechner" }],
         ["Behalte ich meine eigene Marke?", "Ja. Du trittst unter deinem eigenen Namen auf; UNIO liefert System, Software und Dealflow im Hintergrund, ohne sich vor deine Marke zu stellen."],
         ["Bin ich angestellt oder selbstständig?", "Du bleibst selbstständig und handelst auf eigene Rechnung — CIRCLE ist ein Netzwerk, kein Anstellungsverhältnis. [PLATZHALTER: rechtl. Konstruktion bestätigen]"],
-        ["Wie funktioniert die Beteiligung?", "Top-Performer bekommen echte Unternehmensbeteiligung, die Community eine Gewinnbeteiligung — du baust also mit an dem, wovon du profitierst. [PLATZHALTER: Beteiligungsdetails]"],
+        ["Wie funktioniert die Beteiligung?", "Top-Performer bekommen echte Unternehmensbeteiligung, und über das Referral-Programm verdienst du an Deals von Makler:innen mit, die du in den CIRCLE holst. [PLATZHALTER: Beteiligungsdetails]", { href: "#bewerben", label: "Zum Gespräch" }],
         ["Muss ich meine Bestandskunden mitbringen?", "Nein. Deine Bestandskunden bleiben deine Sache — du kannst sie einbringen, musst aber nicht. Dealflow bekommst du ohnehin über das System."],
         ["Wie schnell bin ich startklar?", "Nach Bewerbung und Gespräch folgt ein kompaktes Onboarding auf Plattform, Projekte und Community — du startest nie bei null."],
         ["Für wen ist der CIRCLE nichts?", "Für alle, die nur einen Maklerpool suchen: CIRCLE ist kuratiert und auf Ownership ausgelegt — wer kein eigenes Geschäft aufbauen will, ist woanders besser aufgehoben."],

@@ -13,7 +13,7 @@ function KapSt({ nr, label, dark = false }) {
     <div aria-hidden="true" className="u-kap" style={{ position: "absolute", left: "2.4vw", top: 96, zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
       <span style={{ font: "11px var(--font-mono)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)" }}>{nr}</span>
       <span style={{ width: 1, height: 54, background: dark ? "var(--hairline-light)" : "var(--hairline-dark)" }}></span>
-      <span className="u-label" style={{ fontSize: 8, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
+      <span className="u-label" style={{ fontSize: 10, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", writingMode: "vertical-rl" }}>{label}</span>
     </div>
   );
 }
@@ -49,7 +49,7 @@ function HeroSt() {
           <FGs reveal={reveal} side="left" strength={13} style={{ position: "absolute", inset: 0 }}>
             <img src="../../assets/img/albrecht.jpg" alt="Das Albrecht — Gegenwart" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
           </FGs>
-          <span className="u-label" style={{ position: "absolute", left: 20, bottom: 16, fontSize: 9, color: "var(--text-inverse)", textShadow: "0 1px 10px rgba(0,0,0,0.6)" }}>{reveal > 0.85 ? "Gegenwart · Das Albrecht" : "Herkunft"}</span>
+          <span className="u-label" style={{ position: "absolute", left: 20, bottom: 16, fontSize: 10, color: "var(--text-inverse)", textShadow: "0 1px 10px rgba(0,0,0,0.6)" }}>{reveal > 0.85 ? "Gegenwart · Das Albrecht" : "Herkunft"}</span>
         </div>
       </div>
     </section>
@@ -280,7 +280,7 @@ function GoldenCircle() {
             const isLens = c === "LENS";
             return (
               <div key={c} style={{ position: "absolute", left: (x / 420) * 100 + "%", top: (y / 420) * 100 + "%", transform: "translate(-50%, -50%)", opacity: on ? 1 : 0, transition: "opacity 400ms var(--ease-unio)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                <span className="u-label" style={{ fontSize: 9, padding: "6px 12px", borderRadius: "var(--r-pill)", background: isLens ? "var(--signal)" : "var(--paper)", color: isLens ? "#FFF" : "var(--ink-2)", boxShadow: isLens ? "none" : "inset 0 0 0 1px var(--hairline-dark)", whiteSpace: "nowrap" }}>{c}</span>
+                <span className="u-label" style={{ fontSize: 10, padding: "6px 12px", borderRadius: "var(--r-pill)", background: isLens ? "var(--signal)" : "var(--paper)", color: isLens ? "#FFF" : "var(--ink-2)", boxShadow: isLens ? "none" : "inset 0 0 0 1px var(--hairline-dark)", whiteSpace: "nowrap" }}>{c}</span>
                 {isLens && on && <UIMiniLens width={150} play={on} />}
               </div>
             );
@@ -328,11 +328,11 @@ function PortraitSt({ p, delay }) {
           <div style={{ position: "absolute", inset: 12, borderRadius: 16, border: "1px solid rgba(255,255,255,0.55)", opacity: on ? 1 : 0, transition: "opacity var(--dur-base) var(--ease-unio)", pointerEvents: "none", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "16px 16px 12px", color: "#FFFFFF" }}>
             <div>
               <span style={{ font: "500 28px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{p.v}<span style={{ font: "12px var(--font-mono)", marginLeft: 6 }}>↗</span></span>
-              <div className="u-label" style={{ fontSize: 9, marginTop: 7, color: "rgba(255,255,255,0.85)" }}>{p.label}</div>
+              <div className="u-label" style={{ fontSize: 10, marginTop: 7, color: "rgba(255,255,255,0.85)" }}>{p.label}</div>
             </div>
             <div>
               <SparkSt pts={p.spark} />
-              <span className="u-label" style={{ display: "inline-block", fontSize: 9, padding: "5px 11px", borderRadius: "var(--r-pill)", background: "rgba(255,255,255,0.2)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", marginTop: 10 }}>{p.disz}</span>
+              <span className="u-label" style={{ display: "inline-block", fontSize: 10, padding: "5px 11px", borderRadius: "var(--r-pill)", background: "rgba(255,255,255,0.2)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", marginTop: 10 }}>{p.disz}</span>
             </div>
           </div>
         </div>
@@ -454,8 +454,10 @@ function FinaleSt() {
       <h2 style={{ margin: 0, font: "500 clamp(40px, 5vw, 84px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
         Raum. Technologie.<br />Mensch<span style={{ color: "var(--signal)" }}>.</span>
       </h2>
-      <div style={{ marginTop: 34 }}>
+      <div style={{ marginTop: 34, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
         <Bs size="lg" variant="signal" knob onClick={() => location.assign("kontakt.html")}>Mit uns sprechen</Bs>
+        <Bs size="lg" variant="ghost" onClick={() => location.assign("bautraeger.html")}>Für Bauträger</Bs>
+        <Bs size="lg" variant="ghost" onClick={() => location.assign("makler.html")}>Für Makler:innen</Bs>
       </div>
     </section>
   );

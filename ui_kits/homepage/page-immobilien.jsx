@@ -1,8 +1,45 @@
-/* UNIO — Immobilien (Sie-Register): „Ich suche" + „Ich verkaufe". */
+/* UNIO — Immobilien (Du-Register): „Ich suche" + „Ich verkaufe". */
 const {
   GlassPanel: GPi, Button: Bi, Input: Ini, Select: Seli,
 } = window.UNIODesignSystem_b6216a;
 const { SiteNav, SiteFooter, PageHero, Chapter, Reveal, PropCard, OBJEKT_DB } = window;
+
+/* Kartenpanel (Leaflet, helle CARTO-Tiles): Marker = Signal-Punkte auf
+   ungefährer Bezirkslage. Hover in der Liste hebt den Pin hervor,
+   Pin-Klick scrollt zur Karte in der Liste. */
+function MapPanel({ items, activeIdx, onPick }) {
+  const divRef = React.useRef(null);
+  const mapRef = React.useRef(null);
+  const layerRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!window.L || !divRef.current || mapRef.current) return;
+    const map = window.L.map(divRef.current, { scrollWheelZoom: false, zoomControl: true });
+    window.L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
+      maxZoom: 19,
+    }).addTo(map);
+    layerRef.current = window.L.layerGroup().addTo(map);
+    mapRef.current = map;
+    return () => { map.remove(); mapRef.current = null; };
+  }, []);
+  React.useEffect(() => {
+    const map = mapRef.current, layer = layerRef.current;
+    if (!map || !layer || !window.L) return;
+    layer.clearLayers();
+    const pts = [];
+    items.forEach((o, i) => {
+      if (!o.ll) return;
+      pts.push(o.ll);
+      const icon = window.L.divIcon({ className: "", html: '<span class="u-pin' + (i === activeIdx ? " on" : "") + '"></span>', iconSize: [18, 18], iconAnchor: [9, 9] });
+      const m = window.L.marker(o.ll, { icon, title: o.t, keyboard: false }).addTo(layer);
+      m.bindTooltip(o.t, { direction: "top", offset: [0, -10] });
+      m.on("click", () => onPick && onPick(i));
+    });
+    if (pts.length) map.fitBounds(window.L.latLngBounds(pts).pad(0.22));
+    setTimeout(() => map.invalidateSize(), 60);
+  }, [items, activeIdx]);
+  return <div ref={divRef} style={{ position: "absolute", inset: 0, zIndex: 1 }} />;
+}
 
 /* Ich suche — Immobiliensuche (Filterleiste + Ergebnis-Grid, wie app.unio.at/listing) */
 function SucheIm() {
@@ -11,12 +48,13 @@ function SucheIm() {
   const [bezirk, setBezirk] = React.useState("Alle");
   const [preis, setPreis] = React.useState("Alle");
   const [hov, setHov] = React.useState(-1);
+  const [showMap, setShowMap] = React.useState(false);
   const typen = ["Alle", "Penthouse", "Haus", "Wohnung", "Neubau"];
   const priceVal = (o) => { const m = (o.price || "").match(/([\d.,]+)\s*Mio/); if (m) return parseFloat(m[1].replace(".", "").replace(",", ".")) * 1e6; const n = (o.price || "").replace(/[^\d]/g, ""); return n ? +n : null; };
   const treffer = OBJEKT_DB.filter((o) => {
-    if (q.trim() && !(o.q + " " + o.t + " " + o.loc).toLowerCase().includes(q.trim().toLowerCase())) return false;
+    if (q.trim() && !(o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase())) return false;
     if (typ !== "Alle" && !(o.tags.join(" ") + " " + o.q).toLowerCase().includes(typ.toLowerCase())) return false;
-    if (bezirk !== "Alle" && !o.loc.includes(bezirk.replace("Wien ", ""))) return false;
+    if (bezirk !== "Alle" && !(o.adr || "").includes(bezirk.replace("Wien ", ""))) return false;
     if (preis !== "Alle") { const v = priceVal(o); if (v == null) return false; if (preis === "bis 1 Mio" && v > 1e6) return false; if (preis === "1–2 Mio" && (v < 1e6 || v > 2e6)) return false; if (preis === "ab 2 Mio" && v < 2e6) return false; }
     return true;
   });
@@ -32,7 +70,7 @@ function SucheIm() {
   const mob = window.useMobile();
   return (
     <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: mob ? "100px 6vw 110px" : "175px 6vw 175px" }}>
-      <Chapter title={<span>Ich suche.</span>} copy="Der aktuelle UNIO-Bestand — jedes Objekt live und transparent vermarktet." style={{ marginBottom: mob ? 40 : 72 }} />
+      <Chapter title={<span>Ich suche.</span>} copy="Jedes Objekt hier wird von einem Menschen betreut und mit Live-Daten vermarktet. Du siehst, was dahintersteckt, bevor du anfragst." style={{ marginBottom: mob ? 40 : 72 }} />
       {/* Suchfeld */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
@@ -50,16 +88,39 @@ function SucheIm() {
         )}
         <span className="u-label" style={{ marginLeft: "auto", color: "var(--text-muted)", fontSize: 10 }}>{treffer.length} von {OBJEKT_DB.length} Objekten</span>
       </div>
-      {/* Ergebnis-Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24, marginTop: 28 }}>
-        {treffer.map((o, i) => (
-          <Reveal key={o.t} delay={(i % 3) * 70}>
-            <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
-          </Reveal>
-        ))}
-        {treffer.length === 0 && (
-          <div style={{ gridColumn: mob ? "auto" : "span 3", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
-            Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
+      {/* Ergebnis: Liste links, Karte rechts (mobil per Toggle über der Liste) */}
+      {mob && (
+        <div style={{ marginTop: 20 }}>
+          <Bi variant={showMap ? "signal" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)}>{showMap ? "Karte ausblenden" : "Auf der Karte ansehen"}</Bi>
+        </div>
+      )}
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.08fr) minmax(0, 0.92fr)", gap: 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
+        <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: 20 }}>
+          {treffer.map((o, i) => (
+            <Reveal key={o.t} delay={(i % 2) * 70}>
+              <div id={"objekt-" + i}>
+                <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
+              </div>
+            </Reveal>
+          ))}
+          {treffer.length === 0 && (
+            <div style={{ gridColumn: mob ? "auto" : "span 2", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
+              Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
+            </div>
+          )}
+        </div>
+        {(!mob || showMap) && window.L && (
+          <div style={{ order: mob ? 1 : 2, position: mob ? "relative" : "sticky", top: mob ? "auto" : 104, height: mob ? "52vh" : "calc(100vh - 132px)", minHeight: 360, borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)", background: "#EDEBE6" }}>
+            <MapPanel
+              items={treffer}
+              activeIdx={hov}
+              onPick={(i) => {
+                setHov(i);
+                const el = document.getElementById("objekt-" + i);
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+            />
+            <span className="u-label" style={{ position: "absolute", top: 12, left: 12, zIndex: 500, fontSize: 10, padding: "6px 12px", borderRadius: "var(--r-pill)", background: "rgba(253,252,250,0.92)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--text-muted)", pointerEvents: "none" }}>Karte · ungefähre Lage</span>
           </div>
         )}
       </div>
@@ -76,14 +137,14 @@ const NUTZEN = [
   ["02", "Käufer, die passen", "Zielgruppen nach Milieu und Lebensphase — nicht nach Klick-Zufall."],
   ["03", "Verkauft, bevor es online geht", "Vorgemerkte Käufer-Community — auf Wunsch vollständig diskret."],
   ["04", "Vermarktung mit Wirkung", "Inszeniert statt nur inseriert — Story, Fotografie, Kampagne."],
-  ["05", "Live-Transparenz", "Reichweite, Anfragen, Besichtigungen und Angebote in Echtzeit — Sie sehen alles."],
+  ["05", "Live-Transparenz", "Reichweite, Anfragen, Besichtigungen und Angebote in Echtzeit — du siehst alles."],
   ["06", "Sicher bis zum Notar", "Ein Ansprechpartner von der Bewertung bis zur Übergabe."],
 ];
 function VerkaufenIm() {
   const mob = window.useMobile();
   return (
     <section id="verkaufen" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "175px 6vw 175px" }} className="u-grain">
-      <Chapter title={<span>Ich verkaufe.</span>} copy="Sechs Gründe, warum Eigentümer:innen mit UNIO verkaufen — jeder davon belegbar." style={{ marginBottom: mob ? 44 : 84 }} />
+      <Chapter title={<span>Ich verkaufe.</span>} copy="Sechs Gründe, warum du mit UNIO verkaufst — jeder davon belegbar." style={{ marginBottom: mob ? 44 : 84 }} />
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 14 : 24 }}>
         {NUTZEN.map(([n, t, p], i) => (
           <Reveal key={n} delay={(i % 3) * 90}>
@@ -101,7 +162,7 @@ function VerkaufenIm() {
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(11,10,9,0.55), transparent 60%)" }}></div>
         <div style={{ position: "relative", padding: "clamp(28px, 4vw, 52px)", maxWidth: 480 }}>
           <GPi tone="dark" padding="26px 28px">
-            <span className="u-label" style={{ color: "var(--text-inverse-muted)", fontSize: 10 }}>Ihre Sicht in LENS · live</span>
+            <span className="u-label" style={{ color: "var(--text-inverse-muted)", fontSize: 10 }}>Deine Sicht in LENS · live</span>
             {[["Reichweite", "48 200"], ["Anfragen", "27"], ["Besichtigungen", "9"], ["Angebote", "2", true]].map(([k, v, sig], i) => (
               <div key={k} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "11px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-light)", marginTop: i === 0 ? 12 : 0 }}>
                 <span className="u-label" style={{ color: "var(--text-inverse-muted)" }}>{k}</span>
@@ -127,7 +188,7 @@ function App() {
         img="../../assets/img/penthouse.jpg"
         pos="center 40%"
         headline={<span>Suchen oder verkaufen</span>}
-        sub="Kuratierte Objekte für Suchende. Volle Transparenz für Eigentümer:innen."
+        sub="Kuratierte Objekte, wenn du suchst. Volle Transparenz, wenn du verkaufst."
       >
         <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap" }}>
           <Bi size="lg" variant="paper" knob onClick={() => window.open(window.UNIO_BEWERTUNG_URL, "_blank")}>Immobilie bewerten</Bi>

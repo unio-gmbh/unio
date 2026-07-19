@@ -73,7 +73,7 @@ function Hero() {
           <span style={{ display: "block", ...lineStyle(1) }}>Finally Simple<span style={{ display: "inline-block", width: "0.14em", height: "0.14em", borderRadius: 4, background: "var(--signal)", marginLeft: "0.08em", verticalAlign: "baseline" }}></span></span>
         </h1>
         <p style={{ maxWidth: 520, margin: "clamp(24px, 3vh, 40px) 0 0", font: "400 clamp(17px, 1.7vw, 21px)/1.6 var(--font-display)", color: "rgba(247,245,241,0.9)", ...ctaStatic }}>
-          Von der Suche bis zum Verkauf: Wir verbinden Daten, Software und Menschen, um Immobilien klar, transparent und nahbar zu machen.
+          Wir bauen Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Alles daran hat ein Ziel: dass du findest, was du wirklich suchst.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: "clamp(28px, 4vh, 44px)", flexWrap: "wrap", ...ctaStatic }}>
           <Bx size="lg" variant="paper" knob onClick={() => (location.hash = "suche")}>Immobilie finden</Bx>
@@ -89,12 +89,12 @@ function SucheHighlights() {
   const [q, setQ] = React.useState("");
   const [hov, setHov] = React.useState(-1);
   const mob = window.useMobile();
-  const treffer = OBJEKT_DB.filter((o) => !q.trim() || (o.q + " " + o.t + " " + o.loc).toLowerCase().includes(q.trim().toLowerCase()));
+  const treffer = OBJEKT_DB.filter((o) => !q.trim() || (o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase()));
   const shown = treffer.slice(0, 3);
   return (
     <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: mob ? "96px 6vw 120px" : "150px 6vw 185px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
-      <Chapter title={<span>Finden Sie Ihr<br />nächstes Zuhause.</span>} copy="Kuratierte Wiener Projekte und Einzelobjekte — jedes davon live und transparent vermarktet." style={{ marginBottom: mob ? 44 : 72 }} />
+      <Chapter title={<span>Finde dein<br />nächstes Zuhause.</span>} copy="Kuratierte Wiener Projekte und Einzelobjekte — jedes davon live und transparent vermarktet." style={{ marginBottom: mob ? 44 : 72 }} />
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 680, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
         <input
@@ -116,7 +116,7 @@ function SucheHighlights() {
         ))}
         {shown.length === 0 && (
           <div style={{ gridColumn: mob ? "auto" : "span 3", padding: "40px 0", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
-            Kein Treffer im kuratierten Bestand — starten Sie die Suche im Dashboard <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener" style={{ color: "var(--signal-deep)" }}>app.unio.at ↗</a>
+            Kein Treffer im kuratierten Bestand — starte die Suche im Dashboard <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener" style={{ color: "var(--signal-deep)" }}>app.unio.at ↗</a>
           </div>
         )}
       </div>
@@ -140,13 +140,23 @@ function Markt() {
           Echte Deals<br />durch echte Daten.
         </h2></Reveal>
         <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 18}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
-          Der Immobilienmarkt ist fragmentiert, analog, intransparent. UNIO legt eine Schicht Klarheit darüber — Marktdaten werden Entscheidungen, Entscheidungen werden Abverkauf.
+          Hinter jeder Immobilie steht ein Mensch mit einem Plan. Unsere Daten sorgen dafür, dass Plan und Objekt zueinanderfinden: transparent, nachvollziehbar, ohne Umwege.
         </p>
       </div>
+      {/* Eine Zahl pro Zielgruppe, jede verlinkt auf ihre Seite */}
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 36 : 48, marginTop: mob ? 64 : 120, borderTop: "1px solid var(--hairline-dark)", paddingTop: mob ? 44 : 60 }}>
-        <SBx value={94} label="Nachfrage-Score · Median" tone="light" size={statSize} />
-        <SBx value={38} unit="Tage" label="bis Abverkauf · Ø Pilotprojekte" tone="light" size={statSize} delta="−41 %" />
-        <SBx value={1240} label="Käuferprofile im Matching" tone="light" size={statSize} />
+        {[
+          ["Wenn du verkaufst", "immobilien.html", 80, "%", "weniger Aufwand — wir übernehmen Vermarktung, Prüfung und Abwicklung"],
+          ["Wenn du baust", "bautraeger.html", 100, "%", "Transparenz — jede Anfrage live in LENS"],
+          ["Wenn du makelst", "makler.html", 100, "%", "Provision ab € 150K Jahresumsatz · CIRCLE"],
+        ].map(([grp, href, val, unit, label]) => (
+          <a key={href} href={href} style={{ textDecoration: "none", display: "block" }}>
+            <span className="u-label" style={{ fontSize: 10, color: "var(--signal-deep)" }}>{grp} →</span>
+            <div style={{ marginTop: 10 }}>
+              <SBx value={val} unit={unit} label={label} tone="light" size={statSize} />
+            </div>
+          </a>
+        ))}
       </div>
     </section>
   );
@@ -159,20 +169,20 @@ function Zielgruppen() {
     <section id="zielgruppen" data-screen-label="Zielgruppen" className="u-grain" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "160px 5vw 180px" }}>
       <Chapter title={<span>Für die, die den Markt<br />bewegen.</span>} style={{ marginBottom: mob ? 44 : 76 }} />
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 16 : 24 }}>
-        {/* Bauträger — Orange-Panel, Sie */}
+        {/* Bauträger — Orange-Panel */}
         <div className="u-grain" style={{ background: "var(--signal)", borderRadius: "var(--r-panel)", padding: "clamp(32px, 4vw, 52px)", color: "#FFFFFF", display: "flex", flexDirection: "column", minHeight: 420 }}>
-          <span className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 10 }}>Für Bauträger</span>
+          <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Für Bauträger</span>
           <h3 style={{ margin: "18px 0 0", font: "500 clamp(28px, 2.6vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em" }}>
             Wissen, was funktioniert<br />bevor gebaut wird.
           </h3>
           <p style={{ margin: "16px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: 420 }}>
-            Wir testen Ihr Projekt live am Markt, steuern Marketing und Vertrieb datenbasiert bis zum Abverkauf — 100 % erfolgsbasiert.
+            Wir testen dein Projekt live am Markt und steuern Marketing und Vertrieb datenbasiert bis zum Abverkauf — 100 % erfolgsbasiert.
           </p>
           <div style={{ display: "flex", gap: 28, marginTop: 30, borderTop: "1px solid rgba(255,255,255,0.35)", paddingTop: 22 }}>
             {[["+31 %", "über Zielpreis · Ecoluxe"], ["282", "Anfragen · ein Projekt"], ["T+38", "Ø Abverkauf"]].map(([v, k]) => (
               <div key={k}>
                 <div style={{ font: "500 26px/1 var(--font-display)", letterSpacing: "-0.02em", color: "#FFFFFF" }}>{v}</div>
-                <div className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 9, marginTop: 7 }}>{k}</div>
+                <div className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10, marginTop: 7 }}>{k}</div>
               </div>
             ))}
           </div>
@@ -180,18 +190,19 @@ function Zielgruppen() {
             <Bx variant="paper" size="lg" knob onClick={() => location.assign("bautraeger.html")}>Projekt prüfen lassen</Bx>
           </div>
         </div>
-        {/* CIRCLE — Foto + Glas, Du */}
+        {/* CIRCLE — Porträt einer Partnerin + Zitat, Du */}
         <div style={{ position: "relative", borderRadius: "var(--r-panel)", overflow: "hidden", minHeight: 420 }}>
-          <img src="../../assets/img/lifestyle-wine.jpg" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.2), rgba(11,10,9,0.62))" }}></div>
+          <img src="../../assets/team/portrait-03.jpg" alt="CIRCLE Partner:in" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%" }} />
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.24), rgba(11,10,9,0.68))" }}></div>
           <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", padding: "clamp(32px, 4vw, 52px)", color: "var(--text-inverse)", zIndex: 3 }}>
             <span className="u-label" style={{ color: "var(--text-inverse-muted)", fontSize: 10 }}>Für Makler:innen · CIRCLE</span>
             <h3 style={{ margin: "18px 0 0", font: "500 clamp(28px, 2.6vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", textShadow: "0 2px 24px rgba(0,0,0,0.4)" }}>
               Nicht die Agentur.<br />Nicht das Portal. Du.
             </h3>
-            <p style={{ margin: "16px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(247,245,241,0.85)", maxWidth: 400 }}>
-              Behalte deine Provision, bau deine eigene Marke — mit Software, Dealflow und echter Unternehmensbeteiligung für Top-Performer.
-            </p>
+            <figure style={{ margin: "20px 0 0", padding: "2px 0 2px 16px", borderLeft: "1.5px solid var(--signal)", maxWidth: 400 }}>
+              <blockquote style={{ margin: 0, font: "400 16px/1.55 var(--font-display)", color: "rgba(247,245,241,0.92)", textShadow: "0 1px 14px rgba(0,0,0,0.45)" }}>„Ich wollte nie ein Büro über mir. Ich wollte ein System hinter mir."</blockquote>
+              <figcaption className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.75)", marginTop: 8, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>[PLATZHALTER: Name] · CIRCLE Partnerin · Wien</figcaption>
+            </figure>
             <div style={{ marginTop: "auto", paddingTop: 28, display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Bx variant="glass" tone="dark" size="lg" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Bx>
             </div>
@@ -204,10 +215,10 @@ function Zielgruppen() {
 
 /* ---------- Produkte ---------- */
 const PRODUKTE = [
-  ["NOVA", "Marktvalidierung in Echtzeit. NOVA zeigt, ob Projekt, Pricing oder Grundrisse den Nerv der Zielgruppe treffen — und liefert datenbasierte Handlungsempfehlungen für fundierte Entscheidungen schon vor dem Verkaufsstart."],
-  ["CIRCLE", "Circle verbindet die besten Makler:innen zu einer leistungsorientierten Community. Selbstständig im Handeln, aber mit dem Rückhalt eines starken Netzwerks — inklusive High-End-Software, Support und Beteiligung."],
-  ["LEAD ENGINE", "Skalierbare Leadgenerierung über die relevanten Kanäle — mit sauberem Tracking, kreativer Iteration und einem Setup, das Nachfrage in planbaren Vertrieb übersetzt."],
-  ["LENS", "Lens liefert volle Transparenz über Projekte, Leads und Vertriebsperformance. Von der Planung bis zum Abschluss zeigt das Dashboard alle relevanten Daten in Echtzeit — für präzise Steuerung und bessere Ergebnisse."],
+  ["NOVA", "Marktvalidierung in Echtzeit. NOVA zeigt, ob Projekt, Pricing oder Grundrisse den Nerv der Zielgruppe treffen — und liefert datenbasierte Handlungsempfehlungen für fundierte Entscheidungen schon vor dem Verkaufsstart.", "bautraeger.html#system", "Für Bauträger"],
+  ["CIRCLE", "Circle verbindet die besten Makler:innen zu einer leistungsorientierten Community. Selbstständig im Handeln, aber mit dem Rückhalt eines starken Netzwerks — inklusive High-End-Software, Support und Beteiligung.", "makler.html", "Für Makler:innen"],
+  ["LEAD ENGINE", "Skalierbare Leadgenerierung über die relevanten Kanäle — mit sauberem Tracking, kreativer Iteration und einem Setup, das Nachfrage in planbaren Vertrieb übersetzt.", "bautraeger.html#system", "Für Bauträger"],
+  ["LENS", "Lens liefert volle Transparenz über Projekte, Leads und Vertriebsperformance. Von der Planung bis zum Abschluss zeigt das Dashboard alle relevanten Daten in Echtzeit — für präzise Steuerung und bessere Ergebnisse.", "bautraeger.html#system", "Für Bauträger"],
 ];
 function Produkte() {
   const [hov, setHov] = React.useState(-1);
@@ -222,20 +233,23 @@ function Produkte() {
           High-End-Software und<br />Community vereint.
         </h2>
         <p style={{ margin: "26px auto 0", font: "400 17px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
-          Eine Plattform, die Daten, Workflows und ein Broker-Netzwerk verbindet — für planbaren Abverkauf und messbare Performance.
+          Vier Produkte, ein Prinzip: Technologie übernimmt das Rechnen und Verwalten, Menschen übernehmen Beratung und Entscheidung.
         </p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, 1fr)", gap: mob ? 14 : 20 }}>
-        {PRODUKTE.map(([t, c], i) => (
+        {PRODUKTE.map(([t, c, href, ziel], i) => (
           <Reveal key={t} delay={i * 90}>
-            <div onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
-              style={{ height: "100%", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 40px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+            <a href={href} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
+              style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <h3 style={{ margin: 0, font: "500 26px/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
                 <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", opacity: hov === i ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></span>
               </div>
               <p style={{ margin: "28px 0 0", font: "400 14px/1.7 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
-            </div>
+              <span style={{ marginTop: "auto", paddingTop: 24, font: "500 13.5px var(--font-display)", color: hov === i ? "var(--signal-deep)" : "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7, transition: "color var(--dur-fast) var(--ease-unio)" }}>
+                {ziel} <span style={{ font: "12px var(--font-mono)" }}>→</span>
+              </span>
+            </a>
           </Reveal>
         ))}
       </div>

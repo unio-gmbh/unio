@@ -1,0 +1,30 @@
+/* UNIO — minimale Basisregeln für Specimens & Kits. */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--size-body);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+}
+.u-label {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.u-grain {
+  position: relative;
+}
+.u-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 40;
+}

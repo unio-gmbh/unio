@@ -7,7 +7,7 @@ const {
   Button: Bb, IconButton: IBb, Tag: Tgb,
 } = window.UNIODesignSystem_b6216a;
 const { SiteNav, SiteFooter, Reveal } = window;
-const { Kap, GridLines, StickyCTA, SystemLine, Lernkurve, CountUp, useOnceInView, Fx, BT_EASE } = window.BT;
+const { Kap, GridLines, StickyCTA, SystemLine, Lernkurve, CountUp, useOnceInView, Fx, BT_EASE, BT_RM } = window.BT;
 
 /* ===== Bridge-Störer (Direktive v2): reines Duotone-Foto-Band, ohne Overlay, ohne Text ===== */
 function BridgeBt({ img }) {
@@ -149,9 +149,14 @@ function ProofBt() {
           </h2>
         </div>
       </div>
-      <a href="#funnel" data-track="inline_cta_beweis" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: mob ? 44 : 72, font: "500 16px var(--font-display)", color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 4, position: "relative" }}>
-        Ihr Projekt so prüfen lassen <span style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>→</span>
-      </a>
+      <div style={{ display: "flex", gap: 36, flexWrap: "wrap", marginTop: mob ? 44 : 72, position: "relative" }}>
+        <a href="#funnel" data-track="inline_cta_beweis" style={{ display: "inline-flex", alignItems: "center", gap: 10, font: "500 16px var(--font-display)", color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 4 }}>
+          Dein Projekt so prüfen lassen <span style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>→</span>
+        </a>
+        <a href="story.html" data-track="inline_link_story" style={{ display: "inline-flex", alignItems: "center", gap: 10, font: "400 16px var(--font-display)", color: "var(--text-muted)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 4 }}>
+          Wer hinter UNIO steht <span style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>→</span>
+        </a>
+      </div>
     </section>
   );
 }
@@ -208,8 +213,8 @@ function FunnelGraphBt() {
                   {/* Orange (UNIO-Zuwachs) oben */}
                   <div style={{ height: orangeH + "%", background: "var(--signal)", position: "relative" }}>
                     {i === 0 && !mob && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
-                      <div style={{ flex: 56, background: "#E8971A", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "#fff" }}><span>Meta</span><span>56%</span></div>
-                      <div style={{ flex: 19, background: "#F0A83F", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "#fff" }}><span>Google</span><span>19%</span></div>
+                      <div style={{ flex: 56, background: "#E8971A", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "10px var(--font-mono)", color: "#fff" }}><span>Meta</span><span>56%</span></div>
+                      <div style={{ flex: 19, background: "#F0A83F", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "10px var(--font-mono)", color: "#fff" }}><span>Google</span><span>19%</span></div>
                     </div>}
                   </div>
                   {/* Basis-Linie */}
@@ -217,13 +222,13 @@ function FunnelGraphBt() {
                   {/* Weiß (Basis) unten */}
                   <div style={{ flex: 1, background: "#FFFFFF", position: "relative" }}>
                     {i === 0 && !mob && <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
-                      <div style={{ flex: 19, borderBottom: "1px solid var(--hairline-dark)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "var(--text-muted)" }}><span>willhaben</span><span>19%</span></div>
-                      <div style={{ flex: 6, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "9px var(--font-mono)", color: "var(--text-muted)" }}><span>ImmoScout24</span><span>6%</span></div>
+                      <div style={{ flex: 19, borderBottom: "1px solid var(--hairline-dark)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "10px var(--font-mono)", color: "var(--text-muted)" }}><span>willhaben</span><span>19%</span></div>
+                      <div style={{ flex: 6, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 8px", font: "10px var(--font-mono)", color: "var(--text-muted)" }}><span>ImmoScout24</span><span>6%</span></div>
                     </div>}
                   </div>
                 </div>
                 <div style={{ font: `500 ${mob ? 10.5 : 14}px var(--font-display)`, color: "var(--ink)", marginTop: mob ? 9 : 14, textAlign: "center" }}>{f.n}</div>
-                <div style={{ font: "9.5px var(--font-mono)", letterSpacing: "0.08em", color: "var(--text-muted)", marginTop: 5, display: mob ? "none" : "block" }}>{f.drv}</div>
+                <div style={{ font: "10px var(--font-mono)", letterSpacing: "0.08em", color: "var(--text-muted)", marginTop: 5, display: mob ? "none" : "block" }}>{f.drv}</div>
               </div>
             );
           })}
@@ -239,7 +244,7 @@ function NCard({ span = 2, tone = "light", title, copy, children }) {
   const mob = window.useMobile();
   const bg = tone === "dark" ? "var(--ink)" : tone === "orange" ? "var(--signal)" : "#FFFFFF";
   const fg = tone === "dark" ? "var(--text-inverse)" : tone === "orange" ? "#FFFFFF" : "var(--ink)";
-  const muted = tone === "dark" ? "var(--text-inverse-muted)" : tone === "orange" ? "rgba(255,245,239,0.85)" : "var(--text-muted)";
+  const muted = tone === "dark" ? "var(--text-inverse-muted)" : tone === "orange" ? "rgba(255,245,239,0.92)" : "var(--text-muted)";
   return (
     <div style={{ gridColumn: mob ? "auto" : `span ${span}`, background: bg, borderRadius: "var(--r-card)", padding: "24px 24px 22px", boxShadow: tone === "light" ? "inset 0 0 0 1px var(--hairline-dark)" : "var(--shadow-float)", display: "flex", flexDirection: "column", gap: 10, minHeight: mob ? 0 : 230 }}>
       <div style={{ font: "500 19px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: fg }}>{title}</div>
@@ -259,7 +264,7 @@ function BentoBt() {
       <div style={{ maxWidth: 760, marginBottom: mob ? 44 : 80 }}>
         <Fx>
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(36px, 3.8vw, 64px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Was Sie davon haben.
+            Was du davon hast.
           </h2>
         </Fx>
       </div>
@@ -269,12 +274,12 @@ function BentoBt() {
             <span style={{ font: "500 52px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>
               <CountUp to={1240} run={run} fmt={(v) => v.toLocaleString("de-AT")} />
             </span>
-            <span className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 9 }}>Käuferprofile im Matching</span>
+            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Käuferprofile im Matching</span>
           </div>
         </NCard>
         <NCard span={2} title="CIRCLE — kuratierter Vertrieb." copy="Top-Makler-Community ab € 100.000 Jahresumsatz schließt schneller ab, gesteuert statt gehofft.">
           <span style={{ font: "500 44px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--signal-deep)", fontVariantNumeric: "tabular-nums" }}>25+</span>
-          <span className="u-label" style={{ display: "block", marginTop: 8, fontSize: 9, color: "var(--text-muted)" }}>Top-Performer im Pool</span>
+          <span className="u-label" style={{ display: "block", marginTop: 8, fontSize: 10, color: "var(--text-muted)" }}>Top-Performer im Pool</span>
         </NCard>
         <NCard span={2} title="Standzeit kostet Zinsen." copy="Jeder Monat weniger Vermarktungsdauer senkt die Zwischenfinanzierung — Tempo als Euro-Größe, nicht als Marketing-Wort.">
           <svg viewBox="0 0 200 46" style={{ width: "100%", maxWidth: 200, height: "auto" }} aria-hidden="true">
@@ -293,7 +298,7 @@ function BentoBt() {
             <path d="M70 28 60 36l10 8" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="translate(0,-8)" />
           </svg>
         </NCard>
-        <NCard span={2} title="Ein Ansprechpartner statt drei Schnittstellen." copy="Agentur, Makler und Portal-Koordination fallen in ein System — keine Reporting-Meetings, Sie sehen live." />
+        <NCard span={2} title="Ein Ansprechpartner statt drei Schnittstellen." copy="Agentur, Makler und Portal-Koordination fallen in ein System — keine Reporting-Meetings, du siehst live." />
         <NCard span={2} title="CIRCLE verkauft, wo andere inserieren." copy="Vorgemerkte Käufer aus der kuratierten Community — Abschlüsse oft, bevor das Projekt öffentlich wird.">
           <svg viewBox="0 0 120 40" style={{ width: 110, height: "auto" }} aria-hidden="true">
             {[16, 40, 64, 88].map((x, i) => <circle key={x} cx={x} cy="20" r="9" fill="none" stroke={i === 3 ? "var(--signal)" : "rgba(11,10,9,0.3)"} strokeWidth="1.5" />)}
@@ -329,7 +334,7 @@ function ModellBt() {
           </h2>
         </Fx>
         <div style={{ width: "100%", maxWidth: 720, marginTop: 44, textAlign: "left" }}>
-          {[["Vergütung", "erfolgsbasiert am Abverkauf — kein Retainer"], ["Reporting", "entfällt — Sie sehen live (LENS)"], ["Markttest", "vor dem Baustart, am echten Markt"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"]].map(([k, v], i) => (
+          {[["Vergütung", "erfolgsbasiert am Abverkauf — kein Retainer"], ["Reporting", "entfällt — du siehst live (LENS)"], ["Markttest", "vor dem Baustart, am echten Markt"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"]].map(([k, v], i) => (
             <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 24, padding: "16px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
               <span className="u-label" style={{ color: "var(--text-muted)" }}>{k}</span>
               <span style={{ font: "400 16px var(--font-display)", color: "var(--ink-2)", textAlign: "right" }}>{v}</span>
@@ -359,7 +364,7 @@ function SimulatorBt() {
       <div style={{ maxWidth: 640, marginBottom: mob ? 40 : 76, position: "relative" }}>
         <Fx>
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.4vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Rechnen Sie es<br />selbst durch.
+            Rechne es<br />selbst durch.
           </h2>
         </Fx>
       </div>
@@ -390,16 +395,16 @@ function SimulatorBt() {
           </p>
         </div>
         <div className="u-grain" style={{ background: "var(--signal)", borderRadius: "var(--r-card)", padding: "clamp(26px, 3vw, 38px)", color: "#FFFFFF", display: "flex", flexDirection: "column", boxShadow: "var(--shadow-float)" }}>
-          <span className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 10 }}>Prognose Abverkauf</span>
+          <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Prognose Abverkauf</span>
           <div style={{ font: "500 clamp(48px, 5vw, 84px)/1 var(--font-display)", letterSpacing: "-0.03em", marginTop: 16, fontVariantNumeric: "tabular-nums" }}>
             {mstr.length < 2 && <span style={{ color: "rgba(255,255,255,0.3)" }}>0</span>}{mstr}
             <span style={{ fontSize: "0.38em", fontWeight: 400, marginLeft: 8 }}>Monate</span>
           </div>
           <div style={{ display: "flex", gap: 32, marginTop: 22, borderTop: "1px solid rgba(255,255,255,0.35)", paddingTop: 18 }}>
-            <div><div style={{ font: "500 24px/1 var(--font-display)", color: "#FFFFFF" }}>{kaufMonat.toFixed(1)}</div><div className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 9, marginTop: 6 }}>Käufe / Monat</div></div>
-            <div><div style={{ font: "500 24px/1 var(--font-display)", color: "#FFFFFF" }}>{einheiten}</div><div className="u-label" style={{ color: "rgba(255,245,239,0.85)", fontSize: 9, marginTop: 6 }}>Einheiten</div></div>
+            <div><div style={{ font: "500 24px/1 var(--font-display)", color: "#FFFFFF" }}>{kaufMonat.toFixed(1)}</div><div className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10, marginTop: 6 }}>Käufe / Monat</div></div>
+            <div><div style={{ font: "500 24px/1 var(--font-display)", color: "#FFFFFF" }}>{einheiten}</div><div className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10, marginTop: 6 }}>Einheiten</div></div>
           </div>
-          <p style={{ margin: "18px 0 0", font: "400 13.5px/1.55 var(--font-display)", color: "rgba(255,245,239,0.92)", display: "flex", gap: 8, alignItems: "baseline" }} title="Qualitativer Zusammenhang — kein Zinssatz beziffert. Die konkrete Ersparnis hängt von Ihrer Finanzierungsstruktur ab.">
+          <p style={{ margin: "18px 0 0", font: "400 13.5px/1.55 var(--font-display)", color: "rgba(255,245,239,0.92)", display: "flex", gap: 8, alignItems: "baseline" }} title="Qualitativer Zusammenhang — kein Zinssatz beziffert. Die konkrete Ersparnis hängt von deiner Finanzierungsstruktur ab.">
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" style={{ flex: "none", transform: "translateY(2px)" }}><circle cx="7" cy="7" r="6"></circle><path d="M7 6.4v3.4M7 4.2v.2" strokeLinecap="round"></path></svg>
             Eingesparte Standzeit ≈ eingesparte Zwischenfinanzierung.
           </p>
@@ -418,7 +423,7 @@ function SimulatorBt() {
             {pdfState === "form" && (
               <div style={{ display: "flex", gap: 8 }}>
                 <input value={mail} onChange={(e) => setMail(e.target.value)} placeholder="E-Mail für den PDF-Versand" style={{ flex: 1, font: "400 14px var(--font-display)", padding: "12px 14px", borderRadius: "var(--r-inner)", border: "none", outline: "none", background: "rgba(255,255,255,0.18)", color: "#FFFFFF", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.4)" }} />
-                <Bb variant="paper" size="sm" disabled={!mail.includes("@")} onClick={() => setPdfState("sent")}>Senden</Bb>
+                <Bb variant="paper" size="sm" disabled={!mail.includes("@")} onClick={async () => { const ok = await window.submitLead("simulator-pdf", { email: mail, einheiten, leads }); if (ok) setPdfState("sent"); }}>Senden</Bb>
               </div>
             )}
             {pdfState === "sent" && (
@@ -433,10 +438,10 @@ function SimulatorBt() {
 
 /* ===== 09 · EINWÄNDE — Akkordeon (Granger) ===== */
 const EINWAENDE = [
-  ["Was kostet es — und wann?", "100 % erfolgsbasiert: Wir verdienen am Abverkauf, nicht am Retainer — keine Setup-Kosten, kein monatliches Fixum. Unser Risiko liegt neben Ihrem."],
-  ["Wie schnell sehen wir erste Daten?", "Der Markttest startet direkt nach der Unterlagen-Übergabe; erste Resonanzdaten liegen innerhalb des Testfensters vor. [PLATZHALTER: verbindliche Timeline]"],
-  ["Was passiert mit unseren Bestandsmaklern?", "Ihre Bestandspartner bleiben eingebunden: CIRCLE ergänzt statt ersetzt, und die Zuordnung jeder Anfrage bleibt in LENS transparent nachvollziehbar. [PLATZHALTER: Details Partnermodell]"],
-  ["Ist das bank- und beiratsfähig?", "Ja. Ihre Projektdaten bleiben Ihre, und die LENS-Auswertungen sind exportfähig — aufbereitet für Bank, Beirat und Gesellschafter."],
+  ["Was kostet es — und wann?", "100 % erfolgsbasiert: Wir verdienen am Abverkauf, nicht am Retainer — keine Setup-Kosten, kein monatliches Fixum. Unser Risiko liegt neben deinem.", { href: "#simulator", label: "Zum Simulator" }],
+  ["Wie schnell sehen wir erste Daten?", "Der Markttest startet direkt nach der Unterlagen-Übergabe; erste Resonanzdaten liegen innerhalb des Testfensters vor. [PLATZHALTER: verbindliche Timeline]", { href: "#funnel", label: "Projekt einreichen" }],
+  ["Was passiert mit unseren Bestandsmaklern?", "Deine Bestandspartner bleiben eingebunden: CIRCLE ergänzt statt ersetzt, und die Zuordnung jeder Anfrage bleibt in LENS transparent nachvollziehbar. [PLATZHALTER: Details Partnermodell]"],
+  ["Ist das bank- und beiratsfähig?", "Ja. Deine Projektdaten bleiben deine, und die LENS-Auswertungen sind exportfähig — aufbereitet für Bank, Beirat und Gesellschafter."],
   ["Was, wenn das Projekt schon läuft?", "Ein Einstieg ist jederzeit möglich: Wir docken an den aktuellen Stand an und steuern ab dort datenbasiert weiter — auch mitten in der Vermarktung."],
   ["Wie steigen wir wieder aus?", "Über klare Meilensteine statt Bindungsfallen — definierte Exit-Punkte je Projektphase, vorab vereinbart."],
 ];
@@ -444,7 +449,7 @@ function EinwaendeBt() {
   return (
     <window.FaqBlock
       nr="09" label="Fragen"
-      title={<span>Was Sie<br />wissen wollen.</span>}
+      title={<span>Was du<br />wissen willst.</span>}
       subline="Ehrliche Antworten — kein Kleingedrucktes."
       items={EINWAENDE}
       anchor={{ text: "Offene Frage? Wir rufen zurück — persönlich, nicht per Bot.", link: "Kontakt aufnehmen", img: "../../assets/team/portrait-02.jpg" }}
@@ -455,7 +460,20 @@ function EinwaendeBt() {
 /* ===== 10 · FUNNEL — 3 Felder + Reassurance ===== */
 function FunnelBt() {
   const [sent, setSent] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState(false);
+  const [einverst, setEinverst] = React.useState(false);
+  const fRef = React.useRef(null);
   const mob = window.useMobile();
+  const send = async () => {
+    const f = fRef.current;
+    if (!f || !f.reportValidity() || !einverst || busy) return;
+    const data = Object.fromEntries(new FormData(f).entries());
+    setBusy(true); setErr(false);
+    const ok = await window.submitLead("projekt", data);
+    setBusy(false);
+    if (ok) setSent(true); else setErr(true);
+  };
   const twoCol = { display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: 12 };
   const feld = { font: "400 15px var(--font-display)", padding: "15px 17px", borderRadius: "var(--r-inner)", border: "none", outline: "none", background: "#FFFFFF", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", width: "100%" };
   const selFeld = { ...feld, appearance: "none", WebkitAppearance: "none", cursor: "pointer", paddingRight: 40, fontFamily: "var(--font-display)", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5A54' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" };
@@ -468,7 +486,7 @@ function FunnelBt() {
             Projekt prüfen lassen<span style={{ color: "var(--signal)" }}>.</span>
           </h2>
           <p style={{ margin: "18px auto 0", font: "400 16px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
-            Unser Team prüft Ihr Projekt auf Marktresonanz, mit echten Daten, bevor Sie Budget binden.
+            Unser Team prüft dein Projekt auf Marktresonanz, mit echten Daten, bevor du Budget bindest.
           </p>
         </Fx>
         <div style={{ marginTop: 36, textAlign: "left", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "clamp(24px, 3vw, 36px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
@@ -480,18 +498,18 @@ function FunnelBt() {
               <div style={{ font: "500 21px var(--font-display)", color: "var(--ink)", marginTop: 16 }}>Danke. Antwort in 48 h — mit Daten.</div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <form ref={fRef} onSubmit={(e) => { e.preventDefault(); send(); }} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={twoCol}>
-                <input placeholder="Name" style={feld} />
-                <input placeholder="E-Mail" style={feld} />
+                <input name="name" placeholder="Name" required autoComplete="name" style={feld} />
+                <input name="email" type="email" placeholder="E-Mail" required autoComplete="email" style={feld} />
               </div>
               <div style={twoCol}>
-                <input placeholder="Firma (optional)" style={feld} />
-                <input placeholder="Telefon (optional)" style={feld} />
+                <input name="firma" placeholder="Firma (optional)" autoComplete="organization" style={feld} />
+                <input name="telefon" type="tel" placeholder="Telefon (optional)" autoComplete="tel" style={feld} />
               </div>
               <div style={twoCol}>
-                <input placeholder="Projekt-Standort — Bezirk oder Adresse" style={feld} />
-                <select defaultValue="" style={selFeld}>
+                <input name="standort" placeholder="Projekt-Standort — Bezirk oder Adresse" required style={feld} />
+                <select name="phase" defaultValue="" style={selFeld}>
                   <option value="" disabled>Projektphase</option>
                   <option>Grundstück</option>
                   <option>Planung</option>
@@ -500,14 +518,14 @@ function FunnelBt() {
                 </select>
               </div>
               <div style={twoCol}>
-                <select defaultValue="" style={selFeld}>
+                <select name="einheiten" defaultValue="" style={selFeld}>
                   <option value="" disabled>Einheiten im Projekt</option>
                   <option>Unter 10</option>
                   <option>10–30</option>
                   <option>31–60</option>
                   <option>Über 60</option>
                 </select>
-                <select defaultValue="" style={selFeld}>
+                <select name="vermarktungsstart" defaultValue="" style={selFeld}>
                   <option value="" disabled>Geplanter Vermarktungsstart</option>
                   <option>Sofort</option>
                   <option>In 3–6 Monaten</option>
@@ -515,13 +533,18 @@ function FunnelBt() {
                   <option>Später / offen</option>
                 </select>
               </div>
-              <input placeholder="Projekt-Link oder Exposé-PDF (optional)" style={feld} />
-              <textarea placeholder="Kurzbeschreibung — Lage, Einheiten-Mix, Besonderheiten (optional)" rows={3} style={{ ...feld, resize: "vertical", fontFamily: "inherit" }}></textarea>
+              <input name="projektlink" placeholder="Projekt-Link oder Exposé-PDF (optional)" style={feld} />
+              <textarea name="beschreibung" placeholder="Kurzbeschreibung — Lage, Einheiten-Mix, Besonderheiten (optional)" rows={3} style={{ ...feld, resize: "vertical", fontFamily: "inherit" }}></textarea>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>
+                <input type="checkbox" checked={einverst} onChange={(e) => setEinverst(e.target.checked)} style={{ marginTop: 2, accentColor: "#FFAA09" }} />
+                Ich bin einverstanden, dass UNIO mich zu meinem Projekt kontaktiert. Details in der <a href="datenschutz.html" style={{ color: "var(--signal-deep)" }}>Datenschutzerklärung</a>.
+              </label>
               <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", marginTop: 6 }}>
-                <Bb variant="signal" size="lg" knob onClick={() => setSent(true)}>Projekt einreichen</Bb>
+                <Bb variant="signal" size="lg" knob disabled={!einverst || busy} onClick={send}>{busy ? "Wird gesendet …" : "Projekt einreichen"}</Bb>
                 <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 10 }}>Vertraulich · Antwort in 48 h · mit Daten</span>
               </div>
-            </div>
+              <window.LeadError show={err} />
+            </form>
           )}
         </div>
       </div>
@@ -542,7 +565,7 @@ const STOERER_PROJ = [
   { img: "../../assets/img/albrecht.jpg", n: "Das Albrecht", b: "Wien 1170", g: "num", v: "61", cap: "Anfragen · 2 Wochen" },
 ];
 function StoererGraphic({ p }) {
-  const cap = { font: "8.5px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)" };
+  const cap = { font: "10px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)" };
   if (p.g === "num") {
     return (
       <div>
@@ -593,14 +616,14 @@ function StoererBt() {
             <div key={i} onMouseEnter={() => setTip(i)} onMouseLeave={() => setTip(-1)}
               style={{ position: "relative", flex: "none", width: "clamp(210px, 22vw, 300px)", aspectRatio: "4 / 5", borderRadius: 14, overflow: "hidden", boxShadow: "inset 0 0 0 0.5px var(--hairline-dark)", transform: tip === i ? "scale(1.02)" : "none", transition: "transform .5s cubic-bezier(.32,.72,0,1)" }}>
               {p.video
-                ? <video src={p.video} poster={p.img} muted loop autoPlay playsInline preload="auto" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", background: "var(--paper-3)" }}></video>
+                ? <video src={p.video} poster={p.img} muted loop autoPlay playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", background: "var(--paper-3)" }}></video>
                 : <img src={p.img} alt={p.n} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
               {!p.plain && <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.28) 0%, transparent 32%, transparent 58%, rgba(11,10,9,0.42))" }}></div>}
               {/* Health-Card-Grafik: Hairline-Frame + Label oben + variierende Grafik unten */}
               {!p.plain && <div aria-hidden="true" style={{ position: "absolute", inset: 12, borderRadius: 14, border: "1px solid rgba(255,255,255,0.5)", pointerEvents: "none", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "14px 14px 12px", color: "#FFFFFF" }}>
                 <div>
                   <div style={{ font: "500 18px/1 var(--font-display)", letterSpacing: "-0.01em" }}>{p.n}<span style={{ font: "10px var(--font-mono)", marginLeft: 6, verticalAlign: "2px" }}>↗</span></div>
-                  <div style={{ font: "9px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)", marginTop: 6 }}>{p.b}</div>
+                  <div style={{ font: "10px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)", marginTop: 6 }}>{p.b}</div>
                 </div>
                 <StoererGraphic p={p} />
               </div>}

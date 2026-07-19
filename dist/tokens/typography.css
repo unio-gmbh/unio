@@ -1,0 +1,29 @@
+/* UNIO — Typografie. Zwei Stimmen, kein Mittelmaß: große Grotesk + kleine Mono. */
+:root {
+  --font-display: "Power Grotesk", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+
+  /* Statements: riesig, eng gesetzt */
+  --size-hero: clamp(64px, 9vw, 148px);
+  --size-h1: clamp(44px, 5.5vw, 88px);
+  --size-h2: clamp(30px, 3.2vw, 52px);
+  --size-h3: 26px;
+  --size-body: 18px;
+  --size-small: 15px;
+
+  /* Datenlayer: klein, versal, weit getrackt */
+  --size-label: 12px;
+  --size-data: 14px;
+  --size-metric: 44px;
+
+  --track-display: -0.03em;
+  --track-label: 0.16em;
+
+  --leading-display: 0.98;
+  --leading-body: 1.55;
+
+  --weight-display: 500;
+  --weight-medium: 500;
+  --weight-book: 400;
+  --weight-light: 300;
+}
