@@ -155,9 +155,9 @@ function SiteNav({ active, cta }) {
     );
   }
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 6vw", transition: "padding .55s var(--ease-unio)" }}>
       <div style={{
-        width: "100%", maxWidth: pill ? 760 : 1400, margin: "0 auto",
+        width: "100%", maxWidth: pill ? 760 : "none", margin: "0 auto",
         display: "flex", alignItems: "center",
         padding: pill ? "9px 10px 9px 22px" : "12px 12px 12px 26px",
         borderRadius: pill ? 12 : 16,

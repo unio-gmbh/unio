@@ -530,48 +530,31 @@ function FunnelBt() {
 }
 
 /* ===== Referenz-Störer: Bild-Marquee mit Hover-Gap (Briefing 06.07.) ===== */
+/* Echte Kennzahlen (Arbeitsstand) je Projekt. Wo keine belastbare Zahl
+   vorliegt (Origins, Das Wimmer), zeigt die Karte den Live-Status statt
+   erfundener Werte. */
 const STOERER_PROJ = [
-  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "bars", d: [4, 6, 5, 8, 7, 9], cap: "Anfragen / Woche" },
-  { video: "../../assets/video/hufhaus.mp4", img: "../../assets/img/vienna-garden.jpg", n: "Das Wimmer", b: "Wien-Umland", g: "ring", d: [72], cap: "Nachfrage-Index" },
-  { img: "../../assets/img/beheim.jpg", n: "Das Beheim", b: "Wien 1170", g: "dots", d: [3], cap: "Vermarktungsphase" },
-  { img: "../../assets/img/obenzwei.jpg", n: "ObenZwei", b: "Wien 1020", g: "bars", d: [3, 5, 4, 7, 6, 8], cap: "Anfragen / Woche" },
-  { img: "../../assets/img/penthouse.jpg", n: "Origins", b: "Wien 1180", g: "ring", d: [64], cap: "Nachfrage-Index" },
-  { img: "../../assets/img/albrecht.jpg", n: "Das Albrecht", b: "Wien 1170", g: "dots", d: [4], cap: "Vermarktungsphase" },
+  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "num", v: "+31 %", cap: "über Zielpreis · verkauft" },
+  { video: "../../assets/video/hufhaus.mp4", img: "../../assets/img/vienna-garden.jpg", n: "Das Wimmer", b: "Wien-Umland", g: "live", cap: "Live vermarktet" },
+  { img: "../../assets/img/beheim.jpg", n: "Das Beheim", b: "Wien 1170", g: "num", v: "27", cap: "Anfragen · 2 Wochen" },
+  { img: "../../assets/img/obenzwei.jpg", n: "ObenZwei", b: "Wien 1020", g: "num", v: "25", cap: "hochqual. Anfragen / Woche" },
+  { img: "../../assets/img/penthouse.jpg", n: "Origins", b: "Wien 1180", g: "live", cap: "Live vermarktet" },
+  { img: "../../assets/img/albrecht.jpg", n: "Das Albrecht", b: "Wien 1170", g: "num", v: "61", cap: "Anfragen · 2 Wochen" },
 ];
-const PHASEN = ["Analyse", "Testing", "Kampagne", "Besichtigung", "Abschluss"];
 function StoererGraphic({ p }) {
   const cap = { font: "8.5px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)" };
-  if (p.g === "bars") {
+  if (p.g === "num") {
     return (
       <div>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 24 }}>
-          {p.d.map((v, k) => <span key={k} style={{ flex: 1, height: (v / 9 * 100) + "%", background: "rgba(255,255,255,0.9)", borderRadius: 1 }}></span>)}
-        </div>
-        <div style={{ ...cap, marginTop: 8 }}>{p.cap} · steigend</div>
-      </div>
-    );
-  }
-  if (p.g === "ring") {
-    const C = 2 * Math.PI * 13;
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-        <svg width="34" height="34" viewBox="0 0 30 30" style={{ flex: "none" }}>
-          <circle cx="15" cy="15" r="13" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
-          <circle cx="15" cy="15" r="13" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeDasharray={C} strokeDashoffset={C * (1 - p.d[0] / 100)} transform="rotate(-90 15 15)" strokeLinecap="round" />
-        </svg>
-        <div>
-          <div style={{ font: "500 16px/1 var(--font-display)", color: "#FFFFFF" }}>{p.d[0]}<span style={{ font: "9px var(--font-mono)", marginLeft: 2 }}>/100</span></div>
-          <div style={{ ...cap, marginTop: 5 }}>{p.cap}</div>
-        </div>
+        <div style={{ font: "500 26px/1 var(--font-display)", letterSpacing: "-0.02em", color: "#FFFFFF" }}>{p.v}</div>
+        <div style={{ ...cap, marginTop: 7 }}>{p.cap}</div>
       </div>
     );
   }
   return (
-    <div>
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-        {PHASEN.map((_, k) => <span key={k} style={{ width: k === p.d[0] ? 20 : 7, height: 7, borderRadius: 4, background: k <= p.d[0] ? "#FFFFFF" : "rgba(255,255,255,0.4)", transition: "all .4s" }}></span>)}
-      </div>
-      <div style={{ ...cap, marginTop: 8 }}>{p.cap} · {PHASEN[p.d[0]]}</div>
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)", animation: BT_RM ? "none" : "uPulse 2.2s var(--ease-unio) infinite" }}></span>
+      <span style={cap}>{p.cap}</span>
     </div>
   );
 }

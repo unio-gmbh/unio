@@ -58,14 +58,15 @@ function HeroSt() {
 
 /* ===== 02 · ERKENNTNIS — fünf Perspektiven als gepinnte Horizontal-Strecke ===== */
 const PERSPEKT = [
-  ["01", "Der Eigentümer", "inseriert und hört monatelang — nichts."],
-  ["02", "Die Maklerin", "verwaltet Papier, statt Menschen zu beraten."],
-  ["03", "Der Bauträger", "baut auf Hoffnung, weil der Markt erst nach dem Baustart antwortet."],
-  ["04", "Der Käufer", "vergleicht Inserate statt Wahrheiten."],
-  ["05", "Der Vermarkter", "schaltet Kampagnen in eine Blackbox."],
+  ["01", "Der Eigentümer", "inseriert und hört monatelang nichts. Keine Reichweite, keine Anfragen, kein Signal, ob der Preis stimmt: nur Stille."],
+  ["02", "Die Maklerin", "verwaltet Papier, statt Menschen zu beraten. Exposés, Portale, Termine, Abrechnung: Die halbe Woche gehört Systemen, die einander nicht kennen."],
+  ["03", "Der Bauträger", "baut auf Hoffnung, weil der Markt erst nach dem Baustart antwortet. Preisband, Grundrisse, Zielgruppen: Entschieden wird, bevor echte Nachfrage sichtbar ist."],
+  ["04", "Der Käufer", "vergleicht Inserate statt Wahrheiten. Geschönte Fotos, veraltete Preise, unbeantwortete Anfragen: Vertrauen bleibt Glückssache."],
+  ["05", "Der Vermarkter", "schaltet Kampagnen in eine Blackbox. Budget rein, Klicks raus. Was davon beim Abschluss ankommt, sieht niemand."],
 ];
 function ErkenntnisSt() {
   const [ref, p] = usePinProgress();
+  const mobSt = window.useMobile();
   const n = PERSPEKT.length;
   // Track fährt über 0–0.82 durch; danach kurzer Halt
   const shift = stC(p / 0.86) * (n - 1);
@@ -99,19 +100,30 @@ function ErkenntnisSt() {
             Wir kannten dieselben Probleme<br /><span style={{ color: "var(--text-muted)" }}>von fünf verschiedenen Seiten.</span>
           </h2>
         </div>
-        {/* horizontaler Track */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", width: n * 100 + "%", transform: `translateX(${-(shift / n) * 100}%)` }}>
-          {PERSPEKT.map(([nr, wer, was]) => (
-            <div key={nr} style={{ width: (100 / n) + "%", flex: "none", position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 7vw" }}>
-              <span aria-hidden="true" style={{ position: "absolute", left: "5vw", top: "22%", font: "500 clamp(180px, 34vw, 460px)/0.8 var(--font-display)", letterSpacing: "-0.05em", color: "rgba(11,10,9,0.06)", pointerEvents: "none", userSelect: "none" }}>{nr}</span>
-              <div style={{ position: "relative", maxWidth: 560 }}>
-                <span style={{ font: "13px var(--font-mono)", color: "var(--signal-deep)" }}>{nr} / 05</span>
-                <h3 style={{ margin: "18px 0 0", font: "500 clamp(34px, 4.6vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{wer}</h3>
-                <p style={{ margin: "20px 0 0", font: "400 clamp(17px, 1.7vw, 24px)/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 440 }}>{was}</p>
-              </div>
+        {/* horizontaler Track: Panels schmaler als der Viewport, das nächste Kapitel
+            ragt rechts herein und blendet sich beim Heranfahren auf */}
+        {(() => {
+          const PW = mobSt ? 100 : 72; // Panelbreite in vw
+          return (
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", width: "max-content", transform: `translateX(${-(shift * PW)}vw)` }}>
+              {PERSPEKT.map(([nr, wer, was], i) => {
+                const d = Math.abs(i - shift);
+                const dim = Math.min(0.62, Math.max(0, d - 0.12) * 0.85);
+                const last = i === n - 1;
+                return (
+                  <div key={nr} style={{ width: (last ? 100 : PW) + "vw", flex: "none", position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 7vw", opacity: 1 - dim }}>
+                    <span aria-hidden="true" style={{ position: "absolute", left: "4vw", top: "22%", font: `500 ${mobSt ? "clamp(180px, 34vw, 460px)" : "clamp(160px, 26vw, 400px)"}/0.8 var(--font-display)`, letterSpacing: "-0.05em", color: "rgba(11,10,9,0.06)", pointerEvents: "none", userSelect: "none" }}>{nr}</span>
+                    <div style={{ position: "relative", maxWidth: 560 }}>
+                      <span style={{ font: "13px var(--font-mono)", color: "var(--signal-deep)" }}>{nr} / 05</span>
+                      <h3 style={{ margin: "18px 0 0", font: "500 clamp(34px, 4.6vw, 76px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{wer}</h3>
+                      <p style={{ margin: "20px 0 0", font: "400 clamp(16px, 1.5vw, 21px)/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 460 }}>{was}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
+          );
+        })()}
         {/* Fortschritts-Punkte */}
         <div style={{ position: "absolute", left: "7vw", bottom: "9vh", display: "flex", gap: 8 }}>
           {PERSPEKT.map((_, i) => (
