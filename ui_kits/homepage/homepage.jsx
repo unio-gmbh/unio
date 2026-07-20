@@ -14,13 +14,17 @@ function Hero() {
   const vidRef = React.useRef(null);
   React.useEffect(() => {
     const v = vidRef.current;
-    if (!v) return;
+    if (!v || RMx) return; // bei Reduced-Motion bleibt das Poster stehen
     v.muted = true;
+    // Mehrere Anlaeufe: Autoplay wird je nach Browser/Netz erst spaeter erlaubt.
+    // Schlaegt alles fehl, bleibt das Poster (echtes Video-Standbild) sichtbar.
     const go = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
     go();
-    v.addEventListener("canplay", go, { once: true });
-    v.addEventListener("loadeddata", go, { once: true });
-    return () => { v.removeEventListener("canplay", go); v.removeEventListener("loadeddata", go); };
+    const evts = ["canplay", "loadeddata", "canplaythrough"];
+    evts.forEach((e) => v.addEventListener(e, go));
+    const onVis = () => { if (!document.hidden) go(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => { evts.forEach((e) => v.removeEventListener(e, go)); document.removeEventListener("visibilitychange", onVis); };
   }, []);
   React.useEffect(() => {
     if (RMx) return;
@@ -59,8 +63,8 @@ function Hero() {
 
   return (
     <section id="top" data-screen-label="Hero" style={{ position: "sticky", top: 0, zIndex: 0, height: "100svh", overflow: "hidden", background: "var(--ink)" }}>
-      <video ref={vidRef} poster="../../assets/img/vienna-facades.jpg" muted loop autoPlay playsInline preload="auto"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: `scale(${1 + (RMx ? 0 : sy * 0.0002)})` }}>
+      <video ref={vidRef} poster="../../assets/img/hero-poster.jpg" muted loop autoPlay playsInline preload={RMx ? "none" : "auto"}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", backgroundImage: "url(../../assets/img/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center", transform: `scale(${1 + (RMx ? 0 : sy * 0.0002)})` }}>
         <source src="../../assets/video/hero-fenster.webm" type="video/webm" />
         <source src="../../assets/video/hero-fenster.mp4" type="video/mp4" />
       </video>
