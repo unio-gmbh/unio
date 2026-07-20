@@ -196,7 +196,7 @@ function Zielgruppen() {
         </div>
         {/* CIRCLE — Porträt einer Partnerin + Zitat, Du */}
         <div style={{ position: "relative", borderRadius: "var(--r-panel)", overflow: "hidden", minHeight: 420 }}>
-          <img src="../../assets/team/portrait-03.jpg" alt="CIRCLE Partner:in" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 18%" }} />
+          <img src="../../assets/team/portrait-03.jpg" alt="CIRCLE Partner:in" style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: mob ? "116%" : "142%", maxWidth: "none", height: "100%", objectFit: "cover", objectPosition: "center 16%" }} />
           <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.24), rgba(11,10,9,0.68))" }}></div>
           <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", padding: "clamp(32px, 4vw, 52px)", color: "var(--text-inverse)", zIndex: 3 }}>
             <span className="u-label" style={{ color: "var(--text-inverse-muted)", fontSize: 10 }}>Für Makler:innen · CIRCLE</span>
