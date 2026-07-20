@@ -288,20 +288,29 @@ const PIcon = ({ d }) => (
   </svg>
 );
 function PropCard({ o, hov, onHov }) {
+  const [aHov, setAHov] = React.useState(false);
+  const agent = o.agent || "UNIO Partner:in";
   return (
     <a href={PROJEKT_URL}
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
       style={{ textDecoration: "none", display: "block", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
       <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
         <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-        {/* Partner-Avatar im Bild, rechts oben */}
-        <span
-          role="link" tabIndex={0} title="Persönlich betreut · UNIO Partner:in"
+        {/* Partner-Avatar im Bild, rechts oben — Hover: Gesicht zoomt, Name gleitet links heraus */}
+        <div
+          role="link" tabIndex={0} title={"Persönlich betreut · " + agent}
+          onMouseEnter={() => setAHov(true)} onMouseLeave={() => setAHov(false)}
+          onFocus={() => setAHov(true)} onBlur={() => setAHov(false)}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); location.assign("makler.html"); }}
           onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); location.assign("makler.html"); } }}
-          style={{ position: "absolute", top: 12, right: 12, cursor: "pointer", display: "block", width: 36, height: 36, borderRadius: "50%", overflow: "hidden", boxShadow: "0 0 0 2px rgba(253,252,250,0.95), 0 4px 14px rgba(11,10,9,0.3)" }}>
-          <img src={o.agentImg || "../../assets/team/portrait-01.jpg"} alt="UNIO Partner:in" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 22%" }} />
-        </span>
+          style={{ position: "absolute", top: 12, right: 12, cursor: "pointer", display: "flex", flexDirection: "row-reverse", alignItems: "center" }}>
+          {/* Kreis mit Gesicht */}
+          <span style={{ position: "relative", zIndex: 2, flex: "none", display: "block", width: 36, height: 36, borderRadius: "50%", overflow: "hidden", boxShadow: aHov ? "0 0 0 2px rgba(253,252,250,1), 0 6px 18px rgba(11,10,9,0.4)" : "0 0 0 2px rgba(253,252,250,0.95), 0 4px 14px rgba(11,10,9,0.3)", transition: "box-shadow var(--dur-fast) var(--ease-unio)" }}>
+            <img src={o.agentImg || "../../assets/team/portrait-01.jpg"} alt={agent} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 22%", transform: aHov ? "scale(1.22)" : "scale(1)", transition: "transform var(--dur-mid, 400ms) var(--ease-unio)" }} />
+          </span>
+          {/* Name gleitet hinter dem Kreis nach links heraus */}
+          <span className="u-label" aria-hidden={!aHov} style={{ position: "relative", zIndex: 1, marginRight: -16, paddingLeft: 13, paddingRight: 22, height: 28, display: "inline-flex", alignItems: "center", borderRadius: 14, whiteSpace: "nowrap", fontSize: 10, letterSpacing: "0.06em", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", pointerEvents: "none", opacity: aHov ? 1 : 0, transform: aHov ? "translateX(0)" : "translateX(14px)", transition: "opacity var(--dur-fast) var(--ease-unio), transform var(--dur-mid, 380ms) var(--ease-unio)" }}>{agent}</span>
+        </div>
         {/* Nachfrage-Badge unten links */}
         {o.score && (
           <span className="u-label" style={{ position: "absolute", left: 12, bottom: 12, fontSize: 10, padding: "7px 13px", borderRadius: 8, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>Nachfrage {o.score}</span>
@@ -328,12 +337,12 @@ function PropCard({ o, hov, onHov }) {
 /* ll = ungefähre Lage (Bezirks-Ebene) für die Kartenansicht — keine Adressen.
    qm/zi/score: Demo-Werte (Arbeitsstand). */
 const OBJEKT_DB = [
-  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], agentImg: "../../assets/team/portrait-01.jpg" },
-  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg" },
-  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], agentImg: "../../assets/team/portrait-03.jpg" },
-  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], agentImg: "../../assets/team/portrait-04.jpg" },
-  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], agentImg: "../../assets/team/portrait-05.jpg" },
-  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg" },
+  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], agentImg: "../../assets/team/portrait-01.jpg", agent: "Lena Berger" },
+  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg", agent: "Marc Reiter" },
+  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], agentImg: "../../assets/team/portrait-03.jpg", agent: "Sophie Frank" },
+  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], agentImg: "../../assets/team/portrait-04.jpg", agent: "David Huber" },
+  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], agentImg: "../../assets/team/portrait-05.jpg", agent: "Nina Vogel" },
+  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg", agent: "Marc Reiter" },
 ];
 
 /* Footer */
