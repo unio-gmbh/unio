@@ -171,6 +171,17 @@ async function main() {
     console.log("✓ Wissens-Hub kopiert");
   }
 
+  /* 3c) Showcase-Seiten (Partner-Page-Varianten): unverlinkt, noindex,
+        bewusst NICHT in der Sitemap. Self-contained, flach nach dist/
+        -> /homepages, /showcase1 ... /showcase7 via cleanUrls. */
+  const SHOWCASE_DIR = join(ROOT, "showcase");
+  if (existsSync(SHOWCASE_DIR)) {
+    for (const f of readdirSync(SHOWCASE_DIR).filter((f) => f.endsWith(".html"))) {
+      cpSync(join(SHOWCASE_DIR, f), join(DIST, f));
+    }
+    console.log("✓ Showcase-Seiten kopiert (nicht in Sitemap)");
+  }
+
   /* 4) robots.txt + sitemap.xml */
   writeFileSync(join(DIST, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
   const today = new Date().toISOString().slice(0, 10);
