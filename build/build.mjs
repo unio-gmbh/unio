@@ -182,6 +182,13 @@ async function main() {
     console.log("✓ Showcase-Seiten kopiert (nicht in Sitemap)");
   }
 
+  /* 3d) Social-Vorschau (unverlinkt, noindex): Galerie + Exporte */
+  if (existsSync(join(ROOT, "social", "preview.html"))) {
+    cpSync(join(ROOT, "social", "preview.html"), join(DIST, "social-preview.html"));
+    cpSync(join(ROOT, "social", "exports"), join(DIST, "social-exports"), { recursive: true });
+    console.log("✓ Social-Vorschau kopiert (nicht in Sitemap)");
+  }
+
   /* 4) robots.txt + sitemap.xml */
   writeFileSync(join(DIST, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
   const today = new Date().toISOString().slice(0, 10);
