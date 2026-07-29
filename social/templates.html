@@ -43,8 +43,8 @@
     text-shadow:0 2px 28px rgba(0,0,0,.6)}
   .marker i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal;flex:none}
   .cta{display:inline-flex;align-items:center;gap:16px;background:var(--ink);color:#F7F5F1;
-    border-radius:14px;font:500 30px var(--fd);padding:26px 46px;letter-spacing:-.01em}
-  .cta .arw{width:52px;height:52px;border-radius:10px;background:var(--signal);color:var(--ink);
+    border-radius:999px;font:500 30px var(--fd);padding:26px 46px;letter-spacing:-.01em}
+  .cta .arw{width:52px;height:52px;border-radius:50%;background:var(--signal);color:var(--ink);
     display:inline-flex;align-items:center;justify-content:center;font:500 26px var(--fm)}
 
   /* ============================================================
@@ -83,14 +83,14 @@
   #e3a .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
   #e3a h1{margin-top:170px}
   #e3a .swipe{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font:500 22px var(--fm);letter-spacing:.18em;color:var(--muted)}
-  #e3b{background:var(--ink)}
+  #e3b{background:var(--paper)}
   #e3b .ph{position:absolute;inset:0 0 42% 0;overflow:hidden}
   #e3b .ph img{width:100%;height:100%;object-fit:cover}
   #e3b .badge{position:absolute;top:56px;left:56px}
-  #e3b .body{position:absolute;left:0;right:0;bottom:0;height:42%;padding:64px 88px;color:#F7F5F1;display:flex;flex-direction:column}
-  #e3b h2{font:500 66px/1.06 var(--fd);letter-spacing:-.02em;color:#fff}
-  #e3b .adr{font:400 30px var(--fd);color:var(--inv-muted);margin-top:12px}
-  #e3b .row{display:flex;gap:40px;margin-top:auto;font:500 26px var(--fm);letter-spacing:.1em;color:#F7F5F1}
+  #e3b .body{position:absolute;left:0;right:0;bottom:0;height:42%;padding:64px 88px;color:var(--ink-2);display:flex;flex-direction:column;border-top:1.5px solid var(--hairline-d)}
+  #e3b h2{font:500 66px/1.06 var(--fd);letter-spacing:-.02em;color:var(--ink)}
+  #e3b .adr{font:400 30px var(--fd);color:var(--muted);margin-top:12px}
+  #e3b .row{display:flex;gap:40px;margin-top:auto;font:500 26px var(--fm);letter-spacing:.1em;color:var(--ink-2)}
   #e3b .row .price{margin-left:auto;font:500 38px var(--fd);letter-spacing:0}
   #e3c .inner{position:absolute;inset:96px;display:flex;flex-direction:column;align-items:flex-start}
   #e3c h1{font-size:104px;max-width:10ch;margin-top:150px}
@@ -116,15 +116,15 @@
   /* ============================================================
      M2 · MAKLER · 4:5 Stat-Snap (100 % Provision)
   ============================================================ */
-  #m2{background:var(--ink)}
+  
   #m2 .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
-  #m2 .big{font:500 340px/0.92 var(--fd);letter-spacing:-.045em;color:#F7F5F1;margin-top:160px}
+  #m2 .big{font:500 340px/0.92 var(--fd);letter-spacing:-.045em;color:var(--ink);margin-top:160px}
   #m2 .big .pct{color:var(--signal)}
-  #m2 h2{font:500 78px/1.08 var(--fd);letter-spacing:-.025em;color:#F7F5F1;margin-top:26px}
-  #m2 .sub{font:400 34px/1.5 var(--fd);color:var(--inv-muted);margin-top:34px;max-width:24ch}
+  #m2 h2{font:500 78px/1.08 var(--fd);letter-spacing:-.025em;color:var(--ink);margin-top:26px}
+  #m2 .sub{font:400 34px/1.5 var(--fd);color:var(--muted);margin-top:34px;max-width:24ch}
   #m2 .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
-    padding-top:44px;border-top:1.5px solid var(--hairline-l)}
-  #m2 .foot .mono{font-size:22px;color:var(--inv-muted)}
+    padding-top:44px;border-top:1.5px solid var(--hairline-d)}
+  #m2 .foot .mono{font-size:22px;color:var(--muted)}
 
   /* ============================================================
      M3 · MAKLER · Carousel 3 Slides (KI-Objektanlage)
@@ -135,13 +135,13 @@
     border:1.5px solid var(--hairline-d);border-radius:10px;padding:20px 32px;background:#FDFCFA}
   #m3a h1{margin-top:auto;max-width:9ch}
   #m3a .swipe{margin-top:56px;display:flex;justify-content:space-between;font:500 22px var(--fm);letter-spacing:.18em;color:var(--muted)}
-  #m3b{background:var(--ink)}
-  #m3b .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:#F7F5F1}
-  #m3b h1{font:500 96px/1.05 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:120px;max-width:11ch}
+  
+  #m3b .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:var(--ink-2)}
+  #m3b h1{font:500 96px/1.05 var(--fd);letter-spacing:-.03em;color:var(--ink);margin-top:120px;max-width:11ch}
   #m3b .flow{margin-top:auto;display:flex;flex-direction:column;gap:22px}
   #m3b .frow{display:flex;align-items:center;gap:26px}
-  #m3b .frow .in{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:var(--inv-muted);
-    border:1.5px solid var(--hairline-l);border-radius:10px;padding:16px 26px}
+  #m3b .frow .in{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:var(--muted);
+    border:1.5px solid var(--hairline-d);border-radius:10px;padding:16px 26px;background:#FDFCFA}
   #m3b .frow .line{flex:1;border-top:2px dashed rgba(255,170,9,.5)}
   #m3b .frow .out{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:#1A1305;background:var(--signal);
     border-radius:10px;padding:16px 26px}
@@ -198,15 +198,15 @@
     padding-top:40px;border-top:1.5px solid var(--hairline-d);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
   /* ===== C · CIRCLE-Carousel (Makler, dunkel) ===== */
-  .cc-slide{background:var(--ink)}
-  .cc-slide .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:#F7F5F1}
-  .cc-slide h1{font:500 112px/1.06 var(--fd);letter-spacing:-.035em;color:#F7F5F1;margin-top:150px;max-width:11ch}
-  .cc-slide .bignum{font:500 300px/0.92 var(--fd);letter-spacing:-.045em;color:#F7F5F1;margin-top:110px}
+  .cc-slide{background:var(--paper)}
+  .cc-slide .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:var(--ink-2)}
+  .cc-slide h1{font:500 112px/1.06 var(--fd);letter-spacing:-.035em;color:var(--ink);margin-top:150px;max-width:11ch}
+  .cc-slide .bignum{font:500 300px/0.92 var(--fd);letter-spacing:-.045em;color:var(--ink);margin-top:110px}
   .cc-slide .bignum .a{color:var(--signal)}
-  .cc-slide h2{font:500 84px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:30px}
-  .cc-slide .txt{font:400 38px/1.55 var(--fd);color:var(--inv-muted);margin-top:40px;max-width:26ch}
+  .cc-slide h2{font:500 84px/1.08 var(--fd);letter-spacing:-.03em;color:var(--ink);margin-top:30px}
+  .cc-slide .txt{font:400 38px/1.55 var(--fd);color:var(--muted);margin-top:40px;max-width:26ch}
   .cc-slide .foot2{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
-    padding-top:40px;border-top:1.5px solid var(--hairline-l);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--inv-muted)}
+    padding-top:40px;border-top:1.5px solid var(--hairline-d);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -313,12 +313,13 @@
 <!-- ============ M2 · Makler · 4:5 Stat-Snap ============ -->
 <div class="board-label">M2 · makler-stat-provision-45.png · Feed 4:5</div>
 <section class="board r45" id="m2" data-name="makler-stat-provision-45">
+  <div class="grain"></div>
   <div class="inner">
     <div class="big">100<span class="pct">%</span></div>
     <h2>Provision. Deine<span class="dot">.</span></h2>
     <p class="sub">Ab € 150K Jahresumsatz gehört jede Provision dir. Deine Marke, dein Netzwerk, dein Anteil.</p>
     <div class="foot">
-      <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
       <span class="mono">ARBEITSSTAND · KEIN VERSPRECHEN, EIN MODELL</span>
     </div>
   </div>
@@ -341,6 +342,7 @@
 
 <div class="board-label">M3b · makler-carousel-2.png · Slide 2 Verwandlung</div>
 <section class="board r45" id="m3b" data-name="makler-carousel-2">
+  <div class="grain"></div>
   <div class="inner">
     <h1>Dokumente rein. Vermarktung raus<span class="dot">.</span></h1>
     <div class="flow">
@@ -468,6 +470,7 @@
 <!-- ============ C · CIRCLE-Carousel (Makler, 4 Slides) ============ -->
 <div class="board-label">C1 · makler-circle-carousel-1.png · Hook</div>
 <section class="board r45 cc-slide" id="cc1" data-name="makler-circle-carousel-1">
+  <div class="grain"></div>
   <div class="inner">
     <h1>Was bleibt dir eigentlich von deiner Provision<span class="dot">?</span></h1>
     <div class="foot2"><span>UNIO · CIRCLE</span><span>WEITER →</span></div>
@@ -476,6 +479,7 @@
 
 <div class="board-label">C2 · makler-circle-carousel-2.png · Zahl</div>
 <section class="board r45 cc-slide" id="cc2" data-name="makler-circle-carousel-2">
+  <div class="grain"></div>
   <div class="inner">
     <div class="bignum">100<span class="a">%</span></div>
     <h2>ab € 150K Jahresumsatz<span class="dot">.</span></h2>
@@ -486,6 +490,7 @@
 
 <div class="board-label">C3 · makler-circle-carousel-3.png · Marke</div>
 <section class="board r45 cc-slide" id="cc3" data-name="makler-circle-carousel-3">
+  <div class="grain"></div>
   <div class="inner">
     <h1 style="margin-top:120px">Deine Marke gehört dir<span class="dot">.</span></h1>
     <p class="txt">Ein Inhouse-Team produziert unter deinem Namen: Videos, Fotos, deine eigene Website. Volle IP-Rechte ab Produktion.</p>
@@ -495,10 +500,11 @@
 
 <div class="board-label">C4 · makler-circle-carousel-4.png · CTA</div>
 <section class="board r45 cc-slide" id="cc4" data-name="makler-circle-carousel-4">
+  <div class="grain"></div>
   <div class="inner">
     <h1 style="margin-top:120px">Der Kreis hat noch Plätze<span class="dot">.</span></h1>
     <p class="txt">CIRCLE ist kuratiert: Wir nehmen Makler:innen auf, die Ownership wollen. Bewirb dich, das Gespräch führt ein Mensch.</p>
-    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO" style="height:30px"><span>UNIO.AT/MAKLER</span></div>
+    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" style="height:30px"><span>UNIO.AT/MAKLER</span></div>
   </div>
 </section>
 

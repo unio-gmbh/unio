@@ -40,16 +40,16 @@
   #r .note{position:absolute;left:80px;right:80px;top:1400px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
 
   /* ===== Szene O · KI-Objektanlage ===== */
-  #o{background:var(--ink)}
-  #o h1{position:absolute;left:80px;right:80px;top:340px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
-  #o .ki{position:absolute;left:80px;right:80px;top:820px;font:500 30px var(--fm);letter-spacing:.18em;text-transform:uppercase;color:var(--inv-muted);display:flex;align-items:center;gap:16px}
+  
+  #o h1{position:absolute;left:80px;right:80px;top:340px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  #o .ki{position:absolute;left:80px;right:80px;top:820px;font:500 30px var(--fm);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px}
   #o .ki i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal}
   #o .flow{position:absolute;left:80px;right:80px;top:940px;display:flex;flex-direction:column;gap:24px}
   #o .frow{display:flex;align-items:center;gap:26px}
-  #o .in{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--inv-muted);border:1.5px solid var(--hairline-l);border-radius:10px;padding:18px 30px}
+  #o .in{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1.5px solid var(--hairline-d);border-radius:10px;padding:18px 30px;background:#FDFCFA}
   #o .line{flex:1;border-top:2px dashed rgba(255,170,9,.5);transform-origin:left;transform:scaleX(0)}
   #o .out{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:#1A1305;background:var(--signal);border-radius:10px;padding:18px 30px}
-  #o .stat{position:absolute;left:80px;right:80px;top:1460px;font:500 34px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal)}
+  #o .stat{position:absolute;left:80px;right:80px;top:1460px;font:500 34px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal-deep)}
   #o .card{position:absolute;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:6}
   #o .card .stack{text-align:center;display:flex;flex-direction:column;align-items:center;gap:56px}
   #o .card img{height:60px}
@@ -105,12 +105,12 @@
   #x .blk{position:absolute;inset:0;background:var(--ink);z-index:3;opacity:0}
 
   /* ===== Szene S · Provision-Stat (Makler) ===== */
-  #s{background:var(--ink)}
-  #s .big{position:absolute;left:80px;right:80px;top:520px;font:500 380px/0.9 var(--fd);letter-spacing:-.045em;color:#F7F5F1}
+  
+  #s .big{position:absolute;left:80px;right:80px;top:520px;font:500 380px/0.9 var(--fd);letter-spacing:-.045em;color:var(--ink)}
   #s .big .pct{color:var(--signal)}
-  #s h2{position:absolute;left:80px;right:80px;top:920px;font:500 92px/1.06 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
-  #s .sub{position:absolute;left:80px;right:80px;top:1120px;font:400 38px/1.5 var(--fd);color:var(--inv-muted);max-width:24ch}
-  #s .note{position:absolute;left:80px;right:80px;top:1380px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--inv-muted)}
+  #s h2{position:absolute;left:80px;right:80px;top:920px;font:500 92px/1.06 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  #s .sub{position:absolute;left:80px;right:80px;top:1120px;font:400 38px/1.5 var(--fd);color:var(--muted);max-width:24ch}
+  #s .note{position:absolute;left:80px;right:80px;top:1380px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
 
   /* ===== Szene C · MOVE AS ONE ueber Crowd-Timelapse ===== */
   #c{background:var(--ink)}
@@ -150,16 +150,16 @@
   #k .res .mk i{width:11px;height:11px;border-radius:50%;background:var(--signal)}
 
   /* ===== Szene L · LENS Live (Eigentuemer) ===== */
-  #l{background:var(--ink)}
-  #l h1{position:absolute;left:80px;right:80px;top:360px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
-  #l .live{position:absolute;left:80px;top:820px;display:flex;align-items:center;gap:16px;font:500 26px var(--fm);letter-spacing:.2em;color:var(--inv-muted)}
+  
+  #l h1{position:absolute;left:80px;right:80px;top:360px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  #l .live{position:absolute;left:80px;top:820px;display:flex;align-items:center;gap:16px;font:500 26px var(--fm);letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
   #l .live i{width:14px;height:14px;border-radius:50%;background:var(--signal)}
   #l .bars{position:absolute;left:80px;right:80px;top:920px;height:220px;display:flex;align-items:flex-end;gap:14px}
   #l .bar{flex:1;background:var(--signal);border-radius:6px 6px 0 0;height:0%}
   #l .kpis{position:absolute;left:80px;right:80px;top:1230px;display:grid;grid-template-columns:1fr 1fr;gap:40px 30px}
-  #l .kpi .n{font:500 84px/1 var(--fd);letter-spacing:-.02em;color:#F7F5F1}
-  #l .kpi .t{font:500 22px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--inv-muted);margin-top:12px}
-  #l .note{position:absolute;left:80px;right:80px;top:1600px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--inv-muted)}
+  #l .kpi .n{font:500 84px/1 var(--fd);letter-spacing:-.02em;color:var(--ink)}
+  #l .kpi .t{font:500 22px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+  #l .note{position:absolute;left:80px;right:80px;top:1600px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -185,6 +185,7 @@
 
 <!-- O · KI-Objektanlage (11 s) -->
 <div class="stage" id="o">
+  <div class="grain"></div>
   <h1 id="o-h1">Niemand wird Makler, um Exposés zu tippen<span class="dot">.</span></h1>
   <div class="ki" id="o-ki"><i></i>Die UNIO KI liest, strukturiert, erstellt</div>
   <div class="flow">
@@ -194,8 +195,8 @@
     <div class="frow" data-i="3"><span class="in">Grundbuch</span><span class="line"></span><span class="out">Bautafel</span></div>
   </div>
   <div class="stat" id="o-stat"><span id="o-pct">0</span> % WENIGER TIPPARBEIT · ARBEITSSTAND</div>
-  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
-    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
   <div class="card" id="o-card">
     <div class="stack">
       <img src="../assets/logo/unio-logo-white.svg" alt="UNIO">
@@ -274,13 +275,13 @@
 
 <!-- S · Provision-Stat (7 s) -->
 <div class="stage" id="s">
-  <div class="grain" style="opacity:.3"></div>
+  <div class="grain"></div>
   <div class="big" id="s-big"><span id="s-n">0</span><span class="pct">%</span></div>
   <h2 id="s-h2">Provision. Deine<span class="dot">.</span></h2>
   <p class="sub" id="s-sub">Ab € 150K Jahresumsatz gehört jede Provision dir. Deine Marke, dein Netzwerk, dein Anteil.</p>
   <p class="note" id="s-note">ARBEITSSTAND · KEIN VERSPRECHEN, EIN MODELL</p>
-  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
-    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
 </div>
 
 <!-- C · MOVE AS ONE / Crowd (10 s) -->
@@ -335,7 +336,7 @@
 
 <!-- L · LENS Live (8 s) -->
 <div class="stage" id="l">
-  <div class="grain" style="opacity:.3"></div>
+  <div class="grain"></div>
   <h1 id="l-h1">Du siehst live, was dein Objekt macht<span class="dot">.</span></h1>
   <div class="live" id="l-live"><i id="l-dot"></i>Deine Sicht in LENS · Live</div>
   <div class="bars" id="l-bars">
@@ -349,8 +350,8 @@
     <div class="kpi"><div class="n" id="l-k4">0</div><div class="t">Angebote</div></div>
   </div>
   <p class="note" id="l-note">DEMO-ANSICHT · ARBEITSSTAND</p>
-  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
-    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/IMMOBILIEN</span></div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/IMMOBILIEN</span></div>
 </div>
 
 <script>
