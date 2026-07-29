@@ -2,3 +2,4 @@
 .vercel
 node_modules/
 build/node_modules/
+social/node_modules

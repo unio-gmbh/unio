@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>UNIO Social Templates · Endkunde + Makler</title>
+<style>
+  /* ===== UNIO Design-Tokens (Quelle: tokens/colors.css) ===== */
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Light.woff2) format('woff2');font-weight:300}
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Regular.woff2) format('woff2');font-weight:400}
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Medium.woff2) format('woff2');font-weight:500}
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Bold.woff2) format('woff2');font-weight:700}
+  @font-face{font-family:'JetBrains Mono';src:url(../assets/fonts/jetbrains/jetbrains-mono-normal-300-700.woff2) format('woff2');font-weight:300 700}
+
+  :root{
+    --paper:#F7F5F1; --paper-2:#F0EDE6; --ink:#0B0A09; --ink-2:#1B1A16;
+    --signal:#FFAA09; --signal-deep:#B87400; --signal-soft:rgba(255,170,9,.16);
+    --muted:rgba(27,26,22,.6); --inv-muted:rgba(247,245,241,.64);
+    --hairline-d:rgba(11,10,9,.14); --hairline-l:rgba(255,255,255,.16);
+    --glass-dark:rgba(10,9,8,.42); --glass-dark-2:rgba(10,9,8,.64);
+    --fd:'Power Grotesk','Helvetica Neue',sans-serif;
+    --fm:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:#2a2823;font-family:var(--fd);padding:40px;display:flex;flex-direction:column;gap:60px;align-items:flex-start}
+
+  /* Artboards */
+  .board{position:relative;overflow:hidden;background:var(--paper);color:var(--ink-2);flex:none}
+  .r916{width:1080px;height:1920px}
+  .r45{width:1080px;height:1350px}
+  .board-label{font:500 13px var(--fm);color:#9a958a;letter-spacing:.1em;text-transform:uppercase;margin-bottom:-46px}
+
+  /* Bausteine */
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.4;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='.06'/></feComponentTransfer></filter><rect width='180' height='180' filter='url(%23n)'/></svg>")}
+  .kap{font:500 20px var(--fm);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:16px}
+  .kap::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--signal)}
+  .kap.inv{color:var(--inv-muted)}
+  .mono{font-family:var(--fm);letter-spacing:.14em;text-transform:uppercase}
+  .dot{color:var(--signal)}
+  .wordmark{height:34px;display:block}
+  .glasspill{display:inline-flex;align-items:center;gap:12px;background:var(--glass-dark);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#F7F5F1;
+    border:1.5px solid var(--hairline-l);border-radius:999px;
+    font:500 21px var(--fm);letter-spacing:.16em;text-transform:uppercase;padding:16px 28px}
+  .glasspill i{width:12px;height:12px;border-radius:50%;background:var(--signal);font-style:normal}
+  .cta{display:inline-flex;align-items:center;gap:16px;background:var(--ink);color:#F7F5F1;
+    border-radius:999px;font:500 30px var(--fd);padding:26px 46px;letter-spacing:-.01em}
+  .cta .arw{width:52px;height:52px;border-radius:50%;background:var(--signal);color:var(--ink);
+    display:inline-flex;align-items:center;justify-content:center;font:500 26px var(--fm)}
+
+  /* ============================================================
+     E1 · ENDKUNDE · 4:5 Objekt-Post (PropCard-System)
+  ============================================================ */
+  #e1 .ph{position:absolute;inset:0}
+  #e1 .ph img{width:100%;height:100%;object-fit:cover}
+  #e1 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.38) 0%,rgba(11,10,9,0) 34%,rgba(11,10,9,0) 46%,rgba(11,10,9,.78) 100%)}
+  #e1 .top{position:absolute;top:64px;left:64px;right:64px;display:flex;justify-content:space-between;align-items:center}
+  #e1 .avatar{width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 5px rgba(253,252,250,.95),0 14px 40px rgba(11,10,9,.4)}
+  #e1 .avatar img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
+  #e1 .bottom{position:absolute;left:64px;right:64px;bottom:64px;color:#F7F5F1}
+  #e1 h1{font:500 92px/1.02 var(--fd);letter-spacing:-.03em;margin:20px 0 12px;color:#fff}
+  #e1 .adr{font:400 36px var(--fd);color:rgba(247,245,241,.85)}
+  #e1 .data{display:flex;gap:44px;align-items:center;margin-top:44px;padding-top:36px;border-top:1.5px solid var(--hairline-l);
+    font:500 30px var(--fm);letter-spacing:.1em}
+  #e1 .data .price{margin-left:auto;font:500 44px var(--fd);letter-spacing:-.01em}
+
+  /* ============================================================
+     E2 · ENDKUNDE · Reel-Cover 9:16 Manifest („Labyrinth")
+  ============================================================ */
+  #e2{background:var(--ink)}
+  #e2 .ph{position:absolute;inset:0}
+  #e2 .ph img{width:100%;height:100%;object-fit:cover;opacity:.62}
+  #e2 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.72),rgba(11,10,9,.18) 38%,rgba(11,10,9,.32) 62%,rgba(11,10,9,.86))}
+  #e2 .safe{position:absolute;left:80px;right:80px;top:280px;bottom:380px;display:flex;flex-direction:column}
+  #e2 h1{font:500 128px/1.04 var(--fd);letter-spacing:-.035em;color:#F7F5F1;margin-top:56px;max-width:9ch}
+  #e2 h1 em{font-style:normal;color:var(--signal)}
+  #e2 .sub{margin-top:auto;font:400 40px/1.5 var(--fd);color:rgba(247,245,241,.88);max-width:20ch}
+  #e2 .foot{position:absolute;left:80px;right:80px;bottom:120px;display:flex;justify-content:space-between;align-items:center}
+
+  /* ============================================================
+     E3 · ENDKUNDE · Carousel 3 Slides (Off-Market-Story)
+  ============================================================ */
+  .c-slide h1{font:500 120px/1.03 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #e3a .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
+  #e3a h1{margin-top:120px}
+  #e3a .swipe{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font:500 22px var(--fm);letter-spacing:.18em;color:var(--muted)}
+  #e3b{background:var(--ink)}
+  #e3b .ph{position:absolute;inset:0 0 42% 0;overflow:hidden}
+  #e3b .ph img{width:100%;height:100%;object-fit:cover}
+  #e3b .badge{position:absolute;top:56px;left:56px}
+  #e3b .body{position:absolute;left:0;right:0;bottom:0;height:42%;padding:64px 88px;color:#F7F5F1;display:flex;flex-direction:column}
+  #e3b h2{font:500 66px/1.06 var(--fd);letter-spacing:-.02em;color:#fff}
+  #e3b .adr{font:400 30px var(--fd);color:var(--inv-muted);margin-top:12px}
+  #e3b .row{display:flex;gap:40px;margin-top:auto;font:500 26px var(--fm);letter-spacing:.1em;color:#F7F5F1}
+  #e3b .row .price{margin-left:auto;font:500 38px var(--fd);letter-spacing:0}
+  #e3c .inner{position:absolute;inset:96px;display:flex;flex-direction:column;align-items:flex-start}
+  #e3c h1{font-size:104px;max-width:9ch}
+  #e3c .cta{margin-top:72px}
+  #e3c .foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end}
+
+  /* ============================================================
+     M1 · MAKLER · Reel-Frame 9:16 Rechner
+  ============================================================ */
+  #m1 .safe{position:absolute;left:80px;right:80px;top:270px;bottom:380px;display:flex;flex-direction:column}
+  #m1 h1{font:500 112px/1.05 var(--fd);letter-spacing:-.035em;color:var(--ink);margin-top:48px}
+  #m1 .chart{margin-top:110px;display:flex;flex-direction:column;gap:52px}
+  #m1 .bar .lbl{display:flex;justify-content:space-between;font:500 26px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  #m1 .bar .lbl b{color:var(--ink);font-weight:500}
+  #m1 .track{height:88px;border-radius:18px;background:var(--paper-2);border:1.5px solid var(--hairline-d);overflow:hidden}
+  #m1 .fill{height:100%;border-radius:16px;display:flex;align-items:center;justify-content:flex-end;padding:0 28px;
+    font:500 36px var(--fd);letter-spacing:-.01em}
+  #m1 .f1{width:87%;background:var(--signal);color:#1A1305}
+  #m1 .f2{width:50%;background:var(--ink);color:#F7F5F1;opacity:.82}
+  #m1 .note{margin-top:64px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
+  #m1 .foot{position:absolute;left:80px;right:80px;bottom:120px;display:flex;justify-content:space-between;align-items:center}
+
+  /* ============================================================
+     M2 · MAKLER · 4:5 Stat-Snap (100 % Provision)
+  ============================================================ */
+  #m2{background:var(--ink)}
+  #m2 .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
+  #m2 .big{font:500 340px/0.92 var(--fd);letter-spacing:-.045em;color:#F7F5F1;margin-top:100px}
+  #m2 .big .pct{color:var(--signal)}
+  #m2 h2{font:500 78px/1.08 var(--fd);letter-spacing:-.025em;color:#F7F5F1;margin-top:26px}
+  #m2 .sub{font:400 34px/1.5 var(--fd);color:var(--inv-muted);margin-top:34px;max-width:24ch}
+  #m2 .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
+    padding-top:44px;border-top:1.5px solid var(--hairline-l)}
+  #m2 .foot .mono{font-size:22px;color:var(--inv-muted)}
+
+  /* ============================================================
+     M3 · MAKLER · Carousel 3 Slides (KI-Objektanlage)
+  ============================================================ */
+  #m3a .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
+  #m3a .chips{display:flex;flex-wrap:wrap;gap:18px;margin-top:96px}
+  .docchip{font:500 24px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);
+    border:1.5px solid var(--hairline-d);border-radius:999px;padding:20px 32px;background:#FDFCFA}
+  #m3a h1{margin-top:auto;max-width:9ch}
+  #m3a .swipe{margin-top:56px;display:flex;justify-content:space-between;font:500 22px var(--fm);letter-spacing:.18em;color:var(--muted)}
+  #m3b{background:var(--ink)}
+  #m3b .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:#F7F5F1}
+  #m3b h1{font:500 96px/1.05 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:60px;max-width:11ch}
+  #m3b .flow{margin-top:auto;display:flex;flex-direction:column;gap:22px}
+  #m3b .frow{display:flex;align-items:center;gap:26px}
+  #m3b .frow .in{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:var(--inv-muted);
+    border:1.5px solid var(--hairline-l);border-radius:999px;padding:16px 26px}
+  #m3b .frow .line{flex:1;border-top:2px dashed rgba(255,170,9,.5)}
+  #m3b .frow .out{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:#1A1305;background:var(--signal);
+    border-radius:999px;padding:16px 26px}
+  #m3c .inner{position:absolute;inset:96px;display:flex;flex-direction:column;align-items:flex-start}
+  #m3c h1{font-size:104px;max-width:10ch}
+  #m3c .stat{margin-top:64px;font:500 30px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal-deep)}
+  #m3c .cta{margin-top:56px}
+  #m3c .foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end}
+
+  /* ============================================================
+     M4 · MAKLER · 4:5 CIRCLE Recruiting (Der Kreis schließt sich)
+  ============================================================ */
+  #m4{background:var(--ink)}
+  #m4 .ring{position:absolute;top:104px;left:50%;transform:translateX(-50%);width:540px;height:540px}
+  #m4 .ring .c{position:absolute;inset:0;border:1.5px solid var(--hairline-l);border-radius:50%}
+  #m4 .p{position:absolute;width:124px;height:124px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--ink)}
+  #m4 .p img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+  #m4 .you{position:absolute;width:124px;height:124px;border-radius:50%;background:var(--signal);color:#1A1305;
+    display:flex;align-items:center;justify-content:center;font:500 32px var(--fd);box-shadow:0 0 0 4px var(--ink)}
+  #m4 .center{position:absolute;top:104px;left:50%;transform:translateX(-50%);width:540px;height:540px;
+    display:flex;align-items:center;justify-content:center;text-align:center}
+  #m4 .center h1{font:500 56px/1.1 var(--fd);letter-spacing:-.02em;color:#F7F5F1}
+  #m4 .body{position:absolute;left:96px;right:96px;bottom:96px}
+  #m4 h2{font:500 82px/1.05 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
+  #m4 .sub{font:400 33px/1.5 var(--fd);color:var(--inv-muted);margin-top:26px;max-width:30ch}
+  #m4 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:40px;border-top:1.5px solid var(--hairline-l)}
+
+  /* ============================================================
+     B1 · BRAND · Reel-Endcard 9:16 (MOVE AS ONE)
+  ============================================================ */
+  #b1{background:var(--ink);display:flex;align-items:center;justify-content:center}
+  #b1 .stack{text-align:center;display:flex;flex-direction:column;align-items:center;gap:64px}
+  #b1 img{height:64px}
+  #b1 .claim{font:500 96px/1 var(--fd);letter-spacing:.02em;color:#F7F5F1}
+  #b1 .claim .dot{display:inline-block;width:26px;height:26px;border-radius:50%;background:var(--signal);margin-left:14px}
+  #b1 .triad{font:500 26px var(--fm);letter-spacing:.3em;text-transform:uppercase;color:var(--inv-muted)}
+
+  /* ============================================================
+     B2 · BRAND · 4:5 Manifest-Zeile (dunkel)
+  ============================================================ */
+  #b2{background:var(--ink)}
+  #b2 .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
+  #b2 h1{font:500 116px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:130px}
+  #b2 h1 .off{color:rgba(247,245,241,.42);text-decoration:line-through;text-decoration-thickness:5px;text-decoration-color:var(--signal)}
+  #b2 .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;padding-top:44px;border-top:1.5px solid var(--hairline-l)}
+  #b2 .foot .mono{font-size:22px;color:var(--inv-muted)}
+</style>
+</head>
+<body>
+
+<!-- ============ E1 · Endkunde · 4:5 Objekt-Post ============ -->
+<div class="board-label">E1 · endkunde-objekt-45.png · Feed 4:5</div>
+<section class="board r45" id="e1" data-name="endkunde-objekt-45">
+  <div class="ph"><img src="../assets/img/penthouse.jpg" alt=""></div>
+  <div class="shade"></div>
+  <div class="grain"></div>
+  <div class="top">
+    <span class="glasspill"><i></i>Nachfrage 96</span>
+    <span class="avatar"><img src="../assets/team/portrait-05.jpg" alt=""></span>
+  </div>
+  <div class="bottom">
+    <span class="glasspill" style="background:var(--glass-dark-2)">Verfügbar · Nie inseriert</span>
+    <h1>Penthouse über den Dächern<span class="dot">.</span></h1>
+    <div class="adr">Wien 1010, Innere Stadt</div>
+    <div class="data">
+      <span>178 M²</span><span>5 ZI</span>
+      <span class="price">€ 4,00 Mio</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ E2 · Endkunde · Reel-Cover 9:16 ============ -->
+<div class="board-label">E2 · endkunde-reel-labyrinth-916.png · Reel-Cover 9:16 (Safe-Zones frei)</div>
+<section class="board r916" id="e2" data-name="endkunde-reel-labyrinth-916">
+  <div class="ph"><img src="../assets/img/hero-poster.jpg" alt=""></div>
+  <div class="shade"></div>
+  <div class="grain" style="opacity:.5"></div>
+  <div class="safe">
+    <span class="kap inv">Für dich · Immobiliensuche</span>
+    <h1>Ein Zuhause ist kein <em>Labyrinth</em>.</h1>
+    <p class="sub">Jedes Objekt bei UNIO wird von einem Menschen betreut. Du siehst, was dahintersteckt, bevor du anfragst.</p>
+  </div>
+  <div class="foot">
+    <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.22em">MOVE AS ONE</span>
+  </div>
+</section>
+
+<!-- ============ E3 · Endkunde · Carousel (3 Slides) ============ -->
+<div class="board-label">E3a · endkunde-carousel-1.png · Slide 1 Hook</div>
+<section class="board r45 c-slide" id="e3a" data-name="endkunde-carousel-1">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="kap">Off-Market · Wien</span>
+    <h1>Dieses Penthouse war nie online<span class="dot">.</span></h1>
+    <div class="swipe"><span>UNIO · KURATIERTER BESTAND</span><span>WISCHEN →</span></div>
+  </div>
+</section>
+
+<div class="board-label">E3b · endkunde-carousel-2.png · Slide 2 Objekt + Daten</div>
+<section class="board r45" id="e3b" data-name="endkunde-carousel-2">
+  <div class="ph"><img src="../assets/img/beheim.jpg" alt=""></div>
+  <span class="badge glasspill"><i></i>Nachfrage 91</span>
+  <div class="body">
+    <div class="grain"></div>
+    <h2>Penthouse Beheim</h2>
+    <div class="adr">Beheimgasse, 1170 Wien · Erstbezug</div>
+    <div class="row">
+      <span>138 M²</span><span>4 ZI</span><span>VERKAUFT IN 38 TAGEN</span>
+      <span class="price">€ 1,70 Mio</span>
+    </div>
+  </div>
+</section>
+
+<div class="board-label">E3c · endkunde-carousel-3.png · Slide 3 CTA</div>
+<section class="board r45 c-slide" id="e3c" data-name="endkunde-carousel-3">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="kap">Vorgemerkt statt zu spät</span>
+    <h1>Finde, was nie inseriert wird<span class="dot">.</span></h1>
+    <span class="cta">Vormerken auf unio.at <span class="arw">→</span></span>
+    <div class="foot">
+      <img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+      <span class="mono" style="font:500 20px var(--fm);color:var(--muted)">RAUM · TECHNOLOGIE · MENSCH</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M1 · Makler · Reel-Frame Rechner ============ -->
+<div class="board-label">M1 · makler-reel-rechner-916.png · Reel-Frame 9:16</div>
+<section class="board r916" id="m1" data-name="makler-reel-rechner-916">
+  <div class="grain"></div>
+  <div class="safe">
+    <span class="kap">CIRCLE · Für Makler:innen</span>
+    <h1>€ 300K Umsatz. Schau, was dir bleibt<span class="dot">.</span></h1>
+    <div class="chart">
+      <div class="bar">
+        <div class="lbl"><b>CIRCLE · DEIN NETTO</b><span>AB € 150K: 100 %</span></div>
+        <div class="track"><div class="fill f1">€ 261K</div></div>
+      </div>
+      <div class="bar">
+        <div class="lbl"><span>KLASSISCHES BÜRO</span><span>~50 % SPLIT</span></div>
+        <div class="track"><div class="fill f2">€ 150K</div></div>
+      </div>
+    </div>
+    <p class="note">MODELLRECHNUNG · PFLICHT-PAKETE ABGEZOGEN · ARBEITSSTAND</p>
+  </div>
+  <div class="foot">
+    <img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span>
+  </div>
+</section>
+
+<!-- ============ M2 · Makler · 4:5 Stat-Snap ============ -->
+<div class="board-label">M2 · makler-stat-provision-45.png · Feed 4:5</div>
+<section class="board r45" id="m2" data-name="makler-stat-provision-45">
+  <div class="inner">
+    <span class="kap inv">CIRCLE · Ownership</span>
+    <div class="big">100<span class="pct">%</span></div>
+    <h2>Provision. Deine<span class="dot">.</span></h2>
+    <p class="sub">Ab € 150K Jahresumsatz gehört jede Provision dir. Deine Marke, dein Netzwerk, dein Anteil.</p>
+    <div class="foot">
+      <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <span class="mono">ARBEITSSTAND · KEIN VERSPRECHEN, EIN MODELL</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M3 · Makler · Carousel (3 Slides) ============ -->
+<div class="board-label">M3a · makler-carousel-1.png · Slide 1 Hook</div>
+<section class="board r45 c-slide" id="m3a" data-name="makler-carousel-1">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="kap">KI-Objektanlage</span>
+    <div class="chips">
+      <span class="docchip">BAB</span><span class="docchip">Grundrisse</span>
+      <span class="docchip">Energieausweis</span><span class="docchip">Grundbuch</span>
+      <span class="docchip">Fotos</span><span class="docchip">Nutzwertgutachten</span>
+    </div>
+    <h1>Dein Papierstapel. In 40 Sekunden ein Exposé<span class="dot">.</span></h1>
+    <div class="swipe"><span>UNIO · PLATTFORM</span><span>WISCHEN →</span></div>
+  </div>
+</section>
+
+<div class="board-label">M3b · makler-carousel-2.png · Slide 2 Verwandlung</div>
+<section class="board r45" id="m3b" data-name="makler-carousel-2">
+  <div class="inner">
+    <span class="kap inv">Die UNIO KI liest, strukturiert, erstellt</span>
+    <h1>Dokumente rein. Vermarktung raus<span class="dot">.</span></h1>
+    <div class="flow">
+      <div class="frow"><span class="in">Grundrisse</span><span class="line"></span><span class="out">Exposé</span></div>
+      <div class="frow"><span class="in">Energieausweis</span><span class="line"></span><span class="out">Online-Inserat</span></div>
+      <div class="frow"><span class="in">BAB + Fotos</span><span class="line"></span><span class="out">Broschüre</span></div>
+      <div class="frow"><span class="in">Grundbuch</span><span class="line"></span><span class="out">Bautafel</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="board-label">M3c · makler-carousel-3.png · Slide 3 CTA</div>
+<section class="board r45 c-slide" id="m3c" data-name="makler-carousel-3">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="kap">Du prüfst und gibst frei</span>
+    <h1>Mehr Mensch, weniger Papierkram<span class="dot">.</span></h1>
+    <div class="stat">42 % WENIGER TIPPARBEIT PRO OBJEKT · ARBEITSSTAND</div>
+    <span class="cta">CIRCLE entdecken <span class="arw">→</span></span>
+    <div class="foot">
+      <img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+      <span class="mono" style="font:500 20px var(--fm);color:var(--muted)">UNIO.AT/MAKLER</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M4 · Makler · 4:5 CIRCLE Recruiting ============ -->
+<div class="board-label">M4 · makler-circle-recruiting-45.png · Feed 4:5</div>
+<section class="board r45" id="m4" data-name="makler-circle-recruiting-45">
+  <div class="ring">
+    <span class="c"></span>
+    <span class="p" style="top:-62px;left:208px"><img src="../assets/team/portrait-01.jpg" alt=""></span>
+    <span class="p" style="top:70px;right:-34px"><img src="../assets/team/portrait-02.jpg" alt=""></span>
+    <span class="p" style="bottom:70px;right:-34px"><img src="../assets/team/portrait-03.jpg" alt=""></span>
+    <span class="p" style="bottom:70px;left:-34px"><img src="../assets/team/portrait-06.jpg" alt=""></span>
+    <span class="you" style="top:70px;left:-34px">+ Du</span>
+  </div>
+  <div class="center"><h1>Der Kreis<br>schließt sich<span class="dot">.</span></h1></div>
+  <div class="body">
+    <h2>Kuratiert. Wien zuerst<span class="dot">.</span></h2>
+    <p class="sub">CIRCLE nimmt Makler:innen auf, die Ownership wollen. Software, Dealflow und Beteiligung inklusive.</p>
+    <div class="foot">
+      <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <span class="mono" style="font:500 22px var(--fm);color:var(--inv-muted)">JETZT BEWERBEN</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B1 · Brand · Reel-Endcard ============ -->
+<div class="board-label">B1 · brand-endcard-916.png · Reel-Endcard 9:16</div>
+<section class="board r916" id="b1" data-name="brand-endcard-916">
+  <div class="grain" style="opacity:.3"></div>
+  <div class="stack">
+    <img src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <div class="claim">MOVE AS ONE<span class="dot"></span></div>
+    <div class="triad">Raum · Technologie · Mensch</div>
+  </div>
+</section>
+
+<!-- ============ B2 · Brand · 4:5 Manifest-Zeile ============ -->
+<div class="board-label">B2 · brand-manifest-45.png · Feed 4:5</div>
+<section class="board r45" id="b2" data-name="brand-manifest-45">
+  <div class="inner">
+    <span class="kap inv">MOVE AS ONE · Manifest</span>
+    <h1>Aus Menschen wurden <span class="off">Leads</span>. Wir drehen das um<span class="dot">.</span></h1>
+    <div class="foot">
+      <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <span class="mono">UNIO · WIEN</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
