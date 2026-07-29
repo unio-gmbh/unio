@@ -38,14 +38,13 @@
   .mono{font-family:var(--fm);letter-spacing:.14em;text-transform:uppercase}
   .dot{color:var(--signal)}
   .wordmark{height:34px;display:block}
-  .glasspill{display:inline-flex;align-items:center;gap:12px;background:var(--glass-dark);
-    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#F7F5F1;
-    border:1.5px solid var(--hairline-l);border-radius:999px;
-    font:500 21px var(--fm);letter-spacing:.16em;text-transform:uppercase;padding:16px 28px}
-  .glasspill i{width:12px;height:12px;border-radius:50%;background:var(--signal);font-style:normal}
+  .marker{display:inline-flex;align-items:center;gap:16px;color:#F7F5F1;
+    font:500 26px var(--fm);letter-spacing:.18em;text-transform:uppercase;
+    text-shadow:0 2px 28px rgba(0,0,0,.6)}
+  .marker i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal;flex:none}
   .cta{display:inline-flex;align-items:center;gap:16px;background:var(--ink);color:#F7F5F1;
-    border-radius:999px;font:500 30px var(--fd);padding:26px 46px;letter-spacing:-.01em}
-  .cta .arw{width:52px;height:52px;border-radius:50%;background:var(--signal);color:var(--ink);
+    border-radius:14px;font:500 30px var(--fd);padding:26px 46px;letter-spacing:-.01em}
+  .cta .arw{width:52px;height:52px;border-radius:10px;background:var(--signal);color:var(--ink);
     display:inline-flex;align-items:center;justify-content:center;font:500 26px var(--fm)}
 
   /* ============================================================
@@ -58,7 +57,7 @@
   #e1 .avatar{width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 5px rgba(253,252,250,.95),0 14px 40px rgba(11,10,9,.4)}
   #e1 .avatar img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
   #e1 .bottom{position:absolute;left:64px;right:64px;bottom:64px;color:#F7F5F1}
-  #e1 h1{font:500 92px/1.02 var(--fd);letter-spacing:-.03em;margin:20px 0 12px;color:#fff}
+  #e1 h1{font:500 92px/1.02 var(--fd);letter-spacing:-.03em;margin:26px 0 12px;color:#fff}
   #e1 .adr{font:400 36px var(--fd);color:rgba(247,245,241,.85)}
   #e1 .data{display:flex;gap:44px;align-items:center;margin-top:44px;padding-top:36px;border-top:1.5px solid var(--hairline-l);
     font:500 30px var(--fm);letter-spacing:.1em}
@@ -133,7 +132,7 @@
   #m3a .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
   #m3a .chips{display:flex;flex-wrap:wrap;gap:18px;margin-top:140px}
   .docchip{font:500 24px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);
-    border:1.5px solid var(--hairline-d);border-radius:999px;padding:20px 32px;background:#FDFCFA}
+    border:1.5px solid var(--hairline-d);border-radius:10px;padding:20px 32px;background:#FDFCFA}
   #m3a h1{margin-top:auto;max-width:9ch}
   #m3a .swipe{margin-top:56px;display:flex;justify-content:space-between;font:500 22px var(--fm);letter-spacing:.18em;color:var(--muted)}
   #m3b{background:var(--ink)}
@@ -142,10 +141,10 @@
   #m3b .flow{margin-top:auto;display:flex;flex-direction:column;gap:22px}
   #m3b .frow{display:flex;align-items:center;gap:26px}
   #m3b .frow .in{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:var(--inv-muted);
-    border:1.5px solid var(--hairline-l);border-radius:999px;padding:16px 26px}
+    border:1.5px solid var(--hairline-l);border-radius:10px;padding:16px 26px}
   #m3b .frow .line{flex:1;border-top:2px dashed rgba(255,170,9,.5)}
   #m3b .frow .out{flex:none;font:500 22px var(--fm);letter-spacing:.12em;color:#1A1305;background:var(--signal);
-    border-radius:999px;padding:16px 26px}
+    border-radius:10px;padding:16px 26px}
   #m3c .inner{position:absolute;inset:96px;display:flex;flex-direction:column;align-items:flex-start}
   #m3c h1{font-size:104px;max-width:10ch;margin-top:150px}
   #m3c .stat{margin-top:64px;font:500 30px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal-deep)}
@@ -189,6 +188,25 @@
   #b2 h1 .off{color:rgba(247,245,241,.42);text-decoration:line-through;text-decoration-thickness:5px;text-decoration-color:var(--signal)}
   #b2 .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;padding-top:44px;border-top:1.5px solid var(--hairline-l)}
   #b2 .foot .mono{font-size:22px;color:var(--inv-muted)}
+
+  /* ===== W · Wissens-Carousel ImmoESt (Endkunde) ===== */
+  .w-slide .inner{position:absolute;inset:96px;display:flex;flex-direction:column}
+  .w-slide .no{font:500 30px var(--fm);letter-spacing:.16em;color:var(--signal-deep)}
+  .w-slide h1{font:500 108px/1.06 var(--fd);letter-spacing:-.03em;color:var(--ink);margin-top:40px;max-width:11ch}
+  .w-slide .txt{font:400 40px/1.55 var(--fd);color:var(--muted);margin-top:44px;max-width:26ch}
+  .w-slide .foot2{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
+    padding-top:40px;border-top:1.5px solid var(--hairline-d);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  /* ===== C · CIRCLE-Carousel (Makler, dunkel) ===== */
+  .cc-slide{background:var(--ink)}
+  .cc-slide .inner{position:absolute;inset:96px;display:flex;flex-direction:column;color:#F7F5F1}
+  .cc-slide h1{font:500 112px/1.06 var(--fd);letter-spacing:-.035em;color:#F7F5F1;margin-top:150px;max-width:11ch}
+  .cc-slide .bignum{font:500 300px/0.92 var(--fd);letter-spacing:-.045em;color:#F7F5F1;margin-top:110px}
+  .cc-slide .bignum .a{color:var(--signal)}
+  .cc-slide h2{font:500 84px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:30px}
+  .cc-slide .txt{font:400 38px/1.55 var(--fd);color:var(--inv-muted);margin-top:40px;max-width:26ch}
+  .cc-slide .foot2{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
+    padding-top:40px;border-top:1.5px solid var(--hairline-l);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--inv-muted)}
 </style>
 </head>
 <body>
@@ -200,11 +218,11 @@
   <div class="shade"></div>
   <div class="grain"></div>
   <div class="top">
-    <span class="glasspill"><i></i>Nachfrage 96</span>
+    <span class="marker"><i></i>Nachfrage 96</span>
     <span class="avatar"><img src="../assets/team/portrait-05.jpg" alt=""></span>
   </div>
   <div class="bottom">
-    <span class="glasspill" style="background:var(--glass-dark-2)">Verfügbar · Nie inseriert</span>
+    <span class="marker" style="font-size:23px;color:rgba(247,245,241,.9)">Verfügbar · Nie inseriert</span>
     <h1>Penthouse über den Dächern<span class="dot">.</span></h1>
     <div class="adr">Wien 1010, Innere Stadt</div>
     <div class="data">
@@ -243,7 +261,7 @@
 <div class="board-label">E3b · endkunde-carousel-2.png · Slide 2 Objekt + Daten</div>
 <section class="board r45" id="e3b" data-name="endkunde-carousel-2">
   <div class="ph"><img src="../assets/img/beheim.jpg" alt=""></div>
-  <span class="badge glasspill"><i></i>Nachfrage 91</span>
+  <span class="badge marker"><i></i>Nachfrage 91</span>
   <div class="body">
     <div class="grain"></div>
     <h2>Penthouse Beheim</h2>
@@ -391,6 +409,96 @@
       <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
       <span class="mono">UNIO · WIEN</span>
     </div>
+  </div>
+</section>
+
+<!-- ============ W · Wissens-Carousel ImmoESt (Endkunde, 5 Slides) ============ -->
+<div class="board-label">W1 · endkunde-immoest-1.png · Hook</div>
+<section class="board r45 w-slide" id="w1" data-name="endkunde-immoest-1">
+  <div class="grain"></div>
+  <div class="inner">
+    <h1 style="margin-top:150px">Drei legale Wege, beim Verkauf keine ImmoESt zu zahlen<span class="dot">.</span></h1>
+    <div class="foot2"><span>UNIO WISSEN · ÖSTERREICH</span><span>WEITER →</span></div>
+  </div>
+</section>
+
+<div class="board-label">W2 · endkunde-immoest-2.png · Weg 1</div>
+<section class="board r45 w-slide" id="w2" data-name="endkunde-immoest-2">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="no">1 / 3</span>
+    <h1>Hauptwohnsitz&shy;befreiung<span class="dot">.</span></h1>
+    <p class="txt">Seit dem Kauf mindestens zwei Jahre durchgehend dein Hauptwohnsitz? Dann ist der Verkauf steuerfrei.</p>
+    <div class="foot2"><span>IMMOEST SONST: 30 %</span><span>2 / 5</span></div>
+  </div>
+</section>
+
+<div class="board-label">W3 · endkunde-immoest-3.png · Weg 2</div>
+<section class="board r45 w-slide" id="w3" data-name="endkunde-immoest-3">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="no">2 / 3</span>
+    <h1>Die 5-aus-10-Regel<span class="dot">.</span></h1>
+    <p class="txt">Fünf Jahre Hauptwohnsitz innerhalb der letzten zehn Jahre reichen ebenfalls, auch wenn du zwischendurch vermietet hast.</p>
+    <div class="foot2"><span>IMMOEST SONST: 30 %</span><span>3 / 5</span></div>
+  </div>
+</section>
+
+<div class="board-label">W4 · endkunde-immoest-4.png · Weg 3</div>
+<section class="board r45 w-slide" id="w4" data-name="endkunde-immoest-4">
+  <div class="grain"></div>
+  <div class="inner">
+    <span class="no">3 / 3</span>
+    <h1>Hersteller&shy;befreiung<span class="dot">.</span></h1>
+    <p class="txt">Selbst errichtete Gebäude sind befreit. Nur der Wertanstieg von Grund und Boden bleibt steuerpflichtig.</p>
+    <div class="foot2"><span>IMMOEST SONST: 30 %</span><span>4 / 5</span></div>
+  </div>
+</section>
+
+<div class="board-label">W5 · endkunde-immoest-5.png · Save + CTA</div>
+<section class="board r45 w-slide" id="w5" data-name="endkunde-immoest-5">
+  <div class="grain"></div>
+  <div class="inner">
+    <h1 style="margin-top:130px">Speichern für den Tag, an dem du verkaufst<span class="dot">.</span></h1>
+    <p class="txt">Alle Details und Fristen im UNIO Wissens-Hub. Keine Steuerberatung: Für deinen Fall hol dir professionelle Beratung.</p>
+    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" style="height:30px"><span>UNIO.AT/WISSEN</span></div>
+  </div>
+</section>
+
+<!-- ============ C · CIRCLE-Carousel (Makler, 4 Slides) ============ -->
+<div class="board-label">C1 · makler-circle-carousel-1.png · Hook</div>
+<section class="board r45 cc-slide" id="cc1" data-name="makler-circle-carousel-1">
+  <div class="inner">
+    <h1>Was bleibt dir eigentlich von deiner Provision<span class="dot">?</span></h1>
+    <div class="foot2"><span>UNIO · CIRCLE</span><span>WEITER →</span></div>
+  </div>
+</section>
+
+<div class="board-label">C2 · makler-circle-carousel-2.png · Zahl</div>
+<section class="board r45 cc-slide" id="cc2" data-name="makler-circle-carousel-2">
+  <div class="inner">
+    <div class="bignum">100<span class="a">%</span></div>
+    <h2>ab € 150K Jahresumsatz<span class="dot">.</span></h2>
+    <p class="txt">Davor 85. Kein Split, keine Deckelung, kein Kleingedrucktes.</p>
+    <div class="foot2"><span>ARBEITSSTAND</span><span>2 / 4</span></div>
+  </div>
+</section>
+
+<div class="board-label">C3 · makler-circle-carousel-3.png · Marke</div>
+<section class="board r45 cc-slide" id="cc3" data-name="makler-circle-carousel-3">
+  <div class="inner">
+    <h1 style="margin-top:120px">Deine Marke gehört dir<span class="dot">.</span></h1>
+    <p class="txt">Ein Inhouse-Team produziert unter deinem Namen: Videos, Fotos, deine eigene Website. Volle IP-Rechte ab Produktion.</p>
+    <div class="foot2"><span>PERSONAL BRAND · CONTENT · FUNNEL</span><span>3 / 4</span></div>
+  </div>
+</section>
+
+<div class="board-label">C4 · makler-circle-carousel-4.png · CTA</div>
+<section class="board r45 cc-slide" id="cc4" data-name="makler-circle-carousel-4">
+  <div class="inner">
+    <h1 style="margin-top:120px">Der Kreis hat noch Plätze<span class="dot">.</span></h1>
+    <p class="txt">CIRCLE ist kuratiert: Wir nehmen Makler:innen auf, die Ownership wollen. Bewirb dich, das Gespräch führt ein Mensch.</p>
+    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO" style="height:30px"><span>UNIO.AT/MAKLER</span></div>
   </div>
 </section>
 

@@ -46,9 +46,9 @@
   #o .ki i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal}
   #o .flow{position:absolute;left:80px;right:80px;top:940px;display:flex;flex-direction:column;gap:24px}
   #o .frow{display:flex;align-items:center;gap:26px}
-  #o .in{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--inv-muted);border:1.5px solid var(--hairline-l);border-radius:999px;padding:18px 30px}
+  #o .in{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--inv-muted);border:1.5px solid var(--hairline-l);border-radius:10px;padding:18px 30px}
   #o .line{flex:1;border-top:2px dashed rgba(255,170,9,.5);transform-origin:left;transform:scaleX(0)}
-  #o .out{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:#1A1305;background:var(--signal);border-radius:999px;padding:18px 30px}
+  #o .out{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:#1A1305;background:var(--signal);border-radius:10px;padding:18px 30px}
   #o .stat{position:absolute;left:80px;right:80px;top:1460px;font:500 34px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal)}
   #o .card{position:absolute;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:6}
   #o .card .stack{text-align:center;display:flex;flex-direction:column;align-items:center;gap:56px}
@@ -62,16 +62,55 @@
   #p .ph{position:absolute;inset:0;overflow:hidden}
   #p .ph img{width:100%;height:100%;object-fit:cover}
   #p .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42) 0%,rgba(11,10,9,0) 32%,rgba(11,10,9,0) 48%,rgba(11,10,9,.82) 100%);z-index:2}
-  #p .badge{position:absolute;top:300px;left:80px;z-index:3;display:inline-flex;align-items:center;gap:12px;
-    background:var(--glass-dark);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#F7F5F1;
-    border:1.5px solid var(--hairline-l);border-radius:999px;font:500 26px var(--fm);letter-spacing:.16em;text-transform:uppercase;padding:20px 34px}
-  #p .badge i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal}
+  #p .badge{position:absolute;top:300px;left:80px;z-index:3;display:inline-flex;align-items:center;gap:16px;
+    color:#F7F5F1;font:500 28px var(--fm);letter-spacing:.18em;text-transform:uppercase;
+    text-shadow:0 2px 28px rgba(0,0,0,.6)}
+  #p .badge i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal;flex:none}
   #p .bottom{position:absolute;left:80px;right:80px;bottom:430px;color:#F7F5F1;z-index:3}
   #p h1{font:500 96px/1.02 var(--fd);letter-spacing:-.03em;color:#fff}
   #p .adr{font:400 38px var(--fd);color:rgba(247,245,241,.85);margin-top:18px}
   #p .data{display:flex;gap:44px;align-items:center;margin-top:46px;padding-top:38px;border-top:1.5px solid var(--hairline-l);
     font:500 30px var(--fm);letter-spacing:.1em}
   #p .data .price{margin-left:auto;font:500 46px var(--fd);letter-spacing:-.01em}
+
+  /* ===== Szene M · Manifest (MOVE AS ONE) ===== */
+  #m{background:var(--ink)}
+  #m .lines{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:64px}
+  #m .ln{font:500 88px/1.12 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
+  #m .ln.final{color:#F7F5F1}
+  #m .ln.final .dot{color:var(--signal)}
+  #m .card{position:absolute;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:6}
+  #m .card .stack{text-align:center;display:flex;flex-direction:column;align-items:center;gap:56px}
+  #m .card img{height:60px}
+  #m .card .claim{font:500 84px/1 var(--fd);letter-spacing:.02em;color:#F7F5F1}
+  #m .card .claim .d{display:inline-block;width:24px;height:24px;border-radius:50%;background:var(--signal);margin-left:12px}
+  #m .card .triad{font:500 24px var(--fm);letter-spacing:.3em;text-transform:uppercase;color:var(--inv-muted)}
+
+  /* ===== Szene X · Off-Market-Objekte (Endkunde) ===== */
+  #x{background:var(--ink)}
+  #x .hook{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;align-items:center;z-index:4}
+  #x .hook h1{font:500 112px/1.08 var(--fd);letter-spacing:-.035em;color:#F7F5F1}
+  #x .obj{position:absolute;inset:0;opacity:0}
+  #x .obj img{width:100%;height:100%;object-fit:cover}
+  #x .obj .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.4),rgba(11,10,9,0) 35%,rgba(11,10,9,0) 50%,rgba(11,10,9,.85))}
+  #x .obj .info{position:absolute;left:80px;right:80px;bottom:430px;color:#F7F5F1}
+  #x .obj .mk{display:inline-flex;align-items:center;gap:14px;font:500 26px var(--fm);letter-spacing:.18em;text-transform:uppercase;text-shadow:0 2px 28px rgba(0,0,0,.6)}
+  #x .obj .mk i{width:13px;height:13px;border-radius:50%;background:var(--signal);font-style:normal}
+  #x .obj h2{font:500 84px/1.04 var(--fd);letter-spacing:-.03em;color:#fff;margin-top:22px}
+  #x .obj .row{display:flex;gap:38px;margin-top:30px;padding-top:30px;border-top:1.5px solid var(--hairline-l);font:500 28px var(--fm);letter-spacing:.1em}
+  #x .obj .row .pr{margin-left:auto;font:500 42px var(--fd);letter-spacing:-.01em;color:var(--signal)}
+  #x .cta{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:5;opacity:0}
+  #x .cta h1{font:500 104px/1.08 var(--fd);letter-spacing:-.035em;color:#F7F5F1}
+  #x .cta .u{margin-top:56px;font:500 30px var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--signal)}
+  #x .blk{position:absolute;inset:0;background:var(--ink);z-index:3;opacity:0}
+
+  /* ===== Szene S · Provision-Stat (Makler) ===== */
+  #s{background:var(--ink)}
+  #s .big{position:absolute;left:80px;right:80px;top:520px;font:500 380px/0.9 var(--fd);letter-spacing:-.045em;color:#F7F5F1}
+  #s .big .pct{color:var(--signal)}
+  #s h2{position:absolute;left:80px;right:80px;top:920px;font:500 92px/1.06 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
+  #s .sub{position:absolute;left:80px;right:80px;top:1120px;font:400 38px/1.5 var(--fd);color:var(--inv-muted);max-width:24ch}
+  #s .note{position:absolute;left:80px;right:80px;top:1380px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--inv-muted)}
 </style>
 </head>
 <body>
@@ -133,6 +172,66 @@
   </div>
   <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
     <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
+<!-- M · Manifest (12 s) -->
+<div class="stage" id="m">
+  <div class="grain" style="opacity:.3"></div>
+  <div class="lines">
+    <div class="ln" id="m-l1">Aus Beziehungen wurden Pipelines.</div>
+    <div class="ln" id="m-l2">Aus Menschen wurden Leads.</div>
+    <div class="ln" id="m-l3">Aus Vertrauen wurde Verhandlung.</div>
+    <div class="ln final" id="m-l4">Wir drehen das um<span class="dot">.</span></div>
+  </div>
+  <div class="card" id="m-card">
+    <div class="stack">
+      <img src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <div class="claim">MOVE AS ONE<span class="d"></span></div>
+      <div class="triad">Raum · Technologie · Mensch</div>
+    </div>
+  </div>
+</div>
+
+<!-- X · Off-Market-Objekte (12 s) -->
+<div class="stage" id="x">
+  <div class="hook" id="x-hook"><h1>Die besten Wohnungen kommen nie auf die Portale<span class="dot">.</span></h1></div>
+  <div class="blk" id="x-blk"></div>
+  <div class="obj" id="x-o1">
+    <img src="../assets/img/beheim.jpg" alt=""><div class="shade"></div>
+    <div class="info"><span class="mk"><i></i>Nachfrage 91 · Nie inseriert</span>
+      <h2>Penthouse Beheim</h2>
+      <div class="row"><span>1170 WIEN</span><span>138 M²</span><span class="pr">€ 1,70 Mio</span></div></div>
+  </div>
+  <div class="obj" id="x-o2">
+    <img src="../assets/img/vienna-garden.jpg" alt=""><div class="shade"></div>
+    <div class="info"><span class="mk"><i></i>Nachfrage 87 · Off-Market</span>
+      <h2>Garten-Refugium</h2>
+      <div class="row"><span>WIENERWALD</span><span>210 M²</span><span class="pr">€ 1,90 Mio</span></div></div>
+  </div>
+  <div class="obj" id="x-o3">
+    <img src="../assets/img/penthouse.jpg" alt=""><div class="shade"></div>
+    <div class="info"><span class="mk"><i></i>Nachfrage 96 · Nie inseriert</span>
+      <h2>Über den Dächern</h2>
+      <div class="row"><span>1010 WIEN</span><span>178 M²</span><span class="pr">€ 4,00 Mio</span></div></div>
+  </div>
+  <div class="cta" id="x-cta">
+    <h1>Lern sie kennen, bevor sie online gehen<span class="dot">.</span></h1>
+    <div class="u">unio.at</div>
+  </div>
+  <div class="grain" style="opacity:.45"></div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
+<!-- S · Provision-Stat (7 s) -->
+<div class="stage" id="s">
+  <div class="grain" style="opacity:.3"></div>
+  <div class="big" id="s-big"><span id="s-n">0</span><span class="pct">%</span></div>
+  <h2 id="s-h2">Provision. Deine<span class="dot">.</span></h2>
+  <p class="sub" id="s-sub">Ab € 150K Jahresumsatz gehört jede Provision dir. Deine Marke, dein Netzwerk, dein Anteil.</p>
+  <p class="note" id="s-note">ARBEITSSTAND · KEIN VERSPRECHEN, EIN MODELL</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
 </div>
 
 <script>
@@ -209,6 +308,53 @@ const SCENES = {
     const pp = seg(t, 4.4, 0.7);
     document.getElementById("p-price").style.opacity = pp;
     document.getElementById("p-price").style.color = pp > 0.99 ? "var(--signal)" : "#F7F5F1";
+  }},
+  /* ---------- M · Manifest · 12 s ---------- */
+  m: { dur: 12, seek(t){
+    const L = [["m-l1", 0.4], ["m-l2", 2.2], ["m-l3", 4.0], ["m-l4", 6.2]];
+    L.forEach(([id, at]) => {
+      const el = document.getElementById(id);
+      const pin = seg(t, at, 1.0);
+      el.style.opacity = pin * (id === "m-l4" ? 1 : (1 - 0.55 * eo(seg(t, 6.2, 1.0))));
+      el.style.filter = "blur(" + ((1 - pin) * 16) + "px)";
+      el.style.transform = "translateY(" + ((1 - eo(pin)) * 44) + "px)";
+    });
+    const card = document.getElementById("m-card");
+    card.style.opacity = seg(t, 9.6, 0.8);
+  }},
+
+  /* ---------- X · Off-Market-Objekte · 12 s ---------- */
+  x: { dur: 12, seek(t){
+    const hook = document.getElementById("x-hook");
+    const ph = seg(t, 0.1, 0.9);
+    hook.style.opacity = ph * (1 - seg(t, 2.6, 0.6));
+    hook.querySelector("h1").style.filter = "blur(" + ((1 - ph) * 14) + "px)";
+    hook.querySelector("h1").style.transform = "translateY(" + ((1 - eo(ph)) * 40) + "px)";
+    document.getElementById("x-blk").style.opacity = 1 - seg(t, 3.0, 0.7);
+    const objs = [["x-o1", 3.0], ["x-o2", 5.4], ["x-o3", 7.8]];
+    objs.forEach(([id, at], i) => {
+      const el = document.getElementById(id);
+      const on = seg(t, at, 0.7), off = i < 2 ? seg(t, at + 2.4, 0.7) : seg(t, 10.2, 0.7);
+      el.style.opacity = on - off;
+      el.querySelector("img").style.transform = "scale(" + (1.1 - 0.06 * seg(t, at, 2.8)) + ")";
+      const info = el.querySelector(".info");
+      info.style.opacity = seg(t, at + 0.25, 0.6);
+      info.style.transform = "translateY(" + ((1 - eo(seg(t, at + 0.25, 0.6))) * 36) + "px)";
+    });
+    const cta = document.getElementById("x-cta");
+    const pc = seg(t, 10.4, 0.8);
+    cta.style.opacity = pc;
+    cta.querySelector("h1").style.transform = "translateY(" + ((1 - eo(pc)) * 40) + "px)";
+  }},
+
+  /* ---------- S · Provision-Stat · 7 s ---------- */
+  s: { dur: 7, seek(t){
+    const pn = seg(t, 0.3, 1.8);
+    document.getElementById("s-n").textContent = Math.round(eo(pn) * 100);
+    document.getElementById("s-big").style.opacity = seg(t, 0.15, 0.6);
+    rise(document.getElementById("s-h2"), seg(t, 2.1, 0.8));
+    rise(document.getElementById("s-sub"), seg(t, 2.7, 0.8), 28);
+    rise(document.getElementById("s-note"), seg(t, 3.5, 0.7), 20);
   }},
 };
 

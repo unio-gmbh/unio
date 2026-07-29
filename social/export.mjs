@@ -11,10 +11,9 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "exports");
 mkdirSync(OUT, { recursive: true });
 
-const browser = await puppeteer.launch({ channel: "chrome", headless: "new",
-  args: ["--force-device-scale-factor=2"] });
+const browser = await puppeteer.launch({ channel: "chrome", headless: "new" });
 const page = await browser.newPage();
-await page.setViewport({ width: 1400, height: 2100, deviceScaleFactor: 2 });
+await page.setViewport({ width: 1400, height: 2100, deviceScaleFactor: 1 });
 await page.goto("file://" + join(HERE, "templates.html"), { waitUntil: "networkidle0" });
 await page.evaluate(() => document.fonts.ready);
 await new Promise((r) => setTimeout(r, 600));
