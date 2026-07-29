@@ -154,20 +154,20 @@
   /* ============================================================
      M4 · MAKLER · 4:5 CIRCLE Recruiting (Der Kreis schließt sich)
   ============================================================ */
-  #m4{background:var(--ink)}
+  #m4{background:var(--paper)}
   #m4 .ring{position:absolute;top:104px;left:50%;transform:translateX(-50%);width:540px;height:540px}
-  #m4 .ring .c{position:absolute;inset:0;border:1.5px solid var(--hairline-l);border-radius:50%}
-  #m4 .p{position:absolute;width:124px;height:124px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--ink)}
+  #m4 .ring .c{position:absolute;inset:0;border:1.5px solid var(--hairline-d);border-radius:50%}
+  #m4 .p{position:absolute;width:124px;height:124px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--paper),0 14px 34px -12px rgba(11,10,9,.35)}
   #m4 .p img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
   #m4 .you{position:absolute;width:124px;height:124px;border-radius:50%;background:var(--signal);color:#1A1305;
-    display:flex;align-items:center;justify-content:center;font:500 32px var(--fd);box-shadow:0 0 0 4px var(--ink)}
+    display:flex;align-items:center;justify-content:center;font:500 32px var(--fd);box-shadow:0 0 0 4px var(--paper),0 14px 34px -12px rgba(184,116,0,.5)}
   #m4 .center{position:absolute;top:104px;left:50%;transform:translateX(-50%);width:540px;height:540px;
     display:flex;align-items:center;justify-content:center;text-align:center}
-  #m4 .center h1{font:500 56px/1.1 var(--fd);letter-spacing:-.02em;color:#F7F5F1}
+  #m4 .center h1{font:500 56px/1.1 var(--fd);letter-spacing:-.02em;color:var(--ink)}
   #m4 .body{position:absolute;left:96px;right:96px;bottom:96px}
-  #m4 h2{font:500 72px/1.08 var(--fd);letter-spacing:-.025em;color:#F7F5F1}
-  #m4 .sub{font:400 33px/1.5 var(--fd);color:var(--inv-muted);margin-top:26px;max-width:30ch}
-  #m4 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:40px;border-top:1.5px solid var(--hairline-l)}
+  #m4 h2{font:500 72px/1.08 var(--fd);letter-spacing:-.025em;color:var(--ink)}
+  #m4 .sub{font:400 33px/1.5 var(--fd);color:var(--muted);margin-top:26px;max-width:30ch}
+  #m4 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:40px;border-top:1.5px solid var(--hairline-d)}
 
   /* ============================================================
      B1 · BRAND · Reel-Endcard 9:16 (MOVE AS ONE)
@@ -207,6 +207,40 @@
   .cc-slide .txt{font:400 38px/1.55 var(--fd);color:var(--muted);margin-top:40px;max-width:26ch}
   .cc-slide .foot2{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;
     padding-top:40px;border-top:1.5px solid var(--hairline-d);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  /* ===== B-Grid · System-Bento als Social-Post ===== */
+  .bento .inner{position:absolute;inset:80px;display:flex;flex-direction:column}
+  .bento h1{font:500 88px/1.06 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  .bento .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:56px;flex:1}
+  .bcell{background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:24px;padding:30px;
+    display:flex;flex-direction:column;overflow:hidden}
+  .bcell .bt{font:500 30px/1.15 var(--fd);letter-spacing:-.01em;color:var(--ink)}
+  .bcell.amber{background:var(--signal);border-color:var(--signal)}
+  .bcell.amber .bt{color:#1A1305}
+  .bcell .demo{margin-top:auto}
+  .searchrow{display:flex;align-items:center;gap:14px;background:var(--paper);border:1.5px solid var(--hairline-d);
+    border-radius:12px;padding:20px 22px;font:400 27px var(--fd);color:var(--ink-2);white-space:nowrap;overflow:hidden}
+  .searchrow .ar{font:500 22px var(--fm);color:var(--muted)}
+  .searchrow .cr{width:3px;height:32px;background:var(--signal);flex:none}
+  .tagrow{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+  .stag{font:500 18px var(--fm);letter-spacing:.1em;text-transform:uppercase;border-radius:8px;padding:11px 16px}
+  .stag.on{background:var(--signal-soft);color:var(--signal-deep);border:1.5px solid rgba(255,170,9,.4)}
+  .stag.off{background:transparent;color:var(--muted);border:1.5px solid var(--hairline-d)}
+  .checkring{width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center;font:500 52px var(--fm);color:#1A1305;margin:0 auto}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+  .cal i{aspect-ratio:1;border-radius:6px;background:var(--paper-2);font-style:normal}
+  .cal i.hot{background:var(--signal);box-shadow:0 0 0 5px var(--signal-soft)}
+  .lensbars{display:flex;align-items:flex-end;gap:9px;height:110px}
+  .lensbars i{flex:1;background:var(--signal);border-radius:4px 4px 0 0;font-style:normal}
+  .actrow{display:flex;align-items:center;gap:14px;background:var(--paper);border:1.5px solid var(--hairline-d);
+    border-radius:12px;padding:15px 18px;margin-top:12px}
+  .actrow .ck{width:30px;height:30px;border-radius:50%;background:var(--signal);color:#1A1305;flex:none;
+    display:flex;align-items:center;justify-content:center;font:500 17px var(--fm)}
+  .actrow .tx{font:500 23px var(--fd);color:var(--ink-2)}
+  .actrow .wh{margin-left:auto;font:500 15px var(--fm);letter-spacing:.08em;color:var(--signal-deep);text-transform:uppercase;white-space:nowrap}
+  .bento .foot2{margin-top:44px;display:flex;justify-content:space-between;align-items:center;
+    padding-top:36px;border-top:1.5px solid var(--hairline-d);font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -371,6 +405,7 @@
 <!-- ============ M4 · Makler · 4:5 CIRCLE Recruiting ============ -->
 <div class="board-label">M4 · makler-circle-recruiting-45.png · Feed 4:5</div>
 <section class="board r45" id="m4" data-name="makler-circle-recruiting-45">
+  <div class="grain"></div>
   <div class="ring">
     <span class="c"></span>
     <span class="p" style="top:-62px;left:208px"><img src="../assets/team/portrait-01.jpg" alt=""></span>
@@ -384,8 +419,8 @@
     <h2>Die besten Makler Wiens arbeiten nicht mehr allein<span class="dot">.</span></h2>
     <p class="sub">CIRCLE nimmt Makler:innen auf, die Ownership wollen. Software, Dealflow und Beteiligung inklusive.</p>
     <div class="foot">
-      <img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
-      <span class="mono" style="font:500 22px var(--fm);color:var(--inv-muted)">JETZT BEWERBEN</span>
+      <img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+      <span class="mono" style="font:500 22px var(--fm);color:var(--muted)">JETZT BEWERBEN</span>
     </div>
   </div>
 </section>
@@ -505,6 +540,74 @@
     <h1 style="margin-top:120px">Der Kreis hat noch Plätze<span class="dot">.</span></h1>
     <p class="txt">CIRCLE ist kuratiert: Wir nehmen Makler:innen auf, die Ownership wollen. Bewirb dich, das Gespräch führt ein Mensch.</p>
     <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" style="height:30px"><span>UNIO.AT/MAKLER</span></div>
+  </div>
+</section>
+
+<!-- ============ BG-A · Bento „Ein System" (4:5) ============ -->
+<div class="board-label">BG-A · system-bento-a-45.png · Feed 4:5</div>
+<section class="board r45 bento" id="bga" data-name="system-bento-a-45">
+  <div class="grain"></div>
+  <div class="inner">
+    <h1>Ein System für deinen gesamten Verkauf<span class="dot">.</span></h1>
+    <div class="grid">
+      <div class="bcell" style="grid-column:span 2">
+        <div class="bt">KI-Suche</div>
+        <div class="demo">
+          <div class="searchrow"><span class="ar">→</span>Penthouse mit Terrasse, Hernals<span class="cr"></span></div>
+          <div class="tagrow"><span class="stag on">KI-Suche</span><span class="stag off">14 Treffer</span></div>
+        </div>
+      </div>
+      <div class="bcell amber">
+        <div class="bt">Jeder Lead abgesichert</div>
+        <div class="demo"><div class="checkring">✓</div></div>
+      </div>
+      <div class="bcell">
+        <div class="bt">Besichtigung & Kalender</div>
+        <div class="demo"><div class="cal">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i class="hot"></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div></div>
+      </div>
+      <div class="bcell" style="grid-column:span 2">
+        <div class="bt">LENS · Live-Dashboard</div>
+        <div class="demo"><div class="lensbars">
+          <i style="height:44%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:80%"></i>
+          <i style="height:60%"></i><i style="height:90%"></i><i style="height:72%"></i>
+        </div></div>
+      </div>
+    </div>
+    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" style="height:30px"><span>UNIO.AT</span></div>
+  </div>
+</section>
+
+<!-- ============ BG-B · Bento „Naechster Schritt" (4:5) ============ -->
+<div class="board-label">BG-B · system-bento-b-45.png · Feed 4:5</div>
+<section class="board r45 bento" id="bgb" data-name="system-bento-b-45">
+  <div class="grain"></div>
+  <div class="inner">
+    <h1>Das System sagt dir den nächsten Schritt<span class="dot">.</span></h1>
+    <div class="grid">
+      <div class="bcell" style="grid-column:span 2">
+        <div class="bt">Suggested Actions</div>
+        <div class="demo">
+          <div class="actrow"><span class="ck">✓</span><span class="tx">Lead telefonisch kontaktieren</span><span class="wh">Jetzt</span></div>
+          <div class="actrow"><span class="ck" style="background:var(--signal-soft);color:var(--signal-deep)">2</span><span class="tx">Besichtigung vorschlagen</span><span class="wh">Heute</span></div>
+          <div class="actrow"><span class="ck" style="background:var(--paper-2);color:var(--muted)">3</span><span class="tx">Suchprofil ergänzen</span><span class="wh">Diese Woche</span></div>
+        </div>
+      </div>
+      <div class="bcell">
+        <div class="bt">Automatisches Matching</div>
+        <div class="demo"><div class="tagrow">
+          <span class="stag off">Wohnung</span><span class="stag off">1020 Wien</span><span class="stag on">✓ Objekt gefunden</span>
+        </div></div>
+      </div>
+      <div class="bcell amber">
+        <div class="bt">Portal-Export mit einem Klick</div>
+        <div class="demo"><div class="checkring">→</div></div>
+      </div>
+    </div>
+    <div class="foot2"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" style="height:30px"><span>MEHR MENSCH, WENIGER PAPIERKRAM</span></div>
   </div>
 </section>
 

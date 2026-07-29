@@ -160,6 +160,51 @@
   #l .kpi .n{font:500 84px/1 var(--fd);letter-spacing:-.02em;color:var(--ink)}
   #l .kpi .t{font:500 22px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px}
   #l .note{position:absolute;left:80px;right:80px;top:1600px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
+
+  /* ===== Szene B · Bento-Aufbau ===== */
+  #b h1{position:absolute;left:80px;right:80px;top:300px;font:500 96px/1.08 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  #b .grid{position:absolute;left:80px;right:80px;top:700px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  #b .cell{background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:24px;padding:30px;overflow:hidden;opacity:0}
+  #b .cell .bt{font:500 30px/1.15 var(--fd);color:var(--ink)}
+  #b .cell.amber{background:var(--signal);border-color:var(--signal)}
+  #b .cell.amber .bt{color:#1A1305}
+  #b .srow{display:flex;align-items:center;gap:14px;background:var(--paper);border:1.5px solid var(--hairline-d);
+    border-radius:12px;padding:20px 22px;font:400 27px var(--fd);color:var(--ink-2);margin-top:26px;white-space:nowrap;overflow:hidden}
+  #b .srow .ar{font:500 22px var(--fm);color:var(--muted)}
+  #b .srow .cr{width:3px;height:32px;background:var(--signal);flex:none}
+  #b .ring{width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center;font:500 48px var(--fm);color:#1A1305;margin:26px auto 0;transform:scale(0)}
+  #b .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:9px;margin-top:26px}
+  #b .cal i{aspect-ratio:1;border-radius:6px;background:var(--paper-2);font-style:normal}
+  #b .cal i.hot{background:var(--signal)}
+  #b .bars{display:flex;align-items:flex-end;gap:9px;height:104px;margin-top:26px}
+  #b .bars i{flex:1;background:var(--signal);border-radius:4px 4px 0 0;font-style:normal;height:0%}
+  #b .tail{position:absolute;left:80px;right:80px;top:1700px;font:500 30px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+  /* ===== Szene T · Matching ===== */
+  #t h1{position:absolute;left:80px;right:80px;top:360px;font:500 102px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #t .chips{position:absolute;left:80px;right:80px;top:860px;display:flex;flex-wrap:wrap;gap:18px}
+  #t .chip{font:500 26px var(--fm);letter-spacing:.1em;text-transform:uppercase;border-radius:10px;padding:20px 30px;
+    background:#FDFCFA;border:1.5px solid var(--hairline-d);color:var(--ink-2);opacity:0}
+  #t .found{position:absolute;left:80px;right:80px;top:1080px;display:flex;gap:30px;align-items:center;
+    background:#FDFCFA;border:1.5px solid rgba(255,170,9,.5);border-radius:16px;padding:26px;opacity:0;
+    box-shadow:0 30px 70px -35px rgba(184,116,0,.35)}
+  #t .found img{width:210px;height:150px;object-fit:cover;border-radius:10px}
+  #t .found .ti{font:500 40px var(--fd);letter-spacing:-.02em;color:var(--ink)}
+  #t .found .mk{display:flex;align-items:center;gap:12px;font:500 21px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--signal-deep);margin-top:12px}
+  #t .found .mk i{width:11px;height:11px;border-radius:50%;background:var(--signal)}
+  #t .tail{position:absolute;left:80px;right:80px;top:1370px;font:400 36px/1.5 var(--fd);color:var(--muted);max-width:24ch}
+
+  /* ===== Szene A · Suggested Actions ===== */
+  #a h1{position:absolute;left:80px;right:80px;top:360px;font:500 102px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #a .list{position:absolute;left:80px;right:80px;top:880px;display:flex;flex-direction:column;gap:22px}
+  #a .row{display:flex;align-items:center;gap:22px;background:#FDFCFA;border:1.5px solid var(--hairline-d);
+    border-radius:14px;padding:26px 30px;opacity:0}
+  #a .row .ck{width:44px;height:44px;border-radius:50%;background:var(--paper-2);color:transparent;flex:none;
+    display:flex;align-items:center;justify-content:center;font:500 24px var(--fm)}
+  #a .row .tx{font:500 34px var(--fd);color:var(--ink-2)}
+  #a .row .wh{margin-left:auto;font:500 20px var(--fm);letter-spacing:.1em;color:var(--signal-deep);text-transform:uppercase;white-space:nowrap}
+  #a .tail{position:absolute;left:80px;right:80px;top:1430px;font:400 36px/1.5 var(--fd);color:var(--muted);max-width:26ch}
 </style>
 </head>
 <body>
@@ -354,6 +399,70 @@
     <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/IMMOBILIEN</span></div>
 </div>
 
+<!-- B · Bento-Aufbau (12 s) -->
+<div class="stage" id="b">
+  <div class="grain"></div>
+  <h1 id="b-h1">Ein System für deinen gesamten Verkauf<span class="dot">.</span></h1>
+  <div class="grid">
+    <div class="cell" data-i="0" style="grid-column:span 2">
+      <div class="bt">KI-Suche</div>
+      <div class="srow"><span class="ar">→</span><span id="b-q"></span><span class="cr" id="b-cr"></span></div>
+    </div>
+    <div class="cell amber" data-i="1">
+      <div class="bt">Jeder Lead abgesichert</div>
+      <div class="ring" id="b-ring">✓</div>
+    </div>
+    <div class="cell" data-i="2">
+      <div class="bt">Kalender</div>
+      <div class="cal" id="b-cal">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+    <div class="cell" data-i="3" style="grid-column:span 2">
+      <div class="bt">LENS · Live-Dashboard</div>
+      <div class="bars" id="b-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+  <p class="tail" id="b-tail">EINE PLATTFORM · UNIO.AT</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
+<!-- T · Matching (9 s) -->
+<div class="stage" id="t">
+  <div class="grain"></div>
+  <h1 id="t-h1">Einmal sagen, was du suchst<span class="dot">.</span></h1>
+  <div class="chips">
+    <span class="chip" data-i="0">Wohnung</span>
+    <span class="chip" data-i="1">€ 1,0 bis 1,5 Mio</span>
+    <span class="chip" data-i="2">4 bis 5 Zimmer</span>
+    <span class="chip" data-i="3">1020 Wien</span>
+  </div>
+  <div class="found" id="t-found">
+    <img src="../assets/img/obenzwei.jpg" alt="">
+    <div><div class="ti">ObenZwei · Penthouse</div>
+      <div class="mk"><i></i>Passendes Objekt gefunden</div></div>
+  </div>
+  <p class="tail" id="t-tail">Das Matching läuft weiter, auch wenn du nicht suchst.</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT</span></div>
+</div>
+
+<!-- A · Suggested Actions (9 s) -->
+<div class="stage" id="a">
+  <div class="grain"></div>
+  <h1 id="a-h1">Das System sagt dir den nächsten Schritt<span class="dot">.</span></h1>
+  <div class="list">
+    <div class="row" data-i="0"><span class="ck">✓</span><span class="tx">Lead telefonisch kontaktieren</span><span class="wh">Jetzt</span></div>
+    <div class="row" data-i="1"><span class="ck">✓</span><span class="tx">Besichtigung vorschlagen</span><span class="wh">Heute</span></div>
+    <div class="row" data-i="2"><span class="ck">✓</span><span class="tx">Suchprofil ergänzen</span><span class="wh">Diese Woche</span></div>
+  </div>
+  <p class="tail" id="a-tail">Priorisiert nach Wirkung. Du entscheidest, das System erinnert.</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+</div>
+
 <script>
 /* Deterministische Animationen: SEEK(t) setzt den Zustand fuer Zeitpunkt t (Sekunden).
    Easing wie im Web: ease-unio-Anmutung ueber easeOutCubic. */
@@ -536,6 +645,64 @@ const SCENES = {
       el.textContent = Math.round(target * pk).toLocaleString("de-AT");
     });
     rise(document.getElementById("l-note"), seg(t, 5.6, 0.7), 20);
+  }},
+  /* ---------- B · Bento-Aufbau · 12 s ---------- */
+  b: { dur: 12, seek(t){
+    rise(document.getElementById("b-h1"), seg(t, 0.1, 0.9));
+    document.querySelectorAll("#b .cell").forEach((c) => {
+      const i = +c.dataset.i, at = 1.2 + i * 0.5;
+      const pc = eo(seg(t, at, 0.7));
+      c.style.opacity = pc;
+      c.style.transform = "translateY(" + ((1 - pc) * 46) + "px) scale(" + (0.94 + 0.06 * pc) + ")";
+    });
+    const TXT = "Penthouse mit Terrasse, Hernals";
+    const n = Math.round(eo(seg(t, 3.6, 2.4)) * TXT.length);
+    document.getElementById("b-q").textContent = TXT.slice(0, n);
+    document.getElementById("b-cr").style.opacity = Math.floor(t * 2.4) % 2 === 0 ? 1 : 0;
+    const pr = eo(seg(t, 4.4, 0.6));
+    document.getElementById("b-ring").style.transform = "scale(" + pr + ")";
+    const dots = document.querySelectorAll("#b-cal i");
+    const hotIdx = Math.min(13, Math.floor(seg(t, 5.0, 2.4) * 14));
+    dots.forEach((d, i) => d.classList.toggle("hot", i === hotIdx && t > 5.0));
+    const H = [44, 66, 52, 80, 60, 90, 72];
+    document.querySelectorAll("#b-bars i").forEach((bar, i) => {
+      const pb = eo(seg(t, 6.0 + i * 0.14, 0.8));
+      const wob = 1 + 0.06 * Math.sin(t * 1.9 + i * 1.2) * (t > 7.5 ? 1 : 0);
+      bar.style.height = (H[i] * pb * wob) + "%";
+    });
+    rise(document.getElementById("b-tail"), seg(t, 8.2, 0.8), 24);
+  }},
+
+  /* ---------- T · Matching · 9 s ---------- */
+  t: { dur: 9, seek(t){
+    rise(document.getElementById("t-h1"), seg(t, 0.1, 0.9));
+    document.querySelectorAll("#t .chip").forEach((c) => {
+      const i = +c.dataset.i, at = 1.3 + i * 0.45;
+      const pc = eo(seg(t, at, 0.5));
+      c.style.opacity = pc;
+      c.style.transform = "scale(" + (0.85 + 0.15 * pc) + ")";
+    });
+    const pf = eo(seg(t, 3.8, 0.9));
+    const f = document.getElementById("t-found");
+    f.style.opacity = pf;
+    f.style.transform = "translateY(" + ((1 - pf) * 44) + "px)";
+    rise(document.getElementById("t-tail"), seg(t, 5.2, 0.8), 26);
+  }},
+
+  /* ---------- A · Suggested Actions · 9 s ---------- */
+  a: { dur: 9, seek(t){
+    rise(document.getElementById("a-h1"), seg(t, 0.1, 0.9));
+    document.querySelectorAll("#a .row").forEach((r) => {
+      const i = +r.dataset.i, at = 1.4 + i * 0.7;
+      const pr = eo(seg(t, at, 0.7));
+      r.style.opacity = i === 0 ? pr : pr * 0.92;
+      r.style.transform = "translateY(" + ((1 - pr) * 40) + "px)";
+      const ck = r.querySelector(".ck");
+      const pk = seg(t, 3.9 + i * 0.8, 0.4);
+      if (pk > 0) { ck.style.background = "var(--signal)"; ck.style.color = "#1A1305"; ck.style.transform = "scale(" + (0.7 + 0.3 * eo(pk)) + ")"; }
+      else { ck.style.background = "var(--paper-2)"; ck.style.color = "transparent"; }
+    });
+    rise(document.getElementById("a-tail"), seg(t, 6.6, 0.8), 26);
   }},
 };
 
