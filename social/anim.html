@@ -111,6 +111,55 @@
   #s h2{position:absolute;left:80px;right:80px;top:920px;font:500 92px/1.06 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
   #s .sub{position:absolute;left:80px;right:80px;top:1120px;font:400 38px/1.5 var(--fd);color:var(--inv-muted);max-width:24ch}
   #s .note{position:absolute;left:80px;right:80px;top:1380px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--inv-muted)}
+
+  /* ===== Szene C · MOVE AS ONE ueber Crowd-Timelapse ===== */
+  #c{background:var(--ink)}
+  #c video{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:100%;width:auto;min-width:100%;object-fit:cover;filter:brightness(1.28) saturate(1.12)}
+  #c .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.34),rgba(11,10,9,.08) 40%,rgba(11,10,9,.16) 62%,rgba(11,10,9,.62));z-index:2}
+  #c .mid{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:3}
+  #c .pre{font:500 66px/1.25 var(--fd);letter-spacing:-.02em;color:rgba(247,245,241,.88)}
+  #c .claim{font:500 148px/1.02 var(--fd);letter-spacing:.01em;color:#F7F5F1;margin-top:56px}
+  #c .claim .d{display:inline-block;width:30px;height:30px;border-radius:50%;background:var(--signal);margin-left:16px}
+  #c .triad{font:500 26px var(--fm);letter-spacing:.3em;text-transform:uppercase;color:rgba(247,245,241,.7);margin-top:52px}
+
+  /* ===== Szene Q · Endkunden-Quote ueber Zuhause-Clip ===== */
+  #q{background:var(--ink)}
+  #q video{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);height:100%;width:auto;min-width:100%;object-fit:cover;filter:brightness(1.22)}
+  #q .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.32),rgba(11,10,9,.08) 38%,rgba(11,10,9,.18) 60%,rgba(11,10,9,.66));z-index:2}
+  #q .mid{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:3}
+  #q .l1{font:500 58px/1.3 var(--fd);letter-spacing:-.015em;color:rgba(247,245,241,.82)}
+  #q .l2{font:500 108px/1.1 var(--fd);letter-spacing:-.03em;color:#F7F5F1;margin-top:40px;max-width:11ch}
+  #q .l2 .dot{color:var(--signal)}
+
+  /* ===== Szene K · KI-Suche (Bento-Demo) ===== */
+  #k h1{position:absolute;left:80px;right:80px;top:380px;font:500 104px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #k .field{position:absolute;left:80px;right:80px;top:880px;display:flex;align-items:center;gap:22px;
+    background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:16px;padding:34px 38px;box-shadow:0 24px 60px -30px rgba(11,10,9,.25)}
+  #k .field .arr{font:500 30px var(--fm);color:var(--muted)}
+  #k .field .q{font:400 38px var(--fd);color:var(--ink);white-space:nowrap;overflow:hidden}
+  #k .field .caret{width:3px;height:44px;background:var(--signal);flex:none}
+  #k .chips{position:absolute;left:80px;right:80px;top:1060px;display:flex;gap:18px}
+  #k .chip{font:500 24px var(--fm);letter-spacing:.14em;text-transform:uppercase;border-radius:10px;padding:18px 28px;opacity:0}
+  #k .chip.on{background:rgba(255,170,9,.16);color:var(--signal-deep);border:1.5px solid rgba(255,170,9,.4)}
+  #k .chip.off{background:transparent;color:var(--muted);border:1.5px solid var(--hairline-d)}
+  #k .res{position:absolute;left:80px;right:80px;top:1210px;display:flex;gap:30px;align-items:center;
+    background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:16px;padding:26px;opacity:0}
+  #k .res img{width:210px;height:150px;object-fit:cover;border-radius:10px}
+  #k .res .ti{font:500 40px var(--fd);letter-spacing:-.02em;color:var(--ink)}
+  #k .res .mk{display:flex;align-items:center;gap:12px;font:500 21px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+  #k .res .mk i{width:11px;height:11px;border-radius:50%;background:var(--signal)}
+
+  /* ===== Szene L · LENS Live (Eigentuemer) ===== */
+  #l{background:var(--ink)}
+  #l h1{position:absolute;left:80px;right:80px;top:360px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
+  #l .live{position:absolute;left:80px;top:820px;display:flex;align-items:center;gap:16px;font:500 26px var(--fm);letter-spacing:.2em;color:var(--inv-muted)}
+  #l .live i{width:14px;height:14px;border-radius:50%;background:var(--signal)}
+  #l .bars{position:absolute;left:80px;right:80px;top:920px;height:220px;display:flex;align-items:flex-end;gap:14px}
+  #l .bar{flex:1;background:var(--signal);border-radius:6px 6px 0 0;height:0%}
+  #l .kpis{position:absolute;left:80px;right:80px;top:1230px;display:grid;grid-template-columns:1fr 1fr;gap:40px 30px}
+  #l .kpi .n{font:500 84px/1 var(--fd);letter-spacing:-.02em;color:#F7F5F1}
+  #l .kpi .t{font:500 22px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--inv-muted);margin-top:12px}
+  #l .note{position:absolute;left:80px;right:80px;top:1600px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--inv-muted)}
 </style>
 </head>
 <body>
@@ -232,6 +281,76 @@
   <p class="note" id="s-note">ARBEITSSTAND · KEIN VERSPRECHEN, EIN MODELL</p>
   <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
     <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+</div>
+
+<!-- C · MOVE AS ONE / Crowd (10 s) -->
+<div class="stage" id="c">
+  <video src="clips/crowd.mp4" muted preload="auto" playsinline></video>
+  <div class="shade"></div>
+  <div class="grain" style="opacity:.4"></div>
+  <div class="mid">
+    <div class="pre" id="c-p1">Nicht gegeneinander.</div>
+    <div class="pre" id="c-p2" style="margin-top:18px">Miteinander.</div>
+    <div class="claim" id="c-claim">MOVE AS ONE<span class="d"></span></div>
+    <div class="triad" id="c-triad">Raum · Technologie · Mensch</div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO · WIEN</span></div>
+</div>
+
+<!-- Q · Endkunden-Quote / Zuhause (8 s) -->
+<div class="stage" id="q">
+  <video src="clips/zuhause.mp4" muted preload="auto" playsinline></video>
+  <div class="shade"></div>
+  <div class="grain" style="opacity:.4"></div>
+  <div class="mid">
+    <div class="l1" id="q-l1">Nicht einfach eine Immobilie finden.</div>
+    <div class="l2" id="q-l2">Sondern den Ort, der sich richtig anfühlt<span class="dot">.</span></div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
+<!-- K · KI-Suche (9 s) -->
+<div class="stage" id="k">
+  <div class="grain"></div>
+  <h1 id="k-h1">Sag einfach, wie du wohnen willst<span class="dot">.</span></h1>
+  <div class="field" id="k-field">
+    <span class="arr">→</span>
+    <span class="q" id="k-q"></span>
+    <span class="caret" id="k-caret"></span>
+  </div>
+  <div class="chips">
+    <span class="chip on" id="k-c1">KI-Suche</span>
+    <span class="chip off" id="k-c2">14 Treffer</span>
+  </div>
+  <div class="res" id="k-res">
+    <img src="../assets/img/beheim.jpg" alt="">
+    <div><div class="ti">Penthouse Beheim</div>
+      <div class="mk"><i></i>Nachfrage 91 · 1170 Wien</div></div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT</span></div>
+</div>
+
+<!-- L · LENS Live (8 s) -->
+<div class="stage" id="l">
+  <div class="grain" style="opacity:.3"></div>
+  <h1 id="l-h1">Du siehst live, was dein Objekt macht<span class="dot">.</span></h1>
+  <div class="live" id="l-live"><i id="l-dot"></i>Deine Sicht in LENS · Live</div>
+  <div class="bars" id="l-bars">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="n" id="l-k1">0</div><div class="t">Reichweite</div></div>
+    <div class="kpi"><div class="n" id="l-k2">0</div><div class="t">Anfragen</div></div>
+    <div class="kpi"><div class="n" id="l-k3">0</div><div class="t">Besichtigungen</div></div>
+    <div class="kpi"><div class="n" id="l-k4">0</div><div class="t">Angebote</div></div>
+  </div>
+  <p class="note" id="l-note">DEMO-ANSICHT · ARBEITSSTAND</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/IMMOBILIEN</span></div>
 </div>
 
 <script>
@@ -356,13 +475,89 @@ const SCENES = {
     rise(document.getElementById("s-sub"), seg(t, 2.7, 0.8), 28);
     rise(document.getElementById("s-note"), seg(t, 3.5, 0.7), 20);
   }},
+  /* ---------- C · MOVE AS ONE / Crowd · 10 s ---------- */
+  c: { dur: 10, video: { sel: "#c video", speed: 0.55, offset: 0 }, seek(t){
+    rise(document.getElementById("c-p1"), seg(t, 0.8, 1.0), 30);
+    rise(document.getElementById("c-p2"), seg(t, 2.2, 1.0), 30);
+    const pc = seg(t, 4.0, 1.1);
+    const claim = document.getElementById("c-claim");
+    claim.style.opacity = pc;
+    claim.style.filter = "blur(" + ((1 - pc) * 18) + "px)";
+    claim.style.transform = "translateY(" + ((1 - eo(pc)) * 50) + "px)";
+    rise(document.getElementById("c-triad"), seg(t, 5.4, 0.9), 24);
+  }},
+
+  /* ---------- Q · Endkunden-Quote / Zuhause · 8 s ---------- */
+  q: { dur: 8, video: { sel: "#q video", speed: 0.36, offset: 0.1 }, seek(t){
+    rise(document.getElementById("q-l1"), seg(t, 0.7, 1.0), 28);
+    const p2 = seg(t, 1.9, 1.2);
+    const l2 = document.getElementById("q-l2");
+    l2.style.opacity = p2;
+    l2.style.filter = "blur(" + ((1 - p2) * 16) + "px)";
+    l2.style.transform = "translateY(" + ((1 - eo(p2)) * 44) + "px)";
+  }},
+
+  /* ---------- K · KI-Suche · 9 s ---------- */
+  k: { dur: 9, seek(t){
+    rise(document.getElementById("k-h1"), seg(t, 0.1, 0.9));
+    rise(document.getElementById("k-field"), seg(t, 1.0, 0.6), 30);
+    const TXT = "Penthouse mit Terrasse, Hernals";
+    const n = Math.round(eo(seg(t, 1.6, 2.6)) * TXT.length);
+    document.getElementById("k-q").textContent = TXT.slice(0, n);
+    document.getElementById("k-caret").style.opacity = (t < 4.4 || Math.floor(t * 2.4) % 2 === 0) ? 1 : 0;
+    const c1 = document.getElementById("k-c1"), c2 = document.getElementById("k-c2");
+    c1.style.opacity = seg(t, 4.5, 0.4);
+    c1.style.transform = "scale(" + (0.85 + 0.15 * eo(seg(t, 4.5, 0.4))) + ")";
+    c2.style.opacity = seg(t, 4.9, 0.4);
+    c2.style.transform = "scale(" + (0.85 + 0.15 * eo(seg(t, 4.9, 0.4))) + ")";
+    const pr = seg(t, 5.6, 0.8);
+    const res = document.getElementById("k-res");
+    res.style.opacity = pr;
+    res.style.transform = "translateY(" + ((1 - eo(pr)) * 40) + "px)";
+  }},
+
+  /* ---------- L · LENS Live · 8 s ---------- */
+  l: { dur: 8, seek(t){
+    rise(document.getElementById("l-h1"), seg(t, 0.1, 0.9));
+    rise(document.getElementById("l-live"), seg(t, 1.1, 0.6), 24);
+    document.getElementById("l-dot").style.opacity = 0.45 + 0.55 * Math.abs(Math.sin(t * 2.4));
+    const H = [46, 64, 52, 78, 60, 88, 72];
+    document.querySelectorAll("#l-bars .bar").forEach((b, i) => {
+      const pb = eo(seg(t, 1.5 + i * 0.16, 0.8));
+      const wob = 1 + 0.05 * Math.sin(t * 1.8 + i * 1.3) * (t > 3 ? 1 : 0);
+      b.style.height = (H[i] * pb * wob) + "%";
+    });
+    const K = [["l-k1", 48200, 3.0], ["l-k2", 27, 3.4], ["l-k3", 9, 3.8], ["l-k4", 2, 4.2]];
+    K.forEach(([id, target, at]) => {
+      const el = document.getElementById(id);
+      const pk = eo(seg(t, at, 1.4));
+      el.parentElement.style.opacity = seg(t, at, 0.5);
+      el.textContent = Math.round(target * pk).toLocaleString("de-AT");
+    });
+    rise(document.getElementById("l-note"), seg(t, 5.6, 0.7), 20);
+  }},
 };
 
 const params = new URLSearchParams(location.search);
 const scene = params.get("scene") || "r";
 document.getElementById(scene).classList.add("active");
 window.DUR = SCENES[scene].dur;
-window.SEEK = (t) => { SCENES[scene].seek(t); return true; };
+window.SEEK = async (t) => {
+  const sc = SCENES[scene];
+  if (sc.video) {
+    const v = document.querySelector(sc.video.sel);
+    if (v && v.duration) {
+      const target = Math.min(sc.video.offset + t * sc.video.speed, v.duration - 0.06);
+      if (Math.abs(v.currentTime - target) > 0.004) {
+        const done = new Promise((res) => { v.onseeked = res; setTimeout(res, 600); });
+        v.currentTime = target;
+        await done;
+      }
+    }
+  }
+  sc.seek(t);
+  return true;
+};
 window.SEEK(0);
 /* Vorschau im Browser: ?play=1 */
 if (params.get("play")) {

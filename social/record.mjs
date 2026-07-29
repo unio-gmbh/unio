@@ -12,10 +12,11 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "exports");
 const FPS = 30;
 const NAMES = { r: "makler-rechner-reel-916", o: "makler-objektanlage-reel-916", p: "endkunde-objekt-reveal-916",
-  m: "brand-manifest-reel-916", x: "endkunde-offmarket-reel-916", s: "makler-provision-reel-916" };
+  m: "brand-manifest-reel-916", x: "endkunde-offmarket-reel-916", s: "makler-provision-reel-916",
+  c: "brand-moveasone-crowd-916", q: "endkunde-quote-zuhause-916", k: "endkunde-ki-suche-916", l: "endkunde-lens-live-916" };
 
 const FFMPEG = execFileSync("python3", ["-c", "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"]).toString().trim();
-const scenes = process.argv.slice(2).length ? process.argv.slice(2) : ["r", "o", "p", "m", "x", "s"];
+const scenes = process.argv.slice(2).length ? process.argv.slice(2) : ["r", "o", "p", "m", "x", "s", "c", "q", "k", "l"];
 
 const browser = await puppeteer.launch({ channel: "chrome", headless: "new" });
 const page = await browser.newPage();
