@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>UNIO Social Animationen · Reel/Story 9:16</title>
+<style>
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Regular.woff2) format('woff2');font-weight:400}
+  @font-face{font-family:'Power Grotesk';src:url(../assets/fonts/PowerGrotesk-Medium.woff2) format('woff2');font-weight:500}
+  @font-face{font-family:'JetBrains Mono';src:url(../assets/fonts/jetbrains/jetbrains-mono-normal-300-700.woff2) format('woff2');font-weight:300 700}
+  :root{
+    --paper:#F7F5F1; --paper-2:#F0EDE6; --ink:#0B0A09;
+    --signal:#FFAA09; --signal-deep:#B87400;
+    --muted:rgba(27,26,22,.6); --inv-muted:rgba(247,245,241,.64);
+    --hairline-d:rgba(11,10,9,.14); --hairline-l:rgba(255,255,255,.16);
+    --glass-dark:rgba(10,9,8,.42);
+    --fd:'Power Grotesk','Helvetica Neue',sans-serif;
+    --fm:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:#000;font-family:var(--fd)}
+  .stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--paper);display:none}
+  .stage.active{display:block}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.4;mix-blend-mode:multiply;z-index:5;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='.06'/></feComponentTransfer></filter><rect width='180' height='180' filter='url(%23n)'/></svg>")}
+  .mono{font-family:var(--fm);letter-spacing:.14em;text-transform:uppercase}
+  .dot{color:var(--signal)}
+  .wordmark{height:34px;display:block}
+  .foot{position:absolute;left:80px;right:80px;bottom:120px;display:flex;justify-content:space-between;align-items:center;z-index:4}
+
+  /* ===== Szene R · Rechner ===== */
+  #r h1{position:absolute;left:80px;right:80px;top:380px;font:500 106px/1.06 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #r .chart{position:absolute;left:80px;right:80px;top:900px;display:flex;flex-direction:column;gap:52px}
+  #r .lbl{display:flex;justify-content:space-between;font:500 26px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  #r .lbl b{color:var(--ink);font-weight:500}
+  #r .track{height:88px;border-radius:18px;background:var(--paper-2);border:1.5px solid var(--hairline-d);overflow:hidden}
+  #r .fill{height:100%;border-radius:16px;display:flex;align-items:center;justify-content:flex-end;padding:0 28px;
+    font:500 36px var(--fd);white-space:nowrap}
+  #r .f1{background:var(--signal);color:#1A1305;width:0%}
+  #r .f2{background:var(--ink);color:#F7F5F1;opacity:.82;width:0%}
+  #r .note{position:absolute;left:80px;right:80px;top:1400px;font:400 24px var(--fm);letter-spacing:.08em;color:var(--muted)}
+
+  /* ===== Szene O · KI-Objektanlage ===== */
+  #o{background:var(--ink)}
+  #o h1{position:absolute;left:80px;right:80px;top:340px;font:500 100px/1.08 var(--fd);letter-spacing:-.03em;color:#F7F5F1}
+  #o .ki{position:absolute;left:80px;right:80px;top:820px;font:500 30px var(--fm);letter-spacing:.18em;text-transform:uppercase;color:var(--inv-muted);display:flex;align-items:center;gap:16px}
+  #o .ki i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal}
+  #o .flow{position:absolute;left:80px;right:80px;top:940px;display:flex;flex-direction:column;gap:24px}
+  #o .frow{display:flex;align-items:center;gap:26px}
+  #o .in{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--inv-muted);border:1.5px solid var(--hairline-l);border-radius:999px;padding:18px 30px}
+  #o .line{flex:1;border-top:2px dashed rgba(255,170,9,.5);transform-origin:left;transform:scaleX(0)}
+  #o .out{flex:none;font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:#1A1305;background:var(--signal);border-radius:999px;padding:18px 30px}
+  #o .stat{position:absolute;left:80px;right:80px;top:1460px;font:500 34px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal)}
+  #o .card{position:absolute;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:6}
+  #o .card .stack{text-align:center;display:flex;flex-direction:column;align-items:center;gap:56px}
+  #o .card img{height:60px}
+  #o .card .claim{font:500 84px/1 var(--fd);letter-spacing:.02em;color:#F7F5F1}
+  #o .card .claim .d{display:inline-block;width:24px;height:24px;border-radius:50%;background:var(--signal);margin-left:12px}
+  #o .card .triad{font:500 24px var(--fm);letter-spacing:.3em;text-transform:uppercase;color:var(--inv-muted)}
+
+  /* ===== Szene P · Objekt-Reveal (Endkunde) ===== */
+  #p{background:var(--ink)}
+  #p .ph{position:absolute;inset:0;overflow:hidden}
+  #p .ph img{width:100%;height:100%;object-fit:cover}
+  #p .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42) 0%,rgba(11,10,9,0) 32%,rgba(11,10,9,0) 48%,rgba(11,10,9,.82) 100%);z-index:2}
+  #p .badge{position:absolute;top:300px;left:80px;z-index:3;display:inline-flex;align-items:center;gap:12px;
+    background:var(--glass-dark);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#F7F5F1;
+    border:1.5px solid var(--hairline-l);border-radius:999px;font:500 26px var(--fm);letter-spacing:.16em;text-transform:uppercase;padding:20px 34px}
+  #p .badge i{width:14px;height:14px;border-radius:50%;background:var(--signal);font-style:normal}
+  #p .bottom{position:absolute;left:80px;right:80px;bottom:430px;color:#F7F5F1;z-index:3}
+  #p h1{font:500 96px/1.02 var(--fd);letter-spacing:-.03em;color:#fff}
+  #p .adr{font:400 38px var(--fd);color:rgba(247,245,241,.85);margin-top:18px}
+  #p .data{display:flex;gap:44px;align-items:center;margin-top:46px;padding-top:38px;border-top:1.5px solid var(--hairline-l);
+    font:500 30px var(--fm);letter-spacing:.1em}
+  #p .data .price{margin-left:auto;font:500 46px var(--fd);letter-spacing:-.01em}
+</style>
+</head>
+<body>
+
+<!-- R · Rechner (8 s) -->
+<div class="stage" id="r">
+  <div class="grain"></div>
+  <h1 id="r-h1">Rate, was dein Büro von € 300K behält<span class="dot">.</span></h1>
+  <div class="chart">
+    <div>
+      <div class="lbl" id="r-l1"><b>CIRCLE · DEIN NETTO</b><span>AB € 150K: 100 %</span></div>
+      <div class="track"><div class="fill f1" id="r-f1"><span id="r-v1">€ 0</span></div></div>
+    </div>
+    <div>
+      <div class="lbl" id="r-l2"><span>KLASSISCHES BÜRO</span><span>~50 % SPLIT</span></div>
+      <div class="track"><div class="fill f2" id="r-f2"><span id="r-v2">€ 0</span></div></div>
+    </div>
+  </div>
+  <p class="note" id="r-note">MODELLRECHNUNG · PFLICHT-PAKETE ABGEZOGEN · ARBEITSSTAND</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+</div>
+
+<!-- O · KI-Objektanlage (11 s) -->
+<div class="stage" id="o">
+  <h1 id="o-h1">Niemand wird Makler, um Exposés zu tippen<span class="dot">.</span></h1>
+  <div class="ki" id="o-ki"><i></i>Die UNIO KI liest, strukturiert, erstellt</div>
+  <div class="flow">
+    <div class="frow" data-i="0"><span class="in">Grundrisse</span><span class="line"></span><span class="out">Exposé</span></div>
+    <div class="frow" data-i="1"><span class="in">Energieausweis</span><span class="line"></span><span class="out">Online-Inserat</span></div>
+    <div class="frow" data-i="2"><span class="in">BAB + Fotos</span><span class="line"></span><span class="out">Broschüre</span></div>
+    <div class="frow" data-i="3"><span class="in">Grundbuch</span><span class="line"></span><span class="out">Bautafel</span></div>
+  </div>
+  <div class="stat" id="o-stat"><span id="o-pct">0</span> % WENIGER TIPPARBEIT · ARBEITSSTAND</div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
+  <div class="card" id="o-card">
+    <div class="stack">
+      <img src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+      <div class="claim">MOVE AS ONE<span class="d"></span></div>
+      <div class="triad">Raum · Technologie · Mensch</div>
+    </div>
+  </div>
+</div>
+
+<!-- P · Objekt-Reveal (8 s) -->
+<div class="stage" id="p">
+  <div class="ph"><img id="p-img" src="../assets/img/penthouse.jpg" alt=""></div>
+  <div class="shade"></div>
+  <div class="grain" style="opacity:.5"></div>
+  <span class="badge" id="p-badge"><i></i>Nachfrage <span id="p-score">0</span></span>
+  <div class="bottom">
+    <h1 id="p-h1">Penthouse über den Dächern<span class="dot">.</span></h1>
+    <div class="adr" id="p-adr">Wien 1010, Innere Stadt · Nie inseriert</div>
+    <div class="data" id="p-data">
+      <span>178 M²</span><span>5 ZI</span>
+      <span class="price" id="p-price">€ 4,00 Mio</span>
+    </div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
+<script>
+/* Deterministische Animationen: SEEK(t) setzt den Zustand fuer Zeitpunkt t (Sekunden).
+   Easing wie im Web: ease-unio-Anmutung ueber easeOutCubic. */
+const cl = (v) => Math.max(0, Math.min(1, v));
+const eo = (t) => 1 - Math.pow(1 - t, 3);                      /* easeOutCubic */
+const seg = (t, a, d) => cl((t - a) / d);                      /* Segment-Progress */
+const fmtK = (n) => "€ " + Math.round(n) + "K";
+
+/* Element-Helfer: Blur-to-clear + Rise (Website-Muster) */
+function rise(el, p, dist = 40){
+  el.style.opacity = p;
+  el.style.filter = "blur(" + ((1 - p) * 14) + "px)";
+  el.style.transform = "translateY(" + ((1 - eo(p)) * dist) + "px)";
+}
+
+const SCENES = {
+  /* ---------- R · Rechner · 8 s ---------- */
+  r: { dur: 8, seek(t){
+    rise(document.getElementById("r-h1"), seg(t, 0.1, 0.9));
+    rise(document.getElementById("r-l1"), seg(t, 1.1, 0.5), 24);
+    const p1 = eo(seg(t, 1.4, 1.6));
+    const f1 = document.getElementById("r-f1");
+    f1.style.width = (p1 * 87) + "%";
+    f1.style.opacity = p1 > 0 ? 1 : 0;
+    document.getElementById("r-v1").textContent = fmtK(p1 * 261);
+    rise(document.getElementById("r-l2"), seg(t, 2.4, 0.5), 24);
+    const p2 = eo(seg(t, 2.7, 1.4));
+    const f2 = document.getElementById("r-f2");
+    f2.style.width = (p2 * 50) + "%";
+    f2.style.opacity = p2 > 0 ? 1 : 0;
+    document.getElementById("r-v2").textContent = fmtK(p2 * 150);
+    rise(document.getElementById("r-note"), seg(t, 4.4, 0.8), 20);
+  }},
+
+  /* ---------- O · KI-Objektanlage · 11 s ---------- */
+  o: { dur: 11, seek(t){
+    rise(document.getElementById("o-h1"), seg(t, 0.1, 0.9));
+    rise(document.getElementById("o-ki"), seg(t, 1.3, 0.7), 26);
+    document.querySelectorAll("#o .frow").forEach((row) => {
+      const i = +row.dataset.i, base = 2.1 + i * 0.9;
+      rise(row.querySelector(".in"), seg(t, base, 0.5), 30);
+      row.querySelector(".line").style.transform = "scaleX(" + eo(seg(t, base + 0.35, 0.5)) + ")";
+      const po = eo(seg(t, base + 0.75, 0.45));
+      const out = row.querySelector(".out");
+      out.style.opacity = po;
+      out.style.transform = "scale(" + (0.7 + 0.3 * po) + ")";
+    });
+    const ps = seg(t, 6.4, 1.2);
+    rise(document.getElementById("o-stat"), ps, 24);
+    document.getElementById("o-pct").textContent = Math.round(eo(ps) * 42);
+    /* Endcard-Blende ab 9.2 s */
+    const card = document.getElementById("o-card");
+    card.style.opacity = seg(t, 9.2, 0.7);
+    card.style.pointerEvents = "none";
+  }},
+
+  /* ---------- P · Objekt-Reveal · 8 s ---------- */
+  p: { dur: 8, seek(t){
+    const img = document.getElementById("p-img");
+    const pz = seg(t, 0, 7.6);
+    const pf = eo(seg(t, 0.1, 1.4));
+    img.style.transform = "scale(" + (1.14 - 0.08 * eo(pz)) + ")";
+    img.style.filter = "blur(" + ((1 - pf) * 26) + "px)";
+    const pb = eo(seg(t, 1.6, 0.6));
+    const badge = document.getElementById("p-badge");
+    badge.style.opacity = pb;
+    badge.style.transform = "scale(" + (0.72 + 0.28 * pb) + ")";
+    document.getElementById("p-score").textContent = Math.round(eo(seg(t, 1.7, 1.1)) * 96);
+    rise(document.getElementById("p-h1"), seg(t, 2.6, 0.9));
+    rise(document.getElementById("p-adr"), seg(t, 3.1, 0.8), 30);
+    rise(document.getElementById("p-data"), seg(t, 3.7, 0.9), 30);
+    const pp = seg(t, 4.4, 0.7);
+    document.getElementById("p-price").style.opacity = pp;
+    document.getElementById("p-price").style.color = pp > 0.99 ? "var(--signal)" : "#F7F5F1";
+  }},
+};
+
+const params = new URLSearchParams(location.search);
+const scene = params.get("scene") || "r";
+document.getElementById(scene).classList.add("active");
+window.DUR = SCENES[scene].dur;
+window.SEEK = (t) => { SCENES[scene].seek(t); return true; };
+window.SEEK(0);
+/* Vorschau im Browser: ?play=1 */
+if (params.get("play")) {
+  const t0 = performance.now();
+  (function loop(){ window.SEEK(((performance.now() - t0) / 1000) % window.DUR); requestAnimationFrame(loop); })();
+}
+</script>
+</body>
+</html>
