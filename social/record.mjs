@@ -17,10 +17,10 @@ const NAMES = { r: "makler-rechner-reel-916", o: "makler-objektanlage-reel-916",
   b: "system-bento-reel-916", t: "endkunde-matching-reel-916", a: "makler-actions-reel-916",
   v: "endkunde-verkauf-prozess-916", d: "endkunde-besichtigung-916", f: "endkunde-bewertung-916",
   u: "brand-inszeniert-reel-916", w: "brand-vorort-reel-916",
-  g: "brand-team-reel-916", j: "bautraeger-referenzen-reel-916" };
+  g: "brand-team-reel-916", j: "bautraeger-referenzen-reel-916", y: "bautraeger-projektmarken-reel-916" };
 
 const FFMPEG = execFileSync("python3", ["-c", "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"]).toString().trim();
-const scenes = process.argv.slice(2).length ? process.argv.slice(2) : ["r", "o", "p", "m", "x", "s", "c", "q", "k", "l", "b", "t", "a", "v", "d", "f", "u", "w", "g", "j"];
+const scenes = process.argv.slice(2).length ? process.argv.slice(2) : ["r", "o", "p", "m", "x", "s", "c", "q", "k", "l", "b", "t", "a", "v", "d", "f", "u", "w", "g", "j", "y"];
 
 const browser = await puppeteer.launch({ channel: "chrome", headless: "new" });
 const page = await browser.newPage();

@@ -318,6 +318,24 @@
   #j .finbg{position:absolute;inset:0;background:var(--paper);z-index:4;opacity:0}
   #j .fin h1{font:500 108px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
   #j .fin .m{font:500 30px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--signal-deep);margin-top:52px}
+
+  /* ===== Szene Y · Projekt-Marken-Parade ===== */
+  #y{background:var(--ink)}
+  #y .hook{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;align-items:center;z-index:4}
+  #y .hook h1{font:500 108px/1.1 var(--fd);letter-spacing:-.035em;color:#F7F5F1}
+  #y .hook h1 em{font-style:normal;color:var(--signal)}
+  #y .mk-slide{position:absolute;inset:0;opacity:0}
+  #y .mk-slide img{width:100%;height:100%;object-fit:cover}
+  #y .mk-slide .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.24),rgba(11,10,9,0) 32%,rgba(11,10,9,0) 52%,rgba(11,10,9,.8))}
+  #y .mk-slide .info{position:absolute;left:80px;right:80px;bottom:440px;color:#F7F5F1}
+  #y .mk-slide .lb{display:inline-flex;align-items:center;gap:14px;font:500 26px var(--fm);letter-spacing:.18em;text-transform:uppercase;
+    color:rgba(247,245,241,.92);text-shadow:0 2px 26px rgba(0,0,0,.6)}
+  #y .mk-slide .lb i{width:13px;height:13px;border-radius:50%;background:var(--signal);font-style:normal}
+  #y .mk-slide h2{font:500 76px/1.06 var(--fd);letter-spacing:-.025em;color:#fff;margin-top:20px;max-width:12ch}
+  #y .fin{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:5;opacity:0}
+  #y .finbg{position:absolute;inset:0;background:var(--paper);z-index:4;opacity:0}
+  #y .fin h1{font:500 112px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #y .fin .m{font:500 30px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--signal-deep);margin-top:52px}
 </style>
 </head>
 <body>
@@ -707,6 +725,29 @@
   <div class="grain" style="opacity:.4"></div>
   <div class="foot" style="z-index:6"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO" id="j-logo">
     <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em" id="j-foot2">MOVE AS ONE</span></div>
+</div>
+
+<!-- Y · Projekt-Marken-Parade (16 s) -->
+<div class="stage" id="y">
+  <div class="hook" id="y-hook"><h1>Dein Projekt ist kein Inserat. Es ist eine <em>Marke</em>.</h1></div>
+  <div class="mk-slide" id="y-s1"><img src="clips/mk-albrecht-desk.png" alt=""><div class="shade"></div>
+    <div class="info"><span class="lb"><i></i>Albrechts Townhouses · Korneuburg</span><h2>Alt und neu, stilvoll verbunden.</h2></div></div>
+  <div class="mk-slide" id="y-s2"><img src="clips/mk-obenzwei.png" alt=""><div class="shade"></div>
+    <div class="info"><span class="lb"><i></i>ObenZwei · Wien 1020</span><h2>Licht, Linien und leise Materialien.</h2></div></div>
+  <div class="mk-slide" id="y-s3"><img src="clips/mk-beheim-2.png" alt=""><div class="shade"></div>
+    <div class="info"><span class="lb"><i></i>Beheim · Wien 1170</span><h2>Zwei Penthäuser. Ein seltener Blick.</h2></div></div>
+  <div class="mk-slide" id="y-s4"><img src="clips/mk-origins.png" alt=""><div class="shade"></div>
+    <div class="info"><span class="lb"><i></i>Origins M72/74 · Wien 1130</span><h2>Original state. Open future.</h2></div></div>
+  <div class="mk-slide" id="y-s5"><img src="clips/mk-ecoluxe-2.png" alt=""><div class="shade"></div>
+    <div class="info"><span class="lb"><i></i>Ecoluxe · Wienerwald</span><h2>Grün. Ruhig. Verbunden.</h2></div></div>
+  <div class="finbg" id="y-finbg"></div>
+  <div class="fin" id="y-fin">
+    <h1>Eigene Marke. Eigener Funnel. Ein System<span class="dot">.</span></h1>
+    <div class="m">Website · Print · Kampagne · unio.at/bautraeger</div>
+  </div>
+  <div class="grain" style="opacity:.35"></div>
+  <div class="foot" style="z-index:6"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO" id="y-logo">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em" id="y-foot2">MOVE AS ONE</span></div>
 </div>
 
 <script>
@@ -1113,6 +1154,32 @@ const SCENES = {
     const light = t > 11.7;
     document.getElementById("j-logo").style.filter = light ? "invert(1)" : "none";
     document.getElementById("j-foot2").style.color = light ? "rgba(27,26,22,.6)" : "";
+  }},
+  /* ---------- Y · Projekt-Marken-Parade · 16 s ---------- */
+  y: { dur: 16, seek(t){
+    const hook = document.getElementById("y-hook");
+    const ph = seg(t, 0.15, 0.9);
+    hook.style.opacity = ph * (1 - seg(t, 2.7, 0.6));
+    hook.querySelector("h1").style.filter = "blur(" + ((1 - ph) * 14) + "px)";
+    hook.querySelector("h1").style.transform = "translateY(" + ((1 - eo(ph)) * 40) + "px)";
+    const S = [["y-s1", 3.1], ["y-s2", 5.3], ["y-s3", 7.5], ["y-s4", 9.7], ["y-s5", 11.9]];
+    S.forEach(([id, at], i) => {
+      const el = document.getElementById(id);
+      const on = seg(t, at, 0.55), off = seg(t, i < 4 ? at + 2.2 : 13.9, 0.55);
+      el.style.opacity = on - off;
+      el.querySelector("img").style.transform = "scale(" + (1.09 - 0.05 * seg(t, at, 2.6)) + ")";
+      const info = el.querySelector(".info");
+      info.style.opacity = seg(t, at + 0.2, 0.5);
+      info.style.transform = "translateY(" + ((1 - eo(seg(t, at + 0.2, 0.5))) * 32) + "px)";
+    });
+    document.getElementById("y-finbg").style.opacity = seg(t, 13.9, 0.6);
+    const pf = seg(t, 14.2, 0.8);
+    const fin = document.getElementById("y-fin");
+    fin.style.opacity = pf;
+    fin.querySelector("h1").style.transform = "translateY(" + ((1 - eo(pf)) * 40) + "px)";
+    const light = t > 14.1;
+    document.getElementById("y-logo").style.filter = light ? "invert(1)" : "none";
+    document.getElementById("y-foot2").style.color = light ? "rgba(27,26,22,.6)" : "";
   }},
 };
 
