@@ -205,6 +205,56 @@
   #a .row .tx{font:500 34px var(--fd);color:var(--ink-2)}
   #a .row .wh{margin-left:auto;font:500 20px var(--fm);letter-spacing:.1em;color:var(--signal-deep);text-transform:uppercase;white-space:nowrap}
   #a .tail{position:absolute;left:80px;right:80px;top:1430px;font:400 36px/1.5 var(--fd);color:var(--muted);max-width:26ch}
+
+  /* ===== Szene V · Verkaufs-Prozess (Endkunde/Eigentuemer) ===== */
+  #v h1{position:absolute;left:80px;right:80px;top:300px;font:500 104px/1.06 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #v .steps{position:absolute;left:80px;right:80px;top:660px}
+  #v .rail{position:absolute;left:31px;top:26px;bottom:26px;width:3px;background:var(--paper-2)}
+  #v .railfill{position:absolute;left:31px;top:26px;width:3px;background:var(--signal);height:0%}
+  #v .step{position:relative;display:flex;gap:36px;padding:34px 0;opacity:0}
+  #v .step .pt{width:66px;height:66px;border-radius:50%;background:#FDFCFA;border:2px solid var(--hairline-d);
+    display:flex;align-items:center;justify-content:center;font:500 24px var(--fm);color:var(--muted);flex:none;z-index:2}
+  #v .step.done .pt{background:var(--signal);border-color:var(--signal);color:#1A1305}
+  #v .step .tx .st{font:500 44px/1.15 var(--fd);letter-spacing:-.015em;color:var(--ink)}
+  #v .step .tx .sd{font:400 28px/1.4 var(--fd);color:var(--muted);margin-top:8px;max-width:24ch}
+  #v .step .tx .sm{font:500 21px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--signal-deep);margin-top:10px}
+
+  /* ===== Szene D · Besichtigung buchen ===== */
+  #d h1{position:absolute;left:80px;right:80px;top:340px;font:500 102px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #d .objrow{position:absolute;left:80px;right:80px;top:800px;display:flex;gap:26px;align-items:center;
+    background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:16px;padding:22px;opacity:0}
+  #d .objrow img{width:170px;height:120px;object-fit:cover;border-radius:10px}
+  #d .objrow .ti{font:500 36px var(--fd);letter-spacing:-.015em;color:var(--ink)}
+  #d .objrow .ad{font:400 26px var(--fd);color:var(--muted);margin-top:8px}
+  #d .slots{position:absolute;left:80px;right:80px;top:1010px;display:flex;gap:20px}
+  #d .slot{flex:1;text-align:center;background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:14px;
+    padding:26px 10px;opacity:0}
+  #d .slot .dy{font:500 24px var(--fm);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  #d .slot .tm{font:500 44px var(--fd);color:var(--ink);margin-top:8px}
+  #d .slot.pick{background:var(--signal);border-color:var(--signal)}
+  #d .slot.pick .dy{color:rgba(26,19,5,.65)}
+  #d .slot.pick .tm{color:#1A1305}
+  #d .tap{position:absolute;width:90px;height:90px;border-radius:50%;border:3px solid var(--signal);opacity:0;z-index:6}
+  #d .conf{position:absolute;left:80px;right:80px;top:1310px;display:flex;align-items:center;gap:20px;opacity:0}
+  #d .conf .ck{width:52px;height:52px;border-radius:50%;background:var(--signal);color:#1A1305;flex:none;
+    display:flex;align-items:center;justify-content:center;font:500 26px var(--fm)}
+  #d .conf .tx{font:500 40px var(--fd);color:var(--ink)}
+  #d .tail{position:absolute;left:80px;right:80px;top:1450px;font:400 34px/1.5 var(--fd);color:var(--muted)}
+
+  /* ===== Szene F · Bewertung anfragen ===== */
+  #f h1{position:absolute;left:80px;right:80px;top:320px;font:500 102px/1.08 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #f .form{position:absolute;left:80px;right:80px;top:800px;display:flex;flex-direction:column;gap:20px}
+  #f .fld{background:#FDFCFA;border:1.5px solid var(--hairline-d);border-radius:14px;padding:28px 30px}
+  #f .fld .lb{font:500 20px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  #f .fld .vl{font:400 36px var(--fd);color:var(--ink);margin-top:10px;min-height:46px;display:flex;align-items:center}
+  #f .fld .vl .cr{width:3px;height:38px;background:var(--signal);margin-left:4px}
+  #f .btn{display:inline-flex;align-items:center;gap:16px;background:var(--ink);color:#F7F5F1;align-self:flex-start;
+    border-radius:999px;font:500 32px var(--fd);padding:26px 46px;margin-top:14px}
+  #f .btn .arw{width:52px;height:52px;border-radius:50%;background:var(--signal);color:var(--ink);
+    display:inline-flex;align-items:center;justify-content:center;font:500 26px var(--fm)}
+  #f .done{position:absolute;left:80px;right:80px;top:820px;opacity:0}
+  #f .done .big{font:500 88px/1.1 var(--fd);letter-spacing:-.03em;color:var(--ink)}
+  #f .done .sm{font:500 26px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--signal-deep);margin-top:36px}
 </style>
 </head>
 <body>
@@ -463,6 +513,62 @@
     <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/MAKLER</span></div>
 </div>
 
+<!-- V · Verkaufs-Prozess (12 s) -->
+<div class="stage" id="v">
+  <div class="grain"></div>
+  <h1 id="v-h1">Verkaufen, in vier Schritten<span class="dot">.</span></h1>
+  <div class="steps">
+    <div class="rail"></div><div class="railfill" id="v-rail"></div>
+    <div class="step" data-i="0"><span class="pt">01</span><div class="tx">
+      <div class="st">Bewertung anfragen</div><div class="sd">Kostenlos, datenbasiert.</div><div class="sm">Antwort in 48 h · mit Daten</div></div></div>
+    <div class="step" data-i="1"><span class="pt">02</span><div class="tx">
+      <div class="st">Preisband aus echten Daten</div><div class="sd">Markt- und Nachfragedaten statt Bauchgefühl.</div></div></div>
+    <div class="step" data-i="2"><span class="pt">03</span><div class="tx">
+      <div class="st">Vermarktung, wie du willst</div><div class="sd">Inszeniert statt inseriert, auf Wunsch komplett diskret.</div></div></div>
+    <div class="step" data-i="3"><span class="pt">04</span><div class="tx">
+      <div class="st">Verkauft</div><div class="sd">Du siehst jeden Schritt live in LENS.</div><div class="sm">Ø 38 Tage · Arbeitsstand</div></div></div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT/IMMOBILIEN</span></div>
+</div>
+
+<!-- D · Besichtigung buchen (10 s) -->
+<div class="stage" id="d">
+  <div class="grain"></div>
+  <h1 id="d-h1">Besichtigung? In zehn Sekunden fixiert<span class="dot">.</span></h1>
+  <div class="objrow" id="d-obj">
+    <img src="../assets/img/beheim.jpg" alt="">
+    <div><div class="ti">Penthouse Beheim</div><div class="ad">Beheimgasse, 1170 Wien</div></div>
+  </div>
+  <div class="slots">
+    <div class="slot" data-i="0" id="d-s0"><div class="dy">Do</div><div class="tm">17:30</div></div>
+    <div class="slot" data-i="1" id="d-s1"><div class="dy">Fr</div><div class="tm">12:00</div></div>
+    <div class="slot" data-i="2" id="d-s2"><div class="dy">Sa</div><div class="tm">10:00</div></div>
+  </div>
+  <div class="tap" id="d-tap"></div>
+  <div class="conf" id="d-conf"><span class="ck">✓</span><span class="tx">Donnerstag, 17:30 · Bestätigt</span></div>
+  <p class="tail" id="d-tail">Termine direkt aus dem Objekt heraus, synchron mit deinem Kalender.</p>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT</span></div>
+</div>
+
+<!-- F · Bewertung anfragen (10 s) -->
+<div class="stage" id="f">
+  <div class="grain"></div>
+  <h1 id="f-h1">Was ist deine Wohnung wert? Frag einfach<span class="dot">.</span></h1>
+  <div class="form" id="f-form">
+    <div class="fld"><div class="lb">Adresse</div><div class="vl"><span id="f-v1"></span><span class="cr" id="f-c1"></span></div></div>
+    <div class="fld"><div class="lb">Wohnfläche</div><div class="vl"><span id="f-v2"></span><span class="cr" id="f-c2" style="opacity:0"></span></div></div>
+    <div class="btn" id="f-btn">Bewertung anfragen <span class="arw">→</span></div>
+  </div>
+  <div class="done" id="f-done">
+    <div class="big">Danke. Du hörst von uns<span class="dot">.</span></div>
+    <div class="sm">In 48 h · mit Daten, nicht Floskeln</div>
+  </div>
+  <div class="foot"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">KOSTENLOS · UNIO.AT</span></div>
+</div>
+
 <script>
 /* Deterministische Animationen: SEEK(t) setzt den Zustand fuer Zeitpunkt t (Sekunden).
    Easing wie im Web: ease-unio-Anmutung ueber easeOutCubic. */
@@ -703,6 +809,78 @@ const SCENES = {
       else { ck.style.background = "var(--paper-2)"; ck.style.color = "transparent"; }
     });
     rise(document.getElementById("a-tail"), seg(t, 6.6, 0.8), 26);
+  }},
+  /* ---------- V · Verkaufs-Prozess · 12 s ---------- */
+  v: { dur: 12, seek(t){
+    rise(document.getElementById("v-h1"), seg(t, 0.1, 0.9));
+    const AT = [1.3, 3.3, 5.3, 7.3];
+    document.querySelectorAll("#v .step").forEach((st) => {
+      const i = +st.dataset.i;
+      const ps = seg(t, AT[i], 0.8);
+      st.style.opacity = ps;
+      st.style.transform = "translateY(" + ((1 - eo(ps)) * 36) + "px)";
+      st.classList.toggle("done", t > AT[i] + 1.4);
+      const pt = st.querySelector(".pt");
+      if (t > AT[i] + 1.4) pt.textContent = "✓"; else pt.textContent = "0" + (i + 1);
+    });
+    document.getElementById("v-rail").style.height = (eo(seg(t, 1.8, 7.4)) * 96) + "%";
+  }},
+
+  /* ---------- D · Besichtigung buchen · 10 s ---------- */
+  d: { dur: 10, seek(t){
+    rise(document.getElementById("d-h1"), seg(t, 0.1, 0.9));
+    const po = seg(t, 1.3, 0.7);
+    const obj = document.getElementById("d-obj");
+    obj.style.opacity = po;
+    obj.style.transform = "translateY(" + ((1 - eo(po)) * 36) + "px)";
+    [0, 1, 2].forEach((i) => {
+      const s = document.getElementById("d-s" + i);
+      const ps = eo(seg(t, 2.2 + i * 0.3, 0.5));
+      s.style.opacity = ps;
+      s.style.transform = "scale(" + (0.88 + 0.12 * ps) + ")";
+    });
+    /* Tap-Kreis auf Slot 1 (Do 17:30) */
+    const s0 = document.getElementById("d-s0");
+    const tap = document.getElementById("d-tap");
+    const r = s0.getBoundingClientRect ? null : null;
+    tap.style.left = "212px"; tap.style.top = "1058px";
+    const pt = seg(t, 4.0, 0.5), pt2 = seg(t, 4.5, 0.6);
+    tap.style.opacity = pt > 0 ? (1 - pt2) : 0;
+    tap.style.transform = "scale(" + (0.5 + 1.1 * eo(pt2 > 0 ? pt2 : pt * 0.5)) + ")";
+    s0.classList.toggle("pick", t > 4.45);
+    const pc = seg(t, 5.2, 0.7);
+    const conf = document.getElementById("d-conf");
+    conf.style.opacity = pc;
+    conf.style.transform = "translateY(" + ((1 - eo(pc)) * 30) + "px)";
+    const ck = conf.querySelector(".ck");
+    ck.style.transform = "scale(" + (0.6 + 0.4 * eo(seg(t, 5.4, 0.5))) + ")";
+    rise(document.getElementById("d-tail"), seg(t, 6.4, 0.8), 24);
+  }},
+
+  /* ---------- F · Bewertung anfragen · 10 s ---------- */
+  f: { dur: 10, seek(t){
+    rise(document.getElementById("f-h1"), seg(t, 0.1, 0.9));
+    rise(document.getElementById("f-form"), seg(t, 1.2, 0.8), 34);
+    const A1 = "Beheimgasse 12, 1170 Wien", A2 = "138 m²";
+    const n1 = Math.round(eo(seg(t, 1.9, 1.7)) * A1.length);
+    document.getElementById("f-v1").textContent = A1.slice(0, n1);
+    document.getElementById("f-c1").style.opacity = (t < 3.7 && Math.floor(t * 2.6) % 2 === 0) ? 1 : 0;
+    const n2 = Math.round(eo(seg(t, 3.9, 0.9)) * A2.length);
+    document.getElementById("f-v2").textContent = A2.slice(0, n2);
+    document.getElementById("f-c2").style.opacity = (t > 3.8 && t < 5.0 && Math.floor(t * 2.6) % 2 === 0) ? 1 : 0;
+    /* Button-Press */
+    const btn = document.getElementById("f-btn");
+    const pp = seg(t, 5.4, 0.25), pr = seg(t, 5.65, 0.25);
+    btn.style.transform = "scale(" + (1 - 0.06 * (eo(pp) - eo(pr))) + ")";
+    /* Formular raus, Danke rein */
+    const out = seg(t, 6.1, 0.6);
+    const form = document.getElementById("f-form");
+    form.style.opacity = String(1 - out);
+    form.style.transform = "translateY(" + (-(eo(out)) * 40) + "px)";
+    const pd = seg(t, 6.5, 0.8);
+    const done = document.getElementById("f-done");
+    done.style.opacity = pd;
+    done.style.transform = "translateY(" + ((1 - eo(pd)) * 40) + "px)";
   }},
 };
 
