@@ -255,6 +255,36 @@
   #f .done{position:absolute;left:80px;right:80px;top:820px;opacity:0}
   #f .done .big{font:500 88px/1.1 var(--fd);letter-spacing:-.03em;color:var(--ink)}
   #f .done .sm{font:500 26px var(--fm);letter-spacing:.16em;text-transform:uppercase;color:var(--signal-deep);margin-top:36px}
+
+  /* ===== Szene U · Nicht inseriert. Inszeniert. (Unterlagen-Parade) ===== */
+  #u .hookw{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:4}
+  #u .hookw h1{font:500 104px/1.1 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #u .hookw h1 em{font-style:normal;color:var(--signal-deep)}
+  #u .mat{position:absolute;inset:0;opacity:0}
+  #u .mat img{width:100%;height:100%;object-fit:cover}
+  #u .mat.card{background:var(--paper);display:flex;align-items:center;justify-content:center}
+  #u .mat.card img{width:88%;height:auto;border-radius:20px;box-shadow:0 50px 120px -40px rgba(11,10,9,.45);border:1px solid var(--hairline-d)}
+  #u .mat.card .lb{color:var(--ink-2);text-shadow:none}
+  #u .mat.card .shade{display:none}
+  #u .mat .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.3),rgba(11,10,9,0) 34%,rgba(11,10,9,0) 55%,rgba(11,10,9,.72))}
+  #u .mat .lb{position:absolute;left:80px;bottom:440px;display:inline-flex;align-items:center;gap:16px;
+    color:#F7F5F1;font:500 27px var(--fm);letter-spacing:.18em;text-transform:uppercase;text-shadow:0 2px 28px rgba(0,0,0,.6)}
+  #u .mat .lb i{width:13px;height:13px;border-radius:50%;background:var(--signal);font-style:normal}
+  #u .fin{position:absolute;left:80px;right:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;z-index:5;opacity:0;background:transparent}
+  #u .finbg{position:absolute;inset:0;background:var(--paper);z-index:4;opacity:0}
+  #u .fin h1{font:500 122px/1.06 var(--fd);letter-spacing:-.035em;color:var(--ink)}
+  #u .fin h1 .x{color:var(--muted);text-decoration:line-through;text-decoration-thickness:5px;text-decoration-color:var(--signal)}
+
+  /* ===== Szene W · Vor Ort (Team-Footage) ===== */
+  #w{background:var(--ink)}
+  #w video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  #w .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42),rgba(11,10,9,.1) 40%,rgba(11,10,9,.2) 62%,rgba(11,10,9,.7));z-index:2}
+  #w .l1{position:absolute;left:80px;right:80px;top:330px;font:500 96px/1.1 var(--fd);letter-spacing:-.03em;color:#F7F5F1;z-index:3}
+  #w .team{position:absolute;inset:0;opacity:0;z-index:3}
+  #w .team img{width:100%;height:100%;object-fit:cover}
+  #w .team .shade2{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.35),rgba(11,10,9,0) 40%,rgba(11,10,9,0) 60%,rgba(11,10,9,.72))}
+  #w .l2{position:absolute;left:80px;right:80px;bottom:430px;font:500 74px/1.15 var(--fd);letter-spacing:-.025em;color:#F7F5F1;z-index:6;opacity:0}
+  #w .l2 .dot{color:var(--signal)}
 </style>
 </head>
 <body>
@@ -569,6 +599,37 @@
     <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">KOSTENLOS · UNIO.AT</span></div>
 </div>
 
+<!-- U · Nicht inseriert. Inszeniert. (13 s) -->
+<div class="stage" id="u">
+  <div class="grain"></div>
+  <div class="hookw" id="u-hook"><h1>Andere machen ein Inserat. Wir machen einen <em>Auftritt</em>.</h1></div>
+  <div class="mat" id="u-m1"><img src="clips/mat-rendering-hof.png" alt=""><div class="shade"></div>
+    <span class="lb"><i></i>Eigene Bildwelt je Projekt</span></div>
+  <div class="mat card" id="u-m2"><img src="clips/mat-flyer-card.png" alt=""><div class="shade"></div>
+    <span class="lb"><i></i>Unterlagen, die man behalten will</span></div>
+  <div class="mat card" id="u-m3"><img src="clips/mat-mappe-card.png" alt=""><div class="shade"></div>
+    <span class="lb"><i></i>Move as One · bis ins Detail</span></div>
+  <div class="mat" id="u-m4"><img src="clips/mat-rendering-gruen.png" alt=""><div class="shade"></div>
+    <span class="lb"><i></i>Inszeniert, nicht nur abgebildet</span></div>
+  <div class="finbg" id="u-finbg"></div>
+  <div class="fin" id="u-fin"><h1>Nicht <span class="x">inseriert</span>. Inszeniert<span class="dot">.</span></h1></div>
+  <div class="foot" style="z-index:6"><img class="wordmark" src="../assets/logo/unio-logo-black.svg" alt="UNIO" id="u-logo">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--muted);letter-spacing:.2em">UNIO.AT</span></div>
+</div>
+
+<!-- W · Vor Ort · Raum. Technologie. Mensch. (11 s) -->
+<div class="stage" id="w">
+  <video src="clips/vorort.mp4" muted preload="auto" playsinline></video>
+  <div class="shade"></div>
+  <div class="grain" style="opacity:.4"></div>
+  <div class="l1" id="w-l1">Software prüft Daten. Menschen prüfen Räume<span class="dot">.</span></div>
+  <div class="team" id="w-t1"><img src="clips/team-1.jpg" alt=""><div class="shade2"></div></div>
+  <div class="team" id="w-t2"><img src="clips/team-2.jpg" alt=""><div class="shade2"></div></div>
+  <div class="l2" id="w-l2">Raum. Technologie. Mensch<span class="dot">.</span></div>
+  <div class="foot" style="z-index:7"><img class="wordmark" src="../assets/logo/unio-logo-white.svg" alt="UNIO">
+    <span class="mono" style="font:500 24px var(--fm);color:var(--inv-muted);letter-spacing:.2em">MOVE AS ONE</span></div>
+</div>
+
 <script>
 /* Deterministische Animationen: SEEK(t) setzt den Zustand fuer Zeitpunkt t (Sekunden).
    Easing wie im Web: ease-unio-Anmutung ueber easeOutCubic. */
@@ -881,6 +942,53 @@ const SCENES = {
     const done = document.getElementById("f-done");
     done.style.opacity = pd;
     done.style.transform = "translateY(" + ((1 - eo(pd)) * 40) + "px)";
+  }},
+  /* ---------- U · Nicht inseriert. Inszeniert. · 13 s ---------- */
+  u: { dur: 13, seek(t){
+    const hook = document.getElementById("u-hook");
+    const ph = seg(t, 0.15, 0.9);
+    hook.style.opacity = ph * (1 - seg(t, 2.5, 0.6));
+    hook.querySelector("h1").style.filter = "blur(" + ((1 - ph) * 14) + "px)";
+    hook.querySelector("h1").style.transform = "translateY(" + ((1 - eo(ph)) * 40) + "px)";
+    const M = [["u-m1", 2.9], ["u-m2", 5.0], ["u-m3", 7.1], ["u-m4", 9.2]];
+    M.forEach(([id, at], i) => {
+      const el = document.getElementById(id);
+      const on = seg(t, at, 0.6), off = seg(t, i < 3 ? at + 2.1 : 11.0, 0.6);
+      el.style.opacity = on - off;
+      const isCard = el.classList.contains("card");
+      el.querySelector("img").style.transform = isCard
+        ? "scale(" + (1.04 - 0.04 * seg(t, at, 2.6)) + ")"
+        : "scale(" + (1.1 - 0.06 * seg(t, at, 2.6)) + ")";
+      const lb = el.querySelector(".lb");
+      lb.style.opacity = seg(t, at + 0.3, 0.5);
+      lb.style.transform = "translateY(" + ((1 - eo(seg(t, at + 0.3, 0.5))) * 26) + "px)";
+    });
+    document.getElementById("u-finbg").style.opacity = seg(t, 11.0, 0.6);
+    const pf = seg(t, 11.3, 0.8);
+    const fin = document.getElementById("u-fin");
+    fin.style.opacity = pf;
+    fin.querySelector("h1").style.transform = "translateY(" + ((1 - eo(pf)) * 40) + "px)";
+    /* Logo: schwarz nur auf hellen Phasen sichtbar, sonst weiss via Filter */
+    const darkPhase = (t > 2.9 && t < 5.0) || (t > 9.2 && t < 11.2);
+    document.getElementById("u-logo").style.filter = darkPhase ? "invert(1)" : "none";
+  }},
+
+  /* ---------- W · Vor Ort · 11 s ---------- */
+  w: { dur: 11, video: { sel: "#w video", speed: 0.49, offset: 0.05 }, seek(t){
+    rise(document.getElementById("w-l1"), seg(t, 0.9, 1.0));
+    document.getElementById("w-l1").style.opacity = seg(t, 0.9, 1.0) * (1 - seg(t, 5.2, 0.6));
+    const T = [["w-t1", 5.6], ["w-t2", 7.4]];
+    T.forEach(([id, at], i) => {
+      const el = document.getElementById(id);
+      const on = seg(t, at, 0.5), off = i === 0 ? seg(t, 7.4, 0.5) : 0;
+      el.style.opacity = on - off;
+      el.querySelector("img").style.transform = "scale(" + (1.08 - 0.05 * seg(t, at, 2.2)) + ")";
+    });
+    const p2 = seg(t, 6.2, 0.9);
+    const l2 = document.getElementById("w-l2");
+    l2.style.opacity = p2;
+    l2.style.filter = "blur(" + ((1 - p2) * 12) + "px)";
+    l2.style.transform = "translateY(" + ((1 - eo(p2)) * 34) + "px)";
   }},
 };
 
