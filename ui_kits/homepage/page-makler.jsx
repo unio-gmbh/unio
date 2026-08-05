@@ -82,16 +82,16 @@ function HeroMk() {
       <style>{`@keyframes mkDrift { from { transform: translateY(-4px); } to { transform: translateY(5px); } }`}</style>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         {/* Links: Off-White, Headline + verankerte CTAs */}
-        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "185px 4vw 120px 7vw" }}>
+        <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "clamp(72px, 13vh, 185px) 4vw clamp(56px, 10vh, 120px) 7vw" }}>
           <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-14%", top: "8%", width: "60%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.18) 0%, rgba(255,219,87,.09) 44%, transparent 72%)", animation: BT_RM ? "none" : "heroGlowDrift 30s ease-in-out infinite alternate" }}></div>
           <GridLines />
-          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(31px, 8.4vw, 40px)" : "clamp(40px, 4.4vw, 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(31px, 8.4vw, 40px)" : "clamp(36px, min(4.4vw, 7.2vh), 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
             Agent-First beginnt hier.<br />Werde UNIO Partner<span style={{ color: "var(--signal)" }}>.</span>
           </h1>
-          <p style={{ margin: mob ? "18px 0 0" : "24px 0 0", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 430, position: "relative" }}>
-            CIRCLE ist die Agent-First Community für Top-Makler: mehr Netto, konstanter Dealflow, Personal Brand Growth und echte Ownership.
+          <p style={{ margin: mob ? "18px 0 0" : "clamp(16px, 2.4vh, 24px) 0 0", font: `400 ${mob ? "15.5px" : "clamp(15px, min(1.05vw, 1.8vh), 17px)"}/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 500, position: "relative" }}>
+            CIRCLE ist eine Agent-First-Community für Makler, die ihren Beruf lieben und leben. Eine Gemeinschaft, die echtes Unternehmertum mit modernster Technologie, starkem Marketing und einer Infrastruktur verbindet, die dich wirklich weiterbringt.
           </p>
-          <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", position: "relative" }}>
+          <div style={{ display: "flex", gap: 12, marginTop: mob ? 30 : "clamp(20px, 3vh, 30px)", flexWrap: "wrap", position: "relative" }}>
             <Bm size="lg" knob data-track="hero_cta_primary" onClick={() => (location.hash = "rechner")}>Was bleibt für dich? Zum Rechner</Bm>
             <Bm size="lg" variant="ghost" data-track="hero_cta_secondary" onClick={() => (location.hash = "bewerben")}>Jetzt bewerben</Bm>
           </div>
@@ -103,11 +103,11 @@ function HeroMk() {
             <img src="../../assets/team/gruppe-serioes.jpg" alt="Das UNIO Gründerteam" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
             <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 45%, rgba(11,10,9,0.55))" }}></div>
             {/* saubere Fakten-Leiste am unteren Rand, nichts abgeschnitten */}
-            <div style={{ position: "absolute", left: 16, right: 16, bottom: 16, display: "flex", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-light)", overflow: "hidden", opacity: docked ? 1 : 0, transform: docked ? "none" : "translateY(12px)", transition: `all 700ms ${BT_EASE}` }}>
+            <div style={{ position: "absolute", left: "clamp(10px, 1.2vw, 16px)", right: "clamp(10px, 1.2vw, 16px)", bottom: "clamp(10px, 1.2vw, 16px)", display: "flex", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-light)", overflow: "hidden", opacity: docked ? 1 : 0, transform: docked ? "none" : "translateY(12px)", transition: `all 700ms ${BT_EASE}` }}>
               {[["100 %", "Provision"], ["Deine", "Marke"], ["Beteiligung", "möglich"]].map(([v, k], i) => (
-                <div key={k} style={{ flex: 1, padding: "14px 16px", borderLeft: i === 0 ? "none" : "1px solid var(--hairline-light)", color: "var(--text-inverse)" }}>
-                  <div style={{ font: "500 18px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{v}</div>
-                  <div className="u-label" style={{ fontSize: 10, color: "var(--text-inverse-muted)", marginTop: 5 }}>{k}</div>
+                <div key={k} style={{ flex: 1, minWidth: 0, padding: "clamp(9px, 1.4vh, 14px) clamp(10px, 1.2vw, 16px)", borderLeft: i === 0 ? "none" : "1px solid var(--hairline-light)", color: "var(--text-inverse)" }}>
+                  <div style={{ font: "500 clamp(13px, min(1.2vw, 2vh), 18px)/1 var(--font-display)", letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{v}</div>
+                  <div className="u-label" style={{ fontSize: "clamp(8.5px, 0.65vw, 10px)", color: "var(--text-inverse-muted)", marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{k}</div>
                 </div>
               ))}
             </div>
@@ -125,11 +125,11 @@ const FRAGEN_MK = [
   ["Warum baust du auf, was dir", "am Ende nicht gehört?"],
 ];
 const PILLARS_MK = [
-  ["01", "Ownership statt Abhängigkeit", "CIRCLE dreht das alte Margensystem um: Deine Provision gehört dir — und über das UNIO Share-Modell partizipierst du am Netzwerk, das du selbst mit aufbaust.", [["100 %", "Provision ab €150K p.a."], ["85 %", "Provision bis €150K p.a."]]],
-  ["02", "Enablement durch Infrastruktur & Tech", "Statt Kontrolle: Enablement. Digitales Backoffice, KI-Portfoliomanagement, immersive Exposés, Smart Matching, intelligentes Lead Management, digitales Closing und KI-Telefonassistent.", [["8+", "Tech-Module"], ["~80 %", "weniger Admin"]]],
-  ["03", "Unternehmertum mit Community-Power", "Du bleibst unabhängig und baust deine eigene Marke auf — aber nicht allein. Austausch, Standards, Zusammenarbeit und gemeinsames Momentum statt Einzelkämpfer-Modus.", [["25 %", "Referral aus geworbenen Deals"], ["49 %", "Share an Top-Performer"]]],
-  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Das UNIO-Akquise-Team holt exklusive, kuratierte Projekte. Alle Projekte werden aufbereitet, vom Inhouse-Marketing ins richtige Licht gerückt — und du bekommst vorqualifizierte Leads.", [["exklusiv", "kuratierter Dealflow aus dem UNIO-Akquise-Team"]]],
-  ["05", "Deine Marketing-Superpower", "CIRCLE ist für Makler, die nicht „mitlaufen\" wollen. Individuelle Markenstrategie, Personal Branding und volle Content-Produktion unter deinem Namen.", [["Content", "Video · Foto · Grafik unter deinem Namen"], ["Website", "Personal Brand & Funnel inklusive"]]],
+  ["01", "Ownership statt Abhängigkeit", "CIRCLE stellt das klassische Margensystem auf den Kopf. Deine Kunden gehören dir. Deine Marke gehört dir. Deine Provision gehört dir. Du baust langfristig dein eigenes Unternehmen auf, nicht das eines anderen.", [["100 %", "Provision ab €150K p.a."], ["85 %", "Provision bis €150K p.a."]]],
+  ["02", "Enablement durch Infrastruktur & Technologie", "Alles, was du brauchst. Nichts, was dich ausbremst. Von der UNIO Plattform mit KI-Portfoliomanagement, Smart Matching und intelligentem Lead-Management bis zu immersiven Exposés, digitalem Closing und KI-Telefonassistent. Technologie übernimmt die Routine, damit du dich auf Menschen konzentrieren kannst.", [["8+", "Tech-Module"], ["~80 %", "weniger Admin"]]],
+  ["03", "Unternehmertum mit Community-Power", "Bleib unabhängig und baue deine eigene Marke auf, aber niemals allein. Eine kuratierte Community aus ambitionierten Maklern, gemeinsame Standards, echter Wissensaustausch und Zusammenarbeit statt Konkurrenz. Denn gemeinsam bewegt man mehr.", [["25 %", "Referral aus geworbenen Deals"], ["49 %", "Share an Top-Performer"]]],
+  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Die besten Projekte sollten kein Zufall sein. Du erhältst Zugang zu exklusiven, kuratierten Projekten von UNIO. Jedes Projekt wird professionell vorbereitet, durch unser Inhouse-Marketing hochwertig inszeniert und mit vorqualifizierten Leads ergänzt. So kannst du dich auf Beratung statt Akquise konzentrieren.", [["exklusiv", "kuratierter Dealflow aus dem UNIO-Akquise-Team"]]],
+  ["05", "Deine authentische Marke", "Menschen vertrauen Menschen. CIRCLE richtet sich an Makler, die den Wert einer starken persönlichen Marke verstehen. Gemeinsam entwickeln wir deine Positionierung und produzieren hochwertigen Content, unter deinem Namen und für deine Zielgruppe. Du wirst sichtbar. Nicht irgendeine Plattform.", [["Content", "Video · Foto · Grafik unter deinem Namen"], ["Website", "Personal Brand & Funnel inklusive"]]],
 ];
 function FragenMk() {
   const mob = window.useMobile();
@@ -142,7 +142,7 @@ function FragenMk() {
           Fünf Hebel, die dich<br />skalieren lassen.
         </h2>
         <p style={{ margin: "22px 0 0", font: `400 ${mob ? 15 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)", maxWidth: 520 }}>
-          CIRCLE kombiniert Einkommen, Dealflow, Growth und Ownership in einem Operating Model — damit du wie ein Unternehmer wächst, ohne deine Unabhängigkeit zu verlieren.
+          Fünf Hebel für bessere Beziehungen, mehr Freiheit und nachhaltiges Wachstum.
         </p>
       </div>
       <div style={{ position: "relative" }}>
@@ -169,9 +169,18 @@ function FragenMk() {
     </section>
   );
 }
+
+/* ===== PROZESS — vom Dokument bis zur Abrechnung (Feedback: Magic-Scroll-Events) ===== */
+const PROZESS_MK = [
+  ["01", "Objekt in Minuten", "Dokumente rein, die KI baut daraus die komplette Vermarktung."],
+  ["02", "Ein Klick, alle Kanäle", "Alle relevanten Portale, dazu Meta und Google. Export, Update und Rückzug inklusive."],
+  ["03", "Jeder Lead zählt", "Kommunikation, Besichtigungen und Follow-ups laufen strukturiert über die Plattform."],
+  ["04", "Kaufangebote, digital", "Nachvollziehbar und rechtssicher, ohne E-Mail-Pingpong."],
+  ["05", "Übergabe und Abrechnung", "Der letzte Schritt passiert auf der Plattform. Danach ist der Deal wirklich fertig."],
+];
 /* CIRCLE-Antwort — eigener Beat, wortweise */
 function AntwortMk() {
-  const antwort = "CIRCLE ist die Antwort: eine kuratierte Community selbstständiger Makler:innen — mit Software, Dealflow und echter Beteiligung.".split(" ");
+  const antwort = "CIRCLE ist die Antwort: eine kuratierte Community für Vollblutmakler, unterstützt durch Technologie, Marketing, exklusiven Dealflow und echte unternehmerische Beteiligung.".split(" ");
   const pRef = React.useRef(null);
   const [lit, setLit] = React.useState(BT_RM ? antwort.length : 0);
   React.useEffect(() => {
@@ -372,16 +381,74 @@ function ObjektanlageMk() {
   );
 }
 
+/* kleine Bild-Glyphen fuer die Ablauf-Stationen in Panel C */
+function AblaufGlyph({ i, on }) {
+  const dl = (n) => (on ? n + "ms" : "0ms");
+  const wrap = { position: "relative", width: 96, height: 60, flex: "none" };
+  const card = { position: "absolute", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark), 0 1px 2px rgba(11,10,9,0.05)", borderRadius: 8 };
+  if (i === 0) {
+    /* Ein Klick, alle Kanaele: drei Kanal-Kacheln poppen nacheinander auf */
+    return (
+      <div style={wrap} aria-hidden="true">
+        {[0, 1, 2].map((j) => (
+          <span key={j} style={{ ...card, left: 10 + j * 30, top: 14 + (j % 2) * 8, width: 26, height: 26, opacity: on ? 1 : 0, transform: on ? "none" : "translateY(10px) scale(0.8)", transition: `all 420ms ${BT_EASE}`, transitionDelay: dl(j * 130) }}>
+            <span style={{ position: "absolute", right: -4, bottom: -4, width: 10, height: 10, borderRadius: "50%", background: "var(--signal)", boxShadow: "0 0 0 2px var(--paper)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 300ms ${BT_EASE}`, transitionDelay: dl(260 + j * 130) }}></span>
+          </span>
+        ))}
+      </div>
+    );
+  }
+  if (i === 1) {
+    /* Jeder Lead zaehlt: Chat-Blase, Punkte fuellen sich */
+    return (
+      <div style={wrap} aria-hidden="true">
+        <span style={{ ...card, left: 14, top: 12, width: 68, height: 34, borderRadius: 17, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, opacity: on ? 1 : 0, transform: on ? "none" : "translateY(10px)", transition: `all 420ms ${BT_EASE}` }}>
+          {[0, 1, 2].map((j) => (
+            <span key={j} style={{ width: 7, height: 7, borderRadius: "50%", background: on ? "var(--signal)" : "var(--paper-3, #ECE9E2)", transition: "background 300ms", transitionDelay: dl(250 + j * 150) }}></span>
+          ))}
+        </span>
+        <span style={{ position: "absolute", left: 26, top: 45, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "7px solid #FFFFFF", filter: "drop-shadow(0 1px 0 var(--hairline-dark))", opacity: on ? 1 : 0, transition: `opacity 420ms ${BT_EASE}` }}></span>
+      </div>
+    );
+  }
+  if (i === 2) {
+    /* Kaufangebote, digital: Dokument, Signatur-Linie zeichnet sich, Haken */
+    return (
+      <div style={wrap} aria-hidden="true">
+        <span style={{ ...card, left: 28, top: 4, width: 40, height: 52, borderRadius: 7, opacity: on ? 1 : 0, transform: on ? "none" : "translateY(10px)", transition: `all 420ms ${BT_EASE}` }}>
+          <span style={{ position: "absolute", left: 8, top: 10, width: 24, height: 2, background: "var(--paper-3, #ECE9E2)" }}></span>
+          <span style={{ position: "absolute", left: 8, top: 17, width: 18, height: 2, background: "var(--paper-3, #ECE9E2)" }}></span>
+          <span style={{ position: "absolute", left: 8, bottom: 12, height: 2, background: "var(--signal)", width: on ? 24 : 0, transition: `width 500ms ${BT_EASE}`, transitionDelay: dl(300) }}></span>
+          <span style={{ position: "absolute", right: -6, bottom: -6, width: 16, height: 16, borderRadius: "50%", background: "var(--signal)", color: "#FFFFFF", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "9px var(--font-mono)", transform: on ? "scale(1)" : "scale(0)", transition: `transform 320ms ${BT_EASE}`, transitionDelay: dl(650) }}>✓</span>
+        </span>
+      </div>
+    );
+  }
+  /* Uebergabe und Abrechnung: Kreis zeichnet sich um das Euro-Zeichen */
+  const C = 2 * Math.PI * 20;
+  return (
+    <div style={wrap} aria-hidden="true">
+      <svg width="48" height="48" viewBox="0 0 48 48" style={{ position: "absolute", left: 24, top: 6 }}>
+        <circle cx="24" cy="24" r="20" fill="#FFFFFF" stroke="var(--hairline-dark)" strokeWidth="1" />
+        <circle cx="24" cy="24" r="20" fill="none" stroke="var(--signal)" strokeWidth="2" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={on ? 0 : C} transform="rotate(-90 24 24)" style={{ transition: `stroke-dashoffset 800ms ${BT_EASE}`, transitionDelay: dl(150) }} />
+      </svg>
+      <span style={{ position: "absolute", left: 24, top: 6, width: 48, height: 48, display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 15px var(--font-mono)", color: on ? "var(--signal-deep)" : "var(--text-muted)", transition: "color 400ms" }}>€</span>
+    </div>
+  );
+}
+
 /* ===== 05 · 80 % WENIGER ADMIN — Porträt-Moment mit Glas-Chips ===== */
 function AdminMk() {
   const [ref, p] = window.usePinProgress();
   const mob = window.useMobile();
   const chips = ["Exposé", "CRM", "Termine", "Closing", "Abrechnung"];
   const scatter = [[8, 8, -7], [52, 4, 5], [64, 40, 9], [6, 48, -4], [34, 26, 3]];
-  const k = BT_RM ? 1 : oaClamp(p / 0.16 * 1.4);          // 0–0.16: Chips sortieren
+  const k = BT_RM ? 1 : oaClamp(p / 0.13 * 1.4);          // 0–0.13: Chips sortieren
   const done = k > 0.8;
-  const slide = BT_RM ? 0 : oaClamp((p - 0.34) / 0.14);   // späterer Start: mehr Abstand, nächstes Panel bleibt länger verborgen
-  const oaP = BT_RM ? 1 : oaClamp((p - 0.5) / 0.5);       // Objektanlage-Animation
+  const slide = BT_RM ? 0 : oaClamp((p - 0.26) / 0.1);    // Panel A → B
+  const oaP = BT_RM ? 1 : oaClamp((p - 0.38) / 0.34);     // Objektanlage-Animation
+  const slide2 = BT_RM ? 0 : oaClamp((p - 0.74) / 0.09);  // Panel B → C
+  const cP = BT_RM ? 1 : oaClamp((p - 0.845) / 0.155);    // restliche Prozess-Stationen
   const ph1 = oaClamp(oaP / 0.35), ph2 = oaClamp((oaP - 0.35) / 0.25), ph3 = oaClamp((oaP - 0.6) / 0.4);
   const oaHead = oaP < 0.35 ? "Drag and Drop deiner Dokumente" : oaP < 0.6 ? "Die UNIO KI liest, strukturiert und erstellt" : "Fertig zur Freigabe.";
   if (BT_RM) {
@@ -390,45 +457,57 @@ function AdminMk() {
         <Kap nr="05" label="Entlastung" />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
           <div>
-            <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 54px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>80 % weniger Admin.<br />100 % mehr Makeln.</h2>
-            <p style={{ margin: "20px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 460 }}>Die Plattform räumt sichtbar weg, was dich vom Gespräch abhält.</p>
+            <h2 style={{ margin: 0, font: "500 clamp(32px, 3.4vw, 54px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>80 % weniger Administration.<br />100 % mehr Menschlichkeit.</h2>
+            <p style={{ margin: "20px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 460 }}>Die Plattform nimmt dir sichtbar Arbeit ab und automatisiert alles, was nicht deine persönliche Aufmerksamkeit braucht. Damit du mehr Zeit für Gespräche hast. Mehr Zeit für echte Beziehungen.</p>
           </div>
           <div style={{ position: "relative", height: 360, borderRadius: "var(--r-panel)", overflow: "hidden" }}>
-            <img src="../../assets/photos/lifestyle-paar.jpg" alt="[PLATZHALTER: Partner:in im Gespräch]" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 25%" }} />
+            <img src="../../assets/team/community-laptop-fokus.jpg" alt="Konzentrierte Arbeit am Laptop im UNIO Office" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }} />
           </div>
+        </div>
+        {/* statischer Ablauf fuer Reduced Motion */}
+        <div style={{ maxWidth: 760, marginTop: 72 }}>
+          <h3 style={{ margin: "0 0 8px", font: "500 clamp(24px, 2.4vw, 34px)/1.1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Vom ersten Dokument bis zur Abrechnung.</h3>
+          {PROZESS_MK.map(([nr, t, c]) => (
+            <div key={nr} style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: "0 20px", padding: "22px 0", borderBottom: "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
+              <span style={{ font: "13px var(--font-mono)", color: "var(--signal-deep)" }}>{nr}</span>
+              <div>
+                <h4 style={{ margin: 0, font: "500 18px/1.3 var(--font-display)", color: "var(--ink)" }}>{t}</h4>
+                <p style={{ margin: "6px 0 0", font: "400 14px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>{c}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     );
   }
   return (
-    <section id="objektanlage" ref={ref} data-track="chapter_view_05" data-screen-label="Admin" style={{ height: "660vh", position: "relative", background: "var(--paper-2)" }}>
+    <section id="objektanlage" ref={ref} data-track="chapter_view_05" data-screen-label="Admin" style={{ height: "820vh", position: "relative", background: "var(--paper-2)" }}>
       <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", background: "var(--paper)" }}>
         {/* weicher Farb-Crossfade: paper-2 desaturiert nach paper */}
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "var(--paper-2)", opacity: 1 - slide }}></div>
         <GridLines />
-        <Kap nr="05" label={slide > 0.5 ? "Objektanlage" : "Entlastung"} />
+        <Kap nr="05" label={slide2 > 0.5 ? "Ablauf" : slide > 0.5 ? "Objektanlage" : "Entlastung"} />
         {/* Richtungs-Hinweis: kündigt den horizontalen Kapitelwechsel an */}
-        <div aria-hidden="true" style={{ position: "absolute", right: mob ? 14 : 28, top: "50%", transform: "translateY(-50%)", zIndex: 6, display: "flex", alignItems: "center", gap: 10, opacity: !BT_RM && p > 0.2 && p < 0.46 ? 1 : 0, transition: "opacity 500ms var(--ease-unio)", pointerEvents: "none" }}>
+        <div aria-hidden="true" style={{ position: "absolute", right: mob ? 14 : 28, top: "50%", transform: "translateY(-50%)", zIndex: 6, display: "flex", alignItems: "center", gap: 10, opacity: !BT_RM && ((p > 0.16 && p < 0.34) || (p > 0.68 && p < 0.81)) ? 1 : 0, transition: "opacity 500ms var(--ease-unio)", pointerEvents: "none" }}>
           <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>Weiter</span>
           <span style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(253,252,250,0.9)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "14px var(--font-mono)", color: "var(--ink)" }}>→</span>
         </div>
-        {/* Horizontaler Zwei-Panel-Track: Admin → Objektanlage-Auftakt */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", width: "200%", transform: `translateX(${-slide * 50}%)` }}>
+        {/* Horizontaler Drei-Panel-Track: Admin → Objektanlage → Ablauf bis Abrechnung */}
+        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", transform: `translateX(${-(slide + slide2) * (100 / 3)}%)` }}>
           {/* Panel A — Admin */}
-          <div style={{ width: "50%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
+          <div style={{ width: "33.3334%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
             <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1fr)", gap: mob ? 24 : 56, alignItems: "center", width: "100%" }}>
               <div>
                 <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(27px, 7.2vw, 34px)" : "clamp(32px, 3.4vw, 54px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-                  80 % weniger Admin.<br />100 % mehr Makeln.
+                  80 % weniger Administration.<br />100 % mehr Menschlichkeit.
                 </h2>
                 <p style={{ margin: "16px 0 0", font: `400 ${mob ? 15 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 460 }}>
-                  Die Plattform räumt sichtbar weg, was dich vom Gespräch abhält — scroll, und der Stapel sortiert sich.
+                  Die Plattform nimmt dir sichtbar Arbeit ab und automatisiert alles, was nicht deine persönliche Aufmerksamkeit braucht. Scroll, und der Stapel sortiert sich.
                 </p>
               </div>
               <div style={{ position: "relative", height: mob ? 300 : 400, borderRadius: "var(--r-panel)", overflow: "hidden" }}>
-                <img src="../../assets/photos/lifestyle-paar.jpg" alt="[PLATZHALTER: Partner:in im Gespräch]" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 25%" }} />
+                <img src="../../assets/team/community-laptop-fokus.jpg" alt="Konzentrierte Arbeit am Laptop im UNIO Office" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }} />
                 <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.18), rgba(11,10,9,0.42))" }}></div>
-                <span className="u-label" style={{ position: "absolute", left: 16, top: 14, fontSize: 10, color: "var(--text-inverse)", textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>[PLATZHALTER: Partner:in im Gespräch]</span>
                 {chips.map((c, i) => {
                   const [sx, sy, rot] = scatter[i];
                   const ki = oaClamp(k * 1.4 - i * 0.09);
@@ -452,7 +531,7 @@ function AdminMk() {
             </div>
           </div>
           {/* Panel B — Objektanlage: Animation LINKS, Headline RECHTS. Läuft in-place per oaP */}
-          <div style={{ width: "50%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw", overflow: "hidden" }}>
+          <div style={{ width: "33.3334%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.2fr) minmax(0, 0.8fr)", alignItems: "center", gap: mob ? 12 : 32, padding: mob ? "92px 6vw 30px" : "0 7vw 0 11vw", overflow: "hidden" }}>
             {/* Bühne */}
             <div style={{ position: "relative", height: mob ? "38svh" : "72svh", gridRow: mob ? 2 : "auto" }}>
               <div style={{ position: "absolute", left: "50%", top: "50%", transform: `translate(-50%, -50%) scale(${0.7 + 0.3 * ph2})`, width: 150, height: 150, borderRadius: 16, overflow: "hidden", opacity: Math.max(0.25, Math.max(1 - ph1, ph2)), boxShadow: ph2 > 0.2 && ph3 < 0.9 ? "0 0 0 5px var(--signal-soft)" : "none", transition: "box-shadow 400ms" }}>
@@ -508,6 +587,46 @@ function AdminMk() {
               </div>
             </div>
           </div>
+          {/* Panel C — Ablauf: die restlichen Stationen bis zur Abrechnung */}
+          <div style={{ width: "33.3334%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", alignItems: "center", gap: mob ? 18 : 48, padding: mob ? "92px 6vw 30px" : "0 9vw 0 11vw", overflow: "hidden" }}>
+            <div>
+              <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(28px, 3vw, 50px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+                Und weiter,<br />bis zur Abrechnung.
+              </h2>
+              <p style={{ margin: mob ? "12px 0 0" : "18px 0 0", font: `400 ${mob ? 14 : 16}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 400 }}>
+                Ein Deal, ein System. Auch nach der Objektanlage arbeitet die Plattform, damit du beim Menschen bleibst.
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: mob ? 16 : 40 }}>
+                <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+                  <circle cx="17" cy="17" r="14" fill="none" stroke="var(--hairline-dark)" strokeWidth="1.5" />
+                  <circle cx="17" cy="17" r="14" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={(1 - cP) * 2 * Math.PI * 14} transform="rotate(-90 17 17)" strokeLinecap="round" />
+                </svg>
+                <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>Station {Math.min(4, Math.max(1, Math.ceil(cP * 4.4)))} von 4</span>
+              </div>
+            </div>
+            <div style={{ position: "relative", paddingLeft: mob ? 26 : 34 }}>
+              {/* vertikale Fortschrittslinie */}
+              <div aria-hidden="true" style={{ position: "absolute", left: mob ? 8 : 11, top: 8, bottom: 8, width: 1.5, background: "var(--hairline-dark)" }}>
+                <div style={{ width: "100%", height: cP * 100 + "%", background: "var(--signal)" }}></div>
+              </div>
+              {PROZESS_MK.slice(1).map(([nr, t, c], i) => {
+                const on = cP * 4.4 - i > 0.4;
+                return (
+                  <div key={nr} style={{ position: "relative", padding: mob ? "13px 0" : "14px 0", opacity: on ? 1 : 0.32, transform: on ? "none" : "translateY(8px)", transition: `all 500ms ${BT_EASE}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
+                    <span aria-hidden="true" style={{ position: "absolute", left: mob ? -25 : -31, top: "50%", marginTop: mob ? -6.5 : -7.5, width: mob ? 13 : 15, height: mob ? 13 : 15, borderRadius: "50%", background: on ? "var(--signal)" : "var(--paper)", boxShadow: on ? "0 0 0 4px var(--signal-soft, rgba(255,170,9,0.18))" : "inset 0 0 0 1.5px var(--hairline-dark)", transition: `all 400ms ${BT_EASE}` }}></span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h3 style={{ margin: 0, font: `500 ${mob ? 16 : 20}px/1.3 var(--font-display)`, letterSpacing: "-0.01em", color: "var(--ink)" }}>{t}</h3>
+                      <p style={{ margin: "6px 0 0", font: `400 ${mob ? 12.5 : 14}px/1.55 var(--font-display)`, color: "var(--text-muted)", maxWidth: 480 }}>{c}</p>
+                    </div>
+                    {mob ? null : <AblaufGlyph i={i} on={on} />}
+                  </div>
+                );
+              })}
+              <div style={{ marginTop: mob ? 10 : 16, opacity: cP > 0.8 ? 1 : 0, transform: cP > 0.8 ? "none" : "translateY(10px)", transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 9, padding: "11px 16px", borderRadius: "var(--r-pill)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.4)", font: `500 ${mob ? 12 : 13}px var(--font-display)`, color: "var(--signal-deep)", whiteSpace: "nowrap" }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Deal abgeschlossen. Alles auf der Plattform.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -517,15 +636,18 @@ function AdminMk() {
 /* ===== 06 · DER RECHNER — hell, Count-up nach Slider-Release ===== */
 function RechnerMk() {
   const [umsatz, setUmsatz] = React.useState(150000);
+  const [vgl, setVgl] = React.useState("klassisch"); // Default: groesster Vorsprung
   const software = (599 + 199) * 12; // beide Pakete verpflichtend
   const unioCut = 0.15 * Math.min(umsatz, 150000); // 15 % bis 150K, 0 % darüber
   const unio = umsatz - unioCut - software;
   const klassisch = umsatz * 0.5;
-  const delta = unio - klassisch;
+  const eigenes = umsatz * 0.7; // eigenes Buero: ~70 % nach Fixkosten
+  const vergleichswert = vgl === "klassisch" ? klassisch : eigenes;
+  const delta = unio - vergleichswert;
   const dispRef = React.useRef(delta);
   const [disp, setDisp] = React.useState(delta);
   React.useEffect(() => {
-    if (BT_RM) { dispRef.current = delta; setDisp(delta); return; }
+    if (BT_RM || document.hidden) { dispRef.current = delta; setDisp(delta); return; }
     const id = setTimeout(() => {
       const from = dispRef.current, to = delta, t0 = performance.now();
       const step = (now) => {
@@ -537,7 +659,8 @@ function RechnerMk() {
       };
       requestAnimationFrame(step);
     }, 200);
-    return () => clearTimeout(id);
+    const settle = setTimeout(() => { dispRef.current = delta; setDisp(delta); }, 900); // Fallback, falls rAF gedrosselt ist
+    return () => { clearTimeout(id); clearTimeout(settle); };
   }, [delta]);
   const fmt = (n) => "€ " + Math.round(n).toLocaleString("de-AT");
   const mob = window.useMobile();
@@ -572,7 +695,7 @@ function RechnerMk() {
             <span style={{ font: "11px var(--font-mono)", color: "var(--text-muted)" }}>€ 600K</span>
           </div>
           <div style={{ marginTop: 30, borderTop: "1px solid var(--hairline-dark)", paddingTop: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-            {[["CIRCLE: dein Netto", unio, "var(--signal)", 1], ["Klassisches Büro: ~50 %", klassisch, "var(--ink-3)", klassisch / unio]].map(([l, v, c, w]) => (
+            {[["CIRCLE: dein Netto", unio, "var(--signal)", 1], ["Eigenes Büro: ~70 %", eigenes, "var(--steel, #D1D3D5)", eigenes / unio], ["Klassisches Büro: ~50 %", klassisch, "var(--steel, #D1D3D5)", klassisch / unio]].map(([l, v, c, w]) => (
               <div key={l}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ font: "400 13.5px var(--font-display)", color: "var(--text-muted)" }}>{l}</span>
@@ -590,6 +713,15 @@ function RechnerMk() {
         </div>
         <div className="u-grain" style={{ borderRadius: "var(--r-card)", padding: "clamp(28px, 3vw, 40px)", background: "var(--signal)", color: "#FFFFFF", display: "flex", flexDirection: "column", boxShadow: "var(--shadow-soft)" }}>
           <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Dein Vorsprung / Jahr</span>
+          <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+            {[["klassisch", "vs. Klassisches Büro"], ["eigenes", "vs. Eigenes Büro"]].map(([key, label]) => (
+              <button key={key} type="button" onClick={() => setVgl(key)} aria-pressed={vgl === key} data-track={"rechner_vergleich_" + key}
+                style={{ font: "500 12px var(--font-display)", padding: "8px 14px", borderRadius: 999, cursor: "pointer", border: "none",
+                  background: vgl === key ? "rgba(255,255,255,0.94)" : "rgba(255,255,255,0.14)",
+                  color: vgl === key ? "var(--signal-deep, #B87400)" : "#FFFFFF",
+                  boxShadow: vgl === key ? "none" : "inset 0 0 0 1px rgba(255,255,255,0.45)" }}>{label}</button>
+            ))}
+          </div>
           <div style={{ font: "500 clamp(48px, 5vw, 84px)/1 var(--font-display)", letterSpacing: "-0.03em", marginTop: 18, fontVariantNumeric: "tabular-nums" }}>{fmt(disp)}</div>
           <p style={{ margin: "18px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: 380 }}>
             Gleiche Deals, gleiche Arbeit — aber deine Marke, deine Provision, dein Anteil an dem, was du aufbaust.
@@ -666,10 +798,10 @@ function BewegungMk() {
         <div style={mob ? undefined : { position: "sticky", top: "calc(50vh - 150px)" }}>
           <Fx>
             <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.6vw, 58px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em" }}>
-              Eine Bewegung.<br />Kein Maklerpool.
+              Eine Bewegung.<br />Keine Agency.
             </h2>
             <p style={{ margin: "20px 0 0", font: "400 17px/1.6 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: 460 }}>
-              Kuratiert statt offen für alle: Wir nehmen Makler:innen auf, die Ownership wollen — und geben ihnen dafür Software, Dealflow und Beteiligung.
+              Kuratiert für alle, die eine Vision spüren. Für Menschen, die mit der Technologie gehen, den Wert einer starken eigenen Brand kennen und auf echte Beziehungen setzen. Für alle, die nicht nur zusammenarbeiten, sondern gemeinsam etwas aufbauen wollen.
             </p>
           </Fx>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 44 }}>
@@ -842,25 +974,23 @@ function SchritteMk() {
 }
 
 /* ===== DEINE MARKE. DEIN ASSET — Personal Brand in Aktion ===== */
+/* beide Reihen im Wechsel: Marketingunterlage, Mensch, Marketingunterlage, Mensch ...
+   Achtung, historische Dateinamen: die echten Mockups sind die *-print.png Dateien. */
 const MK_MARKETING = [
   { src: "../../assets/marketing/albrecht-print.png" },
+  { src: "../../assets/team/community-duo.jpg" },
   { src: "../../assets/marketing/ecoluxe-print.png" },
-  { src: "../../assets/marketing/obenzwei-print.png" },
-  { src: "../../assets/marketing/origins-print.png" },
+  { src: "../../assets/team/community-selfie-baustelle.jpg" },
   { src: "../../assets/marketing/beheim-print-1.png" },
-  { src: "../../assets/marketing/beheim-print-2.png" },
+  { src: "../../assets/team/community-spatenstich.jpg" },
 ];
 const MK_MENSCHEN = [
-  { src: "../../assets/marketing/albrecht-desk.jpg" },
-  { src: "../../assets/team/community-duo.jpg" },
-  { src: "../../assets/marketing/beheim-desk.jpg" },
-  { src: "../../assets/team/community-spatenstich.jpg" },
-  { src: "../../assets/marketing/albrecht-desk-2.jpg" },
-  { src: "../../assets/team/portrait-05.jpg" },
-  { src: "../../assets/marketing/obenzwei-phones.jpg" },
+  { src: "../../assets/marketing/origins-print.png" },
+  { src: "../../assets/team/community-plan-glas.jpg" },
+  { src: "../../assets/marketing/obenzwei-print.png" },
+  { src: "../../assets/team/community-meeting.jpg" },
+  { src: "../../assets/marketing/beheim-print-2.png" },
   { src: "../../assets/team/community-baustelle.jpg" },
-  { src: "../../assets/team/portrait-01.jpg" },
-  { src: "../../assets/team/community-dachfenster.jpg" },
 ];
 function MkRow({ items, reverse, hov, dur }) {
   const [tip, setTip] = React.useState(-1);
@@ -932,7 +1062,7 @@ function MarkeAssetMk() {
 
 /* ===== DER UNTERSCHIED — klassischer Makler vs. CIRCLE (clean, ohne Kachel) ===== */
 const VERGLEICH = [
-  ["Provisionsaufteilung", "Splits oft mit Gebühren oder Bedingungen", "Bis 100 %, unabhängig vom Umsatz"],
+  ["Provisionsaufteilung", "Unfaire Splits mit hohen Kosten", "Bis 100 %, unabhängig vom Umsatz"],
   ["Eigene Marke", "Bleibt meist außen vor", "UNIO baut deine Brand für dich auf"],
   ["Dealflow", "Zufällig, Portfolios bei Agenturen", "Kontinuierlich & kuratiert"],
   ["Infrastruktur", "Fragmentiert und veraltet", "Integrierte High-End-Plattform"],

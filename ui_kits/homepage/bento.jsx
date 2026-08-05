@@ -56,12 +56,12 @@ function AnimSuche({ text = "Penthouse mit Terrasse, Hernals" }) {
 }
 
 /* 2 — Provisionssicherung: Haken poppt */
-function AnimSchutz() {
+function AnimSchutz({ onPaper = false }) {
   const t = window.useTick(4, 900);
   const on = t >= 1;
   return (
     <div style={{ display: "flex", justifyContent: "center", paddingBottom: 8 }}>
-      <span style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(255,255,255,0.2)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.45)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "32px var(--font-mono)", color: "#FFFFFF", transform: on ? "scale(1)" : "scale(0.55)", opacity: on ? 1 : 0, transition: "all 500ms var(--ease-unio)" }}>✓</span>
+      <span style={{ width: 80, height: 80, borderRadius: "50%", background: onPaper ? "rgba(255,170,9,0.12)" : "rgba(255,255,255,0.2)", boxShadow: onPaper ? "inset 0 0 0 1px var(--signal)" : "inset 0 0 0 1px rgba(255,255,255,0.45)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "32px var(--font-mono)", color: onPaper ? "var(--signal-deep, #B87400)" : "#FFFFFF", transform: on ? "scale(1)" : "scale(0.55)", opacity: on ? 1 : 0, transition: "all 500ms var(--ease-unio)" }}>✓</span>
     </div>
   );
 }
@@ -216,13 +216,19 @@ function AnimAnlage({ pct = 90 }) {
 
 /* Ansprechpartner-Kachel (Makler): Software-Bento mit einem Gesicht darin */
 function AnsprechTile() {
+  const t = window.useTick(2, 1400);
   return (
-    <BCard span={2} title="Dein Ansprechpartner im CIRCLE" copy="Software automatisiert die Prozesse — entschieden und begleitet wird von Menschen.">
+    <BCard span={2} orange title="Dein Ansprechpartner im CIRCLE" copy="Software automatisiert die Prozesse — entschieden und begleitet wird von Menschen.">
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <span style={{ width: 54, height: 54, borderRadius: "50%", flex: "none", border: "1px dashed var(--hairline-dark)", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "10px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}>FOTO</span>
+        <span style={{ position: "relative", width: 54, height: 54, flex: "none", display: "block" }}>
+          <img src="../../assets/team/nikita-avatar.jpg" alt="Nikita Neznamov" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", boxShadow: "0 0 0 1px rgba(255,255,255,0.55)", display: "block" }} />
+          <span aria-hidden="true" style={{ position: "absolute", right: -1, bottom: -1, width: 14, height: 14, borderRadius: "50%", background: "#FFFFFF", boxShadow: "0 0 0 2px var(--signal)", display: "block" }}>
+            <span style={{ position: "absolute", inset: 3, borderRadius: "50%", background: "var(--signal-deep, #B87400)", transform: t % 2 === 0 ? "scale(1)" : "scale(0.55)", opacity: t % 2 === 0 ? 1 : 0.55, transition: "all 1200ms var(--ease-unio)" }}></span>
+          </span>
+        </span>
         <div>
-          <div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>[PLATZHALTER: Name]</div>
-          <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>Partner-Management · Wien</span>
+          <div style={{ font: "500 15px var(--font-display)", color: "#FFFFFF" }}>Nikita Neznamov</div>
+          <span className="u-label" style={{ fontSize: 10, color: "rgba(255,245,239,0.88)" }}>Founder · Wien</span>
         </div>
       </div>
     </BCard>
@@ -238,32 +244,54 @@ function SystemBento({ makler = false }) {
       <div style={{ maxWidth: 760, marginBottom: mob ? 52 : 88 }}>
         {(() => { const R = window.Reveal; const H = (
         <h2 style={{ margin: 0, font: "500 clamp(38px, 4.2vw, 72px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-          Ein System für deinen<br />gesamten Verkauf.
+          {makler ? <span>Ein System für deinen<br />gesamten Vertrieb.</span> : <span>Ein System für deinen<br />gesamten Verkauf.</span>}
         </h2>
         ); return R ? <R>{H}</R> : H; })()}
         <p style={{ margin: "20px 0 0", font: "400 18px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>
-          Jede Funktion hier hat denselben Job: dir Verwaltungszeit abzunehmen, damit du sie Menschen gibst. Mehr Gespräche, mehr Besichtigungen, mehr Abschlüsse.
+          {makler
+            ? "Jede Funktion verfolgt dasselbe Ziel: dass du dich auf das konzentrieren kannst, was nur Menschen können. Vertrauen aufbauen, beraten und Kunden auf ihrem Weg begleiten."
+            : "Jede Funktion hier hat denselben Job: dir Verwaltungszeit abzunehmen, damit du sie Menschen gibst. Mehr Gespräche, mehr Besichtigungen, mehr Abschlüsse."}
         </p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 16 }}>
-        <BCard span={4} title="KI-Suche & Lead-Inbox" copy="Frag in natürlicher Sprache nach Objekten oder Käufern — die Plattform versteht dich und liefert sofort passende Treffer."><AnimSuche text={makler ? "Penthouse mit Terrasse, 1190 Wien" : "Penthouse mit Terrasse, Hernals"} /></BCard>
+        {makler ? (
+          <React.Fragment>
+            <BCard span={4} orange title="KI-Objektanlage" copy="Dokumente rein — Vermarktung raus. Die KI liest deine Unterlagen und baut daraus Exposé, Inserat und Suchprofil.">
+              <a href="#objektanlage" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", textDecoration: "none", color: "#FFFFFF" }}>
+                <span style={{ font: "400 13px/1.5 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: "32ch" }}>Die ganze Verwandlung — eine Scroll-Sequenz weiter unten.</span>
+                <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: "50%", flex: "none", background: "rgba(255,255,255,0.18)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "16px var(--font-mono)" }}>↓</span>
+              </a>
+            </BCard>
+            <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf allen relevanten Portalen, dazu Meta und Google — inkl. Update & Rückzug."><AnimPortale /></BCard>
+            <BCard span={2} title="Provisionssicherung" copy="Jeder Lead wird automatisch abgesichert — bevor du Zeit investierst."><AnimSchutz onPaper /></BCard>
+            <BCard span={2} title="Kunden-Interface" copy="Deine Kund:innen sehen Exposés, Termine und Dokumente in einem aufgeräumten Portal — unter deiner Marke.">
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {["Exposé", "Termine", "Dokumente"].map((c) => (
+                  <span key={c} style={chipStyle(true)}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>{c}</span>
+                ))}
+              </div>
+            </BCard>
+            <BCard span={2} title="Suggested Actions" copy="Das System sagt dir den nächsten Schritt — priorisiert nach Wirkung."><AnimActions /></BCard>
+            <BCard span={2} title="Smart Matching" copy="Aus jeder Anfrage entsteht ein Suchprofil — laufend gegen deinen Bestand gematcht."><AnimMatching /></BCard>
+            <BCard span={2} title="Smart Besichtigungen" copy="Termine direkt aus dem Lead heraus buchen — synchron mit deinem Kalender."><AnimKalender /></BCard>
+            <AnsprechTile />
+            <BCard span={6} title="& vieles mehr" copy="Vom ersten Dokument bis zur Abrechnung: Der ganze Ablauf passiert auf der Plattform.">
+              <div className="u-label" style={{ display: "flex", gap: "10px 22px", flexWrap: "wrap", fontSize: 10.5, color: "var(--text-muted)", lineHeight: 2 }}>
+                {["Objekt in Minuten", "Ein Klick, alle Kanäle", "Jeder Lead zählt", "Kaufangebote, digital", "Übergabe und Abrechnung"].map((f) => (
+                  <span key={f} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                    <span aria-hidden="true" style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--signal)" }}></span>{f}
+                  </span>
+                ))}
+              </div>
+            </BCard>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+        <BCard span={4} title="KI-Suche & Lead-Inbox" copy="Frag in natürlicher Sprache nach Objekten oder Käufern — die Plattform versteht dich und liefert sofort passende Treffer."><AnimSuche text="Penthouse mit Terrasse, Hernals" /></BCard>
         <BCard span={2} orange title="Provisionssicherung" copy="Jeder Lead wird automatisch abgesichert — bevor du Zeit investierst."><AnimSchutz /></BCard>
         <BCard span={2} title="Suggested Actions" copy="Das System sagt dir den nächsten Schritt — priorisiert nach Wirkung."><AnimActions /></BCard>
         <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf ImmobilienScout24 & willhaben — inkl. Update & Rückzug."><AnimPortale /></BCard>
         <BCard span={2} title="Besichtigung & Kalender" copy="Termine direkt aus dem Lead heraus buchen — synchron mit deinem Kalender."><AnimKalender /></BCard>
-        {makler ? (
-          <React.Fragment>
-            <BCard span={2} title="Automatisches Matching" copy="Aus jeder Anfrage entsteht ein Suchprofil — laufend gegen deinen Bestand gematcht."><AnimMatching /></BCard>
-            <BCard span={2} orange title="KI-Objektanlage" copy="Dokumente rein — Vermarktung raus.">
-              <a href="#objektanlage" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", textDecoration: "none", color: "#FFFFFF" }}>
-                <span style={{ font: "400 13px/1.5 var(--font-display)", color: "rgba(255,245,239,0.9)", maxWidth: "22ch" }}>Die ganze Verwandlung — eine Scroll-Sequenz weiter unten.</span>
-                <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: "50%", flex: "none", background: "rgba(255,255,255,0.18)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "16px var(--font-mono)" }}>↓</span>
-              </a>
-            </BCard>
-            <AnsprechTile />
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
             <BCard span={2} title="Automatisches Matching" copy="Aus jeder Anfrage entsteht ein Suchprofil — die Plattform matcht es laufend gegen deinen Bestand."><AnimMatching /></BCard>
             <BCard span={2} orange title="KI-Objektanlage" copy="Dokumente reinziehen — die KI erstellt Exposé, Daten und Suchprofil automatisch."><AnimAnlage /></BCard>
             <BCard span={2} title="LENS — Live-Dashboard" copy="Pipeline, Nachfrage und Kosten in Echtzeit — du siehst jederzeit, wo ein Projekt steht."><AnimLens /></BCard>
