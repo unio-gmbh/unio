@@ -86,7 +86,7 @@ function HeroMk() {
           <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-14%", top: "8%", width: "60%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.18) 0%, rgba(255,219,87,.09) 44%, transparent 72%)", animation: BT_RM ? "none" : "heroGlowDrift 30s ease-in-out infinite alternate" }}></div>
           <GridLines />
           <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(31px, 8.4vw, 40px)" : "clamp(36px, min(4.4vw, 7.2vh), 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
-            Agent-First beginnt hier.<br />Werde UNIO Partner<span style={{ color: "var(--signal)" }}>.</span>
+            Agent-First<br />beginnt hier<span style={{ color: "var(--signal)" }}>.</span>
           </h1>
           <p style={{ margin: mob ? "18px 0 0" : "clamp(16px, 2.4vh, 24px) 0 0", font: `400 ${mob ? "15.5px" : "clamp(15px, min(1.05vw, 1.8vh), 17px)"}/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 500, position: "relative" }}>
             CIRCLE ist eine Agent-First-Community für Makler, die ihren Beruf lieben und leben. Eine Gemeinschaft, die echtes Unternehmertum mit modernster Technologie, starkem Marketing und einer Infrastruktur verbindet, die dich wirklich weiterbringt.
@@ -180,7 +180,7 @@ const PROZESS_MK = [
 ];
 /* CIRCLE-Antwort — eigener Beat, wortweise */
 function AntwortMk() {
-  const antwort = "CIRCLE ist die Antwort: eine kuratierte Community für Vollblutmakler, unterstützt durch Technologie, Marketing, exklusiven Dealflow und echte unternehmerische Beteiligung.".split(" ");
+  const antwort = "CIRCLE ist die Antwort: eine kuratierte Community für Makler mit Leidenschaft, unterstützt durch Technologie, Marketing, exklusiven Dealflow und echte unternehmerische Beteiligung.".split(" ");
   const pRef = React.useRef(null);
   const [lit, setLit] = React.useState(BT_RM ? antwort.length : 0);
   React.useEffect(() => {
@@ -735,29 +735,47 @@ function RechnerMk() {
   );
 }
 
-/* ===== 07 · ECHTE BETEILIGUNG — Typo-Moment ===== */
+/* ===== 07 · ECHTE BETEILIGUNG — reiner Typo-Moment, scrollgetrieben, ohne Kante ===== */
 function BeteiligungMk() {
+  const ref = React.useRef(null);
+  const mob = window.useMobile();
+  const [prog, setProg] = React.useState(BT_RM ? 1 : 0);
+  React.useEffect(() => {
+    if (BT_RM) return;
+    const on = () => {
+      const el = ref.current; if (!el) return;
+      const r = el.getBoundingClientRect();
+      setProg(oaClamp((innerHeight * 0.8 - r.top) / (r.height * 0.75)));
+    };
+    on();
+    addEventListener("scroll", on, { passive: true });
+    return () => removeEventListener("scroll", on);
+  }, []);
+  const WORDS = ["Du", "baust", "auf,", "BR", "was", "DIR", "gehört"];
+  const lit = (i) => prog * 8.5 - i > 0.5;
+  const ws = (i) => ({
+    display: "inline-block",
+    opacity: lit(i) ? 1 : 0.12,
+    transform: lit(i) ? "none" : "translateY(0.16em)",
+    filter: lit(i) ? "blur(0)" : "blur(5px)",
+    transition: `all 550ms ${BT_EASE}`,
+  });
+  const dirFilled = prog > 0.78;
+  const dotOn = prog > 0.9;
   return (
-    <section data-track="chapter_view_07" data-screen-label="Beteiligung" className="u-grain" style={{ position: "relative", zIndex: 7, background: "var(--paper-2)", padding: "clamp(120px, 18vh, 220px) 7vw", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+    <section ref={ref} data-track="chapter_view_07" data-screen-label="Beteiligung" className="u-grain" style={{ position: "relative", zIndex: 6, background: "var(--paper)", padding: "clamp(120px, 20vh, 240px) 7vw", minHeight: "92vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <GridLines />
       <Kap nr="07" label="Beteiligung" />
-      <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-        <Fx>
-          <h2 style={{ margin: 0, font: "500 clamp(44px, 6vw, 104px)/1 var(--font-display)", letterSpacing: "-0.04em", color: "var(--ink)", maxWidth: 900 }}>
-            Du baust auf,<br />was <span style={{ color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>dir</span> gehört<span style={{ color: "var(--signal)" }}>.</span>
-          </h2>
-        </Fx>
-        <div style={{ width: "100%", maxWidth: 720, marginTop: 84 }}>
-          {[["Unternehmensbeteiligung", "für Top-Performer"], ["Referral-Programm", "25 % aus geworbenen Deals"], ["Details", "im persönlichen Gespräch"]].map(([k, v], i) => (
-            <Fx key={k} delay={i * 100}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 24, padding: "18px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
-                <span className="u-label" style={{ color: "var(--text-muted)" }}>{k}</span>
-                <span style={{ font: "400 17px var(--font-display)", color: "var(--ink-2)", textAlign: "right" }}>{v}</span>
-              </div>
-            </Fx>
-          ))}
-        </div>
-      </div>
+      <h2 aria-label="Du baust auf, was dir gehört." style={{ margin: 0, font: `500 ${mob ? "clamp(38px, 10.5vw, 52px)" : "clamp(44px, 6vw, 104px)"}/1.06 var(--font-display)`, letterSpacing: "-0.04em", color: "var(--ink)", maxWidth: 920, textAlign: "center", position: "relative" }}>
+        {WORDS.map((w, i) => {
+          if (w === "BR") return <br key={i} />;
+          if (w === "DIR") return (
+            <span key={i} aria-hidden="true" style={{ ...ws(i), color: dirFilled ? "var(--signal)" : "transparent", WebkitTextStroke: "1.5px var(--ink)", transition: `all 550ms ${BT_EASE}, color 700ms ${BT_EASE}` }}>dir&nbsp;</span>
+          );
+          return <span key={i} aria-hidden="true" style={ws(i)}>{w}{i < WORDS.length - 1 ? " " : ""}</span>;
+        })}
+        <span aria-hidden="true" style={{ display: "inline-block", color: "var(--signal)", transform: dotOn ? "scale(1)" : "scale(0)", transition: `transform 420ms ${BT_EASE}` }}>.</span>
+      </h2>
     </section>
   );
 }
@@ -1132,7 +1150,6 @@ function FaqMk() {
         ["Behalte ich meine eigene Marke?", "Ja. Du trittst unter deinem eigenen Namen auf; UNIO liefert System, Software und Dealflow im Hintergrund, ohne sich vor deine Marke zu stellen."],
         ["Bin ich angestellt oder selbstständig?", "Du bleibst selbstständig und handelst auf eigene Rechnung — CIRCLE ist ein Netzwerk, kein Anstellungsverhältnis. [PLATZHALTER: rechtl. Konstruktion bestätigen]"],
         ["Wie funktioniert die Beteiligung?", "Top-Performer bekommen echte Unternehmensbeteiligung, und über das Referral-Programm verdienst du an Deals von Makler:innen mit, die du in den CIRCLE holst. [PLATZHALTER: Beteiligungsdetails]", { href: "#bewerben", label: "Zum Gespräch" }],
-        ["Muss ich meine Bestandskunden mitbringen?", "Nein. Deine Bestandskunden bleiben deine Sache — du kannst sie einbringen, musst aber nicht. Dealflow bekommst du ohnehin über das System."],
         ["Wie schnell bin ich startklar?", "Nach Bewerbung und Gespräch folgt ein kompaktes Onboarding auf Plattform, Projekte und Community — du startest nie bei null."],
         ["Für wen ist der CIRCLE nichts?", "Für alle, die nur einen Maklerpool suchen: CIRCLE ist kuratiert und auf Ownership ausgelegt — wer kein eigenes Geschäft aufbauen will, ist woanders besser aufgehoben."],
       ]}

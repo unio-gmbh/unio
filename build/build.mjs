@@ -46,9 +46,9 @@ const PAGES = [
   },
   {
     src: "bautraeger.html", out: "bautraeger.html", path: "/bautraeger",
-    title: "Bauträger Vermarktung Wien: Markttest vor Baustart | UNIO",
-    description: "Neubauprojekte datenbasiert vermarkten: Markttest vor dem Baustart, Performance-Kampagnen, kuratierter Maklervertrieb und Live-Steuerung in LENS. 100 % erfolgsbasiert, kein Retainer.",
-    og: "/assets/img/ecoluxe-wide.jpg",
+    title: "Bauträger Vermarktung Wien: Marketing & Vertrieb als System | UNIO",
+    description: "Neubauprojekte und Bestands-Abverkauf mit einem System: Performance-Kampagnen, kuratierter Maklervertrieb (CIRCLE) und Live-Steuerung in LENS. 100 % erfolgsbasiert, kein Retainer.",
+    og: "/assets/img/albrechts-fassade.jpg",
   },
   {
     src: "immobilien.html", out: "immobilien.html", path: "/immobilien",
@@ -59,7 +59,7 @@ const PAGES = [
   {
     src: "story.html", out: "story.html", path: "/story",
     title: "Die UNIO Story: Fünf Unternehmen, eine Mission | UNIO",
-    description: "Der Markt war eine Blackbox, also bauten wir Klarheit: Wie Vertrieb, Marketing und Technologie 2026 zu UNIO fusionierten. Acht Gründer, drei Disziplinen, ein Betriebssystem.",
+    description: "Move as one: Wie Vertrieb, Marketing und Technologie 2026 zu UNIO fusionierten. Acht Gründer, drei Disziplinen, ein Betriebssystem.",
     og: "/assets/team/gruppe-serioes.jpg",
     extraSchema: () => ([{
       "@context": "https://schema.org", "@type": "AboutPage", name: "Die UNIO Story", url: ORIGIN + "/story",

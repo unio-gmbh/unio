@@ -353,7 +353,7 @@ function SiteFooter() {
       <EmberGlow variant="still" corner="86% 88%" />
       <div style={{ position: "relative", zIndex: 1 }}>
       <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(36px, 10vw, 48px)" : "clamp(44px, 5.4vw, 92px)"}/0.98 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-        Raum. Technologie.<br />Mensch.
+        Move as one<span style={{ color: "var(--signal)" }}>.</span>
       </h2>
       <div style={{ display: "flex", gap: 12, marginTop: mob ? 28 : 36, flexWrap: "wrap" }}>
         <Button size="lg" variant="paper" knob onClick={() => (location.href = "kontakt.html?demo=1")}>Demo buchen</Button>

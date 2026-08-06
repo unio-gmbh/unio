@@ -1,6 +1,6 @@
 /* UNIO — Story v2 (Korrektur-Briefing 05.07.): ein oranger Punkt als roter Faden.
    Sequenz: 01 Ursprung (Hero) · 02 Erkenntnis (5 Seiten, horizontal) · 03 Fusion (Sankey)
-   · 04 Warum·Wie·Was (Golden Circle) · 05 Menschen · 06 Roadmap (horizontal) · 07 Finale.
+   · 04 Warum·Wie·Was (Golden Circle) · 05 Menschen · 06 Finale (Beat 08, Roadmap ausgeblendet).
    Hinweis: der Faden nutzt var(--signal) #FFAA09 (System-Akzent) statt des Briefing-Hex
    #E96F2B, damit EIN Orange über die ganze Website konsistent bleibt. */
 const { GlassPanel: GPs, Button: Bs, FlutedGlass: FGs } = window.UNIODesignSystem_b6216a;
@@ -37,7 +37,7 @@ function HeroSt() {
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "185px 4vw 120px 7vw" }}>
           <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.2vw, 40px)" : "clamp(40px, 4.4vw, 76px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Der Markt war eine Blackbox.<br />Also bauten wir<br />Klarheit<span style={{ color: "var(--signal)" }}>.</span>
+            Move as one<span style={{ color: "var(--signal)" }}>.</span>
           </h1>
           <p className="u-label" style={{ margin: "26px 0 0", color: "var(--text-muted)" }}>Die Geschichte hinter UNIO · Wien</p>
           <p style={{ margin: "18px 0 0", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
@@ -47,9 +47,9 @@ function HeroSt() {
         <div style={{ position: "relative", overflow: "hidden", background: "var(--paper-3)", minHeight: mob ? 340 : undefined }}>
           <img src="../../assets/img/vienna-facade.jpg" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", filter: "sepia(0.5) saturate(0.7)", opacity: 1 - reveal * 0.9, transition: "opacity 300ms linear" }} />
           <FGs reveal={reveal} side="left" strength={13} style={{ position: "absolute", inset: 0 }}>
-            <img src="../../assets/img/albrecht.jpg" alt="Das Albrecht — Gegenwart" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src="../../assets/img/obenzwei.jpg" alt="ObenZwei — Gegenwart" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
           </FGs>
-          <span className="u-label" style={{ position: "absolute", left: 20, bottom: 16, fontSize: 10, color: "var(--text-inverse)", textShadow: "0 1px 10px rgba(0,0,0,0.6)" }}>{reveal > 0.85 ? "Gegenwart · Das Albrecht" : "Herkunft"}</span>
+          <span className="u-label" style={{ position: "absolute", left: 20, bottom: 16, fontSize: 10, color: "var(--text-inverse)", textShadow: "0 1px 10px rgba(0,0,0,0.6)" }}>{reveal > 0.85 ? "Gegenwart · ObenZwei" : "Herkunft"}</span>
         </div>
       </div>
     </section>
@@ -62,7 +62,7 @@ const PERSPEKT = [
   ["02", "Die Maklerin", "verwaltet Papier, statt Menschen zu beraten. Exposés, Portale, Termine, Abrechnung: Die halbe Woche gehört Systemen, die einander nicht kennen."],
   ["03", "Der Bauträger", "baut auf Hoffnung, weil der Markt erst nach dem Baustart antwortet. Preisband, Grundrisse, Zielgruppen: Entschieden wird, bevor echte Nachfrage sichtbar ist."],
   ["04", "Der Käufer", "vergleicht Inserate statt Wahrheiten. Geschönte Fotos, veraltete Preise, unbeantwortete Anfragen: Vertrauen bleibt Glückssache."],
-  ["05", "Der Vermarkter", "schaltet Kampagnen in eine Blackbox. Budget rein, Klicks raus. Was davon beim Abschluss ankommt, sieht niemand."],
+  ["05", "Der Marketer", "schaltet Kampagnen in eine Blackbox. Budget rein, Klicks raus. Was davon beim Abschluss ankommt, sieht niemand."],
 ];
 function ErkenntnisSt() {
   const [ref, p] = usePinProgress();
@@ -234,8 +234,8 @@ function FusionFlow() {
 const HOW_LABELS = ["Raum", "Technologie", "Mensch"];
 const WHAT_CHIPS = ["NOVA", "LEAD ENGINE", "CIRCLE", "LENS"];
 const CIRCLE_COPY = [
-  ["WARUM", "Der Markt ist eine Blackbox. Menschen verdienen Klarheit.", "Die Überzeugung hinter der Fusion — und der Maßstab für jede Entscheidung seither."],
-  ["WIE", "Raum · Technologie · Mensch.", "Drei Disziplinen, die einander brauchen — keine funktioniert allein."],
+  ["WARUM", "Weil Vertrauen besser skaliert als Druck.", "Die Immobilienbranche kann wieder zutiefst menschlich werden. Das ist die Überzeugung hinter allem."],
+  ["WIE", "Raum · Technologie · Mensch.", "Gemeinsame Infrastruktur, individuelle Marken, geteilte Wertschöpfung: verbunden in einem Betriebssystem."],
   ["WAS", "Ein Betriebssystem für Immobilienvertrieb.", "NOVA, LEAD ENGINE, CIRCLE und LENS — vier Module, ein System. Live in LENS."],
 ];
 function GoldenCircle() {
@@ -445,19 +445,24 @@ function SkalaSt() {
 
 /* ===== 07 · FINALE ===== */
 function FinaleSt() {
+  const zeilen = ["Keine weitere Immobilienagentur.", "Keine weitere Plattform.", "Kein weiteres Technologieunternehmen."];
   return (
-    <section data-screen-label="Finale" className="u-grain" style={{ ...stackCard(8, "var(--paper)"), padding: "150px 7vw 175px", textAlign: "center" }}>
-      <KapSt nr="07" label="Finale" />
-      <p style={{ margin: "0 auto 30px", font: "400 clamp(17px, 1.8vw, 22px)/1.55 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>
-        Was als Überzeugung begann, ist heute ein System. Und wir fangen gerade erst an.
-      </p>
-      <h2 style={{ margin: 0, font: "500 clamp(40px, 5vw, 84px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-        Raum. Technologie.<br />Mensch<span style={{ color: "var(--signal)" }}>.</span>
-      </h2>
-      <div style={{ marginTop: 34, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-        <Bs size="lg" variant="signal" knob onClick={() => location.assign("kontakt.html")}>Mit uns sprechen</Bs>
-        <Bs size="lg" variant="ghost" onClick={() => location.assign("bautraeger.html")}>Für Bauträger</Bs>
-        <Bs size="lg" variant="ghost" onClick={() => location.assign("makler.html")}>Für Makler:innen</Bs>
+    <section data-screen-label="Finale" className="u-grain" style={{ ...stackCard(8, "var(--paper)"), padding: "clamp(130px, 18vh, 200px) 7vw", textAlign: "center" }}>
+      <KapSt nr="06" label="Finale" />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 34 }}>
+        {zeilen.map((z, i) => (
+          <Reveal key={z} delay={i * 120}>
+            <p style={{ margin: 0, font: "400 clamp(17px, 1.9vw, 24px)/1.4 var(--font-display)", color: "var(--text-muted)" }}>{z}</p>
+          </Reveal>
+        ))}
+      </div>
+      <Reveal delay={400}>
+        <h2 style={{ margin: 0, font: "500 clamp(38px, 4.6vw, 80px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+          UNIO ist eine Überzeugung<span style={{ color: "var(--signal)" }}>.</span>
+        </h2>
+      </Reveal>
+      <div style={{ marginTop: 38, display: "flex", justifyContent: "center" }}>
+        <Bs size="lg" variant="signal" knob onClick={() => location.assign("kontakt.html")}>Gespräch anfragen</Bs>
       </div>
     </section>
   );
@@ -473,7 +478,7 @@ function App() {
       <FusionFlow />
       <GoldenCircle />
       <TeamSt />
-      <SkalaSt />
+      <FinaleSt />
       <div style={{ position: "relative", zIndex: 9 }}><SiteFooter /></div>
     </div>
   );

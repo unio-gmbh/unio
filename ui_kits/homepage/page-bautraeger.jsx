@@ -1,7 +1,8 @@
-/* UNIO — Bauträger v3 (Korrektur-Briefing 04.07.): 10 Kapitel, variierte Architekturen.
-   01 Split-Hero · 02 Treppen-Statement · 03 Beweis · 04 Pipeline (bt-system) ·
-   05 Lernkurve (bt-system) · 06 Nutzen-Bento · 07 100 % · 08 Simulator ·
-   09 Einwände · 10 Strecke + Funnel. Tracking-Events: data-track. */
+/* UNIO — Bauträger v4 (Feedback 05.08.): Story ohne Testing-Fokus, Problem→Lösung.
+   01 Split-Hero (stärkste Makler + bestes Marketing) · Störer · 02 Problem→Lösung
+   (gepinnt, ersetzt Leistungen + SystemLine) · 03 Beweis · Funnel-Graph ·
+   Lernkurve/Dashboard · Nutzen-Bento (Risiko-Umkehr) · Zwei Ausgangslagen ·
+   100 % Modell · Strecke · Funnel · Einwände. Tracking-Events: data-track. */
 const {
   GlassPanel: GPb, FlutedGlass: FGb, StatBlock: SBb, DataLabel: DLb,
   Button: Bb, IconButton: IBb, Tag: Tgb,
@@ -48,13 +49,13 @@ function HeroBt() {
         <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "175px 4vw 120px 7vw" }}>
           <div className="u-herglow" aria-hidden="true" style={{ position: "absolute", left: "-14%", top: "8%", width: "60%", height: "80%", zIndex: 0, pointerEvents: "none", background: "radial-gradient(60% 60% at 20% 40%, rgba(255,170,9,.18) 0%, rgba(255,219,87,.09) 44%, transparent 72%)", animation: BT_RM ? "none" : "heroGlowDrift 30s ease-in-out infinite alternate" }}></div>
           <GridLines />
-          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(32px, 8.6vw, 42px)" : "clamp(40px, 4.4vw, 76px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
-            <span style={{ display: "block" }}>Wissen, was funktioniert</span>
-            <span style={{ display: "block", marginLeft: mob ? "4%" : "8%", color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>bevor</span>
-            <span style={{ display: "block", marginLeft: mob ? "8%" : "16%" }}>gebaut wird<span style={{ color: "var(--signal)" }}>.</span></span>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 40px)" : "clamp(36px, 4vw, 70px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)", position: "relative" }}>
+            <span style={{ display: "block" }}>Makler und Marketing,</span>
+            <span style={{ display: "block", marginLeft: mob ? "4%" : "8%", color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>verbunden</span>
+            <span style={{ display: "block", marginLeft: mob ? "8%" : "16%" }}>zu einem System<span style={{ color: "var(--signal)" }}>.</span></span>
           </h1>
-          <p style={{ margin: mob ? "20px 0 0" : "24px 0 0 16%", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 380, position: "relative" }}>
-            Markttest, Marketing und Vertrieb als ein datengesteuertes System.
+          <p style={{ margin: mob ? "20px 0 0" : "24px 0 0 16%", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 400, position: "relative" }}>
+            Die stärksten Makler der Stadt, das beste Marketing und volle Transparenz: verbunden für deinen Abverkauf.
           </p>
           <div style={{ display: "flex", gap: 12, marginTop: mob ? 24 : 30, marginLeft: mob ? 0 : "16%", alignItems: "center", position: "relative", flexWrap: "wrap" }}>
             <Bb size="lg" knob data-track="hero_cta_primary" onClick={() => (location.hash = "funnel")}>Projekt prüfen lassen</Bb>
@@ -64,9 +65,9 @@ function HeroBt() {
         {/* Rechts: Projektfoto, Reveal-Choreografie */}
         <div style={{ position: "relative", overflow: "hidden", minHeight: mob ? 380 : 480 }}>
           <FGb reveal={reveal} side="left" strength={13} style={{ position: "absolute", inset: 0 }}>
-            <img src="../../assets/img/albrecht.jpg" alt="Das Albrecht — Townhäuser, Wien 1170" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src="../../assets/img/penthouse.jpg" alt="Origins — Penthouse, Wien 1180" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </FGb>
-          <DockPoint top="18%" right="8%" label="Preisband kalibriert" show={docked} delay={0} />
+          <DockPoint top="18%" right="8%" label="Kampagne live" show={docked} delay={0} />
           <DockPoint top="42%" right="16%" label="Nachfrage-Score 72" show={docked} delay={160} />
           <DockPoint top="64%" right="7%" label="Top 4 reserviert" show={docked} delay={320} />
         </div>
@@ -81,35 +82,96 @@ function HeroBt() {
   );
 }
 
-/* ===== 02 · DAS PROBLEM — Treppen-Statement ===== */
-const PROBLEME = [
-  ["01", "Testing & Positionierung", "Brand Sprint, Creative Testing und Zielgruppen-Cluster liefern eine validierte Story — für höhere Preisresilienz und bessere Nachfrage."],
-  ["02", "Lead Engine", "Realtime Demand, messbar bis zur Anfragequalität: KI-Qualifizierung, Intent Score und datenbasierte Sales-Execution bis zum Close."],
-  ["03", "Circle", "Kuratierte Makler-Community (ab 100.000 € Jahresumsatz) sorgt für höhere Abschlussgeschwindigkeit, Fokus und messbar gesteuerten Vertrieb."],
-  ["04", "Dashboard & Data Intelligence", "Live-Pipeline, Unit-Status und Predictions in Echtzeit — plus Data Engine, die aus Projekten lernt und jedes nächste Launch besser macht."],
+/* ===== 02 · PROBLEM → LÖSUNG — gepinnt, jedes Problem bekommt seine Antwort ===== */
+const PL_PAARE = [
+  ["Inserate warten, bis Nachfrage zufällig vorbeikommt.", "LEAD ENGINE", "Nachfrage, die wir schaffen.", "Kampagnen auf Meta und Google bringen planbare Nachfrage, messbar bis zur Anfragequalität. Wir gehen mit dem Marketing in Vorleistung."],
+  ["Makler arbeiten nebeneinander, jeder für sich.", "CIRCLE", "Die stärksten Makler, verbunden.", "Eine kuratierte Community aus Top-Maklern verkauft dein Projekt gemeinsam: gesteuert statt gehofft, mit vorgemerkten Käufern."],
+  ["Reporting kommt Wochen später, als PDF.", "LENS", "Du siehst alles. Live.", "Pipeline, Anfragen und Unit-Status in Echtzeit im Dashboard. Reporting-Meetings entfallen, du schaust einfach rein."],
+  ["Entscheidungen fallen nach Gefühl.", "NOVA", "Der Markttest vor dem Baustart.", "Preisband und Grundrisse am echten Markt validieren, bevor gebaut wird: die nächste Ausbaustufe des Systems. Heute schon fließen alle Kampagnen-Daten zurück in dein Projekt."],
 ];
+/* Produktband-Toene: Signal in drei Abstufungen, Zukunftsvision neutral */
+const PL_SHADES = ["#FFAA09", "#EE9410", "#D97F06", "var(--paper-3, #ECE9E2)"];
+function PlZeile({ paar, on, zukunft, mob, idx }) {
+  const [problem, produkt, titel, copy] = paar;
+  const band = PL_SHADES[Math.min(idx, PL_SHADES.length - 1)];
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: mob ? 10 : 56, alignItems: "center", padding: mob ? "16px 0" : "13px 0", borderTop: "1px solid var(--hairline-dark)" }}>
+      <div style={{ alignSelf: mob ? "start" : "center" }}>
+        <span style={{ display: "inline-block", maxWidth: mob ? "none" : "24ch", font: `400 ${mob ? 15 : "clamp(15px, 1.25vw, 18px)"}/1.5 var(--font-display)`, color: on ? "var(--text-muted)" : "var(--ink)", textDecoration: "line-through", textDecorationThickness: 1.5, textDecorationColor: on ? "var(--signal)" : "transparent", transition: `color 500ms ${BT_EASE}, text-decoration-color 650ms ${BT_EASE}` }}>
+          {problem}
+        </span>
+      </div>
+      <div style={{ position: "relative", overflow: "hidden", opacity: on ? 1 : 0.18, transform: on ? "none" : "translateX(26px)", transition: `all 600ms ${BT_EASE}`, background: "#FFFFFF", borderRadius: "var(--r-card)", padding: mob ? "16px 48px 16px 18px" : "15px 58px 15px 22px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), 0 1px 2px rgba(11,10,9,0.04)" }}>
+        {/* vertikales Produktband am rechten Kartenrand */}
+        <span style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: mob ? 32 : 38, background: band, display: "flex", alignItems: "center", justifyContent: "center", transform: on ? "none" : "translateX(100%)", transition: `transform 550ms ${BT_EASE}` }}>
+          <span style={{ writingMode: "vertical-rl", font: "10px var(--font-mono)", letterSpacing: "0.2em", textTransform: "uppercase", color: zukunft ? "var(--text-muted)" : "#FFFFFF", whiteSpace: "nowrap" }}>{produkt}</span>
+        </span>
+        {zukunft && <span className="u-label" style={{ display: "block", fontSize: 10, color: "var(--text-muted)", marginBottom: 6 }}>Zukunftsvision</span>}
+        <div style={{ font: `500 ${mob ? 17 : "clamp(17px, 1.5vw, 22px)"}/1.2 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)" }}>{titel}</div>
+        <p style={{ margin: "6px 0 0", font: `400 ${mob ? 13 : 13.5}px/1.5 var(--font-display)`, color: "var(--text-muted)", maxWidth: "56ch" }}>{copy}</p>
+      </div>
+    </div>
+  );
+}
 function ProblemBt() {
   const mob = window.useMobile();
-  return (
-    <section data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "110px 6vw 100px" : "185px 7vw 160px" }}>
-      <div style={{ maxWidth: 640, marginBottom: mob ? 52 : 100, position: "relative" }}>
-        <h2 style={{ margin: 0, font: "500 clamp(34px, 4vw, 64px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-          Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
-        </h2>
-        <p style={{ margin: "22px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 500 }}>
-          Bauträger brauchen kein weiteres Tool — sondern ein System, das den gesamten Projektzyklus optimiert: von Positionierung und Nachfrage bis zur Vertriebs-Execution und Echtzeit-Steuerung.
-        </p>
-      </div>
-      <div style={{ position: "relative" }}>
-        {PROBLEME.map(([nr, t, m], i) => (
-          <Fx key={nr} delay={i * 90}>
-            <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "64px minmax(0, 1.2fr) minmax(0, 1fr)", gap: mob ? "10px 0" : "0 40px", padding: mob ? "32px 0" : "48px 0", borderTop: "1px solid var(--hairline-dark)", alignItems: "start" }}>
-              <span style={{ font: "14px var(--font-mono)", color: "var(--signal-deep)", paddingTop: mob ? 0 : 6 }}>{nr}</span>
-              <h3 style={{ margin: 0, font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(24px, 2.6vw, 38px)"}/1.1 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
-              <p style={{ margin: 0, font: "400 15px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 380 }}>{m}</p>
-            </div>
-          </Fx>
+  const secRef = React.useRef(null);
+  const [p, setP] = React.useState(BT_RM ? 1 : 0);
+  React.useEffect(() => {
+    if (BT_RM) return;
+    const on = () => {
+      const el = secRef.current; if (!el) return;
+      setP(Math.max(0, Math.min(1, (scrollY - el.offsetTop) / (el.offsetHeight - innerHeight))));
+    };
+    on();
+    addEventListener("scroll", on, { passive: true });
+    return () => removeEventListener("scroll", on);
+  }, []);
+  if (mob || BT_RM) {
+    return (
+      <section id="system" data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "100px 6vw 96px" }}>
+        <Kap nr="02" label="System" />
+        <div style={{ maxWidth: 640, marginBottom: 40, position: "relative" }}>
+          <h2 style={{ margin: 0, font: "500 clamp(30px, 8vw, 40px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+            Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+          </h2>
+          <p style={{ margin: "16px 0 0", font: "400 15px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 500 }}>
+            Kein weiteres Tool, sondern ein System: Jedes Problem im Abverkauf bekommt eine Antwort.
+          </p>
+        </div>
+        {PL_PAARE.map((paar, i) => (
+          <Fx key={paar[1]} delay={i * 80}><PlZeile paar={paar} on={true} zukunft={i === 3} mob={true} idx={i} /></Fx>
         ))}
+      </section>
+    );
+  }
+  return (
+    <section id="system" ref={secRef} data-track="chapter_view_02" data-screen-label="System" style={{ height: "300vh", position: "relative", background: "var(--paper)" }}>
+      <div className="u-grain" style={{ position: "sticky", top: 0, minHeight: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(70px, 11vh, 120px) 7vw clamp(36px, 6vh, 70px)" }}>
+        <GridLines />
+        <Kap nr="02" label="System" />
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: 56, alignItems: "start", position: "relative" }}>
+          <div>
+            <h2 style={{ margin: 0, font: "500 clamp(30px, 3.2vw, 54px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+              Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+            </h2>
+            <p style={{ margin: "20px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 400 }}>
+              Kein weiteres Tool, sondern ein System: Jedes Problem im Abverkauf bekommt eine Antwort. Scroll, und die linke Seite erledigt sich.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 40 }}>
+              <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+                <circle cx="17" cy="17" r="14" fill="none" stroke="var(--hairline-dark)" strokeWidth="1.5" />
+                <circle cx="17" cy="17" r="14" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={(1 - p) * 2 * Math.PI * 14} transform="rotate(-90 17 17)" strokeLinecap="round" />
+              </svg>
+              <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>{Math.min(4, Math.floor(p * 4.6) + (p > 0.02 ? 1 : 0)) || 1} von 4 gelöst</span>
+            </div>
+          </div>
+          <div>
+            {PL_PAARE.map((paar, i) => (
+              <PlZeile key={paar[1]} paar={paar} on={BT_RM || p * 4.6 - i > 0.5} zukunft={i === 3} mob={false} idx={i} />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -127,14 +189,14 @@ function ProofBt() {
   ];
   const edge = mob ? 20 : 38;
   const labels = mob
-    ? [["Case", "Villa Ecoluxe", { top: 22, left: edge }], ["Status", "Verkauft", { top: 22, right: edge, textAlign: "right" }, true]]
-    : [["Case", "Villa Ecoluxe", { top: 34, left: edge }], ["Status", "Verkauft", { top: 34, right: edge, textAlign: "right" }, true], ["Vermarktung", "Vor Baustart getestet", { bottom: 34, left: edge }], ["Steuerung", "Live · LENS", { bottom: 34, right: edge, textAlign: "right" }]];
+    ? [["Case", "Das Albrecht", { top: 22, left: edge }], ["Status", "Live vermarktet", { top: 22, right: edge, textAlign: "right" }, true]]
+    : [["Case", "Das Albrecht", { top: 34, left: edge }], ["Status", "Live vermarktet", { top: 34, right: edge, textAlign: "right" }, true], ["Vermarktung", "Kampagne + CIRCLE", { bottom: 34, left: edge }], ["Steuerung", "Live · LENS", { bottom: 34, right: edge, textAlign: "right" }]];
   return (
     <section data-track="chapter_view_03" data-screen-label="Beweis" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 110px" : "175px 7vw 175px" }}>
       <GridLines />
       <Kap nr="03" label="Beweis" />
       <div style={{ position: "relative", borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "var(--shadow-soft)" }}>
-        <img src="../../assets/img/ecoluxe-wide.jpg" alt="Villa Ecoluxe" style={{ display: "block", width: "100%", height: mob ? "min(64vh, 480px)" : "min(70vh, 620px)", objectFit: "cover" }} />
+        <img src="../../assets/img/albrecht-dusk.jpg" alt="Das Albrecht, Townhäuser in Wien 1170" style={{ display: "block", width: "100%", height: mob ? "min(64vh, 480px)" : "min(70vh, 620px)", objectFit: "cover" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.34), transparent 36%, transparent 58%, rgba(11,10,9,0.5))" }}></div>
         <div aria-hidden="true" style={{ position: "absolute", inset: mob ? 10 : 18, border: "1px solid rgba(255,255,255,0.34)", borderRadius: 14, pointerEvents: "none" }}></div>
         {labels.map(([k, v, posi, sig]) => (
@@ -145,7 +207,7 @@ function ProofBt() {
         ))}
         <div style={{ position: "absolute", left: edge, right: edge, top: "45%", color: "var(--text-inverse)" }}>
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(32px, 4vw, 64px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", textShadow: "0 2px 40px rgba(0,0,0,0.45)" }}>
-            Verkauft, bevor der<br />Markt es glaubte.
+            61 Anfragen.<br />Zwei Wochen.
           </h2>
         </div>
       </div>
@@ -269,46 +331,46 @@ function BentoBt() {
         </Fx>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 14 }}>
-        <NCard span={4} tone="orange" title="Schneller zur Vorverwertungsquote." copy="Vorgemerkte Nachfrage zahlt direkt auf die von Banken geforderte Vorverkaufsquote ein — frühere Finanzierungsfreigabe, früherer Baustart.">
+        <NCard span={4} tone="orange" title="Wir gehen ins Risiko. Mit unserem Marketing." copy="Kreation, Kampagnen und Media gehen in Vorleistung, vergütet wird am Abverkauf. Wenig Risiko für dich, maximales Bemühen von uns.">
           <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
-            <span style={{ font: "500 52px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>
-              <CountUp to={1240} run={run} fmt={(v) => v.toLocaleString("de-AT")} />
-            </span>
-            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Käuferprofile im Matching</span>
+            <span style={{ font: "500 52px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>€ 0</span>
+            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Retainer · Setup-Kosten</span>
           </div>
         </NCard>
-        <NCard span={2} title="CIRCLE — kuratierter Vertrieb." copy="Top-Makler-Community ab € 100.000 Jahresumsatz schließt schneller ab, gesteuert statt gehofft.">
+        <NCard span={2} title="Die stärksten Makler der Stadt." copy="CIRCLE ist kuratiert: Top-Makler ab € 100.000 Jahresumsatz, gesteuert statt gehofft.">
           <span style={{ font: "500 44px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--signal-deep)", fontVariantNumeric: "tabular-nums" }}>25+</span>
           <span className="u-label" style={{ display: "block", marginTop: 8, fontSize: 10, color: "var(--text-muted)" }}>Top-Performer im Pool</span>
         </NCard>
-        <NCard span={2} title="Standzeit kostet Zinsen." copy="Jeder Monat weniger Vermarktungsdauer senkt die Zwischenfinanzierung — Tempo als Euro-Größe, nicht als Marketing-Wort.">
+        <NCard span={2} title="Du siehst alles. Live." copy="Pipeline, Anfragen und Unit-Status in LENS. Reporting-Meetings entfallen, du schaust einfach rein.">
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 9, font: "11px var(--font-mono)", letterSpacing: "0.08em", color: "var(--ink-2)", padding: "9px 14px", borderRadius: "var(--r-pill)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)", animation: BT_RM ? "none" : "uPulse 2.2s var(--ease-unio) infinite" }}></span>
+            app.unio.at · Anfragen live
+          </span>
+        </NCard>
+        <NCard span={2} title="Schneller zur Vorverwertungsquote." copy="Vorgemerkte Nachfrage zahlt auf die von Banken geforderte Vorverkaufsquote ein: frühere Finanzierungsfreigabe, früherer Baustart.">
+          <span style={{ font: "500 44px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--signal-deep)", fontVariantNumeric: "tabular-nums" }}>
+            <CountUp to={1240} run={run} fmt={(v) => v.toLocaleString("de-AT")} />
+          </span>
+          <span className="u-label" style={{ display: "block", marginTop: 8, fontSize: 10, color: "var(--text-muted)" }}>Käuferprofile im Matching</span>
+        </NCard>
+        <NCard span={2} title="Standzeit kostet Zinsen." copy="Jeder Monat weniger Vermarktungsdauer senkt die Zwischenfinanzierung: Tempo als Euro-Größe, nicht als Marketing-Wort.">
           <svg viewBox="0 0 200 46" style={{ width: "100%", maxWidth: 200, height: "auto" }} aria-hidden="true">
             <polyline points="4,8 40,14 76,12 112,24 148,30 192,40" fill="none" stroke="rgba(11,10,9,0.3)" strokeWidth="1.5" />
             <circle cx="192" cy="40" r="3.5" fill="var(--signal)" />
           </svg>
         </NCard>
-        <NCard span={2} title="Der Mix wird getestet, bevor er gebaut wird." copy="Grundrisse, Preisband und Zielgruppen am echten Markt validiert — weniger Umplanung, weniger Margen-Risiko.">
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {["Preisband", "Grundrisse", "Zielgruppen"].map((c) => <span key={c} style={nChip}>{c}</span>)}
-          </div>
-        </NCard>
-        <NCard span={2} title="Absagen fließen zurück ins Projekt." copy="Besichtigungs- und Absage-Gründe als strukturierter Rückkanal für Ausstattungs- und Preisentscheidungen.">
-          <svg viewBox="0 0 200 40" style={{ width: 130, height: "auto" }} aria-hidden="true">
-            <path d="M10 12 H150 a20 20 0 0 1 0 24 H60" fill="none" stroke="rgba(11,10,9,0.3)" strokeWidth="1.5" />
-            <path d="M70 28 60 36l10 8" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="translate(0,-8)" />
-          </svg>
-        </NCard>
-        <NCard span={2} title="Ein Ansprechpartner statt drei Schnittstellen." copy="Agentur, Makler und Portal-Koordination fallen in ein System — keine Reporting-Meetings, du siehst live." />
-        <NCard span={2} title="CIRCLE verkauft, wo andere inserieren." copy="Vorgemerkte Käufer aus der kuratierten Community — Abschlüsse oft, bevor das Projekt öffentlich wird.">
+        <NCard span={2} title="CIRCLE verkauft, wo andere inserieren." copy="Vorgemerkte Käufer aus der kuratierten Community: Abschlüsse oft, bevor das Projekt öffentlich ist.">
           <svg viewBox="0 0 120 40" style={{ width: 110, height: "auto" }} aria-hidden="true">
             {[16, 40, 64, 88].map((x, i) => <circle key={x} cx={x} cy="20" r="9" fill="none" stroke={i === 3 ? "var(--signal)" : "rgba(11,10,9,0.3)"} strokeWidth="1.5" />)}
             <circle cx="88" cy="20" r="3.5" fill="var(--signal)" />
           </svg>
         </NCard>
-        <NCard span={2} title="Nachfrage mit Substanz." copy="Zielgruppen nach Milieus statt Reichweite um jeden Preis.">
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {["Eigennutzer", "1020–1220 Wien", "€ 0,6–1,8 Mio", "Familien & Paare"].map((c) => <span key={c} style={nChip}>{c}</span>)}
-          </div>
+        <NCard span={2} title="Ein Ansprechpartner statt drei Schnittstellen." copy="Agentur, Makler und Portal-Koordination fallen in ein System. Keine Abstimmungsrunden, du siehst live." />
+        <NCard span={2} title="Gutes Produkt, beste Chancen." copy="Wir sind ehrlich zu dir: Wenn das Produkt gut ist, hast du bei uns die besten Chancen am Markt.">
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "500 13px var(--font-display)", color: "var(--signal-deep)" }}>
+            <span style={{ width: 17, height: 17, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1.5px var(--signal)", font: "10px var(--font-mono)" }}>✓</span>
+            Ehrliche Einschätzung vorab
+          </span>
         </NCard>
       </div>
     </section>
@@ -321,7 +383,7 @@ function ModellBt() {
   return (
     <section data-track="chapter_view_07" data-screen-label="Modell" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "175px 7vw 175px" }}>
       <GridLines />
-      <Kap nr="07" label="Modell" />
+      <Kap nr="08" label="Modell" />
       <div ref={ref100} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
         <Fx>
           <div style={{ font: "500 clamp(110px, 18vw, 280px)/0.95 var(--font-display)", letterSpacing: "-0.05em", color: "transparent", WebkitTextStroke: "1.5px rgba(11,10,9,0.55)", whiteSpace: "nowrap" }}>
@@ -334,7 +396,7 @@ function ModellBt() {
           </h2>
         </Fx>
         <div style={{ width: "100%", maxWidth: 720, marginTop: 44, textAlign: "left" }}>
-          {[["Vergütung", "erfolgsbasiert am Abverkauf — kein Retainer"], ["Reporting", "entfällt — du siehst live (LENS)"], ["Markttest", "vor dem Baustart, am echten Markt"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"]].map(([k, v], i) => (
+          {[["Vergütung", "erfolgsbasiert am Abverkauf, kein Retainer"], ["Unser Einsatz", "Marketing, Kreation und Media gehen in Vorleistung"], ["Reporting", "entfällt, du siehst live (LENS)"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"], ["Ausblick", "Markttest vor Baustart als nächste Ausbaustufe"]].map(([k, v], i) => (
             <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 24, padding: "16px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
               <span className="u-label" style={{ color: "var(--text-muted)" }}>{k}</span>
               <span style={{ font: "400 16px var(--font-display)", color: "var(--ink-2)", textAlign: "right" }}>{v}</span>
@@ -436,10 +498,75 @@ function SimulatorBt() {
   );
 }
 
+/* ===== ZWEI AUSGANGSLAGEN — Zielgruppen-Weiche, hell und aufgeräumt ===== */
+function MandatPanel({ label, titel, copy, schritte, on, from, delayBase }) {
+  const mob = window.useMobile();
+  const dl = (n) => (on ? (delayBase + n) + "ms" : "0ms");
+  return (
+    <div style={{ position: "relative", borderRadius: "var(--r-panel)", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)", padding: mob ? "24px 22px 26px" : "clamp(28px, 2.6vw, 40px)", opacity: on ? 1 : 0, transform: on ? "none" : `translateX(${from}px)`, transition: `all 750ms ${BT_EASE}`, display: "flex", flexDirection: "column" }}>
+      <span className="u-label" style={{ display: "inline-flex", alignItems: "center", gap: 8, alignSelf: "flex-start", fontSize: 10, color: "var(--signal-deep)" }}>
+        <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>{label}
+      </span>
+      <h3 style={{ margin: "16px 0 0", font: `500 ${mob ? "clamp(21px, 5.8vw, 26px)" : "clamp(22px, 2vw, 32px)"}/1.15 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)" }}>{titel}</h3>
+      <p style={{ margin: "12px 0 0", font: `400 ${mob ? 14 : 15}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: "48ch" }}>{copy}</p>
+      {/* Mini-Ablauf: Punkte und Linie bauen sich gestaffelt auf */}
+      <div style={{ marginTop: mob ? 20 : 26, position: "relative" }}>
+        {schritte.map(([wann, was], i) => (
+          <div key={wann} style={{ position: "relative", display: "grid", gridTemplateColumns: mob ? "88px 1fr" : "104px 1fr", gap: 14, alignItems: "baseline", padding: "9px 0 9px 22px", opacity: on ? 1 : 0, transform: on ? "none" : "translateY(10px)", transition: `all 500ms ${BT_EASE}`, transitionDelay: dl(i * 160) }}>
+            {i < schritte.length - 1 && <span aria-hidden="true" style={{ position: "absolute", left: 4.5, top: 22, bottom: -12, width: 1, background: "var(--hairline-dark)" }}></span>}
+            <span aria-hidden="true" style={{ position: "absolute", left: 0, top: 13, width: 10, height: 10, borderRadius: "50%", background: "var(--signal)", boxShadow: "0 0 0 3px var(--signal-soft, rgba(255,170,9,0.18))", transform: on ? "scale(1)" : "scale(0)", transition: `transform 400ms ${BT_EASE}`, transitionDelay: dl(i * 160 + 100) }}></span>
+            <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>{wann}</span>
+            <span style={{ font: `400 ${mob ? 13.5 : 14.5}px/1.5 var(--font-display)`, color: "var(--ink-2)" }}>{was}</span>
+          </div>
+        ))}
+      </div>
+      <a href="#funnel" data-track={"mandat_cta_" + label.split(" ")[0].toLowerCase()} style={{ display: "inline-flex", alignItems: "center", gap: 9, font: "500 15px var(--font-display)", color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid var(--hairline-dark)", paddingBottom: 3, marginTop: "auto", paddingTop: 24, alignSelf: "flex-start" }}>
+        Projekt prüfen lassen <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>→</span>
+      </a>
+    </div>
+  );
+}
+function MandateBt() {
+  const [ref, run] = useOnceInView(0.25);
+  const mob = window.useMobile();
+  return (
+    <section data-screen-label="Ausgangslagen" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 100px" : "150px 7vw 150px" }}>
+      <GridLines />
+      <Kap nr="07" label="Ausgangslagen" />
+      <div style={{ maxWidth: 720, marginBottom: mob ? 36 : 56, position: "relative" }}>
+        <Fx>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+            Zwei Ausgangslagen.<br />Ein System<span style={{ color: "var(--signal)" }}>.</span>
+          </h2>
+          <p style={{ margin: "18px 0 0", font: "400 16px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
+            Egal, wo dein Projekt steht: Das System dahinter ist dasselbe, nur der Einstieg ist ein anderer.
+          </p>
+        </Fx>
+      </div>
+      <div ref={ref} style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap: mob ? 20 : 24, position: "relative", alignItems: "stretch" }}>
+        <MandatPanel
+          on={run} from={-44} delayBase={250}
+          label="Abverkauf · Bestand"
+          titel={<span>Du hast gekauft.<br />Jetzt soll es schnell gehen.</span>}
+          copy="Das Zinshaus ist günstig eingekauft, die Einheiten sollen zügig und sauber in den Markt. Kein Markenaufbau nötig: Das System startet sofort."
+          schritte={[["Tag 1", "Unterlagen und Preisliste übergeben"], ["Woche 1", "Kampagne und CIRCLE-Matching gehen live"], ["Ab Woche 2", "Besichtigungen und Angebote, alles live in LENS"]]}
+        />
+        <MandatPanel
+          on={run} from={44} delayBase={400}
+          label="Neuentwicklung · Launch"
+          titel={<span>Du entwickelst neu.<br />Es braucht eine eigene Marke.</span>}
+          copy="Dein Projekt braucht eine Positionierung und eine Story, die trägt. Wir bauen zuerst den Auftritt und starten dann den Vertrieb. Nicht inseriert, inszeniert."
+          schritte={[["Schritt 1", "Positionierung und Projektstory"], ["Schritt 2", "Projektmarke, Homepage und Vermarktungsunterlagen"], ["Schritt 3", "Launch mit Kampagne und CIRCLE"]]}
+        />
+      </div>
+    </section>
+  );
+}
+
 /* ===== 09 · EINWÄNDE — Akkordeon (Granger) ===== */
 const EINWAENDE = [
   ["Was kostet es — und wann?", "100 % erfolgsbasiert: Wir verdienen am Abverkauf, nicht am Retainer — keine Setup-Kosten, kein monatliches Fixum. Unser Risiko liegt neben deinem.", { href: "#simulator", label: "Zum Simulator" }],
-  ["Wie schnell sehen wir erste Daten?", "Der Markttest startet direkt nach der Unterlagen-Übergabe; erste Resonanzdaten liegen innerhalb des Testfensters vor. [PLATZHALTER: verbindliche Timeline]", { href: "#funnel", label: "Projekt einreichen" }],
+  ["Wie schnell sehen wir erste Daten?", "Kampagnen-Setup und CIRCLE-Matching starten direkt nach der Unterlagen-Übergabe; Anfragen und Pipeline siehst du ab dem ersten Tag live in LENS. [PLATZHALTER: verbindliche Timeline]", { href: "#funnel", label: "Projekt einreichen" }],
   ["Was passiert mit unseren Bestandsmaklern?", "Deine Bestandspartner bleiben eingebunden: CIRCLE ergänzt statt ersetzt, und die Zuordnung jeder Anfrage bleibt in LENS transparent nachvollziehbar. [PLATZHALTER: Details Partnermodell]"],
   ["Ist das bank- und beiratsfähig?", "Ja. Deine Projektdaten bleiben deine, und die LENS-Auswertungen sind exportfähig — aufbereitet für Bank, Beirat und Gesellschafter."],
   ["Was, wenn das Projekt schon läuft?", "Ein Einstieg ist jederzeit möglich: Wir docken an den aktuellen Stand an und steuern ab dort datenbasiert weiter — auch mitten in der Vermarktung."],
@@ -557,7 +684,7 @@ function FunnelBt() {
    vorliegt (Origins, Das Wimmer), zeigt die Karte den Live-Status statt
    erfundener Werte. */
 const STOERER_PROJ = [
-  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "num", v: "+31 %", cap: "über Zielpreis · verkauft" },
+  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "num", v: "282", cap: "Anfragen · Kampagne" },
   { video: "../../assets/video/hufhaus.mp4", img: "../../assets/img/vienna-garden.jpg", n: "Das Wimmer", b: "Wien-Umland", g: "live", cap: "Live vermarktet" },
   { img: "../../assets/img/beheim.jpg", n: "Das Beheim", b: "Wien 1170", g: "num", v: "27", cap: "Anfragen · 2 Wochen" },
   { img: "../../assets/img/obenzwei.jpg", n: "ObenZwei", b: "Wien 1020", g: "num", v: "25", cap: "hochqual. Anfragen / Woche" },
@@ -656,10 +783,10 @@ function App() {
       <StoererBt />
       <ProblemBt />
       <ProofBt />
-      <SystemLine />
       <FunnelGraphBt />
       <Lernkurve />
       <BentoBt />
+      <MandateBt />
       <ModellBt />
       <window.ProjektStrecke />
       <FunnelBt />

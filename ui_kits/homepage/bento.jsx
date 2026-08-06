@@ -215,6 +215,43 @@ function AnimAnlage({ pct = 90 }) {
 }
 
 /* Ansprechpartner-Kachel (Makler): Software-Bento mit einem Gesicht darin */
+/* "& vieles mehr": Reiseleiste ueber die volle Kachelbreite — ein Punkt wandert
+   von Station zu Station, die Linie fuellt sich hinter ihm. */
+function AnimAblaufTicker() {
+  const items = ["Objekt in Minuten", "Ein Klick, alle Kanäle", "Jeder Lead zählt", "Kaufangebote, digital", "Übergabe und Abrechnung"];
+  const mob = window.useMobile();
+  const t = window.useTick(items.length, 1700);
+  const pos = (i) => ((i + 0.5) / items.length) * 100;
+  if (mob) {
+    return (
+      <div className="u-label" style={{ fontSize: 10.5 }}>
+        {items.map((f, i) => (
+          <div key={f} style={{ display: "flex", alignItems: "center", gap: 10, padding: "5px 0", color: i === t ? "var(--ink)" : "var(--text-muted)", transition: "color 400ms var(--ease-unio)" }}>
+            <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: i <= t ? "var(--signal)" : "var(--paper-3, #ECE9E2)", transition: "background 400ms" }}></span>{f}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div style={{ position: "relative", padding: "26px 0 4px" }}>
+      <div style={{ position: "relative", height: 14 }}>
+        <div aria-hidden="true" style={{ position: "absolute", left: pos(0) + "%", right: (100 - pos(items.length - 1)) + "%", top: 6, height: 1, background: "var(--hairline-dark)" }}></div>
+        <div aria-hidden="true" style={{ position: "absolute", left: pos(0) + "%", top: 5.5, height: 2, background: "var(--signal)", width: (pos(t) - pos(0)) + "%", transition: "width 900ms var(--ease-unio)" }}></div>
+        {items.map((f, i) => (
+          <span key={f} aria-hidden="true" style={{ position: "absolute", left: pos(i) + "%", top: 2.5, transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: i <= t ? "var(--signal)" : "#FFFFFF", boxShadow: i <= t ? "none" : "inset 0 0 0 1px var(--hairline-dark)", transition: "all 400ms var(--ease-unio)" }}></span>
+        ))}
+        <span aria-hidden="true" style={{ position: "absolute", left: pos(t) + "%", top: -1, transform: "translateX(-50%)", width: 15, height: 15, borderRadius: "50%", background: "var(--signal)", boxShadow: "0 0 0 5px rgba(255,170,9,0.14)", transition: "left 900ms var(--ease-unio)" }}></span>
+      </div>
+      <div className="u-label" style={{ display: "flex", marginTop: 14, fontSize: 10.5 }}>
+        {items.map((f, i) => (
+          <span key={f} style={{ flex: 1, textAlign: "center", color: i === t ? "var(--ink)" : "var(--text-muted)", transition: "color 400ms var(--ease-unio)", padding: "0 6px" }}>{f}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AnsprechTile() {
   const t = window.useTick(2, 1400);
   return (
@@ -276,13 +313,7 @@ function SystemBento({ makler = false }) {
             <BCard span={2} title="Smart Besichtigungen" copy="Termine direkt aus dem Lead heraus buchen — synchron mit deinem Kalender."><AnimKalender /></BCard>
             <AnsprechTile />
             <BCard span={6} title="& vieles mehr" copy="Vom ersten Dokument bis zur Abrechnung: Der ganze Ablauf passiert auf der Plattform.">
-              <div className="u-label" style={{ display: "flex", gap: "10px 22px", flexWrap: "wrap", fontSize: 10.5, color: "var(--text-muted)", lineHeight: 2 }}>
-                {["Objekt in Minuten", "Ein Klick, alle Kanäle", "Jeder Lead zählt", "Kaufangebote, digital", "Übergabe und Abrechnung"].map((f) => (
-                  <span key={f} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <span aria-hidden="true" style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--signal)" }}></span>{f}
-                  </span>
-                ))}
-              </div>
+              <AnimAblaufTicker />
             </BCard>
           </React.Fragment>
         ) : (

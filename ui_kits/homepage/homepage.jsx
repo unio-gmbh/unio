@@ -150,8 +150,8 @@ function Markt() {
       {/* Eine Zahl pro Zielgruppe, jede verlinkt auf ihre Seite */}
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 36 : 48, marginTop: mob ? 64 : 120, borderTop: "1px solid var(--hairline-dark)", paddingTop: mob ? 44 : 60 }}>
         {[
-          ["Wenn du verkaufst", "immobilien.html", 80, "%", "weniger Aufwand — wir übernehmen Vermarktung, Prüfung und Abwicklung"],
           ["Wenn du baust", "bautraeger.html", 100, "%", "Transparenz — jede Anfrage live in LENS"],
+          ["Wenn du verkaufst", "immobilien.html", 80, "%", "weniger Aufwand — wir übernehmen Vermarktung, Prüfung und Abwicklung"],
           ["Wenn du makelst", "makler.html", 100, "%", "Provision ab € 150K Jahresumsatz · CIRCLE"],
         ].map(([grp, href, val, unit, label]) => (
           <a key={href} href={href} style={{ textDecoration: "none", display: "block" }}>

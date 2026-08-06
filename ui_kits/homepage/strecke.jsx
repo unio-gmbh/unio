@@ -17,8 +17,8 @@ const SEQ_ROW_A = {
   low: [[SQ_IMG + "ecoluxe.jpg", 16], [SQ_PH + "hufhaus-pool-abend.jpg", 26]],
 };
 const SEQ_ROW_B = {
-  top: [["../../assets/marketing/albrecht-print.png", 20], [SQ_IMG + "albrecht.jpg", 30], ["../../assets/marketing/albrecht-unterlagen.png", 17]],
-  low: [[SQ_IMG + "beheim.jpg", 16], [SQ_IMG + "albrecht-dusk.jpg", 26]],
+  top: [["../../assets/marketing/albrechts-desk.jpg", 20], [SQ_IMG + "albrechts-fassade.jpg", 30], ["../../assets/marketing/albrechts-flatlay.jpg", 17], [SQ_IMG + "albrechts-schlafen.jpg", 22]],
+  low: [[SQ_IMG + "albrechts-dachgeschoss.jpg", 18], [SQ_IMG + "albrechts-hof.jpg", 26], [SQ_IMG + "albrechts-wohnen.jpg", 22]],
 };
 
 function SeqTile({ src, w, mobile }) {
@@ -194,8 +194,8 @@ function SeqPinned({ mobile }) {
           {/* P2 — Ecoluxe */}
           <SeqHead
             name="Ecoluxe" sup="/25" mobile={mobile}
-            dat={[["282", "Anfragen"], ["+31 %", "über Zielpreis"], ["Wien", "Wohnbau · Neubau"]]}
-            desc="Live am Markt getestet, positioniert und über dem Zielpreis abverkauft — bevor klassische Vermarktung überhaupt gestartet wäre."
+            dat={[["282", "Anfragen"], ["Wien", "Wohnbau · Neubau"]]}
+            desc="Positioniert, inszeniert und mit Kampagnen auf Nachfrage gebracht: 282 Anfragen über das System, bevor klassische Vermarktung überhaupt gestartet wäre."
             side={SQ_IMG + "vienna-garden.jpg"}
           />
           {/* P3 — Bildwand Albrecht (zwei versetzte Reihen) */}
@@ -256,7 +256,7 @@ function SeqVertikal() {
         <div style={{ ...seqMono, marginBottom: 20 }}>Referenzen · Wien 2024–2026</div>
         <h2 style={{ margin: 0, font: "700 clamp(44px, 7vw, 120px)/0.98 var(--font-display)", letterSpacing: "-0.04em", color: "var(--ink)" }}>Nicht inseriert.<br /><span style={{ color: "transparent", WebkitTextStroke: "1.5px var(--ink)" }}>Inszeniert.</span></h2>
       </div>
-      {[["Ecoluxe", "/25", [["282", "Anfragen"], ["+31 %", "über Zielpreis"]], SEQ_ROW_A], ["Albrecht", "/26", [["61", "Anfragen · 2 Wochen"], ["Live", "Pipeline in LENS"]], SEQ_ROW_B]].map(([n, sup, dat, row]) => (
+      {[["Ecoluxe", "/25", [["282", "Anfragen"], ["Wien", "Wohnbau · Neubau"]], SEQ_ROW_A], ["Albrecht", "/26", [["61", "Anfragen · 2 Wochen"], ["Live", "Pipeline in LENS"]], SEQ_ROW_B]].map(([n, sup, dat, row]) => (
         <div key={n} className="u-grain" style={{ background: "var(--paper)", padding: "40px 7vw 70px" }}>
           <div style={{ font: "700 clamp(40px, 7vw, 110px)/1 var(--font-display)", letterSpacing: "-0.04em", color: "var(--ink)" }}>
             {n}<sup style={{ fontFamily: "var(--font-mono)", fontSize: "0.15em", letterSpacing: "0.2em", color: "var(--signal)" }}>{sup}</sup>
