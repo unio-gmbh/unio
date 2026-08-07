@@ -127,6 +127,19 @@ function ProblemBt() {
     addEventListener("scroll", on, { passive: true });
     return () => removeEventListener("scroll", on);
   }, []);
+  /* Mobile: Zeilen aktivieren sich scrollbasiert (bidirektional), RM bleibt statisch */
+  const zeilenRefs = React.useRef([]);
+  const [mOn, setMOn] = React.useState([false, false, false, false]);
+  React.useEffect(() => {
+    if (!mob || BT_RM) return;
+    const on = () => {
+      setMOn(zeilenRefs.current.map((el) => el ? el.getBoundingClientRect().top < innerHeight * 0.78 : false));
+    };
+    on();
+    addEventListener("scroll", on, { passive: true });
+    addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
+  }, [mob]);
   if (mob || BT_RM) {
     return (
       <section id="system" data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "100px 6vw 96px" }}>
@@ -140,7 +153,9 @@ function ProblemBt() {
           </p>
         </div>
         {PL_PAARE.map((paar, i) => (
-          <Fx key={paar[1]} delay={i * 80}><PlZeile paar={paar} on={true} zukunft={i === 3} mob={true} idx={i} /></Fx>
+          <div key={paar[1]} ref={(el) => { zeilenRefs.current[i] = el; }}>
+            <PlZeile paar={paar} on={BT_RM ? true : mOn[i]} zukunft={i === 3} mob={true} idx={i} />
+          </div>
         ))}
       </section>
     );
@@ -358,6 +373,20 @@ function LensShowcaseBt() {
   const b = [cl(p / 0.3), cl((p - 0.35) / 0.28), cl((p - 0.7) / 0.28)];
   const act = p < 0.33 ? 0 : p < 0.68 ? 1 : 2;
   const statisch = mob || BT_RM;
+  /* Mobile: jedes Panel animiert beim Erreichen im Viewport (bidirektional) */
+  const beatRefs = React.useRef([]);
+  const [mv, setMv] = React.useState([false, false, false]);
+  React.useEffect(() => {
+    if (!mob || BT_RM) return;
+    const on = () => {
+      setMv(beatRefs.current.map((el) => el ? el.getBoundingClientRect().top < innerHeight * 0.78 : false));
+    };
+    on();
+    addEventListener("scroll", on, { passive: true });
+    addEventListener("resize", on);
+    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
+  }, [mob]);
+  const kOf = (i, desk) => BT_RM ? 1 : (mob ? (mv[i] ? 1 : 0) : desk);
   const maxW = Math.max(...LENS_WOCHEN);
   const statusTotal = LENS_STATUS.reduce((a, x) => a + x[1], 0);
   const heatMax = Math.max(...LENS_HEAT.rows.flatMap(([, v]) => v));
@@ -367,7 +396,7 @@ function LensShowcaseBt() {
     <LensFrame>
       <div style={statisch ? undefined : { minHeight: "min(56svh, 500px)", position: "relative" }}>
         {/* Beat 1: KPI-Karten wie im Dashboard + Leads pro Woche */}
-        <div style={panelBase(0)}>
+        <div style={panelBase(0)} ref={(el) => { beatRefs.current[0] = el; }}>
           <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 10 }}>
             {LENS_KPI.map(([v, sub, delta, bar, note]) => (
               <div key={sub} style={{ background: "var(--paper)", borderRadius: 12, padding: "14px 15px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
@@ -382,17 +411,17 @@ function LensShowcaseBt() {
           <div className="u-label" style={{ ...uLbl, display: "block", margin: "16px 0 10px" }}>Leads pro Woche · letzte 12 Wochen</div>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: statisch ? 76 : "clamp(76px, 13svh, 120px)" }}>
             {LENS_WOCHEN.map((v, i) => (
-              <span key={i} style={{ flex: 1, height: ((v / maxW) * 100 * (statisch ? 1 : b[0])) + "%", minHeight: 3, background: LENS_FRAMP[Math.min(4, Math.floor((i / LENS_WOCHEN.length) * 5))], borderRadius: 3, transition: "height 500ms var(--ease-unio)" }}></span>
+              <span key={i} style={{ flex: 1, height: ((v / maxW) * 100 * kOf(0, b[0])) + "%", minHeight: 3, background: LENS_FRAMP[Math.min(4, Math.floor((i / LENS_WOCHEN.length) * 5))], borderRadius: 3, transition: "height 500ms var(--ease-unio)" }}></span>
             ))}
           </div>
         </div>
         {/* Beat 2: Pipeline mit Konversionen + Status-Segmentbalken */}
-        <div style={panelBase(1)}>
+        <div style={panelBase(1)} ref={(el) => { beatRefs.current[1] = el; }}>
           <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Lead-Pipeline</div>
           <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Kumulierter Stufen-Durchlauf aller 331 Interessen.</div>
           <div style={{ display: "flex", gap: 0, marginTop: 16 }}>
             {LENS_FUNNEL.map(([label, n, pct], i) => {
-              const k = statisch ? 1 : cl(b[1] * 1.6 - i * 0.15);
+              const k = kOf(1, cl(b[1] * 1.6 - i * 0.15));
               return (
                 <React.Fragment key={label}>
                   {i > 0 && (
@@ -404,7 +433,7 @@ function LensShowcaseBt() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="u-label" style={{ fontSize: 7.5, color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 6 }}>
-                      <span style={{ font: "600 clamp(16px, 1.6vw, 24px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", opacity: 0.3 + 0.7 * k }}>{n}</span>
+                      <span style={{ font: "600 clamp(16px, 1.6vw, 24px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", opacity: 0.3 + 0.7 * k, transition: "opacity 500ms var(--ease-unio)" }}>{n}</span>
                       {!mob && <span style={{ font: "9px var(--font-mono)", color: "var(--text-muted)" }}>{pct} %</span>}
                     </div>
                     <div style={{ height: statisch ? 62 : "clamp(62px, 11svh, 96px)", display: "flex", alignItems: "flex-end", marginTop: 10 }}>
@@ -418,7 +447,7 @@ function LensShowcaseBt() {
           <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--hairline-dark)" }}>
             <span className="u-label" style={uLbl}>Aktueller Status</span>
             <div style={{ display: "flex", gap: 3, height: 8, borderRadius: 999, overflow: "hidden", marginTop: 9 }}>
-              {LENS_STATUS.map(([l, n, c]) => <span key={l} style={{ width: ((n / statusTotal) * 100 * (statisch ? 1 : Math.max(0.15, b[1]))) + "%", background: c, transition: "width 500ms var(--ease-unio)" }}></span>)}
+              {LENS_STATUS.map(([l, n, c]) => <span key={l} style={{ width: ((n / statusTotal) * 100 * kOf(1, Math.max(0.15, b[1]))) + "%", background: c, transition: "width 500ms var(--ease-unio)" }}></span>)}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginTop: 10 }}>
               {LENS_STATUS.map(([l, n, c]) => (
@@ -430,12 +459,12 @@ function LensShowcaseBt() {
           </div>
         </div>
         {/* Beat 3: Quellenqualitaet + Eingangszeiten-Heatmap */}
-        <div style={panelBase(2)}>
+        <div style={panelBase(2)} ref={(el) => { beatRefs.current[2] = el; }}>
           <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Quellenqualität</div>
           <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Wie gut konvertieren Leads je Quelle.</div>
           <div style={{ marginTop: 10 }}>
             {LENS_QUELLEN.map(([q, leads, rate, farbe], i) => {
-              const k = statisch ? 1 : cl(b[2] * 1.7 - i * 0.14);
+              const k = kOf(2, cl(b[2] * 1.7 - i * 0.14));
               return (
                 <div key={q} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) 44px", gap: 10, alignItems: "center", padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-dark)" }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "400 12px var(--font-display)", color: "var(--ink-2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -444,7 +473,7 @@ function LensShowcaseBt() {
                   <div style={{ height: 7, borderRadius: 4, background: "rgba(20,18,16,0.07)", overflow: "hidden" }}>
                     <div style={{ height: "100%", width: (rate * 2 * k) + "%", background: farbe, borderRadius: 4, transition: "width 500ms var(--ease-unio)" }}></div>
                   </div>
-                  <span style={{ font: "11px var(--font-mono)", color: "var(--ink)", textAlign: "right", opacity: 0.3 + 0.7 * k }}>{rate} %</span>
+                  <span style={{ font: "11px var(--font-mono)", color: "var(--ink)", textAlign: "right", opacity: 0.3 + 0.7 * k, transition: "opacity 500ms var(--ease-unio)" }}>{rate} %</span>
                 </div>
               );
             })}
@@ -460,7 +489,7 @@ function LensShowcaseBt() {
               <React.Fragment key={day}>
                 <span className="u-label" style={{ fontSize: 7.5, color: "var(--text-muted)", alignSelf: "center" }}>{day}</span>
                 {vals.map((v, i) => {
-                  const k = statisch ? 1 : cl(b[2] * 2 - (ri * 0.06 + i * 0.02));
+                  const k = kOf(2, cl(b[2] * 2 - (ri * 0.06 + i * 0.02)));
                   const t = v ? 0.18 + (v / heatMax) * 0.82 : 0;
                   return <span key={i} style={{ height: mob ? 17 : "clamp(17px, 2.8svh, 24px)", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 8px var(--font-mono)", background: v ? lensHeat(t * k) : "#F7F4ED", color: v / heatMax > 0.55 ? "#FFFFFF" : v ? "var(--ink-2)" : "transparent", transition: "background 400ms var(--ease-unio)" }}>{v || ""}</span>;
                 })}
