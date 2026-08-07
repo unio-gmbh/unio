@@ -299,14 +299,14 @@ function GoldenCircle() {
 
 /* ===== 05 · DIE MENSCHEN DAHINTER ===== */
 const TEAM_PORTRAITS = [
-  { src: "../../assets/team/portrait-01.jpg", pos: "center 22%", nm: "Jacob Kapsch", role: "Founder", disz: "Marketing", v: "1 Mrd.", label: "Impressionen · Kampagnen", spark: [3, 5, 4, 7, 9] },
-  { src: "../../assets/team/portrait-02.jpg", pos: "center 20%", nm: "Johannes Lindner", role: "Founder", disz: "Vertrieb", v: "300 Mio+", label: "€ Projektvolumen", spark: [2, 4, 6, 5, 8] },
-  { src: "../../assets/team/portrait-03.jpg", pos: "center 22%", nm: "Nikita Neznamov", role: "Founder", disz: "Technologie", v: "140+", label: "Datenpunkte je Objekt", spark: [4, 3, 6, 8, 7] },
-  { src: "../../assets/team/portrait-04.jpg", pos: "center 18%", nm: "Wenzel Waechter", role: "Founder", disz: "Vertrieb", v: "T+38", label: "Ø Tage bis Abverkauf", spark: [8, 7, 5, 4, 2] },
-  { src: "../../assets/team/portrait-05.jpg", pos: "center 20%", nm: "Florian Hörmann", role: "Founder", disz: "Vertrieb", v: "25+", label: "Makler im CIRCLE", spark: [2, 4, 5, 7, 8] },
-  { src: "../../assets/team/portrait-06.jpg", pos: "center 18%", nm: "Daniel Hayden", role: "Founder", disz: "Marketing", v: "9", label: "Kanäle im Kampagnen-Mix", spark: [3, 5, 6, 7, 9] },
-  { src: "../../assets/team/portrait-07.jpg", pos: "center 20%", nm: "Marcin Fituch", role: "Founder", disz: "Technologie", v: "8+", label: "Tech-Module in LENS", spark: [2, 3, 5, 6, 8] },
-  { src: "../../assets/team/portrait-08.jpg", pos: "center 18%", nm: "Fabian Fuhrmann", role: "Founder", disz: "Vertrieb", v: "5", label: "Unternehmen fusioniert", spark: [4, 5, 6, 8, 9] },
+  { src: "../../assets/team/portrait-01.jpg", pos: "center 22%", nm: "Jacob Kapsch", role: "Founder", disz: "Marketing", v: "1.500+", label: "Wohnungen vermittelt", spark: [3, 5, 4, 7, 9] },
+  { src: "../../assets/team/portrait-02.jpg", pos: "center 20%", nm: "Johannes Lindner", role: "Founder", disz: "Vertrieb", v: "1 Mrd+", label: "€ Portfolio betreut", spark: [2, 4, 6, 5, 8] },
+  { src: "../../assets/team/portrait-03.jpg", pos: "center 22%", nm: "Nikita Neznamov", role: "Founder", disz: "Technologie", v: "100+", label: "Makler betreut", spark: [4, 3, 6, 7, 9] },
+  { src: "../../assets/team/portrait-04.jpg", pos: "center 18%", nm: "Wenzel Waechter", role: "Founder", disz: "Vertrieb", v: "300 Mio", label: "€ Volumen vermittelt", spark: [2, 3, 5, 6, 8] },
+  { src: "../../assets/team/portrait-05.jpg", pos: "center 20%", nm: "Florian Hörmann", role: "Founder", disz: "Vertrieb", v: "1 Mrd+", label: "Reichweite erzielt", spark: [2, 4, 5, 7, 8] },
+  { src: "../../assets/team/portrait-06.jpg", pos: "center 18%", nm: "Daniel Hayden", role: "Founder", disz: "Marketing", v: "1,5 Mrd+", label: "€ Projektvolumen abverkauft", spark: [3, 5, 6, 7, 9] },
+  { src: "../../assets/team/portrait-07.jpg", pos: "center 20%", nm: "Marcin Fituch", role: "Founder", disz: "Technologie", v: "50 Mio", label: "Zeilen Code geschrieben", spark: [2, 3, 5, 6, 8] },
+  { src: "../../assets/team/portrait-08.jpg", pos: "center 18%", nm: "Fabian Fuhrmann", role: "Founder", disz: "Vertrieb", v: "10 Mio", label: "Datenpunkte analysiert", spark: [4, 5, 6, 8, 9] },
 ];
 function SparkSt({ pts }) {
   const max = Math.max(...pts), min = Math.min(...pts);

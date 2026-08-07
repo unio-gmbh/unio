@@ -217,19 +217,89 @@ function Zielgruppen() {
   );
 }
 
-/* ---------- Produkte ---------- */
-const PRODUKTE = [
-  ["NOVA", "Marktvalidierung in Echtzeit. NOVA zeigt, ob Projekt, Pricing oder Grundrisse den Nerv der Zielgruppe treffen — und liefert datenbasierte Handlungsempfehlungen für fundierte Entscheidungen schon vor dem Verkaufsstart.", "bautraeger.html#system", "Für Bauträger"],
-  ["CIRCLE", "Circle verbindet die besten Makler:innen zu einer leistungsorientierten Community. Selbstständig im Handeln, aber mit dem Rückhalt eines starken Netzwerks — inklusive High-End-Software, Support und Beteiligung.", "makler.html", "Für Makler:innen"],
-  ["LEAD ENGINE", "Skalierbare Leadgenerierung über die relevanten Kanäle — mit sauberem Tracking, kreativer Iteration und einem Setup, das Nachfrage in planbaren Vertrieb übersetzt.", "bautraeger.html#system", "Für Bauträger"],
-  ["LENS", "Lens liefert volle Transparenz über Projekte, Leads und Vertriebsperformance. Von der Planung bis zum Abschluss zeigt das Dashboard alle relevanten Daten in Echtzeit — für präzise Steuerung und bessere Ergebnisse.", "bautraeger.html#system", "Für Bauträger"],
+/* ---------- Produkte: Kacheln je Zielgruppe, NOVA nur bei Bautraegern (letzte Position).
+   Tab-Wechsel: bleibende Kacheln fliegen an ihre neue Position (FLIP), nicht mehr
+   gebrauchte loesen sich auf, neue erscheinen aus der Unschaerfe. ---------- */
+const PRODUKT_GRUPPEN = [
+  ["interessenten", "Für Interessenten", [
+    ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "immobilien.html", "Immobilie bewerten"],
+    ["SMART MATCHING", "Objekte, die wirklich passen: Dein Suchprofil wird laufend gegen kuratierte Objekte gematcht, oft bevor das Inserat online geht.", "immobilien.html", "Immobilien entdecken"],
+    ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", "immobilien.html", "So arbeiten wir"],
+    ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", "immobilien.html", "Verkaufen mit UNIO"],
+  ]],
+  ["makler", "Für Makler", [
+    ["CIRCLE", "Die Community der besten Makler:innen: Unternehmertum mit Rückhalt, exklusiver Dealflow und echte Beteiligung an dem, was du aufbaust.", "makler.html", "CIRCLE entdecken"],
+    ["PERSONAL BRAND", "Dein Marketing-Produkt für die eigene Marke: Content, Fotografie und Grafik unter deinem Namen, inklusive eigener Website. Deine Marke bleibt dein Asset.", "makler.html", "Deine Marke ansehen"],
+    ["LEAD ENGINE", "Qualifizierte Anfragen statt Kaltakquise: Kampagnen mit sauberem Tracking, geroutet direkt in deine Pipeline.", "makler.html", "Werde UNIO Partner"],
+    ["LENS", "Dein Live-Dashboard: Leads, Termine und Performance in Echtzeit, damit du steuerst statt suchst.", "makler.html", "Werde UNIO Partner"],
+  ]],
+  ["bautraeger", "Für Bauträger", [
+    ["LEAD ENGINE", "Skalierbare Leadgenerierung über die relevanten Kanäle — mit sauberem Tracking, kreativer Iteration und einem Setup, das Nachfrage in planbaren Vertrieb übersetzt.", "bautraeger.html#system", "Projekt prüfen lassen"],
+    ["CIRCLE", "Die stärksten Makler der Stadt verkaufen dein Projekt gemeinsam: kuratiert, gesteuert, mit vorgemerkten Käufern.", "bautraeger.html", "Projekt prüfen lassen"],
+    ["LENS", "Lens liefert volle Transparenz über Projekte, Leads und Vertriebsperformance. Von der Planung bis zum Abschluss zeigt das Dashboard alle relevanten Daten in Echtzeit — für präzise Steuerung und bessere Ergebnisse.", "bautraeger.html#system", "Projekt prüfen lassen"],
+    ["NOVA", "Marktvalidierung in Echtzeit. NOVA zeigt, ob Projekt, Pricing oder Grundrisse den Nerv der Zielgruppe treffen — und liefert datenbasierte Handlungsempfehlungen, bevor gebaut wird.", "bautraeger.html#system", "Mehr erfahren", true],
+  ]],
 ];
+const PROD_EASE = "cubic-bezier(.32,.72,0,1)";
 function Produkte() {
+  const [grp, setGrp] = React.useState(0);
   const [hov, setHov] = React.useState(-1);
   const mob = window.useMobile();
+  const rm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const gridRef = React.useRef(null);
+  const prevRects = React.useRef(null);
+  const tiles = PRODUKT_GRUPPEN[grp][2];
+  const wechsel = (gi) => {
+    if (gi === grp) return;
+    const grid = gridRef.current;
+    if (grid && !rm) {
+      /* Positionen der bleibenden Kacheln merken, verschwindende als Geister aufloesen */
+      const alt = {};
+      [...grid.children].forEach((el) => { if (el.dataset.prod) alt[el.dataset.prod] = el.getBoundingClientRect(); });
+      prevRects.current = alt;
+      const bleibt = new Set(PRODUKT_GRUPPEN[gi][2].map((t) => t[0]));
+      const gRect = grid.getBoundingClientRect();
+      grid.querySelectorAll("[data-geist]").forEach((g) => g.remove());
+      [...grid.children].forEach((el) => {
+        const name = el.dataset.prod;
+        if (!name || bleibt.has(name)) return;
+        const r = el.getBoundingClientRect();
+        const geist = el.cloneNode(true);
+        geist.removeAttribute("data-prod");
+        geist.setAttribute("data-geist", "1");
+        geist.setAttribute("aria-hidden", "true");
+        geist.style.cssText += `;position:absolute;left:${r.left - gRect.left}px;top:${r.top - gRect.top}px;width:${r.width}px;height:${r.height}px;margin:0;pointer-events:none;z-index:3;animation:none;`;
+        grid.appendChild(geist);
+        const weg = () => geist.remove();
+        const anim = geist.animate(
+          [{ opacity: 1, transform: "none", filter: "blur(0px)" }, { opacity: 0, transform: "translateY(10px) scale(0.96)", filter: "blur(7px)" }],
+          { duration: 400, easing: PROD_EASE, fill: "forwards" });
+        anim.onfinish = weg;
+        setTimeout(weg, 900); // Fallback, falls die Animation gedrosselt wird
+      });
+    }
+    setGrp(gi); setHov(-1);
+  };
+  React.useLayoutEffect(() => {
+    /* FLIP: bleibende Kacheln fliegen von der alten an die neue Position */
+    const grid = gridRef.current;
+    const alt = prevRects.current;
+    prevRects.current = null;
+    if (!grid || !alt || rm) return;
+    [...grid.children].forEach((el) => {
+      const name = el.dataset.prod;
+      if (!name || !alt[name]) return;
+      const r = el.getBoundingClientRect();
+      const dx = alt[name].left - r.left, dy = alt[name].top - r.top;
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+        el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], { duration: 580, easing: PROD_EASE });
+      }
+    });
+  }, [grp]);
   return (
     <section id="produkte" data-screen-label="Produkte" className="u-grain" style={{ background: "var(--paper)", padding: mob ? "110px 6vw" : "175px 6vw" }}>
-      <div style={{ textAlign: "center", maxWidth: 900, margin: "0 auto 80px" }}>
+      <style>{`@keyframes prodIn { from { opacity: 0; transform: translateY(16px) scale(0.97); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }`}</style>
+      <div style={{ textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
         <span className="u-label" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "8px 16px", borderRadius: "var(--r-pill)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--text-muted)" }}>
           <span aria-hidden="true" style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid var(--signal)", borderRightColor: "transparent", transform: "rotate(-45deg)" }}></span>Produkte
         </span>
@@ -237,24 +307,34 @@ function Produkte() {
           High-End-Software und<br />Community vereint.
         </h2>
         <p style={{ margin: "26px auto 0", font: "400 17px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
-          Vier Produkte, ein Prinzip: Technologie übernimmt das Rechnen und Verwalten, Menschen übernehmen Beratung und Entscheidung.
+          Ein Prinzip: Technologie übernimmt das Rechnen und Verwalten, Menschen übernehmen Beratung und Entscheidung.
         </p>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, 1fr)", gap: mob ? 14 : 20 }}>
-        {PRODUKTE.map(([t, c, href, ziel], i) => (
-          <Reveal key={t} delay={i * 90}>
-            <a href={href} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
-              style={{ display: "flex", flexDirection: "column", height: "100%", textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <h3 style={{ margin: 0, font: "500 26px/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
-                <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", opacity: hov === i ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></span>
-              </div>
-              <p style={{ margin: "28px 0 0", font: "400 14px/1.7 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
-              <span style={{ marginTop: "auto", paddingTop: 24, font: "500 13.5px var(--font-display)", color: hov === i ? "var(--signal-deep)" : "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7, transition: "color var(--dur-fast) var(--ease-unio)" }}>
-                {ziel} <span style={{ font: "12px var(--font-mono)" }}>→</span>
-              </span>
-            </a>
-          </Reveal>
+      {/* Zielgruppen-Schalter: mehr Abstand zur Subheadline, weniger zu den Kacheln */}
+      <div role="tablist" aria-label="Produkte nach Zielgruppe" style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap", margin: mob ? "44px 0 18px" : "60px 0 22px" }}>
+        {PRODUKT_GRUPPEN.map(([key, label], gi) => (
+          <button key={key} type="button" role="tab" aria-selected={grp === gi} onClick={() => wechsel(gi)}
+            style={{ font: "500 14px var(--font-display)", padding: "11px 20px", borderRadius: "var(--r-pill)", cursor: "pointer", border: "none", fontFamily: "inherit",
+              background: grp === gi ? "var(--ink)" : "transparent",
+              color: grp === gi ? "var(--paper)" : "var(--text-muted)",
+              boxShadow: grp === gi ? "var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)",
+              transition: "all var(--dur-fast) var(--ease-unio)" }}>{label}</button>
+        ))}
+      </div>
+      <div ref={gridRef} style={{ position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, 1fr)", gap: mob ? 14 : 20 }}>
+        {tiles.map(([t, c, href, ziel, zukunft], i) => (
+          <a key={t} data-prod={t} href={href} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
+            style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 330, textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", translate: hov === i ? "0 -4px" : "0 0", transition: "box-shadow var(--dur-fast) var(--ease-unio), translate var(--dur-fast) var(--ease-unio)", animation: rm ? "none" : "prodIn 500ms var(--ease-unio) both", animationDelay: rm ? "0ms" : 120 + i * 70 + "ms" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <h3 style={{ margin: 0, font: "500 clamp(20px, 1.6vw, 26px)/1.1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
+              <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", flex: "none", opacity: hov === i ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></span>
+            </div>
+            {zukunft && <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>Zukunftsvision</span>}
+            <p style={{ margin: zukunft ? "16px 0 0" : "28px 0 0", font: "400 14px/1.7 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
+            <span style={{ marginTop: "auto", paddingTop: 24, font: "500 13.5px var(--font-display)", color: hov === i ? "var(--signal-deep)" : "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7, transition: "color var(--dur-fast) var(--ease-unio)" }}>
+              {ziel} <span style={{ font: "12px var(--font-mono)" }}>→</span>
+            </span>
+          </a>
         ))}
       </div>
     </section>
