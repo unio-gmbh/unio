@@ -127,20 +127,7 @@ function ProblemBt() {
     addEventListener("scroll", on, { passive: true });
     return () => removeEventListener("scroll", on);
   }, []);
-  /* Mobile: Zeilen aktivieren sich scrollbasiert (bidirektional), RM bleibt statisch */
-  const zeilenRefs = React.useRef([]);
-  const [mOn, setMOn] = React.useState([false, false, false, false]);
-  React.useEffect(() => {
-    if (!mob || BT_RM) return;
-    const on = () => {
-      setMOn(zeilenRefs.current.map((el) => el ? el.getBoundingClientRect().top < innerHeight * 0.78 : false));
-    };
-    on();
-    addEventListener("scroll", on, { passive: true });
-    addEventListener("resize", on);
-    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
-  }, [mob]);
-  if (mob || BT_RM) {
+  if (BT_RM) {
     return (
       <section id="system" data-track="chapter_view_02" data-screen-label="System" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "100px 6vw 96px" }}>
         <Kap nr="02" label="System" />
@@ -153,10 +140,38 @@ function ProblemBt() {
           </p>
         </div>
         {PL_PAARE.map((paar, i) => (
-          <div key={paar[1]} ref={(el) => { zeilenRefs.current[i] = el; }}>
-            <PlZeile paar={paar} on={BT_RM ? true : mOn[i]} zukunft={i === 3} mob={true} idx={i} />
-          </div>
+          <PlZeile key={paar[1]} paar={paar} on={true} zukunft={i === 3} mob={true} idx={i} />
         ))}
+      </section>
+    );
+  }
+  if (mob) {
+    /* Mobile: gepinnt, die vier Paare laufen als Schritte durch */
+    const stepP = Math.max(0, Math.min(3.999, p * 4.4));
+    const act = Math.min(3, Math.floor(stepP));
+    const geloest = Math.min(4, act + (stepP - act > 0.35 ? 1 : 0));
+    return (
+      <section id="system" ref={secRef} data-track="chapter_view_02" data-screen-label="System" style={{ height: "280vh", position: "relative", background: "var(--paper)" }}>
+        <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "76px 6vw 34px" }}>
+          <Kap nr="02" label="System" />
+          <h2 style={{ margin: 0, font: "500 clamp(26px, 7vw, 34px)/1.08 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
+            Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+          </h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16 }}>
+            <svg width="30" height="30" viewBox="0 0 34 34" aria-hidden="true">
+              <circle cx="17" cy="17" r="14" fill="none" stroke="var(--hairline-dark)" strokeWidth="1.5" />
+              <circle cx="17" cy="17" r="14" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={(1 - p) * 2 * Math.PI * 14} transform="rotate(-90 17 17)" strokeLinecap="round" />
+            </svg>
+            <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>{Math.max(1, geloest)} von 4 gelöst</span>
+          </div>
+          <div style={{ position: "relative", minHeight: 310, marginTop: 20 }}>
+            {PL_PAARE.map((paar, i) => (
+              <div key={paar[1]} style={{ position: "absolute", inset: 0, opacity: act === i ? 1 : 0, transform: act === i ? "none" : (i < act ? "translateY(-14px)" : "translateY(14px)"), transition: `all 450ms ${BT_EASE}`, pointerEvents: act === i ? "auto" : "none" }}>
+                <PlZeile paar={paar} on={act > i || stepP - i > 0.35} zukunft={i === 3} mob={true} idx={i} />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     );
   }
@@ -372,21 +387,8 @@ function LensShowcaseBt() {
   const cl = (x) => Math.max(0, Math.min(1, x));
   const b = [cl(p / 0.3), cl((p - 0.35) / 0.28), cl((p - 0.7) / 0.28)];
   const act = p < 0.33 ? 0 : p < 0.68 ? 1 : 2;
-  const statisch = mob || BT_RM;
-  /* Mobile: jedes Panel animiert beim Erreichen im Viewport (bidirektional) */
-  const beatRefs = React.useRef([]);
-  const [mv, setMv] = React.useState([false, false, false]);
-  React.useEffect(() => {
-    if (!mob || BT_RM) return;
-    const on = () => {
-      setMv(beatRefs.current.map((el) => el ? el.getBoundingClientRect().top < innerHeight * 0.78 : false));
-    };
-    on();
-    addEventListener("scroll", on, { passive: true });
-    addEventListener("resize", on);
-    return () => { removeEventListener("scroll", on); removeEventListener("resize", on); };
-  }, [mob]);
-  const kOf = (i, desk) => BT_RM ? 1 : (mob ? (mv[i] ? 1 : 0) : desk);
+  const statisch = BT_RM;
+  const kOf = (i, desk) => BT_RM ? 1 : desk;
   const maxW = Math.max(...LENS_WOCHEN);
   const statusTotal = LENS_STATUS.reduce((a, x) => a + x[1], 0);
   const heatMax = Math.max(...LENS_HEAT.rows.flatMap(([, v]) => v));
@@ -394,29 +396,29 @@ function LensShowcaseBt() {
   const panelBase = (i) => statisch ? { position: "relative", marginTop: i === 0 ? 0 : 18 } : { position: "absolute", inset: "clamp(16px, 1.6vw, 24px)", opacity: act === i ? 1 : 0, transform: act === i ? "none" : "translateY(14px)", transition: `all 500ms ${BT_EASE}`, pointerEvents: act === i ? "auto" : "none" };
   const inhalt = (
     <LensFrame>
-      <div style={statisch ? undefined : { minHeight: "min(56svh, 500px)", position: "relative" }}>
+      <div style={statisch ? undefined : { minHeight: mob ? "min(52svh, 350px)" : "min(56svh, 500px)", position: "relative" }}>
         {/* Beat 1: KPI-Karten wie im Dashboard + Leads pro Woche */}
-        <div style={panelBase(0)} ref={(el) => { beatRefs.current[0] = el; }}>
+        <div style={panelBase(0)}>
           <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 10 }}>
             {LENS_KPI.map(([v, sub, delta, bar, note]) => (
-              <div key={sub} style={{ background: "var(--paper)", borderRadius: 12, padding: "14px 15px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+              <div key={sub} style={{ background: "var(--paper)", borderRadius: 12, padding: mob ? "10px 12px" : "14px 15px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
                 <span className="u-label" style={uLbl}>{sub}</span>
-                <div style={{ font: "600 clamp(24px, 2.2vw, 34px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 10, fontVariantNumeric: "tabular-nums" }}>{v}{bar != null && <span style={{ fontSize: "0.55em", color: "var(--text-muted)" }}> %</span>}</div>
+                <div style={{ font: `600 ${mob ? "21px" : "clamp(24px, 2.2vw, 34px)"}/1 var(--font-display)`, letterSpacing: "-0.02em", color: "var(--ink)", marginTop: mob ? 7 : 10, fontVariantNumeric: "tabular-nums" }}>{v}{bar != null && <span style={{ fontSize: "0.55em", color: "var(--text-muted)" }}> %</span>}</div>
                 {delta && <div style={{ font: "9px var(--font-mono)", letterSpacing: "0.1em", color: "var(--text-muted)", marginTop: 7 }}>{delta}</div>}
                 {bar != null && <div style={{ height: 4, borderRadius: 999, background: "rgba(20,18,16,0.08)", overflow: "hidden", marginTop: 9 }}><div style={{ height: "100%", width: bar + "%", background: "var(--signal)", borderRadius: 999 }}></div></div>}
-                <div style={{ font: "400 10.5px var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{note}</div>
+                <div style={{ font: `400 ${mob ? 9.5 : 10.5}px var(--font-display)`, color: "var(--text-muted)", marginTop: mob ? 5 : 7 }}>{note}</div>
               </div>
             ))}
           </div>
           <div className="u-label" style={{ ...uLbl, display: "block", margin: "16px 0 10px" }}>Leads pro Woche · letzte 12 Wochen</div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: statisch ? 76 : "clamp(76px, 13svh, 120px)" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: statisch ? 76 : (mob ? "clamp(52px, 8svh, 76px)" : "clamp(76px, 13svh, 120px)") }}>
             {LENS_WOCHEN.map((v, i) => (
               <span key={i} style={{ flex: 1, height: ((v / maxW) * 100 * kOf(0, b[0])) + "%", minHeight: 3, background: LENS_FRAMP[Math.min(4, Math.floor((i / LENS_WOCHEN.length) * 5))], borderRadius: 3, transition: "height 500ms var(--ease-unio)" }}></span>
             ))}
           </div>
         </div>
         {/* Beat 2: Pipeline mit Konversionen + Status-Segmentbalken */}
-        <div style={panelBase(1)} ref={(el) => { beatRefs.current[1] = el; }}>
+        <div style={panelBase(1)}>
           <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Lead-Pipeline</div>
           <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Kumulierter Stufen-Durchlauf aller 331 Interessen.</div>
           <div style={{ display: "flex", gap: 0, marginTop: 16 }}>
@@ -436,7 +438,7 @@ function LensShowcaseBt() {
                       <span style={{ font: "600 clamp(16px, 1.6vw, 24px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", opacity: 0.3 + 0.7 * k, transition: "opacity 500ms var(--ease-unio)" }}>{n}</span>
                       {!mob && <span style={{ font: "9px var(--font-mono)", color: "var(--text-muted)" }}>{pct} %</span>}
                     </div>
-                    <div style={{ height: statisch ? 62 : "clamp(62px, 11svh, 96px)", display: "flex", alignItems: "flex-end", marginTop: 10 }}>
+                    <div style={{ height: statisch ? 62 : (mob ? 50 : "clamp(62px, 11svh, 96px)"), display: "flex", alignItems: "flex-end", marginTop: 10 }}>
                       <div style={{ width: "100%", height: Math.max(8, pct * k) + "%", borderRadius: 8, background: LENS_FRAMP[i], transition: "height 500ms var(--ease-unio)" }}></div>
                     </div>
                   </div>
@@ -459,7 +461,7 @@ function LensShowcaseBt() {
           </div>
         </div>
         {/* Beat 3: Quellenqualitaet + Eingangszeiten-Heatmap */}
-        <div style={panelBase(2)} ref={(el) => { beatRefs.current[2] = el; }}>
+        <div style={panelBase(2)}>
           <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Quellenqualität</div>
           <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Wie gut konvertieren Leads je Quelle.</div>
           <div style={{ marginTop: 10 }}>
@@ -491,7 +493,7 @@ function LensShowcaseBt() {
                 {vals.map((v, i) => {
                   const k = kOf(2, cl(b[2] * 2 - (ri * 0.06 + i * 0.02)));
                   const t = v ? 0.18 + (v / heatMax) * 0.82 : 0;
-                  return <span key={i} style={{ height: mob ? 17 : "clamp(17px, 2.8svh, 24px)", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 8px var(--font-mono)", background: v ? lensHeat(t * k) : "#F7F4ED", color: v / heatMax > 0.55 ? "#FFFFFF" : v ? "var(--ink-2)" : "transparent", transition: "background 400ms var(--ease-unio)" }}>{v || ""}</span>;
+                  return <span key={i} style={{ height: mob ? 14 : "clamp(17px, 2.8svh, 24px)", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 8px var(--font-mono)", background: v ? lensHeat(t * k) : "#F7F4ED", color: v / heatMax > 0.55 ? "#FFFFFF" : v ? "var(--ink-2)" : "transparent", transition: "background 400ms var(--ease-unio)" }}>{v || ""}</span>;
                 })}
               </React.Fragment>
             ))}
@@ -520,6 +522,27 @@ function LensShowcaseBt() {
           ))}
         </div>
         <p className="u-label" style={{ margin: "20px 0 0", color: "var(--text-muted)", fontSize: 9 }}>Echte Zahlen aus einem laufenden Projekt · Arbeitsstand</p>
+      </section>
+    );
+  }
+  if (mob) {
+    return (
+      <section id="lens" ref={secRef} data-track="chapter_view_05b" data-screen-label="LENS" style={{ height: "300vh", position: "relative", background: "var(--paper)" }}>
+        <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "72px 5vw 28px" }}>
+          <Kap nr="05" label="LENS" />
+          <h2 style={{ margin: 0, font: "500 clamp(26px, 7vw, 34px)/1.08 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt. Live<span style={{ color: "var(--signal)" }}>.</span></h2>
+          {/* aktiver Beat-Text wechselt mit dem Scroll */}
+          <div style={{ position: "relative", minHeight: 72, marginTop: 12 }}>
+            {LENS_BEATS.map(([t, c], i) => (
+              <div key={t} style={{ position: "absolute", inset: 0, opacity: act === i ? 1 : 0, transform: act === i ? "none" : "translateY(10px)", transition: `all 400ms ${BT_EASE}`, pointerEvents: "none" }}>
+                <div style={{ font: "500 15.5px/1.3 var(--font-display)", color: "var(--ink)" }}><span style={{ font: "11px var(--font-mono)", color: "var(--signal-deep)", marginRight: 8 }}>0{i + 1}</span>{t}</div>
+                <p style={{ margin: "4px 0 0", font: "400 12.5px/1.5 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 12 }}>{inhalt}</div>
+          <p className="u-label" style={{ margin: "14px 0 0", color: "var(--text-muted)", fontSize: 8.5 }}>Echte Zahlen aus einem laufenden Projekt · Arbeitsstand</p>
+        </div>
       </section>
     );
   }
