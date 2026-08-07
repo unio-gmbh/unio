@@ -301,6 +301,232 @@ function FunnelGraphBt() {
   );
 }
 
+/* ===== LENS-SHOWCASE — das echte Dashboard baut sich beim Scrollen auf.
+   Design und Inhalte 1:1 aus dem Dashboard-Design v2 (dash-bautraeger),
+   Zahlen: Arbeitsstand eines laufenden Projekts. ===== */
+const LENS_KPI = [
+  ["53", "Neue Leads (7 Tage)", "-2 % VS. VORWOCHE", null, "54 in der Vorwoche"],
+  ["297", "Kontakte", null, null, "331 Interessen gesamt"],
+  ["24", "Qualifizierungsrate", null, 24, "79 qualifizierte Leads"],
+  ["31", "Besichtigungen", null, null, "9 % der Interessen"],
+];
+const LENS_WOCHEN = [2, 4, 57, 27, 19, 20, 30, 8, 70, 66, 29];
+const LENS_FUNNEL = [["Neu", 331, 100], ["Kontaktversuch", 193, 58], ["Kontaktiert", 103, 31], ["Qualifiziert", 79, 24], ["Besichtigung", 31, 9]];
+const LENS_CONV = ["58 %", "53 %", "77 %", "39 %"];
+const LENS_FRAMP = ["#F8DCA5", "#FACF7E", "#FBC157", "#FDB430", "#FFAA09"];
+const LENS_STATUS = [["Neu", 68, "#F2CE63"], ["Kontaktversuch", 90, "var(--signal)"], ["Kontaktiert", 24, "#D98A06"], ["Qualifiziert", 48, "#B06B10"], ["Besichtigung", 31, "#7A4A0E"], ["Verloren", 70, "#C2402A"]];
+const LENS_QUELLEN = [["Meta / Zapier", 192, 17, "var(--signal)"], ["Willhaben", 87, 41, "#F2CE63"], ["ImmoScout24", 25, 24, "#B06B10"], ["Erstinteresse im Projekt", 12, 33, "#8A857B"]];
+const LENS_HEAT = {
+  cols: ["0–5", "6–8", "9–11", "12–14", "15–17", "18–20", "21–23"],
+  rows: [["Mo", [0, 0, 5, 0, 7, 10, 0]], ["Di", [4, 0, 9, 15, 8, 8, 19]], ["Mi", [0, 9, 9, 5, 6, 13, 12]], ["Do", [4, 6, 14, 12, 13, 16, 12]], ["Fr", [0, 4, 5, 12, 5, 6, 8]], ["Sa", [0, 0, 14, 7, 4, 7, 0]], ["So", [4, 0, 0, 4, 5, 6, 0]]],
+};
+const lensHeat = (t) => { const m = (a, b) => Math.round(a * t + b * (1 - t)); return `rgb(${m(255, 251)}, ${m(170, 248)}, ${m(9, 241)})`; };
+const LENS_BEATS = [
+  ["Jede Anfrage kommt an.", "Meta, Willhaben, ImmoScout24, Web: Jede Quelle landet im selben Dashboard, keine geht verloren."],
+  ["Vom Lead zur Besichtigung.", "Die Pipeline zeigt jeden Schritt mit Konversionsrate. Du siehst, wo es fließt und wo es hakt."],
+  ["Du weißt, welche Quelle liefert.", "Qualitätsrate je Kanal statt Bauchgefühl, und du siehst, wann die Anfragen kommen."],
+];
+function LensFrame({ children }) {
+  return (
+    <div style={{ background: "#FFFFFF", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", overflow: "hidden" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderBottom: "1px solid var(--hairline-dark)", background: "var(--paper)" }}>
+        <span aria-hidden="true" style={{ display: "flex", gap: 5 }}>{[0, 1, 2].map((i) => <span key={i} style={{ width: 8, height: 8, borderRadius: "50%", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}></span>)}</span>
+        <span style={{ font: "11px var(--font-mono)", letterSpacing: "0.08em", color: "var(--text-muted)" }}>app.unio.at · LENS</span>
+        <span className="u-label" style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6, fontSize: 9, padding: "5px 11px", borderRadius: 999, background: "var(--signal-soft, rgba(255,170,9,0.12))", color: "var(--signal-deep)" }}>
+          <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)", animation: BT_RM ? "none" : "uPulse 2s var(--ease-unio) infinite" }}></span>Live
+        </span>
+      </div>
+      <div style={{ position: "relative", padding: "clamp(16px, 1.6vw, 24px)" }}>{children}</div>
+    </div>
+  );
+}
+function LensShowcaseBt() {
+  const secRef = React.useRef(null);
+  const mob = window.useMobile();
+  const [p, setP] = React.useState(BT_RM ? 1 : 0);
+  React.useEffect(() => {
+    if (BT_RM) return;
+    const on = () => {
+      const el = secRef.current; if (!el) return;
+      setP(Math.max(0, Math.min(1, (scrollY - el.offsetTop) / (el.offsetHeight - innerHeight))));
+    };
+    on();
+    addEventListener("scroll", on, { passive: true });
+    return () => removeEventListener("scroll", on);
+  }, []);
+  const cl = (x) => Math.max(0, Math.min(1, x));
+  const b = [cl(p / 0.3), cl((p - 0.35) / 0.28), cl((p - 0.7) / 0.28)];
+  const act = p < 0.33 ? 0 : p < 0.68 ? 1 : 2;
+  const statisch = mob || BT_RM;
+  const maxW = Math.max(...LENS_WOCHEN);
+  const statusTotal = LENS_STATUS.reduce((a, x) => a + x[1], 0);
+  const heatMax = Math.max(...LENS_HEAT.rows.flatMap(([, v]) => v));
+  const uLbl = { fontSize: 8.5, color: "var(--text-muted)" };
+  const panelBase = (i) => statisch ? { position: "relative", marginTop: i === 0 ? 0 : 18 } : { position: "absolute", inset: "clamp(16px, 1.6vw, 24px)", opacity: act === i ? 1 : 0, transform: act === i ? "none" : "translateY(14px)", transition: `all 500ms ${BT_EASE}`, pointerEvents: act === i ? "auto" : "none" };
+  const inhalt = (
+    <LensFrame>
+      <div style={statisch ? undefined : { minHeight: "min(56svh, 500px)", position: "relative" }}>
+        {/* Beat 1: KPI-Karten wie im Dashboard + Leads pro Woche */}
+        <div style={panelBase(0)}>
+          <div style={{ display: "grid", gridTemplateColumns: mob ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 10 }}>
+            {LENS_KPI.map(([v, sub, delta, bar, note]) => (
+              <div key={sub} style={{ background: "var(--paper)", borderRadius: 12, padding: "14px 15px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+                <span className="u-label" style={uLbl}>{sub}</span>
+                <div style={{ font: "600 clamp(24px, 2.2vw, 34px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 10, fontVariantNumeric: "tabular-nums" }}>{v}{bar != null && <span style={{ fontSize: "0.55em", color: "var(--text-muted)" }}> %</span>}</div>
+                {delta && <div style={{ font: "9px var(--font-mono)", letterSpacing: "0.1em", color: "var(--text-muted)", marginTop: 7 }}>{delta}</div>}
+                {bar != null && <div style={{ height: 4, borderRadius: 999, background: "rgba(20,18,16,0.08)", overflow: "hidden", marginTop: 9 }}><div style={{ height: "100%", width: bar + "%", background: "var(--signal)", borderRadius: 999 }}></div></div>}
+                <div style={{ font: "400 10.5px var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{note}</div>
+              </div>
+            ))}
+          </div>
+          <div className="u-label" style={{ ...uLbl, display: "block", margin: "16px 0 10px" }}>Leads pro Woche · letzte 12 Wochen</div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: statisch ? 76 : "clamp(76px, 13svh, 120px)" }}>
+            {LENS_WOCHEN.map((v, i) => (
+              <span key={i} style={{ flex: 1, height: ((v / maxW) * 100 * (statisch ? 1 : b[0])) + "%", minHeight: 3, background: LENS_FRAMP[Math.min(4, Math.floor((i / LENS_WOCHEN.length) * 5))], borderRadius: 3, transition: "height 500ms var(--ease-unio)" }}></span>
+            ))}
+          </div>
+        </div>
+        {/* Beat 2: Pipeline mit Konversionen + Status-Segmentbalken */}
+        <div style={panelBase(1)}>
+          <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Lead-Pipeline</div>
+          <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Kumulierter Stufen-Durchlauf aller 331 Interessen.</div>
+          <div style={{ display: "flex", gap: 0, marginTop: 16 }}>
+            {LENS_FUNNEL.map(([label, n, pct], i) => {
+              const k = statisch ? 1 : cl(b[1] * 1.6 - i * 0.15);
+              return (
+                <React.Fragment key={label}>
+                  {i > 0 && (
+                    <div style={{ width: mob ? 22 : 34, flex: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, color: "var(--text-muted)" }}>
+                      <span style={{ font: "500 12px var(--font-display)" }}>›</span>
+                      {!mob && <span style={{ font: "8px var(--font-mono)", letterSpacing: "0.06em" }}>{LENS_CONV[i - 1]}</span>}
+                    </div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="u-label" style={{ fontSize: 7.5, color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 6 }}>
+                      <span style={{ font: "600 clamp(16px, 1.6vw, 24px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", opacity: 0.3 + 0.7 * k }}>{n}</span>
+                      {!mob && <span style={{ font: "9px var(--font-mono)", color: "var(--text-muted)" }}>{pct} %</span>}
+                    </div>
+                    <div style={{ height: statisch ? 62 : "clamp(62px, 11svh, 96px)", display: "flex", alignItems: "flex-end", marginTop: 10 }}>
+                      <div style={{ width: "100%", height: Math.max(8, pct * k) + "%", borderRadius: 8, background: LENS_FRAMP[i], transition: "height 500ms var(--ease-unio)" }}></div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+          <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid var(--hairline-dark)" }}>
+            <span className="u-label" style={uLbl}>Aktueller Status</span>
+            <div style={{ display: "flex", gap: 3, height: 8, borderRadius: 999, overflow: "hidden", marginTop: 9 }}>
+              {LENS_STATUS.map(([l, n, c]) => <span key={l} style={{ width: ((n / statusTotal) * 100 * (statisch ? 1 : Math.max(0.15, b[1]))) + "%", background: c, transition: "width 500ms var(--ease-unio)" }}></span>)}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 16px", marginTop: 10 }}>
+              {LENS_STATUS.map(([l, n, c]) => (
+                <span key={l} style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "400 10.5px var(--font-display)", color: "var(--text-muted)" }}>
+                  <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: c, flex: "none" }}></span>{l} <b style={{ color: "var(--ink)", fontWeight: 600 }}>{n}</b>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* Beat 3: Quellenqualitaet + Eingangszeiten-Heatmap */}
+        <div style={panelBase(2)}>
+          <div style={{ font: "500 15px/1.2 var(--font-display)", color: "var(--ink)" }}>Quellenqualität</div>
+          <div style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)", marginTop: 4 }}>Wie gut konvertieren Leads je Quelle.</div>
+          <div style={{ marginTop: 10 }}>
+            {LENS_QUELLEN.map(([q, leads, rate, farbe], i) => {
+              const k = statisch ? 1 : cl(b[2] * 1.7 - i * 0.14);
+              return (
+                <div key={q} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr) 44px", gap: 10, alignItems: "center", padding: "7px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-dark)" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "400 12px var(--font-display)", color: "var(--ink-2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: "50%", background: farbe, flex: "none" }}></span>{q} <span style={{ font: "9px var(--font-mono)", color: "var(--text-muted)" }}>{leads}</span>
+                  </span>
+                  <div style={{ height: 7, borderRadius: 4, background: "rgba(20,18,16,0.07)", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: (rate * 2 * k) + "%", background: farbe, borderRadius: 4, transition: "width 500ms var(--ease-unio)" }}></div>
+                  </div>
+                  <span style={{ font: "11px var(--font-mono)", color: "var(--ink)", textAlign: "right", opacity: 0.3 + 0.7 * k }}>{rate} %</span>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "16px 0 8px" }}>
+            <span className="u-label" style={uLbl}>Lead-Eingangszeiten</span>
+            <span className="u-label" style={{ fontSize: 8, padding: "4px 10px", borderRadius: 999, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--text-muted)" }}>Top: Di 21–23 Uhr · 19</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "26px repeat(7, 1fr)", gap: 3 }}>
+            <span></span>
+            {LENS_HEAT.cols.map((c) => <span key={c} className="u-label" style={{ fontSize: 7, color: "var(--text-muted)", textAlign: "center" }}>{c}</span>)}
+            {LENS_HEAT.rows.map(([day, vals], ri) => (
+              <React.Fragment key={day}>
+                <span className="u-label" style={{ fontSize: 7.5, color: "var(--text-muted)", alignSelf: "center" }}>{day}</span>
+                {vals.map((v, i) => {
+                  const k = statisch ? 1 : cl(b[2] * 2 - (ri * 0.06 + i * 0.02));
+                  const t = v ? 0.18 + (v / heatMax) * 0.82 : 0;
+                  return <span key={i} style={{ height: mob ? 17 : "clamp(17px, 2.8svh, 24px)", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 8px var(--font-mono)", background: v ? lensHeat(t * k) : "#F7F4ED", color: v / heatMax > 0.55 ? "#FFFFFF" : v ? "var(--ink-2)" : "transparent", transition: "background 400ms var(--ease-unio)" }}>{v || ""}</span>;
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+    </LensFrame>
+  );
+  if (statisch) {
+    return (
+      <section id="lens" data-track="chapter_view_05b" data-screen-label="LENS" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "100px 6vw 96px" }}>
+        <Kap nr="05" label="LENS" />
+        <div style={{ maxWidth: 640, marginBottom: 36 }}>
+          <h2 style={{ margin: 0, font: "500 clamp(30px, 8vw, 40px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt.<br />Live<span style={{ color: "var(--signal)" }}>.</span></h2>
+          <p style={{ margin: "16px 0 0", font: "400 15px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 480 }}>Das ist kein Mockup: So sieht LENS für ein laufendes Projekt aus. Reporting entfällt, du schaust einfach rein.</p>
+        </div>
+        {inhalt}
+        <div style={{ marginTop: 24 }}>
+          {LENS_BEATS.map(([t, c], i) => (
+            <Fx key={t} delay={i * 80}>
+              <div style={{ padding: "14px 0", borderTop: "1px solid var(--hairline-dark)" }}>
+                <div style={{ font: "500 16px/1.3 var(--font-display)", color: "var(--ink)" }}>{t}</div>
+                <p style={{ margin: "5px 0 0", font: "400 13px/1.55 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
+              </div>
+            </Fx>
+          ))}
+        </div>
+        <p className="u-label" style={{ margin: "20px 0 0", color: "var(--text-muted)", fontSize: 9 }}>Echte Zahlen aus einem laufenden Projekt · Arbeitsstand</p>
+      </section>
+    );
+  }
+  return (
+    <section id="lens" ref={secRef} data-track="chapter_view_05b" data-screen-label="LENS" style={{ height: "320vh", position: "relative", background: "var(--paper)" }}>
+      <div className="u-grain" style={{ position: "sticky", top: 0, minHeight: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(70px, 11vh, 120px) 7vw clamp(36px, 6vh, 70px)" }}>
+        <GridLines />
+        <Kap nr="05" label="LENS" />
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: 56, alignItems: "center", position: "relative" }}>
+          <div>
+            <h2 style={{ margin: 0, font: "500 clamp(30px, 3.2vw, 54px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt.<br />Live<span style={{ color: "var(--signal)" }}>.</span></h2>
+            <p style={{ margin: "18px 0 0", font: "400 16px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 400 }}>
+              Das ist kein Mockup: So sieht LENS für ein laufendes Projekt aus. Reporting entfällt, du schaust einfach rein.
+            </p>
+            <div style={{ marginTop: 30 }}>
+              {LENS_BEATS.map(([t, c], i) => (
+                <div key={t} style={{ padding: "13px 0", borderTop: "1px solid var(--hairline-dark)", opacity: act === i ? 1 : 0.35, transition: `opacity 400ms ${BT_EASE}` }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+                    <span style={{ font: "12px var(--font-mono)", color: act === i ? "var(--signal-deep)" : "var(--text-muted)" }}>0{i + 1}</span>
+                    <div>
+                      <div style={{ font: "500 clamp(16px, 1.4vw, 20px)/1.3 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{t}</div>
+                      <p style={{ margin: "5px 0 0", font: "400 13.5px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: "42ch" }}>{c}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="u-label" style={{ margin: "22px 0 0", color: "var(--text-muted)", fontSize: 9 }}>Echte Zahlen aus einem laufenden Projekt · Arbeitsstand</p>
+          </div>
+          <div>{inhalt}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ===== 06 · NUTZEN-BENTO (der einzige Karten-Moment) ===== */
 function NCard({ span = 2, tone = "light", title, copy, children }) {
   const mob = window.useMobile();
@@ -784,7 +1010,7 @@ function App() {
       <ProblemBt />
       <ProofBt />
       <FunnelGraphBt />
-      <Lernkurve />
+      <LensShowcaseBt />
       <BentoBt />
       <MandateBt />
       <ModellBt />
