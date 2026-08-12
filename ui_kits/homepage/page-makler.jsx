@@ -1152,8 +1152,8 @@ function FaqMk() {
       items={[
         ["Was kostet mich UNIO?", "Ein Software-Beitrag von € 599/Monat — dafür behältst du 85 % Provision ab dem ersten Deal und 100 % ab € 150k Track-Record. Keine versteckten Gebühren.", { href: "#rechner", label: "Zum Rechner" }],
         ["Behalte ich meine eigene Marke?", "Ja. Du trittst unter deinem eigenen Namen auf; UNIO liefert System, Software und Dealflow im Hintergrund, ohne sich vor deine Marke zu stellen."],
-        ["Bin ich angestellt oder selbstständig?", "Du bleibst selbstständig und handelst auf eigene Rechnung — CIRCLE ist ein Netzwerk, kein Anstellungsverhältnis. [PLATZHALTER: rechtl. Konstruktion bestätigen]"],
-        ["Wie funktioniert die Beteiligung?", "Top-Performer bekommen echte Unternehmensbeteiligung, und über das Referral-Programm verdienst du an Deals von Makler:innen mit, die du in den CIRCLE holst. [PLATZHALTER: Beteiligungsdetails]", { href: "#bewerben", label: "Zum Gespräch" }],
+        ["Bin ich angestellt oder selbstständig?", "Du bleibst selbstständig und handelst auf eigene Rechnung — CIRCLE ist ein Netzwerk, kein Anstellungsverhältnis."],
+        ["Wie funktioniert die Beteiligung?", "Top-Performer bekommen echte Unternehmensbeteiligung, und über das Referral-Programm verdienst du an Deals von Makler:innen mit, die du in den CIRCLE holst.", { href: "#bewerben", label: "Zum Gespräch" }],
         ["Wie schnell bin ich startklar?", "Nach Bewerbung und Gespräch folgt ein kompaktes Onboarding auf Plattform, Projekte und Community — du startest nie bei null."],
         ["Für wen ist der CIRCLE nichts?", "Für alle, die nur einen Maklerpool suchen: CIRCLE ist kuratiert und auf Ownership ausgelegt — wer kein eigenes Geschäft aufbauen will, ist woanders besser aufgehoben."],
       ]}

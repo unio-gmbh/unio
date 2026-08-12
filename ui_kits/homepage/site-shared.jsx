@@ -191,9 +191,9 @@ function SiteNav({ active, cta }) {
   return (
     <React.Fragment>
     {skipLink}
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .65s var(--ease-unio)" }}>
       <div style={{
-        width: "100%", maxWidth: pill ? 760 : "none", margin: "0 auto",
+        width: "100%", maxWidth: pill ? 760 : 2200, margin: "0 auto", /* Zahl statt "none": max-width ist sonst nicht animierbar */
         display: "flex", alignItems: "center",
         padding: pill ? "9px 10px 9px 22px" : "12px 12px 12px 26px",
         borderRadius: pill ? 12 : 16,
@@ -202,7 +202,7 @@ function SiteNav({ active, cta }) {
         WebkitBackdropFilter: "blur(24px) saturate(1.8)",
         backdropFilter: "blur(24px) saturate(1.8)",
         boxShadow: pill ? "0 8px 30px rgba(20,18,16,.1), inset 0 1px 0 rgba(255,255,255,.6)" : "0 8px 34px rgba(11,10,9,.18), inset 0 1px 0 rgba(255,255,255,.5)",
-        transition: "background .55s var(--ease-unio), border-color .55s var(--ease-unio), padding .55s var(--ease-unio), max-width .55s var(--ease-unio), box-shadow .55s var(--ease-unio), border-radius .55s var(--ease-unio)",
+        transition: "background .65s var(--ease-unio), border-color .65s var(--ease-unio), padding .65s var(--ease-unio), max-width .65s var(--ease-unio), box-shadow .65s var(--ease-unio), border-radius .65s var(--ease-unio)",
       }}>
         <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
           <a href="index.html" style={{ display: "flex", alignItems: "center", flex: "0 0 auto", textDecoration: "none" }}>
@@ -210,7 +210,7 @@ function SiteNav({ active, cta }) {
           </a>
         </div>
         <span aria-hidden="true" style={{ flex: "1 1 0" }}></span>
-        <nav style={{ display: "flex", gap: pill ? 22 : 28, flex: "0 0 auto", font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .55s var(--ease-unio)" }}>
+        <nav style={{ display: "flex", gap: pill ? 22 : 28, flex: "0 0 auto", font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .65s var(--ease-unio), font-size .65s var(--ease-unio)" }}>
           {NAV_LINKS.map(([l, href]) => (
             <NavLink key={href} href={href} label={l} on={active === href} solid={true} />
           ))}
@@ -223,7 +223,7 @@ function SiteNav({ active, cta }) {
           border: "0.5px solid " + (pill ? "var(--signal)" : "rgba(20,18,16,0.28)"),
           background: pill ? "var(--signal)" : "rgba(255,255,255,0.55)",
           color: pill ? "var(--on-signal)" : "var(--ink)",
-          transition: "all .4s var(--ease-unio)",
+          transition: "all .55s var(--ease-unio)",
         }}>{c.label}</button>
         </div>
       </div>

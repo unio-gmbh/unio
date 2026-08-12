@@ -17,9 +17,11 @@ import nodemailer from "nodemailer";
 const FALLBACK = "office@unio.at";
 
 /* TESTBETRIEB: solange gesetzt, gehen ALLE Leads an diese Adresse.
-   Das eigentliche Routing steht trotzdem in jeder Mail ("Empfaenger-Routing").
-   Nach dem Test auf null setzen, dann greift das Routing wieder. */
-const TEST_EMPFAENGER = "daniel@unio.at";
+   Das eigentliche Routing steht trotzdem in jeder Mail ("Empfaenger-Routing"). */
+const TEST_EMPFAENGER = null;
+
+/* Diese Adresse bekommt IMMER eine Kopie jedes Leads (Wunsch Daniel, Aug 2026). */
+const KOPIE = "daniel@ad.boutique";
 
 function recipient(lead) {
   const type = String(lead.type || "").toLowerCase();
@@ -80,6 +82,7 @@ export default async function handler(req, res) {
     await transporter.sendMail({
       from: `"UNIO Website" <${user}>`,
       to,
+      cc: KOPIE,
       replyTo: typeof lead.email === "string" ? oneLine(lead.email) : undefined,
       subject: `Website-Lead: ${LABELS[lead.type] || oneLine(lead.type)}${lead.name ? " von " + oneLine(lead.name) : ""}`,
       text:

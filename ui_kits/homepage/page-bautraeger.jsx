@@ -843,9 +843,9 @@ function MandateBt() {
 
 /* ===== 09 · EINWÄNDE — Akkordeon (Granger) ===== */
 const EINWAENDE = [
-  ["Was kostet es — und wann?", "100 % erfolgsbasiert: Wir verdienen am Abverkauf, nicht am Retainer — keine Setup-Kosten, kein monatliches Fixum. Unser Risiko liegt neben deinem.", { href: "#simulator", label: "Zum Simulator" }],
-  ["Wie schnell sehen wir erste Daten?", "Kampagnen-Setup und CIRCLE-Matching starten direkt nach der Unterlagen-Übergabe; Anfragen und Pipeline siehst du ab dem ersten Tag live in LENS. [PLATZHALTER: verbindliche Timeline]", { href: "#funnel", label: "Projekt einreichen" }],
-  ["Was passiert mit unseren Bestandsmaklern?", "Deine Bestandspartner bleiben eingebunden: CIRCLE ergänzt statt ersetzt, und die Zuordnung jeder Anfrage bleibt in LENS transparent nachvollziehbar. [PLATZHALTER: Details Partnermodell]"],
+  ["Was kostet es — und wann?", "100 % erfolgsbasiert: Wir verdienen am Abverkauf, nicht am Retainer — keine Setup-Kosten, kein monatliches Fixum. Unser Risiko liegt neben deinem."],
+  ["Wie schnell sehen wir erste Daten?", "Kampagnen-Setup und CIRCLE-Matching starten direkt nach der Unterlagen-Übergabe; Anfragen und Pipeline siehst du ab dem ersten Tag live in LENS.", { href: "#funnel", label: "Projekt einreichen" }],
+  ["Was passiert mit unseren Bestandsmaklern?", "Deine Bestandspartner bleiben eingebunden: CIRCLE ergänzt statt ersetzt, und die Zuordnung jeder Anfrage bleibt in LENS transparent nachvollziehbar."],
   ["Ist das bank- und beiratsfähig?", "Ja. Deine Projektdaten bleiben deine, und die LENS-Auswertungen sind exportfähig — aufbereitet für Bank, Beirat und Gesellschafter."],
   ["Was, wenn das Projekt schon läuft?", "Ein Einstieg ist jederzeit möglich: Wir docken an den aktuellen Stand an und steuern ab dort datenbasiert weiter — auch mitten in der Vermarktung."],
   ["Wie steigen wir wieder aus?", "Über klare Meilensteine statt Bindungsfallen — definierte Exit-Punkte je Projektphase, vorab vereinbart."],
