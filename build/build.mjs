@@ -203,7 +203,7 @@ async function main() {
 
   /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
         Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
-  const UX_KITS = [["dashboard", "backend"], ["property", "objekt"]];
+  const UX_KITS = [["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"]];
   for (const [kit, out] of UX_KITS) {
     const kitDir = join(ROOT, "ui_kits", kit);
     if (!existsSync(kitDir)) continue;
@@ -211,6 +211,8 @@ async function main() {
     mkdirSync(outDir, { recursive: true });
     for (const f of readdirSync(kitDir).filter((f) => f.endsWith(".html") || f.endsWith(".jsx"))) {
       let s = readFileSync(join(kitDir, f), "utf8");
+      /* Einheiten-Links der Projekt-Ueberseite bleiben in der geschuetzten UX-Vorschau */
+      s = s.replaceAll('href="projekt.html"', 'href="/ux/objekt"');
       s = rewriteUrls(s);
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
       /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
