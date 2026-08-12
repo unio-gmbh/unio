@@ -101,7 +101,7 @@ function NavLink({ href, label, on, solid }) {
   );
 }
 function SiteNav({ active, cta }) {
-  const c = cta || { label: "Login", onClick: () => window.open("https://app.unio.at", "_blank") };
+  const c = cta || { label: "Login", onClick: () => window.open("https://app.unio.at/auth/redirect?callbackUrl=%2F", "_blank") };
   const [pill, setPill] = React.useState(false);
   const mob = useMobile();
   const [open, setOpen] = React.useState(false);
@@ -366,7 +366,7 @@ function SiteFooter() {
           <a key={href} href={href} style={{ color: "var(--text-muted)", textDecoration: "none" }}>{l}</a>
         ))}
         <a href="/wissen" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Wissen</a>
-        <a href={APP_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Login ↗</a>
+        <a href="https://app.unio.at/auth/redirect?callbackUrl=%2F" target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Login ↗</a>
         <a href={BEWERTUNG_URL} target="_blank" rel="noopener" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Bewertung ↗</a>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--hairline-dark)", marginTop: mob ? 40 : 56, paddingTop: 24, gap: 20, flexWrap: "wrap" }}>

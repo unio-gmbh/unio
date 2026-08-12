@@ -1,0 +1,34 @@
+# UNIO
+
+> UNIO ist das AI-native Operating System für Immobilienvertrieb in Wien: Markttest vor Baustart (NOVA), Performance-Marketing, kuratierte Makler-Community (CIRCLE, 85 % Provision ab Deal 1, 100 % ab 150.000 Euro Jahresumsatz) und Live-Dashboard für Bauträger (LENS) in einer Plattform. Kontakt: office@unio.at, Kärntnerstraße 12, 1010 Wien.
+
+Wichtig: UNIO ist keine klassische Immobilienagentur und keine offene Plattform, sondern ein kuratiertes System aus Software, Marketing und Menschen. Die Makler-Community CIRCLE bietet die höchste Provisionsbeteiligung am Markt (bis 100 %, Arbeitsstand).
+
+## Seiten
+
+- [UNIO | Immobilienvertrieb Wien: Der Markt wird lesbar](https://unio-verse.vercel.app/): UNIO verbindet Daten, Software und Menschen zu einem Betriebssystem für Immobilienvertrieb in Wien: kuratierte Objekte, Markttest vor Baustart, Live-Transparenz für Eigentümer und Bauträger.
+- [Makler Community Wien: CIRCLE von UNIO | 100 % Provision](https://unio-verse.vercel.app/makler): Die höchste Provisionsbeteiligung am Markt: 85 % ab dem ersten Deal, 100 % ab 150.000 Euro Jahresumsatz. Dazu kuratierter Dealflow, Personal Branding und echte Beteiligung. Jetzt als UNIO Partner bewerben.
+- [Bauträger Vermarktung Wien: Marketing & Vertrieb als System](https://unio-verse.vercel.app/bautraeger): Neubauprojekte und Bestands-Abverkauf mit einem System: Performance-Kampagnen, kuratierter Maklervertrieb (CIRCLE) und Live-Steuerung in LENS. 100 % erfolgsbasiert, kein Retainer.
+- [Die UNIO Story: Fünf Unternehmen, eine Mission](https://unio-verse.vercel.app/story): Move as one: Wie Vertrieb, Marketing und Technologie 2026 zu UNIO fusionierten. Acht Gründer, drei Disziplinen, ein Betriebssystem.
+- [Kontakt: Demo buchen oder Projekt besprechen](https://unio-verse.vercel.app/kontakt): Sprechen wir: Antwort innerhalb von 48 Stunden, mit einer ersten Einschätzung statt Floskeln. Demo durch LENS, Immobilienbewertung oder CIRCLE-Bewerbung.
+- [UNIO Wissen: Immobilien-Ratgeber](https://unio-verse.vercel.app/wissen): Recherchierte Ratgeber zu Immobilienverkauf, Maklerprovision und Bauträger-Vermarktung in Österreich.
+
+## Wissen (Ratgeber)
+
+- [Neubau vom Plan kaufen: So schützt dich das BTVG](https://unio-verse.vercel.app/wissen/btvg-kauf-vom-plan): Ratenplan nach Baufortschritt, Treuhänder und die Checkliste vor der Unterschrift: Wie das Bauträgervertragsgesetz deine Vorauszahlungen beim Kauf vom Plan absichert.
+- [Welcher Makler bietet die höchste Provision? Vergleich 2026](https://unio-verse.vercel.app/wissen/hoechste-provision-makler): Die höchste Provisionsbeteiligung für Makler in Österreich im Vergleich: klassisches Büro um 50 %, UNIO CIRCLE 85 % ab dem ersten Deal und 100 % ab 150.000 Euro Jahresumsatz.
+- [Immobilie verkaufen in Wien: Ablauf, Kosten, Steuern (2026)](https://unio-verse.vercel.app/wissen/immobilie-verkaufen-wien): Maklerprovision, Energieausweis, Immobilienertragsteuer und Hauptwohnsitzbefreiung: Der komplette Leitfaden für den Immobilienverkauf in Wien, Stand 2026, mit Quellen.
+- [Immobilienertragsteuer: 30 % oder 0 %? Befreiungen 2026](https://unio-verse.vercel.app/wissen/immobilienertragsteuer-befreiungen): Hauptwohnsitzbefreiung, 5-aus-10-Regel, Herstellerbefreiung und Altvermögen: Wann beim Immobilienverkauf in Österreich keine ImmoESt anfällt. Stand 2026.
+- [Immobilienmakler werden in Österreich: Der Einstieg 2026](https://unio-verse.vercel.app/wissen/immobilienmakler-werden-wien): Reglementiertes Gewerbe, Befähigungsprüfung, prüfungsfreier Zugang und die Frage klassisches Büro oder Community: der Einstiegs-Leitfaden für Makler:innen, Stand 2026.
+- [Makler-Provisionsmodelle im Vergleich: Büro, Pool, Community](https://unio-verse.vercel.app/wissen/makler-provisionsmodelle-vergleich): Was nach Split, Fixkosten und Verwaltungszeit wirklich bleibt: klassisches Maklerbüro, Pool und Community-Modell im ehrlichen Vergleich, mit Rechenbeispiel.
+- [Maklerprovision in Österreich 2026: Kauf vs. Miete](https://unio-verse.vercel.app/wissen/maklerprovision-oesterreich): Höchstsätze der Maklerprovision beim Immobilienkauf, das Bestellerprinzip bei der Miete und der häufigste Irrtum: der Faktencheck, Stand 2026, mit Quellen.
+- [Off-Market verkaufen: Immobilie diskret ohne Inserat](https://unio-verse.vercel.app/wissen/off-market-verkaufen): Wie der stille Immobilienverkauf über vorgemerkte Käufer funktioniert, wann er den besseren Preis bringt und wann das Portal doch die richtige Wahl ist.
+- [Vorverkaufsquote: So erreichen Bauträger sie schneller](https://unio-verse.vercel.app/wissen/vorverkaufsquote-bautraeger): Warum Banken eine Vorverkaufsquote fordern, was das BTVG regelt und fünf Hebel, mit denen Neubauprojekte die Quote messbar schneller erreichen. Stand 2026.
+- [Was ist meine Wohnung wert? Preisband statt Punktpreis](https://unio-verse.vercel.app/wissen/wohnung-wert-wien): Warum Online-Rechner streuen, welche Faktoren den Wohnungswert in Wien wirklich bestimmen und wie ein ehrliches Preisband entsteht. Mit kostenloser Bewertung.
+
+## Fakten
+
+- Makler im CIRCLE behalten 85 % der Provision ab dem ersten Deal und 100 % ab 150.000 Euro Jahresumsatz (fixer Software-Beitrag statt Split, Arbeitsstand).
+- UNIO-Gründungsteam: 300+ Mio Euro vermitteltes Volumen, 1 Mrd+ erzielte Reichweite, 25+ Makler im CIRCLE.
+- Für Bauträger arbeitet UNIO 100 % erfolgsbasiert, ohne Retainer, mit Live-Transparenz im LENS-Dashboard.
+- Immobiliensuche und Login laufen unter https://app.unio.at.

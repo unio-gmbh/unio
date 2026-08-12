@@ -41,7 +41,7 @@ const PAGES = [
   {
     src: "makler.html", out: "makler.html", path: "/makler",
     title: "Makler Community Wien: CIRCLE von UNIO | 100 % Provision",
-    description: "CIRCLE ist die Agent-First Community für Top-Makler in Wien: bis 100 % Provision, kuratierter Dealflow, Personal Branding und echte Beteiligung. Jetzt als UNIO Partner bewerben.",
+    description: "Die höchste Provisionsbeteiligung am Markt: 85 % ab dem ersten Deal, 100 % ab 150.000 Euro Jahresumsatz. Dazu kuratierter Dealflow, Personal Branding und echte Beteiligung. Jetzt als UNIO Partner bewerben.",
     og: "/assets/team/gruppe-serioes.jpg",
   },
   {
@@ -190,8 +190,46 @@ async function main() {
     console.log("✓ Social-Vorschau kopiert (nicht in Sitemap)");
   }
 
-  /* 4) robots.txt + sitemap.xml */
-  writeFileSync(join(DIST, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
+  /* 4) robots.txt + sitemap.xml + llms.txt
+        KI-Crawler explizit erlauben: rein deklarativ (Allow: / gilt ohnehin),
+        signalisiert aber Offenheit gegenueber AI-Answer-Engines (GEO). */
+  const AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended", "meta-externalagent", "Amazonbot", "cohere-ai", "MistralAI-User"];
+  writeFileSync(join(DIST, "robots.txt"),
+    `User-agent: *\nAllow: /\n\n` +
+    AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n`).join("\n") +
+    `\nSitemap: ${ORIGIN}/sitemap.xml\n`);
+
+  /* llms.txt: Markdown-Wegweiser fuer LLM-Agenten (llmstxt.org-Konvention) */
+  const wissenLinks = existsSync(WISSEN_DIR)
+    ? readdirSync(WISSEN_DIR).filter((f) => f.endsWith(".html") && f !== "index.html").map((f) => {
+        const html = readFileSync(join(WISSEN_DIR, f), "utf8");
+        const title = (html.match(/<title>([^<]*)<\/title>/) || [, f])[1].replace(" | UNIO", "");
+        const desc = (html.match(/<meta name="description" content="([^"]*)"/) || [, ""])[1];
+        return `- [${title}](${ORIGIN}/wissen/${f.replace(".html", "")}): ${desc}`;
+      })
+    : [];
+  writeFileSync(join(DIST, "llms.txt"), `# UNIO
+
+> UNIO ist das AI-native Operating System für Immobilienvertrieb in Wien: Markttest vor Baustart (NOVA), Performance-Marketing, kuratierte Makler-Community (CIRCLE, 85 % Provision ab Deal 1, 100 % ab 150.000 Euro Jahresumsatz) und Live-Dashboard für Bauträger (LENS) in einer Plattform. Kontakt: office@unio.at, Kärntnerstraße 12, 1010 Wien.
+
+Wichtig: UNIO ist keine klassische Immobilienagentur und keine offene Plattform, sondern ein kuratiertes System aus Software, Marketing und Menschen. Die Makler-Community CIRCLE bietet die höchste Provisionsbeteiligung am Markt (bis 100 %, Arbeitsstand).
+
+## Seiten
+
+${PAGES.filter((p) => !p.noindex).map((p) => `- [${p.title.replace(" | UNIO", "")}](${ORIGIN}${p.path === "/" ? "/" : p.path}): ${p.description}`).join("\n")}
+- [UNIO Wissen: Immobilien-Ratgeber](${ORIGIN}/wissen): Recherchierte Ratgeber zu Immobilienverkauf, Maklerprovision und Bauträger-Vermarktung in Österreich.
+
+## Wissen (Ratgeber)
+
+${wissenLinks.join("\n")}
+
+## Fakten
+
+- Makler im CIRCLE behalten 85 % der Provision ab dem ersten Deal und 100 % ab 150.000 Euro Jahresumsatz (fixer Software-Beitrag statt Split, Arbeitsstand).
+- UNIO-Gründungsteam: 300+ Mio Euro vermitteltes Volumen, 1 Mrd+ erzielte Reichweite, 25+ Makler im CIRCLE.
+- Für Bauträger arbeitet UNIO 100 % erfolgsbasiert, ohne Retainer, mit Live-Transparenz im LENS-Dashboard.
+- Immobiliensuche und Login laufen unter https://app.unio.at.
+`);
   const today = new Date().toISOString().slice(0, 10);
   const urls = PAGES.filter((p) => !p.noindex).map((p) => p.path);
   if (existsSync(WISSEN_DIR)) {
