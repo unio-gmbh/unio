@@ -557,16 +557,21 @@ function usePinProgress() {
   const [p, setP] = React.useState(U_RM ? 1 : 0);
   React.useEffect(() => {
     if (U_RM) return;
-    const on = () => {
+    /* Scroll-Events auf Frames buendeln: ein Messen + setState pro rAF statt pro Event,
+       sonst rendert jeder Pin auf Mobilgeraeten mehrfach pro Frame (Ruckeln). */
+    let raf = 0;
+    const messen = () => {
+      raf = 0;
       const el = ref.current; if (!el) return;
       const r = el.getBoundingClientRect();
       const total = Math.max(1, el.offsetHeight - window.innerHeight);
       setP(Math.min(1, Math.max(0, -r.top / total)));
     };
-    on();
+    const on = () => { if (!raf) raf = requestAnimationFrame(messen); };
+    messen();
     window.addEventListener("scroll", on, { passive: true });
     window.addEventListener("resize", on);
-    return () => { window.removeEventListener("scroll", on); window.removeEventListener("resize", on); };
+    return () => { if (raf) cancelAnimationFrame(raf); window.removeEventListener("scroll", on); window.removeEventListener("resize", on); };
   }, []);
   return [ref, p];
 }

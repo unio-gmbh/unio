@@ -439,8 +439,27 @@ function AblaufGlyph({ i, on }) {
 
 /* ===== 05 · 80 % WENIGER ADMIN — Porträt-Moment mit Glas-Chips ===== */
 function AdminMk() {
-  const [ref, p] = window.usePinProgress();
+  const [ref, pRoh] = window.usePinProgress();
   const mob = window.useMobile();
+  /* Mobil: Fortschritt per rAF-Lerp glaetten. Touch-Scroll liefert Events in
+     unregelmaessiger Kadenz; der Lerp interpoliert dazwischen und macht den
+     horizontalen Track butterweich. Desktop nutzt den Rohwert direkt. */
+  const [pGlide, setPGlide] = React.useState(BT_RM ? 1 : 0);
+  const zielRef = React.useRef(0);
+  zielRef.current = pRoh;
+  React.useEffect(() => {
+    if (!mob || BT_RM) return;
+    let raf, cur = zielRef.current;
+    const tick = () => {
+      const d = zielRef.current - cur;
+      cur = Math.abs(d) < 0.0004 ? zielRef.current : cur + d * 0.16;
+      setPGlide(cur);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [mob]);
+  const p = mob && !BT_RM ? pGlide : pRoh;
   const chips = ["Exposé", "CRM", "Termine", "Closing", "Abrechnung"];
   const scatter = [[8, 8, -7], [52, 4, 5], [64, 40, 9], [6, 48, -4], [34, 26, 3]];
   const k = BT_RM ? 1 : oaClamp(p / 0.13 * 1.4);          // 0–0.13: Chips sortieren
@@ -497,7 +516,7 @@ function AdminMk() {
           <span style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(253,252,250,0.9)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "14px var(--font-mono)", color: "var(--ink)" }}>→</span>
         </div>
         {/* Horizontaler Drei-Panel-Track: Admin → Objektanlage → Ablauf bis Abrechnung */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", willChange: "transform", transform: `translateX(${-trackX * (100 / 3)}%)`, transition: mob && !BT_RM ? "transform 340ms cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "none" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", willChange: "transform", transform: `translateX(${-trackX * (100 / 3)}%)` }}>
           {/* Panel A — Admin */}
           <div style={{ width: "33.3334%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
             <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1fr)", gap: mob ? 24 : 56, alignItems: "center", width: "100%" }}>
@@ -520,7 +539,8 @@ function AdminMk() {
                     <div key={c} style={{
                       position: "absolute", left: x + "%", top: y + "%",
                       transform: `rotate(${rot * (1 - ki)}deg)`,
-                      background: "var(--glass-dark)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)",
+                      background: mob ? "rgba(20,18,16,0.6)" : "var(--glass-dark)",
+                      WebkitBackdropFilter: mob ? "none" : "blur(18px)", backdropFilter: mob ? "none" : "blur(18px)",
                       boxShadow: "inset 0 0 0 1px var(--hairline-light)", borderRadius: "var(--r-pill)",
                       padding: "10px 18px", color: "var(--text-inverse)", font: "500 14px var(--font-display)",
                       display: "inline-flex", alignItems: "center", gap: 9, whiteSpace: "nowrap",
