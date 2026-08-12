@@ -4,7 +4,7 @@
    Mobile: Pin bleibt, eigene Größenlogik. prefers-reduced-motion: vertikale Abfolge. */
 const { Button: Bsq } = window.UNIODesignSystem_b6216a;
 
-const SEQ_NAMES = ["Ecoluxe", "Origins", "Albrecht", "ObenZwei", "Das Beheim", "Das Wimmer", "Jardin Hermes"];
+const SEQ_NAMES = ["Ecoluxe", "Origins", "Albrecht", "ObenZwei", "Das Beheim", "Das Wimmer"];
 const SEQ_CLAIM = "Echte Deals durch echte Daten";
 const sqClamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const sstep = (t) => { t = sqClamp(t, 0, 1); return t * t * (3 - 2 * t); };

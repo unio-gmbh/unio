@@ -445,10 +445,14 @@ function AdminMk() {
   const scatter = [[8, 8, -7], [52, 4, 5], [64, 40, 9], [6, 48, -4], [34, 26, 3]];
   const k = BT_RM ? 1 : oaClamp(p / 0.13 * 1.4);          // 0–0.13: Chips sortieren
   const done = k > 0.8;
-  const slide = BT_RM ? 0 : oaClamp((p - 0.26) / 0.1);    // Panel A → B
+  /* Mobil breitere Wechselfenster + Smoothstep-Easing: der Panel-Wechsel
+     verteilt sich auf mehr Scrollweg und startet/endet weich statt linear. */
+  const slide = BT_RM ? 0 : mob ? oaClamp((p - 0.24) / 0.14) : oaClamp((p - 0.26) / 0.1);   // Panel A → B
   const oaP = BT_RM ? 1 : oaClamp((p - 0.38) / 0.34);     // Objektanlage-Animation
-  const slide2 = BT_RM ? 0 : oaClamp((p - 0.74) / 0.09);  // Panel B → C
+  const slide2 = BT_RM ? 0 : mob ? oaClamp((p - 0.72) / 0.12) : oaClamp((p - 0.74) / 0.09); // Panel B → C
   const cP = BT_RM ? 1 : oaClamp((p - 0.845) / 0.155);    // restliche Prozess-Stationen
+  const ease01 = (t) => t * t * (3 - 2 * t);
+  const trackX = mob ? ease01(slide) + ease01(slide2) : slide + slide2;
   const ph1 = oaClamp(oaP / 0.35), ph2 = oaClamp((oaP - 0.35) / 0.25), ph3 = oaClamp((oaP - 0.6) / 0.4);
   const oaHead = oaP < 0.35 ? "Drag and Drop deiner Dokumente" : oaP < 0.6 ? "Die UNIO KI liest, strukturiert und erstellt" : "Fertig zur Freigabe.";
   if (BT_RM) {
@@ -493,7 +497,7 @@ function AdminMk() {
           <span style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(253,252,250,0.9)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "14px var(--font-mono)", color: "var(--ink)" }}>→</span>
         </div>
         {/* Horizontaler Drei-Panel-Track: Admin → Objektanlage → Ablauf bis Abrechnung */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", transform: `translateX(${-(slide + slide2) * (100 / 3)}%)` }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", willChange: "transform", transform: `translateX(${-trackX * (100 / 3)}%)` }}>
           {/* Panel A — Admin */}
           <div style={{ width: "33.3334%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
             <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1fr)", gap: mob ? 24 : 56, alignItems: "center", width: "100%" }}>
@@ -588,15 +592,15 @@ function AdminMk() {
             </div>
           </div>
           {/* Panel C — Ablauf: die restlichen Stationen bis zur Abrechnung */}
-          <div style={{ width: "33.3334%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", alignItems: "center", gap: mob ? 18 : 48, padding: mob ? "92px 6vw 30px" : "0 9vw 0 11vw", overflow: "hidden" }}>
+          <div style={{ width: "33.3334%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", alignItems: "center", gap: mob ? 12 : 48, padding: mob ? "80px 5vw 18px" : "0 9vw 0 11vw", overflow: "hidden" }}>
             <div>
-              <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(22px, 6vw, 28px)" : "clamp(28px, 3vw, 50px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+              <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(20px, 5.4vw, 26px)" : "clamp(28px, 3vw, 50px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
                 Und weiter,<br />bis zur Abrechnung.
               </h2>
-              <p style={{ margin: mob ? "12px 0 0" : "18px 0 0", font: `400 ${mob ? 14 : 16}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 400 }}>
+              <p style={{ margin: mob ? "9px 0 0" : "18px 0 0", font: `400 ${mob ? 13.5 : 16}px/${mob ? 1.5 : 1.6} var(--font-display)`, color: "var(--text-muted)", maxWidth: 400 }}>
                 Ein Deal, ein System. Auch nach der Objektanlage arbeitet die Plattform, damit du beim Menschen bleibst.
               </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: mob ? 16 : 40 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: mob ? 10 : 40 }}>
                 <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
                   <circle cx="17" cy="17" r="14" fill="none" stroke="var(--hairline-dark)" strokeWidth="1.5" />
                   <circle cx="17" cy="17" r="14" fill="none" stroke="var(--signal)" strokeWidth="1.5" strokeDasharray={2 * Math.PI * 14} strokeDashoffset={(1 - cP) * 2 * Math.PI * 14} transform="rotate(-90 17 17)" strokeLinecap="round" />
@@ -612,17 +616,17 @@ function AdminMk() {
               {PROZESS_MK.slice(1).map(([nr, t, c], i) => {
                 const on = cP * 4.4 - i > 0.4;
                 return (
-                  <div key={nr} style={{ position: "relative", padding: mob ? "13px 0" : "14px 0", opacity: on ? 1 : 0.32, transform: on ? "none" : "translateY(8px)", transition: `all 500ms ${BT_EASE}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
+                  <div key={nr} style={{ position: "relative", padding: mob ? "8px 0" : "14px 0", opacity: on ? 1 : 0.32, transform: on ? "none" : "translateY(8px)", transition: `all 500ms ${BT_EASE}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
                     <span aria-hidden="true" style={{ position: "absolute", left: mob ? -25 : -31, top: "50%", marginTop: mob ? -6.5 : -7.5, width: mob ? 13 : 15, height: mob ? 13 : 15, borderRadius: "50%", background: on ? "var(--signal)" : "var(--paper)", boxShadow: on ? "0 0 0 4px var(--signal-soft, rgba(255,170,9,0.18))" : "inset 0 0 0 1.5px var(--hairline-dark)", transition: `all 400ms ${BT_EASE}` }}></span>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h3 style={{ margin: 0, font: `500 ${mob ? 16 : 20}px/1.3 var(--font-display)`, letterSpacing: "-0.01em", color: "var(--ink)" }}>{t}</h3>
-                      <p style={{ margin: "6px 0 0", font: `400 ${mob ? 12.5 : 14}px/1.55 var(--font-display)`, color: "var(--text-muted)", maxWidth: 480 }}>{c}</p>
+                      <h3 style={{ margin: 0, font: `500 ${mob ? 15 : 20}px/1.3 var(--font-display)`, letterSpacing: "-0.01em", color: "var(--ink)" }}>{t}</h3>
+                      <p style={{ margin: mob ? "3px 0 0" : "6px 0 0", font: `400 ${mob ? 12 : 14}px/${mob ? 1.45 : 1.55} var(--font-display)`, color: "var(--text-muted)", maxWidth: 480 }}>{c}</p>
                     </div>
                     {mob ? null : <AblaufGlyph i={i} on={on} />}
                   </div>
                 );
               })}
-              <div style={{ marginTop: mob ? 10 : 16, opacity: cP > 0.8 ? 1 : 0, transform: cP > 0.8 ? "none" : "translateY(10px)", transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 9, padding: "11px 16px", borderRadius: "var(--r-pill)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.4)", font: `500 ${mob ? 12 : 13}px var(--font-display)`, color: "var(--signal-deep)", whiteSpace: "nowrap" }}>
+              <div style={{ marginTop: mob ? 8 : 16, opacity: cP > 0.8 ? 1 : 0, transform: cP > 0.8 ? "none" : "translateY(10px)", transition: `all 500ms ${BT_EASE}`, display: "inline-flex", alignItems: "center", gap: 9, padding: mob ? "9px 14px" : "11px 16px", borderRadius: "var(--r-pill)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.4)", font: `500 ${mob ? 11.5 : 13}px var(--font-display)`, color: "var(--signal-deep)", whiteSpace: "nowrap" }}>
                 <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }}></span>Deal abgeschlossen. Alles auf der Plattform.
               </div>
             </div>

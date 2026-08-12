@@ -4,9 +4,14 @@
      bewerbung (Makler/CIRCLE)          -> circle@unio.at
      projekt + simulator-pdf (Bautraeger) -> projects@unio.at
      kontakt: Rolle Makler -> circle@, Rolle Bautraeger -> projects@, sonst office@unio.at
-   Versand erwartet die Env-Vars GMAIL_USER und GMAIL_APP_PASSWORD (Google-App-Passwort,
-   Konto braucht 2-Faktor-Auth) im Vercel-Projekt. Fehlen sie, wird der Lead nur geloggt
-   (Dashboard > Functions > Logs), das Formular bleibt funktionsfaehig. */
+   Versand: zwei Wege, geprueft in dieser Reihenfolge.
+   1. OAuth2 (empfohlen, funktioniert ohne App-Passwort): Env-Vars GMAIL_USER,
+      GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN. Der Refresh-Token
+      wird einmalig ueber den OAuth-Consent des normalen Gmail-Kontos erzeugt
+      (Google Cloud Console + OAuth Playground, Scope https://mail.google.com/).
+   2. App-Passwort (Fallback): GMAIL_USER + GMAIL_APP_PASSWORD.
+   Fehlen beide, wird der Lead nur geloggt (Dashboard > Functions > Logs),
+   das Formular bleibt funktionsfaehig. */
 import nodemailer from "nodemailer";
 
 const FALLBACK = "office@unio.at";
@@ -46,10 +51,14 @@ export default async function handler(req, res) {
 
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
-  if (!user || !pass) {
-    console.warn("UNIO_LEAD_MAIL_SKIPPED: GMAIL_USER / GMAIL_APP_PASSWORD fehlen (Vercel > Settings > Environment Variables)");
+  const oauth = process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET && process.env.GMAIL_REFRESH_TOKEN;
+  if (!user || (!pass && !oauth)) {
+    console.warn("UNIO_LEAD_MAIL_SKIPPED: Env-Vars fehlen. Entweder GMAIL_USER + GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN (OAuth) oder GMAIL_USER + GMAIL_APP_PASSWORD setzen (Vercel > Settings > Environment Variables).");
     return res.status(200).json({ ok: true });
   }
+  const auth = oauth
+    ? { type: "OAuth2", user, clientId: process.env.GMAIL_CLIENT_ID, clientSecret: process.env.GMAIL_CLIENT_SECRET, refreshToken: process.env.GMAIL_REFRESH_TOKEN }
+    : { user, pass };
 
   const lines = Object.entries(lead)
     .filter(([k]) => k !== "type" && k !== "ts")
@@ -60,7 +69,7 @@ export default async function handler(req, res) {
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      auth: { user, pass },
+      auth,
     });
     await transporter.sendMail({
       from: `"UNIO Website" <${user}>`,
