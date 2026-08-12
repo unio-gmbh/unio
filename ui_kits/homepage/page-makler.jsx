@@ -785,6 +785,7 @@ function BeteiligungMk() {
 }
 
 /* ===== 08 · DIE BEWEGUNG — Orange, der Kreis schließt sich ===== */
+const ZEIGE_GESICHTER = false; /* AKTIV: "Gesichter des CIRCLE" voruebergehend aus */
 function BewegungMk() {
   const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-02.jpg", "portrait-03.jpg"];
   const ref = React.useRef(null);
@@ -862,7 +863,10 @@ function BewegungMk() {
         </div>
         </div>
       </div>
-      {/* Zweiter Teil: Gesichter des CIRCLE */}
+      {/* Zweiter Teil: Gesichter des CIRCLE.
+          AKTIV: voruebergehend ausgeblendet (Aug 2026); im Passiv-Repo sichtbar.
+          Zum Wiedereinblenden ZEIGE_GESICHTER auf true setzen. */}
+      {ZEIGE_GESICHTER && (
       <div style={{ marginTop: 120, borderTop: "1px solid rgba(255,255,255,0.28)", paddingTop: 72 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 20, flexWrap: "wrap", marginBottom: 56 }}>
           <h3 style={{ margin: 0, font: "500 clamp(26px, 2.8vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF" }}>Gesichter des CIRCLE.</h3>
@@ -887,6 +891,7 @@ function BewegungMk() {
           ))}
         </div>
       </div>
+      )}
     </section>
   );
 }
