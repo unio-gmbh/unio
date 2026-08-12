@@ -39,7 +39,7 @@ function LeadError({ show }) {
 }
 
 /* Mobile-Breakpoint: eine Quelle für alle Seiten (< 900px = mobil/klein) */
-const U_MQ_MOBILE = window.matchMedia ? window.matchMedia("(max-width: 899px)") : null;
+const U_MQ_MOBILE = window.matchMedia ? window.matchMedia("(max-width: 767px)") : null;
 function useMobile() {
   const [m, setM] = React.useState(U_MQ_MOBILE ? U_MQ_MOBILE.matches : false);
   React.useEffect(() => {
@@ -219,7 +219,7 @@ function SiteNav({ active, cta }) {
         <div style={{ display: "flex", justifyContent: "flex-end", flex: "0 0 auto" }}>
         <button onClick={c.onClick || undefined} style={{
           flex: "0 0 auto", cursor: "pointer", fontFamily: "var(--font-display)",
-          fontSize: 13, fontWeight: 500, padding: "10px 20px", borderRadius: pill ? 8 : 999,
+          fontSize: 13, fontWeight: 500, padding: "10px 20px", borderRadius: pill ? 8 : 999, whiteSpace: "nowrap",
           border: "0.5px solid " + (pill ? "var(--signal)" : "rgba(20,18,16,0.28)"),
           background: pill ? "var(--signal)" : "rgba(255,255,255,0.55)",
           color: pill ? "var(--on-signal)" : "var(--ink)",
@@ -428,8 +428,8 @@ const U_RM = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce
     "@media (prefers-reduced-motion: reduce){.u-ember{animation:none!important}}",
     "@media (prefers-reduced-motion: reduce){.u-marquee{animation:none!important}}",
     /* Mobile: dekorative Kapitel-Marker ausblenden, iOS-Zoom auf Formularfeldern verhindern */
-    "@media (max-width:899px){.u-kap{display:none!important}}",
-    "@media (max-width:899px){input,select,textarea{font-size:16px!important}}",
+    "@media (max-width:767px){.u-kap{display:none!important}}",
+    "@media (max-width:767px){input,select,textarea{font-size:16px!important}}",
     "html{-webkit-text-size-adjust:100%}",
     /* Hover-Feedback für alle Buttons und CTA-Links: dezente Aufhellung + Lift,
        Press bleibt das bestehende scale(0.985) */

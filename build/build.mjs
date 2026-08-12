@@ -183,6 +183,16 @@ async function main() {
     console.log("✓ Showcase-Seiten kopiert (nicht in Sitemap)");
   }
 
+  /* 3e) Unverlinkte Sonderseiten (z. B. Mail-Sequenzen): flach nach dist/,
+        selbst noindex, bewusst NICHT in der Sitemap. */
+  const EXTRA_DIR = join(ROOT, "extra");
+  if (existsSync(EXTRA_DIR)) {
+    for (const f of readdirSync(EXTRA_DIR).filter((f) => f.endsWith(".html"))) {
+      cpSync(join(EXTRA_DIR, f), join(DIST, f));
+    }
+    console.log("✓ Sonderseiten kopiert (nicht in Sitemap)");
+  }
+
   /* 3d) Social-Vorschau (unverlinkt, noindex): Galerie + Exporte */
   if (existsSync(join(ROOT, "social", "preview.html"))) {
     cpSync(join(ROOT, "social", "preview.html"), join(DIST, "social-preview.html"));

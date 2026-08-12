@@ -241,6 +241,15 @@ const PRODUKT_GRUPPEN = [
 const PROD_EASE = "cubic-bezier(.32,.72,0,1)";
 function Produkte() {
   const [grp, setGrp] = React.useState(0);
+  /* Tablet (768-1139): 2x2-Raster statt vier schmaler Spalten */
+  const [breit, setBreit] = React.useState(() => !window.matchMedia || window.matchMedia("(min-width: 1140px)").matches);
+  React.useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia("(min-width: 1140px)");
+    const on = () => setBreit(mq.matches);
+    mq.addEventListener ? mq.addEventListener("change", on) : mq.addListener(on);
+    return () => { mq.removeEventListener ? mq.removeEventListener("change", on) : mq.removeListener(on); };
+  }, []);
   const [hov, setHov] = React.useState(-1);
   const mob = window.useMobile();
   const rm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -319,7 +328,7 @@ function Produkte() {
               transition: "all var(--dur-fast) var(--ease-unio)" }}>{label}</button>
         ))}
       </div>
-      <div ref={gridRef} style={{ position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, 1fr)", gap: mob ? 14 : 20 }}>
+      <div ref={gridRef} style={{ position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : breit ? "repeat(4, 1fr)" : "repeat(2, 1fr)", gap: mob ? 14 : 20 }}>
         {tiles.map(([t, c, href, ziel, zukunft], i) => (
           <a key={t} data-prod={t} href={href} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
             style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 330, textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", translate: hov === i ? "0 -4px" : "0 0", transition: "box-shadow var(--dur-fast) var(--ease-unio), translate var(--dur-fast) var(--ease-unio)", animation: rm ? "none" : "prodIn 500ms var(--ease-unio) both", animationDelay: rm ? "0ms" : 120 + i * 70 + "ms" }}>

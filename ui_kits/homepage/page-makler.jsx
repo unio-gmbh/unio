@@ -497,7 +497,7 @@ function AdminMk() {
           <span style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(253,252,250,0.9)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "14px var(--font-mono)", color: "var(--ink)" }}>→</span>
         </div>
         {/* Horizontaler Drei-Panel-Track: Admin → Objektanlage → Ablauf bis Abrechnung */}
-        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", willChange: "transform", transform: `translateX(${-trackX * (100 / 3)}%)` }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", width: "300%", willChange: "transform", transform: `translateX(${-trackX * (100 / 3)}%)`, transition: mob && !BT_RM ? "transform 340ms cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "none" }}>
           {/* Panel A — Admin */}
           <div style={{ width: "33.3334%", flex: "none", display: "flex", alignItems: "center", padding: mob ? "92px 6vw 40px" : "175px 11vw 110px 7vw" }}>
             <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1fr) minmax(0, 1fr)", gap: mob ? 24 : 56, alignItems: "center", width: "100%" }}>
@@ -787,7 +787,7 @@ function BeteiligungMk() {
 /* ===== 08 · DIE BEWEGUNG — Orange, der Kreis schließt sich ===== */
 const ZEIGE_GESICHTER = false; /* AKTIV: "Gesichter des CIRCLE" voruebergehend aus */
 function BewegungMk() {
-  const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-02.jpg", "portrait-03.jpg"];
+  const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-05.jpg", "portrait-06.jpg"];
   const ref = React.useRef(null);
   const circWrapRef = React.useRef(null);
   const mob = window.useMobile();
