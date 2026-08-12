@@ -318,23 +318,14 @@ function SparkSt({ pts }) {
   );
 }
 function PortraitSt({ p, delay }) {
+  /* AKTIV-Variante: Overlay-Informationen ausgeblendet, nur Portraet + Name */
   const [on, setOn] = React.useState(false);
   return (
     <Reveal delay={delay}>
       <figure style={{ margin: 0 }}>
-        <div onMouseEnter={() => setOn(true)} onMouseLeave={() => setOn(false)} onClick={() => setOn((v) => !v)}
-          style={{ position: "relative", borderRadius: "var(--r-card)", overflow: "hidden", aspectRatio: "3 / 4", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", cursor: "pointer", background: "var(--paper-2)" }}>
-          <img src={p.src} alt="Gründerporträt" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: p.pos, transform: on ? "scale(1.03)" : "scale(1)", filter: on ? "brightness(0.72)" : "brightness(1)", transition: "all var(--dur-base) var(--ease-unio)" }} />
-          <div style={{ position: "absolute", inset: 12, borderRadius: 16, border: "1px solid rgba(255,255,255,0.55)", opacity: on ? 1 : 0, transition: "opacity var(--dur-base) var(--ease-unio)", pointerEvents: "none", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "16px 16px 12px", color: "#FFFFFF" }}>
-            <div>
-              <span style={{ font: "500 28px/1 var(--font-display)", letterSpacing: "-0.02em" }}>{p.v}<span style={{ font: "12px var(--font-mono)", marginLeft: 6 }}>↗</span></span>
-              <div className="u-label" style={{ fontSize: 10, marginTop: 7, color: "rgba(255,255,255,0.85)" }}>{p.label}</div>
-            </div>
-            <div>
-              <SparkSt pts={p.spark} />
-              <span className="u-label" style={{ display: "inline-block", fontSize: 10, padding: "5px 11px", borderRadius: "var(--r-pill)", background: "rgba(255,255,255,0.2)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", marginTop: 10 }}>{p.disz}</span>
-            </div>
-          </div>
+        <div onMouseEnter={() => setOn(true)} onMouseLeave={() => setOn(false)}
+          style={{ position: "relative", borderRadius: "var(--r-card)", overflow: "hidden", aspectRatio: "3 / 4", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", background: "var(--paper-2)" }}>
+          <img src={p.src} alt="Gründerporträt" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: p.pos, transform: on ? "scale(1.03)" : "scale(1)", transition: "all var(--dur-base) var(--ease-unio)" }} />
         </div>
         <figcaption style={{ marginTop: 12 }}>
           <span style={{ display: "block", font: "500 16px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{p.nm}</span>

@@ -88,44 +88,42 @@ function Hero() {
   );
 }
 
-/* ---------- Suche + Highlight-Immobilien (Endkunde zuerst) ---------- */
+/* ---------- Beispiel-Objekte: die Suche laeuft in der UNIO App ---------- */
+const BEISPIEL_OBJEKTE = [
+  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", ort: "Wien · Neubau", art: "Villa" },
+  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", ort: "1020 Wien · Penthouse", art: "Dachgeschoss" },
+  { img: "../../assets/img/int-kitchen.jpg", t: "Maxingstraße 72", ort: "1130 Wien · Bieterverfahren", art: "Stilaltbau" },
+];
 function SucheHighlights() {
-  const [q, setQ] = React.useState("");
   const [hov, setHov] = React.useState(-1);
   const mob = window.useMobile();
-  const treffer = OBJEKT_DB.filter((o) => !q.trim() || (o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase()));
-  const shown = treffer.slice(0, 3);
   return (
     <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: mob ? "96px 6vw 120px" : "150px 6vw 185px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
-      <Chapter title={<span>Finde dein<br />nächstes Zuhause.</span>} copy="Kuratierte Wiener Projekte und Einzelobjekte — jedes davon live und transparent vermarktet." style={{ marginBottom: mob ? 44 : 72 }} />
-      <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 680, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
-        <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={mob ? "Bezirk, Projekt, Objektart" : "Bezirk, Projekt oder Objektart — z. B. Penthouse 1020"}
-          style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }}
-        />
-        <Bx variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL + (q ? "&search=" + encodeURIComponent(q) : ""), "_blank")}>Suchen</Bx>
-      </div>
-      {q.trim() ? (
-        <div className="u-label" style={{ marginTop: 14, color: "var(--text-muted)", fontSize: 10 }}>{treffer.length} Treffer im Bestand</div>
-      ) : null}
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24, marginTop: 24 }}>
-        {shown.map((o, i) => (
+      <Chapter title={<span>Finde dein<br />nächstes Zuhause.</span>} copy="Kuratierte Projekte und Einzelobjekte, live und transparent vermarktet. Die ganze Suche findest du in der UNIO App." style={{ marginBottom: mob ? 44 : 72 }} />
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24 }}>
+        {BEISPIEL_OBJEKTE.map((o, i) => (
           <Reveal key={o.t} delay={i * 90}>
-            <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
+            <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener"
+              onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
+              style={{ display: "block", textDecoration: "none", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+              <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
+                <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov === i ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
+                <span className="u-label" style={{ position: "absolute", top: 12, left: 12, fontSize: 9, padding: "6px 12px", borderRadius: 999, background: "rgba(253,252,250,0.92)", color: "var(--ink-2)", WebkitBackdropFilter: "blur(8px)", backdropFilter: "blur(8px)" }}>{o.art}</span>
+              </div>
+              <div style={{ padding: "16px 14px 14px" }}>
+                <div style={{ font: "500 18px/1.2 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{o.t}</div>
+                <div className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 6 }}>{o.ort}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, font: "500 13.5px var(--font-display)", color: hov === i ? "var(--signal-deep)" : "var(--text-muted)", transition: "color var(--dur-fast) var(--ease-unio)" }}>
+                  In der UNIO App ansehen <span style={{ font: "12px var(--font-mono)" }}>↗</span>
+                </div>
+              </div>
+            </a>
           </Reveal>
         ))}
-        {shown.length === 0 && (
-          <div style={{ gridColumn: mob ? "auto" : "span 3", padding: "40px 0", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
-            Kein Treffer im kuratierten Bestand — starte die Suche im Dashboard <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener" style={{ color: "var(--signal-deep)" }}>app.unio.at ↗</a>
-          </div>
-        )}
       </div>
       <div style={{ display: "flex", gap: 12, marginTop: 32, flexWrap: "wrap" }}>
-        <Bx variant="ghost" onClick={() => location.assign("immobilien.html")}>Alle Immobilien ansehen</Bx>
+        <Bx variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL, "_blank")}>Alle Objekte in der App ↗</Bx>
         <Bx variant="ghost" onClick={() => window.open(window.UNIO_BEWERTUNG_URL, "_blank")}>Eigene Immobilie bewerten ↗</Bx>
       </div>
       </div>
@@ -223,7 +221,7 @@ function Zielgruppen() {
 const PRODUKT_GRUPPEN = [
   ["interessenten", "Für Interessenten", [
     ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "immobilien.html", "Immobilie bewerten"],
-    ["SMART MATCHING", "Objekte, die wirklich passen: Dein Suchprofil wird laufend gegen kuratierte Objekte gematcht, oft bevor das Inserat online geht.", "immobilien.html", "Immobilien entdecken"],
+    ["SMART MATCHING", "Objekte, die wirklich passen: Dein Suchprofil wird laufend gegen kuratierte Objekte gematcht, oft bevor das Inserat online geht.", "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316", "Immobilien entdecken"],
     ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", "immobilien.html", "So arbeiten wir"],
     ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", "immobilien.html", "Verkaufen mit UNIO"],
   ]],

@@ -962,12 +962,12 @@ function FunnelBt() {
    vorliegt (Origins, Das Wimmer), zeigt die Karte den Live-Status statt
    erfundener Werte. */
 const STOERER_PROJ = [
-  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "num", v: "282", cap: "Anfragen · Kampagne" },
-  { video: "../../assets/video/hufhaus.mp4", img: "../../assets/img/vienna-garden.jpg", n: "Das Wimmer", b: "Wien-Umland", g: "live", cap: "Live vermarktet" },
-  { img: "../../assets/img/beheim.jpg", n: "Das Beheim", b: "Wien 1170", g: "num", v: "27", cap: "Anfragen · 2 Wochen" },
-  { img: "../../assets/img/obenzwei.jpg", n: "ObenZwei", b: "Wien 1020", g: "num", v: "25", cap: "hochqual. Anfragen / Woche" },
-  { img: "../../assets/img/penthouse.jpg", n: "Origins", b: "Wien 1180", g: "live", cap: "Live vermarktet" },
-  { img: "../../assets/img/albrecht.jpg", n: "Das Albrecht", b: "Wien 1170", g: "num", v: "61", cap: "Anfragen · 2 Wochen" },
+  { img: "../../assets/img/ecoluxe.jpg", n: "Ecoluxe", b: "Wien 1190", g: "num", v: "282", cap: "Anfragen · Kampagne", plain: true },
+  { video: "../../assets/video/hufhaus.mp4", img: "../../assets/img/vienna-garden.jpg", n: "Das Wimmer", b: "Wien-Umland", g: "live", cap: "Live vermarktet", plain: true },
+  { img: "../../assets/img/beheim.jpg", n: "Das Beheim", b: "Wien 1170", g: "num", v: "27", cap: "Anfragen · 2 Wochen", plain: true },
+  { img: "../../assets/img/obenzwei.jpg", n: "ObenZwei", b: "Wien 1020", g: "num", v: "25", cap: "hochqual. Anfragen / Woche", plain: true },
+  { img: "../../assets/img/penthouse.jpg", n: "Origins", b: "Wien 1180", g: "live", cap: "Live vermarktet", plain: true },
+  { img: "../../assets/img/albrecht.jpg", n: "Das Albrecht", b: "Wien 1170", g: "num", v: "61", cap: "Anfragen · 2 Wochen", plain: true },
 ];
 function StoererGraphic({ p }) {
   const cap = { font: "10px var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(255,255,255,0.82)" };

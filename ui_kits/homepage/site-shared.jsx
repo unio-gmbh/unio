@@ -7,7 +7,7 @@ const {
 
 const APP_URL = "https://app.unio.at";
 const BEWERTUNG_URL = "https://bewertung.unio.at";
-const SEARCH_URL = "https://app.unio.at/listing?listingType=SALE";
+const SEARCH_URL = "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316";
 const PROJEKT_URL = "projekt.html";
 
 /* Lead-Submission: zentraler Handler für alle Formulare.
@@ -85,7 +85,7 @@ function Reveal({ children, delay = 0, style }) {
 const NAV_LINKS = [
   ["Makler", "makler.html"],
   ["Bauträger", "bautraeger.html"],
-  ["Immobilien", "immobilien.html"],
+  ["Immobilien", SEARCH_URL],
   ["Story", "story.html"],
   ["Kontakt", "kontakt.html"],
 ];
@@ -194,7 +194,7 @@ function SiteNav({ active, cta }) {
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
       <div style={{
         width: "100%", maxWidth: pill ? 760 : "none", margin: "0 auto",
-        display: "flex", alignItems: "center",
+        display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center",
         padding: pill ? "9px 10px 9px 22px" : "12px 12px 12px 26px",
         borderRadius: pill ? 12 : 16,
         background: pill ? "rgba(247,245,241,0.62)" : "rgba(247,245,241,0.5)",
@@ -204,17 +204,17 @@ function SiteNav({ active, cta }) {
         boxShadow: pill ? "0 8px 30px rgba(20,18,16,.1), inset 0 1px 0 rgba(255,255,255,.6)" : "0 8px 34px rgba(11,10,9,.18), inset 0 1px 0 rgba(255,255,255,.5)",
         transition: "background .55s var(--ease-unio), border-color .55s var(--ease-unio), padding .55s var(--ease-unio), max-width .55s var(--ease-unio), box-shadow .55s var(--ease-unio), border-radius .55s var(--ease-unio)",
       }}>
-        <div style={{ flex: pill ? "0 0 auto" : "1 1 0", display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", justifySelf: "start" }}>
           <a href="index.html" style={{ display: "flex", alignItems: "center", flex: "0 0 auto", textDecoration: "none" }}>
             <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18, width: "auto", display: "block" }} />
           </a>
         </div>
-        <nav style={{ display: "flex", gap: pill ? 22 : 28, marginLeft: pill ? 30 : 0, font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .55s var(--ease-unio)" }}>
+        <nav style={{ display: "flex", gap: pill ? 22 : 28, justifySelf: "center", font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .55s var(--ease-unio)" }}>
           {NAV_LINKS.map(([l, href]) => (
             <NavLink key={href} href={href} label={l} on={active === href} solid={true} />
           ))}
         </nav>
-        <div style={{ flex: pill ? "0 0 auto" : "1 1 0", display: "flex", justifyContent: "flex-end", marginLeft: pill ? "auto" : 0 }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", justifySelf: "end" }}>
         <button onClick={c.onClick || undefined} style={{
           flex: "0 0 auto", cursor: "pointer", fontFamily: "var(--font-display)",
           fontSize: 13, fontWeight: 500, padding: "10px 20px", borderRadius: pill ? 8 : 999,
