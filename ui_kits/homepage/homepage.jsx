@@ -220,10 +220,10 @@ function Zielgruppen() {
    gebrauchte loesen sich auf, neue erscheinen aus der Unschaerfe. ---------- */
 const PRODUKT_GRUPPEN = [
   ["interessenten", "Für Interessenten", [
-    ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "immobilien.html", "Immobilie bewerten"],
-    ["SMART EXPOSÉ", "Mehr als ein PDF: Jedes Objekt kommt als digitales Exposé mit allen Daten, Plänen und Unterlagen, immer auf dem aktuellen Stand.", "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316", "Immobilien entdecken"],
-    ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", "immobilien.html", "So arbeiten wir"],
-    ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", "immobilien.html", "Verkaufen mit UNIO"],
+    ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "https://bewertung.unio.at", "Immobilie bewerten"],
+    ["SMART EXPOSÉ", "Mehr als ein PDF: Jedes Objekt kommt als digitales Exposé mit allen Daten, Plänen und Unterlagen, immer auf dem aktuellen Stand.", null, null],
+    ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", null, null],
+    ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", null, null],
   ]],
   ["makler", "Für Makler", [
     ["CIRCLE", "Die Community der besten Makler:innen: Unternehmertum mit Rückhalt, exklusiver Dealflow und echte Beteiligung an dem, was du aufbaust.", "makler.html", "CIRCLE entdecken"],
@@ -329,20 +329,25 @@ function Produkte() {
         ))}
       </div>
       <div ref={gridRef} style={{ position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : breit ? "repeat(4, 1fr)" : "repeat(2, 1fr)", gap: mob ? 14 : 20 }}>
-        {tiles.map(([t, c, href, ziel, zukunft], i) => (
-          <a key={t} data-prod={t} href={href} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
-            style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 330, textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", translate: hov === i ? "0 -4px" : "0 0", transition: "box-shadow var(--dur-fast) var(--ease-unio), translate var(--dur-fast) var(--ease-unio)", animation: rm ? "none" : "prodIn 500ms var(--ease-unio) both", animationDelay: rm ? "0ms" : 120 + i * 70 + "ms" }}>
+        {/* Kacheln ohne href sind bewusst reine Info-Kacheln (kein Link, kein CTA) */}
+        {tiles.map(([t, c, href, ziel, zukunft], i) => {
+          const El = href ? "a" : "div"; const ext = href && href.startsWith("http"); return (
+          <El key={t} data-prod={t} href={href || undefined} target={ext ? "_blank" : undefined} rel={ext ? "noopener" : undefined} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
+            style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 330, textDecoration: "none", background: "#FFFFFF", borderRadius: "var(--r-card)", padding: "34px 30px 32px", boxShadow: hov === i && href ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", translate: hov === i && href ? "0 -4px" : "0 0", transition: "box-shadow var(--dur-fast) var(--ease-unio), translate var(--dur-fast) var(--ease-unio)", animation: rm ? "none" : "prodIn 500ms var(--ease-unio) both", animationDelay: rm ? "0ms" : 120 + i * 70 + "ms" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
               <h3 style={{ margin: 0, font: "500 clamp(20px, 1.6vw, 26px)/1.1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{t}</h3>
-              <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", flex: "none", opacity: hov === i ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></span>
+              <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--signal)", flex: "none", opacity: hov === i && href ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></span>
             </div>
             {zukunft && <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8 }}>Zukunftsvision</span>}
             <p style={{ margin: zukunft ? "16px 0 0" : "28px 0 0", font: "400 14px/1.7 var(--font-display)", color: "var(--text-muted)" }}>{c}</p>
+            {href && ziel ? (
             <span style={{ marginTop: "auto", paddingTop: 24, font: "500 13.5px var(--font-display)", color: hov === i ? "var(--signal-deep)" : "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7, transition: "color var(--dur-fast) var(--ease-unio)" }}>
               {ziel} <span style={{ font: "12px var(--font-mono)" }}>→</span>
             </span>
-          </a>
-        ))}
+            ) : null}
+          </El>
+          );
+        })}
       </div>
     </section>
   );
