@@ -200,6 +200,26 @@ async function main() {
     console.log("✓ Social-Vorschau kopiert (nicht in Sitemap)");
   }
 
+  /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
+        Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
+  const UX_KITS = [["dashboard", "backend"], ["property", "objekt"]];
+  for (const [kit, out] of UX_KITS) {
+    const kitDir = join(ROOT, "ui_kits", kit);
+    if (!existsSync(kitDir)) continue;
+    const outDir = join(DIST, "ux", out);
+    mkdirSync(outDir, { recursive: true });
+    for (const f of readdirSync(kitDir).filter((f) => f.endsWith(".html") || f.endsWith(".jsx"))) {
+      let s = readFileSync(join(kitDir, f), "utf8");
+      s = rewriteUrls(s);
+      s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
+      writeFileSync(join(outDir, f), s);
+    }
+    if (kit === "property") {
+      writeFileSync(join(outDir, "site-shared.jsx"), rewriteUrls(readFileSync(join(SRC, "site-shared.jsx"), "utf8")));
+    }
+  }
+  console.log("\u2713 UX-Vorschauen nach /ux (Passwortschutz via middleware.js)");
+
   /* 4) robots.txt + sitemap.xml + llms.txt
         KI-Crawler explizit erlauben: rein deklarativ (Allow: / gilt ohnehin),
         signalisiert aber Offenheit gegenueber AI-Answer-Engines (GEO). */
