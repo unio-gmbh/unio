@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   const oauth = process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET && process.env.GMAIL_REFRESH_TOKEN;
   if (!user || (!pass && !oauth)) {
     console.warn("UNIO_LEAD_MAIL_SKIPPED: Env-Vars fehlen. Entweder GMAIL_USER + GMAIL_CLIENT_ID + GMAIL_CLIENT_SECRET + GMAIL_REFRESH_TOKEN (OAuth) oder GMAIL_USER + GMAIL_APP_PASSWORD setzen (Vercel > Settings > Environment Variables).");
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, delivered: false });
   }
   const auth = oauth
     ? { type: "OAuth2", user, clientId: process.env.GMAIL_CLIENT_ID, clientSecret: process.env.GMAIL_CLIENT_SECRET, refreshToken: process.env.GMAIL_REFRESH_TOKEN }
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
         `Seite: ${lead.page || "?"}\nZeitpunkt: ${lead.ts || new Date().toISOString()}\nEmpfaenger-Routing: ${to}\n\n` +
         lines.join("\n") + "\n",
     });
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, delivered: true });
   } catch (err) {
     console.error("UNIO_LEAD_MAIL_ERROR", err && err.message);
     return res.status(502).json({ ok: false, error: "mail delivery failed" });
