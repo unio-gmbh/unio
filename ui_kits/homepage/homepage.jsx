@@ -81,7 +81,7 @@ function Hero() {
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: "clamp(28px, 4vh, 44px)", flexWrap: "wrap", ...ctaStatic }}>
           <Bx size="lg" variant="paper" knob onClick={() => (location.hash = "suche")}>Immobilie finden</Bx>
-          <Bx size="lg" variant="glass" tone="dark" glyph="▷">Wie es funktioniert</Bx>
+          <Bx size="lg" variant="glass" tone="dark" glyph="▷" onClick={() => (location.hash = "produkte")}>Wie es funktioniert</Bx>
         </div>
       </div>
     </section>
@@ -90,9 +90,9 @@ function Hero() {
 
 /* ---------- Beispiel-Objekte: die Suche laeuft in der UNIO App ---------- */
 const BEISPIEL_OBJEKTE = [
-  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", ort: "Wien · Neubau", art: "Villa" },
-  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", ort: "1020 Wien · Penthouse", art: "Dachgeschoss" },
-  { img: "../../assets/img/int-kitchen.jpg", t: "Maxingstraße 72", ort: "1130 Wien · Bieterverfahren", art: "Stilaltbau" },
+  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", ort: "Wien · Neubau", art: "Villa", href: "https://app.unio.at/property/57" },
+  { img: "../../assets/img/obenzwei-terrasse.jpg", t: "ObenZwei", ort: "1020 Wien · Penthouse", art: "Dachgeschoss", href: "https://app.unio.at/property/3" },
+  { img: "../../assets/img/maxingstrasse-zimmer.jpg", t: "Maxingstraße 72", ort: "1130 Wien · Bieterverfahren", art: "Stilaltbau", href: "https://app.unio.at/project/6" },
 ];
 function SucheHighlights() {
   const [hov, setHov] = React.useState(-1);
@@ -104,7 +104,7 @@ function SucheHighlights() {
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24 }}>
         {BEISPIEL_OBJEKTE.map((o, i) => (
           <Reveal key={o.t} delay={i * 90}>
-            <a href={window.UNIO_SEARCH_URL} target="_blank" rel="noopener"
+            <a href={o.href} target="_blank" rel="noopener"
               onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
               style={{ display: "block", textDecoration: "none", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
               <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>

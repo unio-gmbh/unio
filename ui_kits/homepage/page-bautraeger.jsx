@@ -226,7 +226,7 @@ function ProofBt() {
       <GridLines />
       <Kap nr="03" label="Beweis" />
       <div style={{ position: "relative", borderRadius: "var(--r-panel)", overflow: "hidden", boxShadow: "var(--shadow-soft)" }}>
-        <img src="../../assets/img/albrecht-dusk.jpg" alt="Das Albrecht, Townhäuser in Wien 1170" style={{ display: "block", width: "100%", height: mob ? "min(64vh, 480px)" : "min(70vh, 620px)", objectFit: "cover" }} />
+        <img src="../../assets/img/albrechts-hof.jpg" alt="Albrechts Townhouses, Blick über den Hof" style={{ display: "block", width: "100%", height: mob ? "min(64vh, 480px)" : "min(70vh, 620px)", objectFit: "cover" }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.34), transparent 36%, transparent 58%, rgba(11,10,9,0.5))" }}></div>
         <div aria-hidden="true" style={{ position: "absolute", inset: mob ? 10 : 18, border: "1px solid rgba(255,255,255,0.34)", borderRadius: 14, pointerEvents: "none" }}></div>
         {labels.map(([k, v, posi, sig]) => (

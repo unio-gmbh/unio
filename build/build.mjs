@@ -52,6 +52,7 @@ const PAGES = [
   },
   {
     src: "immobilien.html", out: "immobilien.html", path: "/immobilien",
+    noindex: true, /* AKTIV: /immobilien leitet via vercel.json in die App weiter */
     title: "Immobilie kaufen oder verkaufen in Wien | UNIO",
     description: "Kuratierte Wiener Objekte mit Kartenansicht und Live-Vermarktung. Für Eigentümer: datenbasierte Bewertung, passende Käufer und volle Transparenz bis zum Notar.",
     og: "/assets/img/penthouse.jpg",

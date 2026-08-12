@@ -194,7 +194,7 @@ function SiteNav({ active, cta }) {
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 60, padding: pill ? "16px 40px" : "22px 40px", transition: "padding .55s var(--ease-unio)" }}>
       <div style={{
         width: "100%", maxWidth: pill ? 760 : "none", margin: "0 auto",
-        display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center",
+        display: "flex", alignItems: "center",
         padding: pill ? "9px 10px 9px 22px" : "12px 12px 12px 26px",
         borderRadius: pill ? 12 : 16,
         background: pill ? "rgba(247,245,241,0.62)" : "rgba(247,245,241,0.5)",
@@ -204,17 +204,19 @@ function SiteNav({ active, cta }) {
         boxShadow: pill ? "0 8px 30px rgba(20,18,16,.1), inset 0 1px 0 rgba(255,255,255,.6)" : "0 8px 34px rgba(11,10,9,.18), inset 0 1px 0 rgba(255,255,255,.5)",
         transition: "background .55s var(--ease-unio), border-color .55s var(--ease-unio), padding .55s var(--ease-unio), max-width .55s var(--ease-unio), box-shadow .55s var(--ease-unio), border-radius .55s var(--ease-unio)",
       }}>
-        <div style={{ display: "flex", alignItems: "center", justifySelf: "start" }}>
+        <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
           <a href="index.html" style={{ display: "flex", alignItems: "center", flex: "0 0 auto", textDecoration: "none" }}>
             <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18, width: "auto", display: "block" }} />
           </a>
         </div>
-        <nav style={{ display: "flex", gap: pill ? 22 : 28, justifySelf: "center", font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .55s var(--ease-unio)" }}>
+        <span aria-hidden="true" style={{ flex: "1 1 0" }}></span>
+        <nav style={{ display: "flex", gap: pill ? 22 : 28, flex: "0 0 auto", font: `500 ${pill ? 13 : 14}px var(--font-display)`, transition: "gap .55s var(--ease-unio)" }}>
           {NAV_LINKS.map(([l, href]) => (
             <NavLink key={href} href={href} label={l} on={active === href} solid={true} />
           ))}
         </nav>
-        <div style={{ display: "flex", justifyContent: "flex-end", justifySelf: "end" }}>
+        <span aria-hidden="true" style={{ flex: "1 1 0" }}></span>
+        <div style={{ display: "flex", justifyContent: "flex-end", flex: "0 0 auto" }}>
         <button onClick={c.onClick || undefined} style={{
           flex: "0 0 auto", cursor: "pointer", fontFamily: "var(--font-display)",
           fontSize: 13, fontWeight: 500, padding: "10px 20px", borderRadius: pill ? 8 : 999,
@@ -352,7 +354,7 @@ function SiteFooter() {
     <footer data-screen-label="Footer" className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", color: "var(--ink-2)", padding: mob ? "110px 6vw 36px" : "175px 6vw 44px" }}>
       <EmberGlow variant="still" corner="86% 88%" />
       <div style={{ position: "relative", zIndex: 1 }}>
-      <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(36px, 10vw, 48px)" : "clamp(44px, 5.4vw, 92px)"}/0.98 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+      <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(44px, 12.5vw, 60px)" : "clamp(58px, 7.2vw, 128px)"}/0.98 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
         Move as one<span style={{ color: "var(--signal)" }}>.</span>
       </h2>
       <div style={{ display: "flex", gap: 12, marginTop: mob ? 28 : 36, flexWrap: "wrap" }}>
