@@ -16,6 +16,11 @@ import nodemailer from "nodemailer";
 
 const FALLBACK = "office@unio.at";
 
+/* TESTBETRIEB: solange gesetzt, gehen ALLE Leads an diese Adresse.
+   Das eigentliche Routing steht trotzdem in jeder Mail ("Empfaenger-Routing").
+   Nach dem Test auf null setzen, dann greift das Routing wieder. */
+const TEST_EMPFAENGER = "daniel@unio.at";
+
 function recipient(lead) {
   const type = String(lead.type || "").toLowerCase();
   if (type === "bewerbung") return "circle@unio.at";
@@ -46,7 +51,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, error: "type und email sind Pflichtfelder" });
   }
 
-  const to = recipient(lead);
+  const routed = recipient(lead);
+  const to = TEST_EMPFAENGER || routed;
   console.log("UNIO_LEAD", to, JSON.stringify(lead));
 
   const user = process.env.GMAIL_USER;
@@ -78,7 +84,7 @@ export default async function handler(req, res) {
       subject: `Website-Lead: ${LABELS[lead.type] || oneLine(lead.type)}${lead.name ? " von " + oneLine(lead.name) : ""}`,
       text:
         `Neuer Lead ueber die UNIO Website\n` +
-        `Seite: ${lead.page || "?"}\nZeitpunkt: ${lead.ts || new Date().toISOString()}\nEmpfaenger-Routing: ${to}\n\n` +
+        `Seite: ${lead.page || "?"}\nZeitpunkt: ${lead.ts || new Date().toISOString()}\nEmpfaenger-Routing: ${routed}${TEST_EMPFAENGER ? ` (Testbetrieb: zugestellt an ${TEST_EMPFAENGER})` : ""}\n\n` +
         lines.join("\n") + "\n",
     });
     return res.status(200).json({ ok: true, delivered: true });
