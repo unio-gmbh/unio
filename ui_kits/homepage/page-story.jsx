@@ -160,12 +160,12 @@ function StatementSt() {
 }
 
 /* ===== 03 · FÜNF UNTERNEHMEN, EINE MISSION — Fusions-Fluss (ohne Trattner) ===== */
-const FIRMEN = [["Boom Living", 0], ["Ad Boutique", 1], ["appworks", 2], ["marlin", 2], ["DCS", 2]];
+const FIRMEN = [["Boom Living", 0], ["Ad Boutique", 1], ["appworks", 2], ["marlin", 2], ["Clockwise", 2]];
 const KNOTEN = ["Vertrieb", "Marketing", "Technologie & Automation"];
 const DISZ_KARTEN = [
   ["Vertrieb", "BOOM LIVING", "Jahrzehnte Wiener Abschlusserfahrung — Menschen, die Märkte lesen und Deals schließen."],
   ["Marketing", "Ad Boutique", "Kampagnen, Stories und Performance für Immobilien — 1 Mrd. Impressionen über Kampagnen."],
-  ["Technologie & Automation", "appworks · marlin · Digital Contract Solutions", "Software, Daten und digitale Verträge — das Betriebssystem unter allem."],
+  ["Technologie & Automation", "appworks · marlin · Clockwise", "Software, Daten und Automatisierung — das Betriebssystem unter allem."],
 ];
 function FusionFlow() {
   const ref = React.useRef(null);
