@@ -53,7 +53,7 @@ function Galerie({ idx, setIdx }) {
   );
 }
 
-function FaktenLeiste() {
+function FaktenLeiste({ onAngebot }) {
   const [tags, setTags] = React.useState(["Waldrand"]);
   const toggle = (t) => setTags((s) => (s.includes(t) ? s.filter((x) => x !== t) : [...s, t]));
   return (
@@ -78,6 +78,7 @@ function FaktenLeiste() {
             <Chip key={t} selected={tags.includes(t)} onToggle={() => toggle(t)}>{t}</Chip>
           ))}
           <Button variant="paper" knob>Besichtigung anfragen</Button>
+          <Button variant="signal" knob onClick={onAngebot}>Angebot legen</Button>
         </div>
       </GlassPanel>
     </div>
@@ -152,15 +153,107 @@ function Anfrage() {
   );
 }
 
+
+/* ===== Angebot legen — Slide-in-Drawer von rechts =====
+   Unverbindliche Angebotsabgabe: Summe (mit Presets), Finanzierung, Kontakt.
+   Demo-UI: Absenden zeigt den Bestaetigungszustand, kein Backend-Call. */
+const ANGEBOT_PRESETS = [["Kaufpreis", 2400000], ["−2 %", 2352000], ["−5 %", 2280000]];
+const eur = (n) => "€ " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+function AngebotDrawer({ offen, onClose }) {
+  const [summe, setSumme] = React.useState(2400000);
+  const [fin, setFin] = React.useState("Finanzierung mit Zusage");
+  const [sent, setSent] = React.useState(false);
+  React.useEffect(() => {
+    if (!offen) return;
+    const esc = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", esc);
+    document.documentElement.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", esc); document.documentElement.style.overflow = ""; };
+  }, [offen]);
+  const setDigits = (v) => { const d = parseInt(String(v).replace(/\D/g, ""), 10); setSumme(isNaN(d) ? 0 : d); };
+  return (
+    <div aria-hidden={!offen} style={{ position: "fixed", inset: 0, zIndex: 90, pointerEvents: offen ? "auto" : "none" }}>
+      {/* Backdrop */}
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(11,10,9,0.45)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", opacity: offen ? 1 : 0, transition: "opacity 400ms var(--ease-unio)" }}></div>
+      {/* Panel */}
+      <aside role="dialog" aria-modal="true" aria-label="Kaufangebot legen" className="u-grain" style={{
+        position: "absolute", top: 0, right: 0, bottom: 0, width: "min(460px, 100vw)",
+        background: "var(--paper)", boxShadow: "-30px 0 80px -30px rgba(11,10,9,0.5)",
+        transform: offen ? "translateX(0)" : "translateX(105%)", transition: "transform 520ms var(--ease-unio)",
+        display: "flex", flexDirection: "column", overflowY: "auto",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 26px", borderBottom: "1px solid var(--hairline-dark)" }}>
+          <DataLabel tone="light" marker>Objekt 042 · Refugium am Waldrand</DataLabel>
+          <IconButton glyph="✕" label="Schließen" onClick={onClose} />
+        </div>
+        {sent ? (
+          <div style={{ padding: "48px 30px", textAlign: "center", display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
+            <span style={{ display: "inline-flex", width: 58, height: 58, borderRadius: "50%", background: "var(--signal-soft)", color: "var(--signal-deep)", alignItems: "center", justifyContent: "center" }}>
+              <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="m4 10.5 4 4 8-9"></path></svg>
+            </span>
+            <h3 style={{ margin: 0, font: "500 26px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Angebot übermittelt.</h3>
+            <p style={{ margin: 0, font: "400 15px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 320 }}>
+              Dein Angebot über <strong style={{ color: "var(--ink)" }}>{eur(summe)}</strong> ist bei uns. Wir melden uns zur Bestätigung, mit Daten, nicht mit Floskeln.
+            </p>
+            <span className="u-label" style={{ color: "var(--text-muted)", marginTop: 6 }}>Antwort in &lt; 2 h · Unverbindlich</span>
+            <Button variant="ghost" onClick={onClose} style={{ marginTop: 8 }}>Zurück zum Objekt</Button>
+          </div>
+        ) : (
+          <div style={{ padding: "26px 26px 30px", display: "flex", flexDirection: "column", gap: 20 }}>
+            <div>
+              <h3 style={{ margin: 0, font: "500 28px/1.1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Angebot legen<span style={{ color: "var(--signal)" }}>.</span></h3>
+              <p style={{ margin: "10px 0 0", font: "400 14px/1.6 var(--font-display)", color: "var(--text-muted)" }}>
+                Unverbindlich: Du signalisierst dein Angebot, wir stimmen alles Weitere persönlich mit dir ab.
+              </p>
+            </div>
+            <div>
+              <span className="u-label" style={{ display: "block", fontSize: 10, color: "var(--text-muted)", marginBottom: 8 }}>DEIN ANGEBOT</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, background: "var(--surface-raised)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "14px 18px" }}>
+                <input value={eur(summe)} onChange={(e) => setDigits(e.target.value)} inputMode="numeric" aria-label="Angebotssumme in Euro"
+                  style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", font: "500 26px var(--font-mono)", letterSpacing: "-0.01em", color: "var(--ink)" }} />
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                {ANGEBOT_PRESETS.map(([l, v]) => (
+                  <button key={l} type="button" onClick={() => setSumme(v)} style={{
+                    font: "500 12.5px var(--font-display)", fontFamily: "inherit", cursor: "pointer", padding: "8px 14px",
+                    borderRadius: "var(--r-pill)", border: "none",
+                    background: summe === v ? "var(--ink)" : "transparent",
+                    color: summe === v ? "var(--paper)" : "var(--text-muted)",
+                    boxShadow: summe === v ? "none" : "inset 0 0 0 1px var(--hairline-dark)",
+                    transition: "all var(--dur-fast) var(--ease-unio)",
+                  }}>{l}</button>
+                ))}
+              </div>
+              <div className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 10 }}>
+                Kaufpreis {eur(2400000)} · Abweichung {summe >= 2400000 ? "+" : "−"}{Math.abs(Math.round((summe / 2400000 - 1) * 1000) / 10).toLocaleString("de-AT")} %
+              </div>
+            </div>
+            <window.UNIODesignSystem_b6216a.Select label="Finanzierung" options={["Finanzierung mit Zusage", "Eigenkapital", "Finanzierung in Klärung"]} value={fin} onChange={(v) => setFin(v && v.target ? v.target.value : v)} />
+            <window.UNIODesignSystem_b6216a.Input label="Name" placeholder="Vor- und Nachname" />
+            <window.UNIODesignSystem_b6216a.Input label="E-Mail" placeholder="name@firma.at" />
+            <Button variant="signal" size="lg" knob onClick={() => setSent(true)}>Angebot übermitteln</Button>
+            <p style={{ margin: 0, font: "400 12px/1.6 var(--font-display)", color: "var(--text-muted)" }}>
+              Kein rechtsverbindliches Kaufanbot: Die Abgabe signalisiert dein Interesse, alles Rechtliche passiert danach, gemeinsam und dokumentiert.
+            </p>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+}
+
 function App() {
   const [idx, setIdx] = React.useState(0);
+  const [angebot, setAngebot] = React.useState(false);
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <window.SiteNav active="immobilien.html" cta={{ label: "Besichtigung", onClick: null }} />
       <Galerie idx={idx} setIdx={setIdx} />
-      <FaktenLeiste />
+      <FaktenLeiste onAngebot={() => setAngebot(true)} />
       <Daten />
       <Anfrage />
+      <AngebotDrawer offen={angebot} onClose={() => setAngebot(false)} />
       <window.SiteFooter />
     </div>
   );

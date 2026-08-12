@@ -5,6 +5,11 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/hinter-unio",
+      "destination": "/circle-team",
+      "permanent": true
+    },
+    {
       "source": "/immobilien",
       "destination": "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316",
       "permanent": false

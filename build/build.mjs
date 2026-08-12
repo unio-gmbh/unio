@@ -79,6 +79,7 @@ const PAGES = [
     og: "/assets/img/penthouse.jpg",
     noindex: true, static: true,
   },
+  { src: "agb.html", out: "agb.html", path: "/agb", title: "Allgemeine Geschäftsbedingungen | UNIO", description: "Allgemeine Geschäftsbedingungen der UNIO Immobilienvermittlung.", noindex: true, static: true },
   { src: "impressum.html", out: "impressum.html", path: "/impressum", title: "Impressum | UNIO", description: "Impressum der UNIO Website.", noindex: true, static: true },
   { src: "datenschutz.html", out: "datenschutz.html", path: "/datenschutz", title: "Datenschutzerklärung | UNIO", description: "Datenschutzerklärung der UNIO Website.", noindex: true, static: true },
 ];
@@ -94,7 +95,7 @@ function rewriteUrls(s) {
   s = s.replaceAll("../../styles.css", "/styles.css");
   s = s.replaceAll("../../_ds_bundle.js", "/assets/js/_ds_bundle.js");
   s = s.replace(/(?<![\w/])index\.html/g, "/");
-  s = s.replace(/\b(makler|bautraeger|immobilien|story|kontakt|projekt|impressum|datenschutz)\.html/g, "/$1");
+  s = s.replace(/\b(makler|bautraeger|immobilien|story|kontakt|projekt|impressum|datenschutz|agb)\.html/g, "/$1");
   s = s.replaceAll('href="/#', 'href="/#');
   return s;
 }
@@ -212,6 +213,9 @@ async function main() {
       let s = readFileSync(join(kitDir, f), "utf8");
       s = rewriteUrls(s);
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
+      /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
+         relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite). */
+      if (f.endsWith(".html")) s = s.replace(/src="([a-zA-Z0-9_.-]+\.jsx)"/g, `src="/ux/${out}/$1"`);
       writeFileSync(join(outDir, f), s);
     }
     if (kit === "property") {

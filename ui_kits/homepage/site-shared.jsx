@@ -374,6 +374,7 @@ function SiteFooter() {
         <div style={{ display: "flex", gap: mob ? 18 : 28, alignItems: "center", flexWrap: "wrap" }}>
           <a href="impressum.html" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Impressum</a>
           <a href="datenschutz.html" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>Datenschutz</a>
+          <a href="agb.html" style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", textDecoration: "none" }}>AGB</a>
           <span className="u-label" style={{ color: "var(--text-muted)" }}>© 2026 UNIO · Wien</span>
         </div>
       </div>
