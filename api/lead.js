@@ -47,7 +47,7 @@ const oneLine = (v) => String(v).replace(/[\r\n]+/g, " ").slice(0, 200);
 /* ===== HTML-Mail im UNIO-Design (Referenz: email/EMAIL_BRIEFING.md) =====
    Interne Lead-Benachrichtigung: Topbar, Headline mit orangem Punkt,
    Mono-Datenpanel mit den Formularfeldern, Antworten-Button, Ink-Footer. */
-const ORIGIN = "https://unio-verse.vercel.app"; /* nach unio.at-Umzug umstellen */
+const ORIGIN = "https://www.unio.at";
 const MONO = "'SF Mono','Segoe UI Mono','Courier New',monospace";
 const DISPLAY = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 

@@ -801,6 +801,11 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   .adw .aintro{font-size:13.5px;line-height:1.6;color:var(--fg2);}
   .adw .afield{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:13px 16px;}
   .adw .afield input,.adw .afield select{width:100%;border:none;outline:none;background:transparent;font-family:inherit;color:var(--ink);font-size:15px;}
+  .adw .afield select{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;padding-right:26px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%236E6862' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 4px center;}
+  .adw .afield:focus-within{border-color:rgba(255,170,9,.55);box-shadow:0 0 0 3px rgba(255,170,9,.14);}
+  .adw .afield select:focus-visible,.adw .afield input:focus-visible{outline:none!important;}
   .adw .asumme input{font-family:var(--font-mono),ui-monospace,monospace;font-size:24px;font-weight:500;letter-spacing:-.01em;}
   .adw .apresets{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .adw .apresets button{font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;

@@ -43,4 +43,4 @@ Allow: /
 User-agent: MistralAI-User
 Allow: /
 
-Sitemap: https://unio-verse.vercel.app/sitemap.xml
+Sitemap: https://www.unio.at/sitemap.xml

@@ -15,8 +15,8 @@ const SRC = join(ROOT, "ui_kits", "homepage");
 const DIST = join(ROOT, "dist");
 const NO_PRERENDER = process.argv.includes("--no-prerender");
 
-/* Kanonische Domain: nach Umzug auf unio.at hier EINMAL umstellen. */
-const ORIGIN = "https://unio-verse.vercel.app";
+/* Kanonische Domain (seit Aug 2026 live auf unio.at). */
+const ORIGIN = "https://www.unio.at";
 
 const ORG_SCHEMA = {
   "@context": "https://schema.org",
@@ -313,12 +313,17 @@ ${wissenLinks.join("\n")}
         const imgs = [...document.querySelectorAll("#root img")];
         imgs.forEach((im, i) => { if (i > 1 && !im.loading) { im.setAttribute("loading", "lazy"); im.setAttribute("decoding", "async"); } });
         const faq = [...document.querySelectorAll('head script[type="application/ld+json"]')].filter((s) => (s.id || "").startsWith("faq")).map((s) => s.outerHTML).join("\n");
-        return { root: document.getElementById("root").innerHTML, faq };
+        /* JS-injizierte Styles (u-skip, u-grain, Keyframes ...) einfrieren: auf langsamen
+           Verbindungen sonst FOUC, bis das Bundle laedt. Die Injektion prueft per id,
+           daher entsteht zur Laufzeit kein Duplikat. */
+        const styles = [...document.querySelectorAll("head style[id]")].map((s) => s.outerHTML).join("\n");
+        return { root: document.getElementById("root").innerHTML, faq, styles };
       });
       await page.close();
       let s = readFileSync(join(DIST, p.out), "utf8");
       s = s.replace(/<div id="root">[\s\S]*?<\/div>\n<script/, `<div id="root">${snap.root}</div>\n<script`);
       if (snap.faq) s = s.replace("</head>", snap.faq + "\n</head>");
+      if (snap.styles) s = s.replace("</head>", snap.styles + "\n</head>");
       writeFileSync(join(DIST, p.out), s);
       console.log("✓ prerendered:", p.path);
     }

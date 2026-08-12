@@ -53,7 +53,7 @@ Die Mail ist die Website im Posteingang: Paper-Flächen, ein präziser Amber-Akz
 
 - **600px** Container, verschachtelte Tabellen (`role="presentation"`), alles Layout-Relevante **inline** gestylt. `<style>` nur für Fonts, Resets und die Mobile-Media-Query (Klassen `.container`, `.px`, `.hero-h1`, `.stack`).
 - **Keine SVGs** (Gmail rendert sie nicht): Logos als PNG in 2-facher Auflösung, per `width`/`height`-Attribut auf Zielgrösse. Schwarz: `/assets/logo/unio-logo-black.png`, Weiss: `/assets/logo/unio-logo-white.png`.
-- Alle Bilder mit **absoluten URLs** auf die Live-Domain (derzeit `https://unio-verse.vercel.app`, nach dem Umzug einmalig auf `https://www.unio.at` umstellen) und sinnvollem `alt`-Text.
+- Alle Bilder mit **absoluten URLs** auf die Live-Domain `https://www.unio.at` und sinnvollem `alt`-Text.
 - Buttons als Tabelle mit `bgcolor` auf dem `td` und Padding auf dem `<a>` (funktioniert inkl. Outlook ohne VML).
 - `color-scheme: light` deklarieren; Flächenfarben immer explizit setzen, damit Dark-Mode-Clients nicht wild invertieren.
 - Kein JavaScript, keine externen Stylesheets, keine Formulare, keine Videos (stattdessen verlinktes Standbild).
