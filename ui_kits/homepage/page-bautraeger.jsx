@@ -891,7 +891,7 @@ function FunnelBt() {
             Projekt prüfen lassen<span style={{ color: "var(--signal)" }}>.</span>
           </h2>
           <p style={{ margin: "18px auto 0", font: "400 16px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
-            Unser Team prüft dein Projekt auf Marktresonanz, mit echten Daten, bevor du Budget bindest.
+            Unser Team prüft dein Projekt persönlich und schaut, ob es zu UNIO passt, bevor du Budget bindest.
           </p>
         </Fx>
         <div style={{ marginTop: 36, textAlign: "left", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: "clamp(24px, 3vw, 36px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
@@ -900,7 +900,7 @@ function FunnelBt() {
               <span style={{ display: "inline-flex", width: 60, height: 60, borderRadius: "50%", background: "var(--signal-soft)", color: "var(--signal-deep)", alignItems: "center", justifyContent: "center" }}>
                 <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="m4 10.5 4 4 8-9"></path></svg>
               </span>
-              <div style={{ font: "500 21px var(--font-display)", color: "var(--ink)", marginTop: 16 }}>Danke. Antwort in 48 h — mit Daten.</div>
+              <div style={{ font: "500 21px var(--font-display)", color: "var(--ink)", marginTop: 16 }}>Danke. Wir prüfen, ob dein Projekt zu UNIO passt. Antwort in 48 h.</div>
             </div>
           ) : (
             <form ref={fRef} onSubmit={(e) => { e.preventDefault(); send(); }} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
