@@ -221,7 +221,7 @@ function Zielgruppen() {
 const PRODUKT_GRUPPEN = [
   ["interessenten", "Für Interessenten", [
     ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "immobilien.html", "Immobilie bewerten"],
-    ["SMART MATCHING", "Objekte, die wirklich passen: Dein Suchprofil wird laufend gegen kuratierte Objekte gematcht, oft bevor das Inserat online geht.", "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316", "Immobilien entdecken"],
+    ["SMART EXPOSÉ", "Mehr als ein PDF: Jedes Objekt kommt als digitales Exposé mit allen Daten, Plänen und Unterlagen, immer auf dem aktuellen Stand.", "https://app.unio.at/listing?listingType=SALE&bbox=16.20248%2C48.09298%2C16.54512%2C48.32316", "Immobilien entdecken"],
     ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", "immobilien.html", "So arbeiten wir"],
     ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", "immobilien.html", "Verkaufen mit UNIO"],
   ]],
