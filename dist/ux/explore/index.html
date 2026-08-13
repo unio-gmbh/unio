@@ -1,0 +1,238 @@
+<!-- @dsCard group="Objektseite" viewport="390x844" name="Explore" subtitle="Vertikaler Immobilien-Feed — lernt aus Herzen und angesehenen Objekten" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explore — UNIO</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32.png">
+<meta name="theme-color" content="#0B0A09">
+<style>
+  :root{ --ink:#0B0A09; --paper:#F7F5F1; --orange:#FFAA09; --ease:cubic-bezier(.32,.72,0,1);}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;}
+  body{background:#151312;font-family:var(--font-display),'Helvetica Neue',Helvetica,sans-serif;-webkit-font-smoothing:antialiased;color:var(--paper);overflow:hidden;}
+  .mono{font-family:var(--font-mono),'SF Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+
+  /* Buehne: mobil vollflaechig, Desktop als zentrierte Phone-Buehne */
+  .stage{position:fixed;inset:0;display:flex;justify-content:center;background:#151312;}
+  .feedwrap{position:relative;width:100%;height:100%;max-width:none;}
+  @media(min-width:768px){
+    .feedwrap{max-width:520px;}
+    .stage::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(60% 50% at 50% 20%, rgba(255,170,9,.07), transparent 70%);}
+  }
+
+  .feed{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain;}
+  .feed::-webkit-scrollbar{display:none;}
+
+  .card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#1B1917;}
+  .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .card .tint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42) 0%,rgba(11,10,9,0) 26%,rgba(11,10,9,0) 52%,rgba(11,10,9,.72) 100%);}
+
+  /* Info unten links */
+  .info{position:absolute;left:18px;right:92px;bottom:calc(24px + env(safe-area-inset-bottom));}
+  .info .why{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(247,245,241,.9);background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.2);border-radius:99px;padding:6px 12px;margin-bottom:12px;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .info .why i{width:6px;height:6px;border-radius:50%;background:var(--orange);font-style:normal;}
+  .info h2{font-size:clamp(26px,6.4vw,34px);font-weight:500;line-height:1.05;letter-spacing:-.025em;text-shadow:0 2px 26px rgba(0,0,0,.45);}
+  .info .meta{margin-top:8px;font-family:var(--font-mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.85);}
+  .info .preis{margin-top:10px;font-size:21px;font-weight:500;letter-spacing:-.01em;}
+  .info .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;text-decoration:none;color:#1A1305;background:var(--orange);
+    font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
+
+  /* Aktionen rechts */
+  .rail{position:absolute;right:14px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;align-items:center;}
+  .rail button,.rail a{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;text-decoration:none;
+    background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.22);color:var(--paper);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .25s var(--ease);}
+  .rail button:active{transform:scale(.9);}
+  .rail .lbl{font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;color:rgba(247,245,241,.7);margin-top:-8px;text-transform:uppercase;}
+  .rail .herz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
+  .rail .herz svg{transition:transform .3s var(--ease);}
+  .rail .herz.on svg{transform:scale(1.15);}
+
+  /* Topbar */
+  .topbar{position:absolute;left:0;right:0;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 12px;}
+  .topbar img{height:15px;display:block;filter:invert(1) brightness(1.6);}
+  .topbar .mono{color:rgba(247,245,241,.85);}
+  .topbar a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  .topbar .hub{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.75);
+    border:1px solid rgba(247,245,241,.25);border-radius:99px;padding:6px 12px;background:rgba(11,10,9,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+
+  /* Erst-Besuch-Hinweis */
+  .hint{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:rgba(11,10,9,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    opacity:1;transition:opacity .5s var(--ease);}
+  .hint.weg{opacity:0;pointer-events:none;}
+  .hint .box{text-align:center;padding:0 34px;max-width:340px;}
+  .hint .box .arrows{font-size:26px;color:var(--orange);animation:hop 1.6s var(--ease) infinite;}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .hint h3{font-size:24px;font-weight:500;letter-spacing:-.02em;margin-top:14px;}
+  .hint p{margin-top:10px;font-size:14.5px;line-height:1.6;color:rgba(247,245,241,.8);}
+  .hint button{margin-top:22px;border:none;cursor:pointer;border-radius:99px;padding:13px 26px;background:var(--orange);color:#1A1305;font-weight:600;font-size:14px;font-family:inherit;}
+
+  /* Merk-Toast */
+  .toast{position:absolute;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-8px);z-index:8;
+    background:rgba(11,10,9,.75);border:1px solid rgba(247,245,241,.2);color:var(--paper);border-radius:99px;padding:9px 18px;
+    font-size:12.5px;font-weight:500;opacity:0;transition:all .4s var(--ease);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast.zeig{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast b{color:var(--orange);font-weight:600;}
+
+  @media(prefers-reduced-motion:reduce){.hint .box .arrows{animation:none;}.rail button,.toast{transition:none;}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="feedwrap">
+    <div class="topbar">
+      <a href="/ux"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO"></a>
+      <span class="mono">EXPLORE · FÜR DICH</span>
+      <a class="hub" href="/ux">UX-HUB</a>
+    </div>
+    <div class="feed" id="feed"></div>
+    <div class="toast" id="toast"></div>
+    <div class="hint" id="hint">
+      <div class="box">
+        <div class="arrows">↑</div>
+        <h3>Scroll dich durch Wien.</h3>
+        <p>Herz gedrückt heißt mehr davon: Der Feed lernt aus deinen Merkungen und den Objekten, die du dir ansiehst.</p>
+        <button id="hintWeg">Los geht's</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---------- Objekt-Pool mit Tags fuer die Empfehlung ---------- */
+  var POOL = [
+    { id:"beheim",     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
+    { id:"beheim2",    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
+    { id:"albrecht",   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
+    { id:"albrecht-dg",img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
+    { id:"ecoluxe",    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","1190","premium"] },
+    { id:"ecoluxe-w",  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1190"] },
+    { id:"obenzwei",   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
+    { id:"obenzwei-t", img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
+    { id:"penthouse",  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
+    { id:"maxing",     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
+    { id:"hufhaus",    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
+    { id:"hufhaus-p",  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
+    { id:"schoenbrunn",img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
+    { id:"facade",     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
+  ];
+  var DETAIL = "/ux/objekt";
+
+  /* ---------- Zustand: Herzen + Gesehen (localStorage) ---------- */
+  var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
+  var seen = JSON.parse(localStorage.getItem("unio_explore_seen") || "{}");
+  var saveLikes = function(){ localStorage.setItem("unio_explore_likes", JSON.stringify([...likes])); };
+  var saveSeen = function(){ localStorage.setItem("unio_explore_seen", JSON.stringify(seen)); };
+
+  /* Tag-Gewichte aus Herzen (x3) und Ansichten (x1) */
+  function tagGewichte(){
+    var w = {};
+    POOL.forEach(function(o){
+      var lk = likes.has(o.id) ? 3 : 0;
+      var sn = Math.min(2, seen[o.id] || 0);
+      o.tags.forEach(function(t){ w[t] = (w[t] || 0) + lk + sn * 0.5; });
+    });
+    return w;
+  }
+  function score(o, w){
+    var s = 0;
+    o.tags.forEach(function(t){ s += w[t] || 0; });
+    if (likes.has(o.id)) s -= 2;                    /* Gemerktes nicht staendig wiederholen */
+    s -= Math.min(3, (seen[o.id] || 0)) * 1.2;      /* oft Gesehenes zuruecknehmen */
+    s += Math.random() * 0.9;                       /* Entdecker-Rauschen */
+    return s;
+  }
+  function naechsteBatch(n, ausschluss){
+    var w = tagGewichte();
+    return POOL
+      .filter(function(o){ return !ausschluss.has(o.id); })
+      .map(function(o){ return [score(o, w), o]; })
+      .sort(function(a, b){ return b[0] - a[0]; })
+      .slice(0, n).map(function(x){ return x[1]; });
+  }
+  function grund(o){
+    if (!likes.size && !Object.keys(seen).length) return null;
+    var w = tagGewichte();
+    var best = null, bw = 0;
+    o.tags.forEach(function(t){ if ((w[t] || 0) > bw) { bw = w[t]; best = t; } });
+    if (!best || bw < 1) return null;
+    var NAMEN = { dach:"Dachgeschoss", terrasse:"Terrasse", garten:"Garten", villa:"Villen", altbau:"Altbau", neubau:"Neubau", pool:"Pool", premium:"Premium", stil:"Stilaltbau", hof:"Hoflage", wald:"Am Grünen", saniert:"Saniert", projekt:"Projekte" };
+    return "Weil dir " + (NAMEN[best] || best) + " gefällt";
+  }
+
+  /* ---------- Feed-Aufbau ---------- */
+  var feed = document.getElementById("feed");
+  var geladen = new Set();
+  var HERZ = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z" transform="scale(.92) translate(1 .5)"/></svg>';
+  function karte(o){
+    var g = grund(o);
+    var like = likes.has(o.id);
+    var el = document.createElement("section");
+    el.className = "card"; el.dataset.id = o.id;
+    el.innerHTML =
+      '<img src="' + o.img + '" alt="' + o.t + '" loading="lazy">' +
+      '<div class="tint"></div>' +
+      '<div class="info">' +
+        (g ? '<span class="why"><i></i>' + g + '</span><br>' : '') +
+        '<h2>' + o.t + '</h2>' +
+        '<div class="meta">' + o.ort + '</div>' +
+        '<div class="preis">' + o.preis + '</div>' +
+        '<a class="more" href="' + DETAIL + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
+      '</div>' +
+      '<div class="rail">' +
+        '<button class="herz' + (like ? " on" : "") + '" aria-label="Merken">' + HERZ + '</button>' +
+        '<span class="lbl">Merken</span>' +
+        '<a href="' + DETAIL + '" aria-label="Details"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 16 4m0 0H7.5M16 4v8.5"/></svg></a>' +
+        '<span class="lbl">Details</span>' +
+      '</div>';
+    el.querySelector(".herz").addEventListener("click", function(){
+      var on = this.classList.toggle("on");
+      if (on) { likes.add(o.id); zeigToast("Gemerkt · der Feed <b>lernt mit</b>"); }
+      else likes.delete(o.id);
+      saveLikes();
+    });
+    return el;
+  }
+  function anhaengen(n){
+    var batch = naechsteBatch(n, geladen);
+    if (!batch.length) { geladen = new Set([...likes]); batch = naechsteBatch(n, geladen); } /* Pool durch: neu mischen */
+    batch.forEach(function(o){ geladen.add(o.id); feed.appendChild(karte(o)); });
+  }
+  anhaengen(5);
+
+  /* Gesehen-Tracking + Nachladen */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var id = e.target.dataset.id;
+      seen[id] = (seen[id] || 0) + 1; saveSeen();
+      if (e.target === feed.lastElementChild) anhaengen(4);
+    });
+  }, { root: feed, threshold: 0.6 });
+  new MutationObserver(function(){ [...feed.children].forEach(function(c){ io.observe(c); }); }).observe(feed, { childList: true });
+  [...feed.children].forEach(function(c){ io.observe(c); });
+
+  /* Toast + Erst-Hinweis */
+  var toastEl = document.getElementById("toast"), toastT;
+  function zeigToast(html){
+    toastEl.innerHTML = html; toastEl.classList.add("zeig");
+    clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("zeig"); }, 2200);
+  }
+  var hint = document.getElementById("hint");
+  if (localStorage.getItem("unio_explore_hint")) hint.classList.add("weg");
+  document.getElementById("hintWeg").addEventListener("click", function(){
+    hint.classList.add("weg"); localStorage.setItem("unio_explore_hint", "1");
+  });
+})();
+</script>
+</body>
+</html>

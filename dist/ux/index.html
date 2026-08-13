@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UX-Vorschau — UNIO</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32.png">
+<meta name="theme-color" content="#F7F5F1">
+<style>
+  body{background:var(--paper);color:var(--ink-2);font-family:var(--font-display),'Helvetica Neue',Helvetica,sans-serif;}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px clamp(20px,5vw,48px);}
+  .top img{height:16px;display:block;}
+  .mono{font-family:var(--font-mono),ui-monospace,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);}
+  .shell{max-width:980px;margin:0 auto;padding:clamp(30px,7vh,80px) 24px 90px;}
+  h1{font:500 clamp(36px,5.4vw,64px)/1.04 var(--font-display);letter-spacing:-.03em;color:var(--ink);margin:14px 0 0;}
+  h1 i{color:var(--signal);font-style:normal;}
+  .lead{font:400 16px/1.65 var(--font-display);color:var(--text-muted);margin:18px 0 0;max-width:520px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:44px;}
+  .card{display:flex;flex-direction:column;gap:10px;background:var(--surface-raised);border-radius:18px;
+    box-shadow:inset 0 0 0 1px var(--hairline-dark);padding:26px;text-decoration:none;color:inherit;
+    transition:transform .3s var(--ease-unio),box-shadow .3s var(--ease-unio);}
+  .card:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--hairline-dark),0 18px 40px -20px rgba(11,10,9,.25);}
+  .card .k{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--signal-deep);}
+  .card b{font:500 21px/1.2 var(--font-display);letter-spacing:-.02em;color:var(--ink);}
+  .card p{font:400 13.5px/1.6 var(--font-display);color:var(--text-muted);margin:0;}
+  .card .go{margin-top:auto;padding-top:14px;font:500 14px var(--font-display);color:var(--signal-deep);}
+  .foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--hairline-dark);}
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="/assets/logo/unio-logo-black.svg" alt="UNIO">
+  <span class="mono">INTERN · PASSWORTGESCHÜTZT</span>
+</div>
+<main class="shell">
+  <span class="mono" style="color:var(--signal-deep);">UI/UX-Vorschau · Arbeitsstand</span>
+  <h1>Das UNIO-Produkt,<br>zum Anfassen<i>.</i></h1>
+  <p class="lead">Vier klickbare Vorschauen aus der Produktentwicklung. Alles Demo-Daten, alles Arbeitsstand, nichts davon ist öffentlich verlinkt.</p>
+  <div class="grid">
+    <a class="card" href="/ux/backend">
+      <span class="k">Backend</span>
+      <b>Dashboard</b>
+      <p>Das Betriebssystem für Makler und Bauträger: Leads, Objekte, CIRCLE, Marketing und der Shop.</p>
+      <span class="go">Öffnen →</span>
+    </a>
+    <a class="card" href="/ux/explore">
+      <span class="k">Endkunde</span>
+      <b>Explore-Feed</b>
+      <p>Vertikaler Immobilien-Feed, der aus Herzen und angesehenen Objekten lernt. Am besten mobil ansehen.</p>
+      <span class="go">Öffnen →</span>
+    </a>
+    <a class="card" href="/ux/projekt">
+      <span class="k">Endkunde</span>
+      <b>Projekt-Überseite</b>
+      <p>Die emotionale Überseite eines Projekts mit Einheiten-Liste, am Beispiel Das Albrecht.</p>
+      <span class="go">Öffnen →</span>
+    </a>
+    <a class="card" href="/ux/objekt">
+      <span class="k">Endkunde</span>
+      <b>Objekt-Detailseite</b>
+      <p>Die Unterseite eines Objekts aus der Suche: Kennzahlen, Marktdaten, Galerie und Angebot legen.</p>
+      <span class="go">Öffnen →</span>
+    </a>
+  </div>
+  <div class="foot mono">© 2026 UNIO · WIEN · DEMO-DATEN · ARBEITSSTAND</div>
+</main>
+</body>
+</html>
