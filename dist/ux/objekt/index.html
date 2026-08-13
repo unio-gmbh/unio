@@ -896,5 +896,27 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   });
 })();
 </script>
+
+<!-- Rueckweg zu Explore: erscheint nur, wenn man aus dem Feed kommt -->
+<style>
+  .expback{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:110;display:none;align-items:center;gap:8px;
+    background:rgba(20,18,16,.82);color:#F7F5F1;border:1px solid rgba(247,245,241,.2);border-radius:99px;padding:11px 18px;
+    font-size:13px;font-weight:600;text-decoration:none;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 14px 34px -14px rgba(20,18,16,.6);font-family:inherit;cursor:pointer;}
+  .expback i{font-style:normal;color:var(--orange);}
+  @media(max-width:760px){.expback{bottom:calc(76px + env(safe-area-inset-bottom));}}
+</style>
+<a class="expback" id="expBack" href="/ux/explore"><i>♥</i> Zurück zu Explore</a>
+<script>
+(function(){
+  var vonExplore = /[?&]von=explore/.test(location.search) || /\/ux\/explore/.test(document.referrer);
+  if (!vonExplore) return;
+  var b = document.getElementById("expBack");
+  b.style.display = "inline-flex";
+  b.addEventListener("click", function(e){
+    if (history.length > 1 && /\/ux\/explore/.test(document.referrer)) { e.preventDefault(); history.back(); }
+  });
+})();
+</script>
 </body>
 </html>

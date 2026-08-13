@@ -403,6 +403,13 @@ function ShopSeite({ onNav }) {
     return <React.Fragment><ContentKonfigurator leistung={CONTENT_LEISTUNGEN.find((l) => l.id === konfig.id)} onBack={() => setKonfig(null)} onAdd={add} />{cartBtn}{toastEl}{drawer}</React.Fragment>;
   }
 
+  const [kat, setKat] = React.useState("druck");
+  const KATEGORIEN = [
+    ["druck", "Druck & Werbemittel"],
+    ["content", "Content & Personal Brand"],
+    ["homepage", "Makler-Homepage"],
+    ["bestellungen", "Bestellungen"],
+  ];
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
       <RvL style={{ marginTop: 40 }}>
@@ -410,8 +417,22 @@ function ShopSeite({ onNav }) {
         <p style={{ margin: "16px 0 0", font: "400 16px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>Werbemittel, Content und deine Makler-Homepage: alles konfiguriert sich aus deinem Profil und deinen Objekten.</p>
       </RvL>
 
-      {/* 01 · Druck & Werbemittel */}
-      <Rv style={{ marginTop: 52 }}>
+      {/* Reiter durch die Meta-Kategorien */}
+      <RvL style={{ marginTop: 34 }}>
+        <div role="tablist" aria-label="Shop-Kategorien" style={{ display: "inline-flex", gap: 6, flexWrap: "wrap", padding: 5, borderRadius: 999, background: "var(--card-bg, #FFFFFF)", boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))" }}>
+          {KATEGORIEN.map(([id, label]) => (
+            <button key={id} role="tab" aria-selected={kat === id} onClick={() => { setKat(id); window.scrollTo(0, 0); }}
+              style={{ font: "500 13.5px var(--font-display)", fontFamily: "inherit", padding: "10px 18px", borderRadius: 999, border: "none", cursor: "pointer",
+                background: kat === id ? "var(--ink)" : "transparent", color: kat === id ? "var(--paper)" : "var(--text-muted)",
+                transition: "all .25s var(--ease-unio)", whiteSpace: "nowrap" }}>
+              {label}{id === "bestellungen" ? " · " + HISTORIE.length : ""}
+            </button>
+          ))}
+        </div>
+      </RvL>
+
+      {kat === "druck" && <React.Fragment>
+      <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Druck &amp; Werbemittel</h2>
           <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>MIT / OHNE MAKLERBILD · MIT / OHNE PARTNERLOGO</span>
@@ -425,8 +446,10 @@ function ShopSeite({ onNav }) {
         ))}
       </div>
 
-      {/* 02 · Content à la carte */}
-      <Rv style={{ marginTop: 64 }}>
+      </React.Fragment>}
+
+      {kat === "content" && <React.Fragment>
+      <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Content &amp; Personal Brand</h2>
           <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>À LA CARTE · UNIO.LUCIDA.AT</span>
@@ -473,8 +496,10 @@ function ShopSeite({ onNav }) {
         </div>
       </div>
 
-      {/* 03 · Makler-Homepage */}
-      <Rv style={{ marginTop: 64 }}>
+      </React.Fragment>}
+
+      {kat === "homepage" && <React.Fragment>
+      <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 8 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Deine Makler-Homepage</h2>
           <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>PERSONAL-BRAND-SEITE · {eurS(LOOK_PREIS)} EINMALIG</span>
@@ -501,8 +526,10 @@ function ShopSeite({ onNav }) {
         ))}
       </div>
 
-      {/* Bestellhistorie */}
-      <Rv style={{ marginTop: 64 }}>
+      </React.Fragment>}
+
+      {kat === "bestellungen" && <React.Fragment>
+      <Rv style={{ marginTop: 36 }}>
         <h2 style={{ margin: "0 0 18px", font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Bestellhistorie</h2>
         <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
           {HISTORIE.map(([datum, was, motiv, stk, preis, s, label], i) => (
@@ -518,6 +545,7 @@ function ShopSeite({ onNav }) {
         </div>
         <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>DEMO-ANSICHT · PREISE UND HISTORIE ARBEITSSTAND</p>
       </Rv>
+      </React.Fragment>}
 
       {cartBtn}{toastEl}{drawer}
     </div>

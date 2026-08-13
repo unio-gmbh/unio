@@ -82,7 +82,34 @@
   .toast.zeig{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast b{color:var(--orange);font-weight:600;}
 
-  @media(prefers-reduced-motion:reduce){.hint .box .arrows{animation:none;}.rail button,.toast{transition:none;}}
+  .likesbtn{cursor:pointer;font-family:var(--font-mono),monospace;}
+  .likesbtn b{color:var(--orange);font-weight:600;}
+
+  /* Merkliste: dunkles Sheet von unten */
+  .liste{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none;}
+  .liste .lback{position:absolute;inset:0;background:rgba(11,10,9,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .4s var(--ease);}
+  .liste.open{pointer-events:auto;}
+  .liste.open .lback{opacity:1;}
+  .liste .sheet{position:relative;max-height:76%;background:#1B1917;border-radius:22px 22px 0 0;border:1px solid rgba(247,245,241,.14);border-bottom:none;
+    transform:translateY(104%);transition:transform .5s var(--ease);display:flex;flex-direction:column;overflow:hidden;}
+  .liste.open .sheet{transform:translateY(0);}
+  .liste .lhead{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px 14px;border-bottom:1px solid rgba(247,245,241,.1);}
+  .liste .lhead .mono{color:rgba(247,245,241,.8);}
+  .liste .lx{width:36px;height:36px;border-radius:50%;border:1px solid rgba(247,245,241,.22);background:rgba(247,245,241,.06);color:var(--paper);cursor:pointer;font-family:inherit;}
+  .liste .lbody{overflow-y:auto;padding:10px 14px calc(20px + env(safe-area-inset-bottom));}
+  .lrow{display:grid;grid-template-columns:64px 1fr auto;gap:13px;align-items:center;padding:10px 8px;border-radius:14px;}
+  .lrow:hover{background:rgba(247,245,241,.05);}
+  .lrow img{width:64px;height:64px;border-radius:12px;object-fit:cover;}
+  .lrow .t{font-size:15px;font-weight:500;letter-spacing:-.01em;}
+  .lrow .m{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,245,241,.6);margin-top:4px;}
+  .lrow .p{font-size:13px;font-weight:500;color:rgba(247,245,241,.9);margin-top:3px;}
+  .lrow .acts{display:flex;gap:8px;align-items:center;}
+  .lrow .acts a{font-size:12.5px;font-weight:600;color:#1A1305;background:var(--orange);border-radius:99px;padding:8px 14px;text-decoration:none;white-space:nowrap;}
+  .lrow .acts button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(247,245,241,.22);background:transparent;color:var(--orange);cursor:pointer;display:grid;place-items:center;}
+  .lleer{padding:44px 24px;text-align:center;color:rgba(247,245,241,.7);font-size:14.5px;line-height:1.6;}
+  .lfoot{padding:0 20px 14px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.45);text-align:center;}
+
+  @media(prefers-reduced-motion:reduce){.hint .box .arrows{animation:none;}.rail button,.toast{transition:none;}.liste .sheet,.liste .lback{transition:none;}}
 </style>
 </head>
 <body>
@@ -91,10 +118,24 @@
     <div class="topbar">
       <a href="/ux"><img src="../../assets/logo/unio-logo-black.svg" alt="UNIO"></a>
       <span class="mono">EXPLORE · FÜR DICH</span>
-      <a class="hub" href="/ux">UX-HUB</a>
+      <span style="display:inline-flex;gap:8px;align-items:center;">
+        <button class="hub likesbtn" id="likesBtn" type="button" aria-label="Merkliste öffnen">♥ <b id="likesCount">0</b></button>
+        <a class="hub" href="/ux">UX-HUB</a>
+      </span>
     </div>
     <div class="feed" id="feed"></div>
     <div class="toast" id="toast"></div>
+    <div class="liste" id="liste" aria-hidden="true">
+      <div class="lback" id="listeBack"></div>
+      <div class="sheet" role="dialog" aria-label="Deine Merkliste">
+        <div class="lhead">
+          <span class="mono">DEINE MERKLISTE · <b id="listeCount" style="color:var(--orange)">0</b> OBJEKTE</span>
+          <button class="lx" id="listeZu" aria-label="Schließen">✕</button>
+        </div>
+        <div class="lbody" id="listeBody"></div>
+        <div class="lfoot">DER FEED LERNT AUS DEINER MERKLISTE</div>
+      </div>
+    </div>
     <div class="hint" id="hint">
       <div class="box">
         <div class="arrows">↑</div>
@@ -125,7 +166,7 @@
     { id:"schoenbrunn",img:"../../assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
     { id:"facade",     img:"../../assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
   ];
-  var DETAIL = "/ux/objekt";
+  var DETAIL = "/ux/objekt?von=explore";
 
   /* ---------- Zustand: Herzen + Gesehen (localStorage) ---------- */
   var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
@@ -232,6 +273,61 @@
   document.getElementById("hintWeg").addEventListener("click", function(){
     hint.classList.add("weg"); localStorage.setItem("unio_explore_hint", "1");
   });
+
+  /* ---------- Merkliste (Sheet) ---------- */
+  var liste = document.getElementById("liste"), listeBody = document.getElementById("listeBody");
+  function zaehler(){
+    document.getElementById("likesCount").textContent = likes.size;
+    document.getElementById("listeCount").textContent = likes.size;
+  }
+  function renderListe(){
+    zaehler();
+    if (!likes.size) { listeBody.innerHTML = '<div class="lleer">Noch keine Herzen.<br>Merk dir Objekte im Feed, dann tauchen sie hier auf.</div>'; return; }
+    listeBody.innerHTML = "";
+    [...likes].reverse().forEach(function(id){
+      var o = POOL.find(function(x){ return x.id === id; });
+      if (!o) return;
+      var row = document.createElement("div");
+      row.className = "lrow";
+      row.innerHTML = '<img src="' + o.img + '" alt="">' +
+        '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis + '</div></div>' +
+        '<div class="acts"><button aria-label="Herz entfernen">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>' +
+        '<a href="' + DETAIL + '">Ansehen</a></div>';
+      row.querySelector("a").addEventListener("click", function(){ sessionStorage.setItem("unio_explore_pos", o.id); });
+      row.querySelector("button").addEventListener("click", function(){
+        likes.delete(o.id); saveLikes(); renderListe();
+        var h = feed.querySelector('.card[data-id="' + o.id + '"] .herz');
+        if (h) h.classList.remove("on");
+      });
+      listeBody.appendChild(row);
+    });
+  }
+  function listeAuf(){ renderListe(); liste.classList.add("open"); liste.setAttribute("aria-hidden", "false"); }
+  function listeZu(){ liste.classList.remove("open"); liste.setAttribute("aria-hidden", "true"); }
+  document.getElementById("likesBtn").addEventListener("click", listeAuf);
+  document.getElementById("listeZu").addEventListener("click", listeZu);
+  document.getElementById("listeBack").addEventListener("click", listeZu);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") listeZu(); });
+  zaehler();
+
+  /* Zaehler bei jedem Herz aktualisieren */
+  feed.addEventListener("click", function(e){
+    if (e.target.closest(".herz")) setTimeout(zaehler, 0);
+    var a = e.target.closest('a[href*="/ux/objekt"]');
+    if (a) { var c = e.target.closest(".card"); if (c) sessionStorage.setItem("unio_explore_pos", c.dataset.id); }
+  });
+
+  /* Rueckkehr von der Objektseite: zuletzt gesehene Karte wieder nach oben */
+  var pos = sessionStorage.getItem("unio_explore_pos");
+  if (pos) {
+    sessionStorage.removeItem("unio_explore_pos");
+    var oPos = POOL.find(function(x){ return x.id === pos; });
+    if (oPos) {
+      var alte = feed.querySelector('.card[data-id="' + pos + '"]');
+      if (alte) feed.prepend(alte);
+      else { geladen.add(pos); feed.prepend(karte(oPos)); }
+    }
+  }
 })();
 </script>
 </body>
