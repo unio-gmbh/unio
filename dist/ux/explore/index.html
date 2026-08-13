@@ -380,28 +380,49 @@
     }
   });
   /* Desktop-Wheel: eine Scrollgeste = genau eine Karte (Instagram-Feel).
-     Touch bleibt beim nativen CSS-Snap (snap-stop always = eine Karte pro Fling). */
-  if (!rm) {
-    var scrollLock = false, wheelAkku = 0, wheelTimer;
-    feed.addEventListener("wheel", function(e){
-      e.preventDefault();
-      if (scrollLock) return;
-      wheelAkku += e.deltaY;
-      clearTimeout(wheelTimer); wheelTimer = setTimeout(function(){ wheelAkku = 0; }, 150);
-      if (Math.abs(wheelAkku) > 42) {
-        var richtung = wheelAkku > 0 ? 1 : -1;
-        wheelAkku = 0; scrollLock = true;
-        feed.scrollBy({ top: richtung * feed.clientHeight, behavior: "smooth" });
-        setTimeout(function(){ scrollLock = false; }, 620);
-      }
-    }, { passive: false });
-  }
+     Robust gegen Haengenbleiben: indexbasierte Ziele (heilen jede Drift),
+     eigene rAF-Animation statt behavior:smooth (Chrome bricht smooth in
+     Mandatory-Snap-Containern teils ab) und Freigabe erst, wenn der
+     Momentum-Schweif des Trackpads abgeklungen ist (sonst Doppel-Spruenge).
+     Touch bleibt beim nativen CSS-Snap (snap-stop always). */
+  var blaettern = function(richtung){
+    if (blaettern.lock) return;
+    var idx = Math.round(feed.scrollTop / feed.clientHeight);
+    var ziel = Math.max(0, Math.min(idx + richtung, feed.children.length - 1)) * feed.clientHeight;
+    if (Math.abs(ziel - feed.scrollTop) < 2) return;
+    blaettern.lock = true;
+    if (rm) { feed.scrollTop = ziel; blaettern.frei(); return; }
+    var start = feed.scrollTop, diff = ziel - start, t0 = performance.now(), D = 520;
+    var step = function(now){
+      var k = Math.min(1, (now - t0) / D);
+      feed.scrollTop = start + diff * (1 - Math.pow(1 - k, 3));
+      if (k < 1) requestAnimationFrame(step); else blaettern.frei();
+    };
+    requestAnimationFrame(step);
+  };
+  blaettern.lock = false;
+  blaettern.frei = function(){
+    clearTimeout(blaettern.tail);
+    blaettern.tail = setTimeout(function(){ blaettern.lock = false; wheelAkku = 0; }, 150);
+  };
+  var wheelAkku = 0, wheelTimer;
+  feed.addEventListener("wheel", function(e){
+    e.preventDefault();
+    if (blaettern.lock) { blaettern.frei(); return; } /* Schweif der Geste: Freigabe hinauszoegern */
+    wheelAkku += e.deltaY;
+    clearTimeout(wheelTimer); wheelTimer = setTimeout(function(){ wheelAkku = 0; }, 150);
+    if (Math.abs(wheelAkku) > 42) {
+      var richtung = wheelAkku > 0 ? 1 : -1;
+      wheelAkku = 0;
+      blaettern(richtung);
+    }
+  }, { passive: false });
 
   /* Desktop: Pfeiltasten blaettern durch den Feed */
   document.addEventListener("keydown", function(e){
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
-      feed.scrollBy({ top: (e.key === "ArrowDown" ? 1 : -1) * feed.clientHeight, behavior: "smooth" });
+      blaettern(e.key === "ArrowDown" ? 1 : -1);
     }
   });
 
