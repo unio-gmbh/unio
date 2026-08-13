@@ -988,10 +988,11 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     bar.insertBefore(fr, bar.firstChild);
   }
 
-  /* Scroll-Through: naechstes Objekt am Seitenende */
+  /* Scroll-Through: naechstes Objekt am Seitenende — nur auf Touch-Geraeten.
+     Am Desktop endet die Seite am Footer (Rueckweg: die Explore-Pill links unten). */
   try {
     var next = JSON.parse(sessionStorage.getItem("unio_explore_next") || "null");
-    if (!next) return;
+    if (!next || !matchMedia("(pointer: coarse)").matches) return;
     var panel = document.getElementById("weiterPanel");
     document.getElementById("weiterImg").src = next.img;
     document.getElementById("weiterT").textContent = next.t;
