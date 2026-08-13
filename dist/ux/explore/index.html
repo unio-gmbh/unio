@@ -31,12 +31,14 @@
   .card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#1B1917;}
   .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   .card.aktiv img{animation:kenburns 9s var(--ease) forwards;}
+  .card .info,.card .rail{opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease) .1s,transform .6s var(--ease) .1s;}
+  .card.aktiv .info,.card.aktiv .rail{opacity:1;transform:none;}
   @keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
   .burst{position:absolute;left:50%;top:50%;z-index:6;pointer-events:none;color:var(--orange);
     transform:translate(-50%,-50%) scale(.4);opacity:0;filter:drop-shadow(0 6px 24px rgba(0,0,0,.4));}
   .burst.go{animation:burst .8s var(--ease) forwards;}
   @keyframes burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}55%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-56%) scale(1.05)}}
-  @media(prefers-reduced-motion:reduce){.card.aktiv img{animation:none;}.burst.go{animation:none;opacity:0;}}
+  @media(prefers-reduced-motion:reduce){.card.aktiv img{animation:none;}.burst.go{animation:none;opacity:0;}.card .info,.card .rail{opacity:1!important;transform:none!important;transition:none;}}
   .card .tint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42) 0%,rgba(11,10,9,0) 26%,rgba(11,10,9,0) 52%,rgba(11,10,9,.72) 100%);}
 
   /* Info unten links */
@@ -157,6 +159,7 @@
 <script>
 (function(){
   /* ---------- Objekt-Pool mit Tags fuer die Empfehlung ---------- */
+  var rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var POOL = [
     { id:"beheim",     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
     { id:"beheim2",    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
@@ -239,6 +242,8 @@
       '<div class="rail">' +
         '<button class="herz' + (like ? " on" : "") + '" aria-label="Merken">' + HERZ + '</button>' +
         '<span class="lbl">Merken</span>' +
+        '<button class="share" aria-label="Teilen"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6.5 10 2.5 6 6.5M10 3v10M4 11v4.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></button>' +
+        '<span class="lbl">Teilen</span>' +
         '<a href="' + DETAIL + '&obj=' + o.id + '" aria-label="Details"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 16 4m0 0H7.5M16 4v8.5"/></svg></a>' +
         '<span class="lbl">Details</span>' +
       '</div>';
@@ -247,6 +252,14 @@
       if (on) { likes.add(o.id); zeigToast("Gemerkt · der Feed <b>lernt mit</b>"); }
       else likes.delete(o.id);
       saveLikes();
+    });
+    el.querySelector(".share").addEventListener("click", function(){
+      var url = location.origin + DETAIL + "&obj=" + o.id;
+      var daten = { title: o.t + " · UNIO", text: o.t + " · " + o.ort + " · " + o.preis, url: url };
+      if (navigator.share) { navigator.share(daten).catch(function(){}); }
+      else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function(){ zeigToast("Link kopiert · <b>teil es weiter</b>"); }, function(){ zeigToast(url); });
+      } else zeigToast(url);
     });
     /* Doppeltipp/Doppelklick = Like mit Herz-Burst (wie bei TikTok) */
     var burst = document.createElement("span");
@@ -356,6 +369,24 @@
       }
     }
   });
+  /* Desktop-Wheel: eine Scrollgeste = genau eine Karte (Instagram-Feel).
+     Touch bleibt beim nativen CSS-Snap (snap-stop always = eine Karte pro Fling). */
+  if (!rm) {
+    var scrollLock = false, wheelAkku = 0, wheelTimer;
+    feed.addEventListener("wheel", function(e){
+      e.preventDefault();
+      if (scrollLock) return;
+      wheelAkku += e.deltaY;
+      clearTimeout(wheelTimer); wheelTimer = setTimeout(function(){ wheelAkku = 0; }, 150);
+      if (Math.abs(wheelAkku) > 42) {
+        var richtung = wheelAkku > 0 ? 1 : -1;
+        wheelAkku = 0; scrollLock = true;
+        feed.scrollBy({ top: richtung * feed.clientHeight, behavior: "smooth" });
+        setTimeout(function(){ scrollLock = false; }, 620);
+      }
+    }, { passive: false });
+  }
+
   /* Desktop: Pfeiltasten blaettern durch den Feed */
   document.addEventListener("keydown", function(e){
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
