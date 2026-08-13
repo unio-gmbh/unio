@@ -274,11 +274,13 @@
       padding:10px 10px 10px 20px;align-items:center;justify-content:space-between;gap:12px;
       background:rgba(20,18,16,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
       box-shadow:0 18px 50px -16px rgba(20,18,16,.5);}
-    .ctabar .l b{display:block;font-size:15px;font-weight:700;color:#fff;}
-    .ctabar .l span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9px;letter-spacing:.12em;
-      text-transform:uppercase;color:rgba(255,255,255,.5);}
-    .ctabar button{background:#F3F0EA;color:var(--ink);border:none;border-radius:16px;
-      padding:14px 20px;font-weight:700;font-size:13.5px;font-family:inherit;white-space:nowrap;}
+    .ctabar{padding:10px;gap:8px;}
+    .ctabar .l{display:none;} /* Preis steht im Exposé; unten zaehlen nur die Aktionen */
+    .ctabar button{flex:1 1 0;min-width:0;background:#F3F0EA;color:var(--ink);border:none;border-radius:16px;
+      padding:14px 8px;font-weight:700;font-size:13px;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ctabar .feedrund{flex:0 0 46px;width:46px;height:46px;padding:0;border-radius:50%;
+      background:rgba(247,245,241,.14);color:var(--orange);border:1px solid rgba(247,245,241,.28);display:none;place-items:center;}
+    .expback{display:none!important;} /* mobil: Rueckweg sitzt in der Aktionsleiste */
     body{padding-bottom:90px;}
   }
   @media (max-width:720px){
@@ -609,10 +611,39 @@
   </div>
 </footer>
 
+<!-- Scroll-Through: am Seitenende wartet das naechste Objekt aus dem Feed.
+     Ein zusaetzlicher Zug nach unten wechselt in den Feed; ein leichter Scroll
+     nach oben laesst dich im Expose, exakt dort, wo du warst. -->
+<style>
+  .weiter{display:none;position:relative;height:88svh;min-height:480px;overflow:hidden;background:#141210;color:#F7F5F1;}
+  .weiter img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;}
+  .weiter .wtint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,16,.86) 0%,rgba(20,18,16,.25) 45%,rgba(20,18,16,.55) 100%);}
+  .weiter .winner{position:absolute;left:0;right:0;top:clamp(26px,7vh,64px);text-align:center;padding:0 24px;}
+  .weiter .wkick{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,245,241,.75);}
+  .weiter h2{font-size:clamp(30px,7.5vw,52px);font-weight:500;letter-spacing:-.025em;line-height:1.04;margin-top:12px;text-shadow:0 2px 30px rgba(0,0,0,.5);}
+  .weiter .wmeta{font-family:var(--font-mono),ui-monospace,monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:rgba(247,245,241,.85);margin-top:10px;}
+  .weiter .wpfeil{font-size:24px;color:var(--orange);margin-top:18px;animation:wHop 1.6s var(--ease) infinite;}
+  @keyframes wHop{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  .weiter .whint{position:absolute;left:24px;right:24px;bottom:calc(96px + env(safe-area-inset-bottom));text-align:center;
+    font-size:12.5px;line-height:1.6;color:rgba(247,245,241,.75);}
+  @media(prefers-reduced-motion:reduce){.weiter .wpfeil{animation:none;}}
+</style>
+<section class="weiter" id="weiterPanel" aria-label="Nächstes Objekt im Feed">
+  <img id="weiterImg" src="" alt="">
+  <div class="wtint"></div>
+  <div class="winner">
+    <span class="wkick">ALS NÄCHSTES IN DEINEM FEED</span>
+    <h2 id="weiterT"></h2>
+    <div class="wmeta" id="weiterM"></div>
+    <div class="wpfeil" aria-hidden="true">↓</div>
+  </div>
+  <span class="whint">Zieh weiter nach unten für das nächste Objekt · ein kurzer Scroll hinauf und du bist wieder im Exposé</span>
+</section>
+
 <div class="ctabar">
   <div class="l"><b>€ 1.749.000</b><span>Verfügbar ab 11.05.2026</span></div>
   <button class="ctabar-angebot" id="angebotOpenMobil">Angebot legen</button>
-  <button>Besichtigung anfragen</button>
+  <button>Besichtigung</button>
 </div>
 
 <!-- Galerie-Overlay -->
@@ -912,11 +943,6 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   @media(max-width:760px){.expback{bottom:calc(76px + env(safe-area-inset-bottom));}}
 </style>
 <a class="expback" id="expBack" href="/ux/explore"><i>♥</i> Zurück zu Explore</a>
-<a class="expback" id="expNext" href="/ux/explore" style="left:auto;right:16px;padding:9px 12px 9px 9px;gap:10px;">
-  <img id="expNextImg" src="" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
-  <span style="text-align:left;line-height:1.25;"><span class="mono" style="display:block;font-size:8px;letter-spacing:.14em;color:rgba(247,245,241,.65);">ALS NÄCHSTES</span><span id="expNextT" style="font-size:12.5px;"></span></span>
-  <i>→</i>
-</a>
 <script>
 (function(){
   /* Merken + Like-Zahl: synchron mit dem Explore-Feed (localStorage) */
@@ -944,19 +970,47 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   if (!vonExplore) return;
   var b = document.getElementById("expBack");
   b.style.display = "inline-flex";
-  b.addEventListener("click", function(e){
-    if (history.length > 1 && /\/ux\/explore/.test(document.referrer)) { e.preventDefault(); history.back(); }
-  });
-  /* Weiter-Sog: naechstes Objekt aus dem Feed anteasern */
+  var zurueck = function(e){
+    if (e) e.preventDefault();
+    if (history.length > 1 && /\/ux\/explore/.test(document.referrer)) history.back();
+    else location.href = "/ux/explore";
+  };
+  b.addEventListener("click", zurueck);
+
+  /* Mobil: runder Feed-Button vorne in der Aktionsleiste */
+  var bar = document.querySelector(".ctabar");
+  if (bar) {
+    var fr = document.createElement("button");
+    fr.className = "feedrund"; fr.setAttribute("aria-label", "Zurück zu Explore");
+    fr.style.display = "grid";
+    fr.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z"/></svg>';
+    fr.addEventListener("click", zurueck);
+    bar.insertBefore(fr, bar.firstChild);
+  }
+
+  /* Scroll-Through: naechstes Objekt am Seitenende */
   try {
     var next = JSON.parse(sessionStorage.getItem("unio_explore_next") || "null");
-    if (next) {
-      var n = document.getElementById("expNext");
-      document.getElementById("expNextImg").src = next.img;
-      document.getElementById("expNextT").textContent = next.t;
-      n.style.display = "inline-flex";
-      n.addEventListener("click", function(){ sessionStorage.setItem("unio_explore_pos", next.id); });
-    }
+    if (!next) return;
+    var panel = document.getElementById("weiterPanel");
+    document.getElementById("weiterImg").src = next.img;
+    document.getElementById("weiterT").textContent = next.t;
+    document.getElementById("weiterM").textContent = next.ort + " · " + next.preis;
+    panel.style.display = "block";
+    var amEnde = function(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 24; };
+    var los = false;
+    var commit = function(){
+      if (los) return; los = true;
+      sessionStorage.setItem("unio_explore_pos", next.id);
+      location.href = "/ux/explore";
+    };
+    window.addEventListener("wheel", function(e){ if (e.deltaY > 14 && amEnde()) commit(); }, { passive: true });
+    var tY = null;
+    window.addEventListener("touchstart", function(e){ tY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener("touchmove", function(e){
+      if (tY === null) return;
+      if (tY - e.touches[0].clientY > 30 && amEnde()) { tY = null; commit(); }
+    }, { passive: true });
   } catch (e) {}
 })();
 </script>
