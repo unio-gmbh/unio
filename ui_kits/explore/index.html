@@ -25,7 +25,8 @@
       background:radial-gradient(60% 50% at 50% 20%, rgba(255,170,9,.07), transparent 70%);}
   }
 
-  .feed{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain;}
+  .feed{height:100%;overflow-y:scroll;scrollbar-width:none;overscroll-behavior:contain;}
+  @media(pointer:coarse){.feed{scroll-snap-type:y mandatory;}} /* Snap nur auf Touch; Desktop scrollt frei */
   .feed::-webkit-scrollbar{display:none;}
 
   .card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#1B1917;}
@@ -379,12 +380,9 @@
       }
     }
   });
-  /* Desktop-Wheel: eine Scrollgeste = genau eine Karte (Instagram-Feel).
-     Robust gegen Haengenbleiben: indexbasierte Ziele (heilen jede Drift),
-     eigene rAF-Animation statt behavior:smooth (Chrome bricht smooth in
-     Mandatory-Snap-Containern teils ab) und Freigabe erst, wenn der
-     Momentum-Schweif des Trackpads abgeklungen ist (sonst Doppel-Spruenge).
-     Touch bleibt beim nativen CSS-Snap (snap-stop always). */
+  /* Desktop scrollt frei (kein Snap, kein Wheel-Abfangen); das kartenweise
+     Einrasten gibt es nur auf Touch-Geraeten via CSS-Snap. blaettern() dient
+     den Pfeiltasten. */
   var blaettern = function(richtung){
     if (blaettern.lock) return;
     var idx = Math.round(feed.scrollTop / feed.clientHeight);
@@ -403,21 +401,8 @@
   blaettern.lock = false;
   blaettern.frei = function(){
     clearTimeout(blaettern.tail);
-    blaettern.tail = setTimeout(function(){ blaettern.lock = false; wheelAkku = 0; }, 150);
+    blaettern.tail = setTimeout(function(){ blaettern.lock = false; }, 150);
   };
-  var wheelAkku = 0, wheelTimer;
-  feed.addEventListener("wheel", function(e){
-    e.preventDefault();
-    if (blaettern.lock) { blaettern.frei(); return; } /* Schweif der Geste: Freigabe hinauszoegern */
-    wheelAkku += e.deltaY;
-    clearTimeout(wheelTimer); wheelTimer = setTimeout(function(){ wheelAkku = 0; }, 150);
-    if (Math.abs(wheelAkku) > 42) {
-      var richtung = wheelAkku > 0 ? 1 : -1;
-      wheelAkku = 0;
-      blaettern(richtung);
-    }
-  }, { passive: false });
-
   /* Desktop: Pfeiltasten blaettern durch den Feed */
   document.addEventListener("keydown", function(e){
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
