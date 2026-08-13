@@ -366,13 +366,72 @@ function ShopKarte({ onOpen, children, name, meta, preis, delay, beliebt }) {
   );
 }
 
+/* ---------- Homepage-Editor: Textbausteine, Fotos, Kontakt ---------- */
+const LOOK_FOTOS = ["../../assets/team/portrait-01.jpg", "../../assets/team/portrait-02.jpg", "../../assets/team/portrait-03.jpg", "../../assets/team/portrait-04.jpg"];
+const LOOK_DEFAULTS = { headline: "Immobilien, persönlich verkauft.", intro: "Seit über 10 Jahren begleite ich Eigentümer:innen durch den Verkauf, mit Strategie, Sichtbarkeit und persönlicher Begleitung.", region: "Wien & Umgebung", tel: SHOP_MAKLER.tel, mail: SHOP_MAKLER.mail, foto: LOOK_FOTOS[1] };
+
+function LookFeld({ label, value, onChange, area }) {
+  const stil = { width: "100%", border: "none", outline: "none", background: "var(--surface-raised)", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px", font: "400 14px/1.5 var(--font-display)", fontFamily: "inherit", color: "var(--ink)", resize: "vertical" };
+  return (
+    <div>
+      <span className="u-label" style={{ display: "block", fontSize: 9, color: "var(--text-muted)", marginBottom: 7 }}>{label}</span>
+      {area ? <textarea rows={3} value={value} onChange={(e) => onChange(e.target.value)} style={stil} /> : <input value={value} onChange={(e) => onChange(e.target.value)} style={stil} />}
+    </div>
+  );
+}
+
+function LookEditor({ offen, onClose, daten, onSave }) {
+  const [d, setD] = React.useState(daten);
+  React.useEffect(() => { if (offen) setD(daten); }, [offen]);
+  React.useEffect(() => {
+    if (!offen) return;
+    const esc = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", esc);
+    return () => document.removeEventListener("keydown", esc);
+  }, [offen]);
+  const set = (k) => (v) => setD((x) => ({ ...x, [k]: v }));
+  return (
+    <div aria-hidden={!offen} style={{ position: "fixed", inset: 0, zIndex: 120, pointerEvents: offen ? "auto" : "none" }}>
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(11,10,9,0.4)", opacity: offen ? 1 : 0, transition: "opacity 350ms var(--ease-unio)" }}></div>
+      <aside role="dialog" aria-modal="true" aria-label="Homepage bearbeiten" style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "min(460px, 100vw)", background: "var(--paper)", boxShadow: "-30px 0 80px -30px rgba(11,10,9,0.5)", transform: offen ? "translateX(0)" : "translateX(105%)", transition: "transform 480ms var(--ease-unio)", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", borderBottom: "1px solid var(--hairline-dark)" }}>
+          <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>HOMEPAGE · INHALTE BEARBEITEN</span>
+          <button onClick={onClose} aria-label="Schließen" style={{ width: 36, height: 36, borderRadius: "50%", border: "1px solid var(--hairline-dark)", background: "var(--surface-raised)", cursor: "pointer", fontFamily: "inherit", color: "var(--ink)" }}>✕</button>
+        </div>
+        <div style={{ padding: "22px 24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div>
+            <span className="u-label" style={{ display: "block", fontSize: 9, color: "var(--text-muted)", marginBottom: 9 }}>DEIN FOTO</span>
+            <div style={{ display: "flex", gap: 10 }}>
+              {LOOK_FOTOS.map((f) => (
+                <button key={f} onClick={() => set("foto")(f)} aria-label="Foto wählen" style={{ padding: 0, border: "none", cursor: "pointer", borderRadius: "50%", background: "none" }}>
+                  <img src={f} alt="" style={{ width: 54, height: 54, borderRadius: "50%", objectFit: "cover", objectPosition: "center 18%", display: "block", boxShadow: d.foto === f ? "0 0 0 3px var(--signal)" : "inset 0 0 0 1px var(--hairline-dark)", opacity: d.foto === f ? 1 : 0.72, transition: "all .25s" }} />
+                </button>
+              ))}
+            </div>
+          </div>
+          <LookFeld label="HEADLINE" value={d.headline} onChange={set("headline")} />
+          <LookFeld label="ÜBER DICH (INTRO)" value={d.intro} onChange={set("intro")} area />
+          <LookFeld label="REGION" value={d.region} onChange={set("region")} />
+          <LookFeld label="TELEFON" value={d.tel} onChange={set("tel")} />
+          <LookFeld label="E-MAIL" value={d.mail} onChange={set("mail")} />
+          <button onClick={() => onSave(d)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "15px 0", background: "var(--signal)", color: "#1A1305", font: "500 14.5px var(--font-display)", fontFamily: "inherit", marginTop: 6 }}>Änderungen speichern</button>
+          <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", textAlign: "center", margin: 0 }}>GEHT ALS BRIEFING AN DAS UMSETZUNGS-TEAM · DEMO</p>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 function ShopSeite({ onNav }) {
   const { Reveal: Rv, RevealL: RvL } = window;
   const [konfig, setKonfig] = React.useState(null);          // {typ, id}
   const [cart, setCart] = React.useState([]);
   const [cartOpen, setCartOpen] = React.useState(false);
   const [ordered, setOrdered] = React.useState(false);
-  const [look, setLook] = React.useState(null);
+  const [look, setLookRaw] = React.useState(() => { const v = parseInt(localStorage.getItem("unio_shop_look"), 10); return isNaN(v) ? null : v; });
+  const setLook = (n) => { setLookRaw(n); localStorage.setItem("unio_shop_look", String(n)); };
+  const [lookDaten, setLookDaten] = React.useState(() => { try { return { ...LOOK_DEFAULTS, ...(JSON.parse(localStorage.getItem("unio_shop_look_daten")) || {}) }; } catch (e) { return LOOK_DEFAULTS; } });
+  const [editor, setEditor] = React.useState(false);
   const [toast, setToast] = React.useState(null);
   const add = (item) => {
     setCart((c) => [...c, item]);
@@ -506,6 +565,46 @@ function ShopSeite({ onNav }) {
         </div>
         <p style={{ margin: "0 0 22px", font: "400 14.5px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>Such dir den Look aus, wir bauen die Seite unter deinem Namen: Story, Objekte, Kontakt und Terminbuchung inklusive. Jeder Look lässt sich live ansehen.</p>
       </Rv>
+
+      {/* Dein Look: immer sichtbar, mit Inhalten und Bearbeitung */}
+      <Rv>
+        {look ? (
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1fr)", gap: 0, background: "var(--card-bg, #FFFFFF)", borderRadius: 18, overflow: "hidden", boxShadow: "0 0 0 2px var(--signal)", marginBottom: 34 }}>
+            <div style={{ position: "relative", minHeight: 300 }}>
+              <img src={"../../assets/img/shop-look-" + look + ".jpg"} alt={"Dein Look " + look} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+              <span className="u-label" style={{ position: "absolute", left: 14, top: 14, fontSize: 8.5, background: "var(--signal)", color: "#1A1305", padding: "5px 11px", borderRadius: 99 }}>DEIN LOOK · {String(look).padStart(2, "0")}</span>
+            </div>
+            <div style={{ padding: "26px 28px", display: "flex", flexDirection: "column", gap: 13 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <img src={lookDaten.foto} alt="" style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", objectPosition: "center 18%" }} />
+                <div>
+                  <div style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>{SHOP_MAKLER.name}</div>
+                  <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{lookDaten.region.toUpperCase()}</span>
+                </div>
+              </div>
+              <div>
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>HEADLINE</span>
+                <div style={{ font: "500 19px/1.25 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)", marginTop: 4 }}>{lookDaten.headline}</div>
+              </div>
+              <div>
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>INTRO</span>
+                <p style={{ margin: "4px 0 0", font: "400 13px/1.6 var(--font-display)", color: "var(--text-muted)" }}>{lookDaten.intro}</p>
+              </div>
+              <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{lookDaten.tel} · {lookDaten.mail.toUpperCase()}</span>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: "auto", paddingTop: 8 }}>
+                <button onClick={() => setEditor(true)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "12px 22px", background: "var(--ink)", color: "var(--paper)", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>Inhalte bearbeiten</button>
+                <a href={"/showcase" + look} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", borderRadius: 999, padding: "12px 22px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13.5px var(--font-display)", textDecoration: "none" }}>Live ansehen ↗</a>
+                <button onClick={() => add({ titel: "Makler-Homepage · Look " + String(look).padStart(2, "0"), detail: "Inkl. deiner Inhalte: " + lookDaten.headline, menge: 1, preis: LOOK_PREIS })} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "12px 22px", background: "var(--signal)", color: "#1A1305", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>In den Warenkorb</button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "20px 24px", marginBottom: 34, display: "flex", alignItems: "center", gap: 14 }}>
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--signal)", flex: "none" }}></span>
+            <p style={{ margin: 0, font: "400 14px/1.5 var(--font-display)", color: "var(--text-muted)" }}>Noch kein Look gewählt: Such dir unten einen aus, danach kannst du hier Texte, Fotos und Kontakt bearbeiten.</p>
+          </div>
+        )}
+      </Rv>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
         {SHOP_LOOKS.map((lk, i) => (
           <Rv key={lk.n} delay={i * 60}>
@@ -519,7 +618,7 @@ function ShopSeite({ onNav }) {
                   <div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>Look {String(lk.n).padStart(2, "0")}</div>
                   <a href={lk.href} target="_blank" rel="noopener" style={{ font: "400 12px var(--font-display)", color: "var(--signal-deep)", textDecoration: "none" }}>Live ansehen ↗</a>
                 </div>
-                <button onClick={() => { setLook(lk.n); add({ titel: "Makler-Homepage · Look " + String(lk.n).padStart(2, "0"), detail: "Personal-Brand-Seite unter deinem Namen · inkl. Setup", menge: 1, preis: LOOK_PREIS }); }} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "10px 18px", background: look === lk.n ? "var(--ink)" : "var(--paper-2)", color: look === lk.n ? "var(--paper)" : "var(--ink)", font: "500 13px var(--font-display)", fontFamily: "inherit", transition: "all .25s" }}>{look === lk.n ? "Gewählt ✓" : "Look wählen"}</button>
+                <button onClick={() => { setLook(lk.n); setToast("Look " + String(lk.n).padStart(2, "0") + " gewählt"); setTimeout(() => setToast(null), 2200); window.scrollTo(0, 0); }} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "10px 18px", background: look === lk.n ? "var(--ink)" : "var(--paper-2)", color: look === lk.n ? "var(--paper)" : "var(--ink)", font: "500 13px var(--font-display)", fontFamily: "inherit", transition: "all .25s" }}>{look === lk.n ? "Gewählt ✓" : "Look wählen"}</button>
               </div>
             </div>
           </Rv>
@@ -548,6 +647,7 @@ function ShopSeite({ onNav }) {
       </React.Fragment>}
 
       {cartBtn}{toastEl}{drawer}
+      <LookEditor offen={editor} onClose={() => setEditor(false)} daten={lookDaten} onSave={(d) => { setLookDaten(d); localStorage.setItem("unio_shop_look_daten", JSON.stringify(d)); setEditor(false); setToast("Inhalte gespeichert"); setTimeout(() => setToast(null), 2200); }} />
     </div>
   );
 }

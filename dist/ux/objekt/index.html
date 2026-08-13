@@ -515,6 +515,11 @@
         <p class="sub">Verfügbar ab 11.05.2026 · Doppelmakler: Boom Living GmbH &amp; Co KG</p>
         <button class="btn">Besichtigung anfragen</button>
         <button class="btn btn-angebot" id="angebotOpen">Angebot legen</button>
+        <button class="ghost" id="objHerz" style="gap:8px;">
+          <svg id="objHerzIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z"/></svg>
+          <span id="objHerzTxt">Merken</span>
+          <span class="mono" id="objLikes" style="color:var(--fg2);"></span>
+        </button>
         <button class="ghost">Exposé erhalten
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
       </div>
@@ -907,8 +912,34 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   @media(max-width:760px){.expback{bottom:calc(76px + env(safe-area-inset-bottom));}}
 </style>
 <a class="expback" id="expBack" href="/ux/explore"><i>♥</i> Zurück zu Explore</a>
+<a class="expback" id="expNext" href="/ux/explore" style="left:auto;right:16px;padding:9px 12px 9px 9px;gap:10px;">
+  <img id="expNextImg" src="" alt="" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
+  <span style="text-align:left;line-height:1.25;"><span class="mono" style="display:block;font-size:8px;letter-spacing:.14em;color:rgba(247,245,241,.65);">ALS NÄCHSTES</span><span id="expNextT" style="font-size:12.5px;"></span></span>
+  <i>→</i>
+</a>
 <script>
 (function(){
+  /* Merken + Like-Zahl: synchron mit dem Explore-Feed (localStorage) */
+  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "objekt-042";
+  var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
+  var basis = 0; for (var i = 0; i < objId.length; i++) basis = (basis * 31 + objId.charCodeAt(i)) % 997;
+  basis = 40 + (basis % 190); /* deterministische Demo-Basis pro Objekt */
+  var btn = document.getElementById("objHerz"), txt = document.getElementById("objHerzTxt"),
+      zahl = document.getElementById("objLikes"), icon = document.getElementById("objHerzIcon");
+  function mal(){
+    var on = likes.has(objId);
+    txt.textContent = on ? "Gemerkt" : "Merken";
+    zahl.textContent = "♥ " + (basis + (on ? 1 : 0));
+    icon.setAttribute("fill", on ? "var(--orange)" : "none");
+    icon.style.color = on ? "var(--orange)" : "inherit";
+  }
+  btn.addEventListener("click", function(){
+    if (likes.has(objId)) likes.delete(objId); else likes.add(objId);
+    localStorage.setItem("unio_explore_likes", JSON.stringify([...likes]));
+    mal();
+  });
+  mal();
+
   var vonExplore = /[?&]von=explore/.test(location.search) || /\/ux\/explore/.test(document.referrer);
   if (!vonExplore) return;
   var b = document.getElementById("expBack");
@@ -916,6 +947,17 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   b.addEventListener("click", function(e){
     if (history.length > 1 && /\/ux\/explore/.test(document.referrer)) { e.preventDefault(); history.back(); }
   });
+  /* Weiter-Sog: naechstes Objekt aus dem Feed anteasern */
+  try {
+    var next = JSON.parse(sessionStorage.getItem("unio_explore_next") || "null");
+    if (next) {
+      var n = document.getElementById("expNext");
+      document.getElementById("expNextImg").src = next.img;
+      document.getElementById("expNextT").textContent = next.t;
+      n.style.display = "inline-flex";
+      n.addEventListener("click", function(){ sessionStorage.setItem("unio_explore_pos", next.id); });
+    }
+  } catch (e) {}
 })();
 </script>
 </body>
