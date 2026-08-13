@@ -85,7 +85,7 @@
   .hint button{margin-top:22px;border:none;cursor:pointer;border-radius:99px;padding:13px 26px;background:var(--orange);color:#1A1305;font-weight:600;font-size:14px;font-family:inherit;}
 
   /* Merk-Toast */
-  .toast{position:absolute;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-8px);z-index:8;
+  .toast{position:absolute;pointer-events:none;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-8px);z-index:8;
     background:rgba(11,10,9,.75);border:1px solid rgba(247,245,241,.2);color:var(--paper);border-radius:99px;padding:9px 18px;
     font-size:12.5px;font-weight:500;opacity:0;transition:all .4s var(--ease);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap;}
   .toast.zeig{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -272,13 +272,23 @@
       if (window.__zaehlerUpd) window.__zaehlerUpd();
     };
     el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more")) likeBurst(); });
-    var letzterTap = 0;
+    /* Doppeltipp nur bei echten Tipps: Wischgesten (Bewegung/Dauer) NIE anfassen,
+       sonst wuergt preventDefault auf iOS das Scroll-Momentum ab. */
+    var letzterTap = 0, tapStart = null;
+    el.addEventListener("touchstart", function(e){
+      tapStart = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() } : null;
+    }, { passive: true });
     el.addEventListener("touchend", function(e){
-      if (e.target.closest(".rail, .info .more")) return;
+      if (!tapStart || e.target.closest(".rail, .info .more")) { tapStart = null; letzterTap = 0; return; }
+      var t = e.changedTouches[0];
+      var bewegt = Math.abs(t.clientX - tapStart.x) > 12 || Math.abs(t.clientY - tapStart.y) > 12;
+      var dauer = Date.now() - tapStart.t;
+      tapStart = null;
+      if (bewegt || dauer > 280) { letzterTap = 0; return; }
       var jetzt = Date.now();
-      if (jetzt - letzterTap < 320) { e.preventDefault(); likeBurst(); }
-      letzterTap = jetzt;
-    });
+      if (jetzt - letzterTap < 320) { e.preventDefault(); likeBurst(); letzterTap = 0; }
+      else letzterTap = jetzt;
+    }, { passive: false });
     return el;
   }
   function anhaengen(n){
