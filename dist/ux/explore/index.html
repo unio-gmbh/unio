@@ -470,9 +470,12 @@
     tabGrid.setAttribute("aria-selected", istGrid);
     tabFeed.setAttribute("aria-selected", !istGrid);
     if (istGrid) {
-      /* Grid-Videos laufen nur in der Grid-Ansicht */
-      gwrap.querySelectorAll("video").forEach(function(v){ if (!rm) { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); } });
+      /* sichtbare Grid-Videos starten (den Rest steuert der Observer) */
       feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      gwrap.querySelectorAll("video").forEach(function(v){
+        var r = v.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight && !rm) { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); }
+      });
     } else {
       gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
       var akt = feed.querySelector(".card.aktiv video");
@@ -494,8 +497,18 @@
     zeigeAnsicht("feed");
   }
 
-  /* Grid fuellen: Reels als hohe Kacheln, Fotos als Quadrate, Reihenfolge nach Empfehlung */
-  (function(){
+  /* Grid fuellen: Reels als hohe Kacheln, Fotos als Quadrate, Reihenfolge nach
+     Empfehlung. Endlos: am unteren Rand kommt die naechste, neu gemischte Runde.
+     Videos spielen nur, wenn ihre Kachel sichtbar ist (Performance). */
+  var gridIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var v = e.target.querySelector("video");
+      if (!v) return;
+      if (e.isIntersecting && !rm && grid.style.display !== "none") { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); }
+      else v.pause();
+    });
+  }, { root: grid, threshold: 0.25 });
+  function baueGridRunde(){
     var w = tagGewichte();
     var sortiert = POOL.slice().sort(function(a, b){ return score(b, w) - score(a, w); });
     sortiert.forEach(function(o){
@@ -511,8 +524,19 @@
         '<span class="gherz">♥ ' + (likes.has(o.id) ? "Gemerkt" : o.t) + '</span>';
       tile.addEventListener("click", function(){ insFeed(o.id); });
       gwrap.appendChild(tile);
+      gridIO.observe(tile);
     });
-  })();
+  }
+  baueGridRunde();
+  var gridLaedt = false;
+  grid.addEventListener("scroll", function(){
+    if (gridLaedt) return;
+    if (grid.scrollTop + grid.clientHeight > grid.scrollHeight - 700) {
+      gridLaedt = true;
+      baueGridRunde();
+      setTimeout(function(){ gridLaedt = false; }, 200);
+    }
+  }, { passive: true });
 
   /* Rueckkehr von der Objektseite: zuletzt gesehene Karte wieder nach oben, direkt im Feed */
   var pos = sessionStorage.getItem("unio_explore_pos");
