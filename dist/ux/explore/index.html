@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="/styles.css">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32.png">
 <meta name="theme-color" content="#0B0A09">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <style>
   :root{ --ink:#0B0A09; --paper:#F7F5F1; --orange:#FFAA09; --ease:cubic-bezier(.32,.72,0,1);}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -102,6 +104,33 @@
   .info{bottom:calc(78px + env(safe-area-inset-bottom))!important;}
   .rail{bottom:calc(84px + env(safe-area-inset-bottom))!important;}
 
+  /* Liste + Karte */
+  .such{display:none;height:100%;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;
+    padding:calc(54px + env(safe-area-inset-top)) 0 calc(86px + env(safe-area-inset-bottom));}
+  .such::-webkit-scrollbar{display:none;}
+  .smap{position:sticky;top:0;z-index:3;height:40svh;min-height:260px;margin:0 10px;border-radius:18px;overflow:hidden;
+    border:1px solid rgba(247,245,241,.14);background:#1B1917;box-shadow:0 18px 44px -20px rgba(0,0,0,.6);}
+  .smap .leaflet-container{width:100%;height:100%;background:#1B1917;font-family:inherit;}
+  .u-xpin{display:block;width:14px;height:14px;border-radius:50%;background:var(--orange);
+    box-shadow:0 0 0 3px rgba(255,170,9,.28),0 2px 8px rgba(0,0,0,.5);transition:transform .25s var(--ease);}
+  .u-xpin.on{transform:scale(1.5);box-shadow:0 0 0 5px rgba(255,170,9,.35),0 2px 10px rgba(0,0,0,.6);}
+  .leaflet-control-attribution{background:rgba(11,10,9,.6)!important;color:rgba(247,245,241,.5)!important;font-size:8px!important;}
+  .leaflet-control-attribution a{color:rgba(247,245,241,.65)!important;}
+  .slist{padding:12px 10px 0;display:flex;flex-direction:column;gap:8px;}
+  .srow{display:grid;grid-template-columns:84px 1fr auto;gap:13px;align-items:center;text-align:left;
+    background:#1B1917;border:1px solid rgba(247,245,241,.1);border-radius:16px;padding:10px;cursor:pointer;
+    color:var(--paper);font-family:inherit;transition:border-color .25s,transform .25s var(--ease);}
+  .srow:hover{transform:translateY(-1px);}
+  .srow.on{border-color:rgba(255,170,9,.7);}
+  .srow img{width:84px;height:66px;border-radius:11px;object-fit:cover;display:block;}
+  .srow .t{font-size:15px;font-weight:500;letter-spacing:-.01em;}
+  .srow .m{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,245,241,.6);margin-top:4px;}
+  .srow .p{font-size:13.5px;font-weight:500;color:rgba(247,245,241,.92);margin-top:4px;}
+  .srow .sherz{width:38px;height:38px;border-radius:50%;border:1px solid rgba(247,245,241,.22);background:transparent;color:var(--paper);
+    display:grid;place-items:center;cursor:pointer;}
+  .srow .sherz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
+  .such .scount{padding:14px 14px 4px;font-family:var(--font-mono),monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.6);}
+
   /* Erst-Besuch-Hinweis */
   .hint{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:rgba(11,10,9,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     opacity:1;transition:opacity .5s var(--ease);}
@@ -163,9 +192,15 @@
     </div>
     <div class="feed" id="feed"></div>
     <div class="grid" id="grid"><div class="gwrap" id="gwrap"></div></div>
+    <div class="such" id="such">
+      <div class="smap" id="suchMap"></div>
+      <div class="scount" id="suchCount"></div>
+      <div class="slist" id="slist"></div>
+    </div>
     <div class="tabbar" role="tablist" aria-label="Ansicht">
       <button id="tabGrid" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="1" width="5.6" height="5.6" rx="1"/><rect x="1" y="9.4" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="9.4" width="5.6" height="5.6" rx="1"/></svg>Entdecken</button>
       <button id="tabFeed" role="tab" aria-selected="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="1.5" width="11" height="13" rx="2"/><path d="m7 5.5 3.5 2.5L7 10.5z" fill="currentColor" stroke="none"/></svg>Feed</button>
+      <button id="tabSuch" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 14.5s-4.8-4.2-4.8-8a4.8 4.8 0 1 1 9.6 0c0 3.8-4.8 8-4.8 8z"/><circle cx="8" cy="6.3" r="1.7"/></svg>Liste</button>
     </div>
     <div class="toast" id="toast"></div>
     <div class="liste" id="liste" aria-hidden="true">
@@ -195,20 +230,20 @@
   /* ---------- Objekt-Pool mit Tags fuer die Empfehlung ---------- */
   var rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var POOL = [
-    { id:"beheim",     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
-    { id:"beheim2",    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
-    { id:"albrecht",   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
-    { id:"albrecht-dg",img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
-    { id:"ecoluxe",    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","1190","premium"] },
-    { id:"ecoluxe-w",  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1190"] },
-    { id:"obenzwei",   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
-    { id:"obenzwei-t", img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
-    { id:"penthouse",  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
-    { id:"maxing",     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
-    { id:"hufhaus",    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
-    { id:"hufhaus-p",  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
-    { id:"schoenbrunn",img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
-    { id:"facade",     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
+    { id:"beheim", ll:[48.2212, 16.3168],     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
+    { id:"beheim2", ll:[48.2239, 16.3121],    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
+    { id:"albrecht", ll:[48.2266, 16.3079],   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
+    { id:"albrecht-dg", ll:[48.2288, 16.3035],img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
+    { id:"ecoluxe", ll:[48.2561, 16.3452],    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","1190","premium"] },
+    { id:"ecoluxe-w", ll:[48.2589, 16.3391],  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1190"] },
+    { id:"obenzwei", ll:[48.2192, 16.3949],   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
+    { id:"obenzwei-t", ll:[48.2222, 16.4013], img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
+    { id:"penthouse", ll:[48.2089, 16.3719],  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
+    { id:"maxing", ll:[48.1862, 16.2998],     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
+    { id:"hufhaus", ll:[48.1974, 16.2352],    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
+    { id:"hufhaus-p", ll:[48.2001, 16.2291],  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
+    { id:"schoenbrunn", ll:[48.1921, 16.3671],img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
+    { id:"facade", ll:[48.2224, 16.3549],     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
     /* Reels: Videoclips im Feed und als grosse Grid-Kacheln */
     { id:"reel-hufhaus", video:"/assets/video/hufhaus.mp4",        img:"/assets/photos/hufhaus-front.jpg", t:"Refugium · Reel", ort:"1140 Wien · Penzing", preis:"€ 2,40 Mio", tags:["villa","garten","wald","1140","reel"] },
     { id:"reel-riffel",  video:"/assets/video/transition-riffel-a.mp4", img:"/assets/img/penthouse.jpg", t:"UNIO · Reel",   ort:"Wien · Innenstadt",   preis:"€ 4,00 Mio", tags:["dach","premium","1010","reel"] },
@@ -461,30 +496,91 @@
   /* ---------- Ansichten: Entdecken-Grid vs. Feed ---------- */
   var grid = document.getElementById("grid"), gwrap = document.getElementById("gwrap");
   var tabGrid = document.getElementById("tabGrid"), tabFeed = document.getElementById("tabFeed");
+  var such = document.getElementById("such"), tabSuch = document.getElementById("tabSuch");
   function zeigeAnsicht(welche){
-    var istGrid = welche === "grid";
-    grid.style.display = istGrid ? "block" : "none";
-    feed.style.display = istGrid ? "none" : "block";
-    tabGrid.classList.toggle("on", istGrid);
-    tabFeed.classList.toggle("on", !istGrid);
-    tabGrid.setAttribute("aria-selected", istGrid);
-    tabFeed.setAttribute("aria-selected", !istGrid);
-    if (istGrid) {
-      /* sichtbare Grid-Videos starten (den Rest steuert der Observer) */
+    var karten = { grid: [grid, tabGrid], feed: [feed, tabFeed], such: [such, tabSuch] };
+    Object.keys(karten).forEach(function(k){
+      karten[k][0].style.display = k === welche ? "block" : "none";
+      karten[k][1].classList.toggle("on", k === welche);
+      karten[k][1].setAttribute("aria-selected", k === welche);
+    });
+    if (welche === "grid") {
       feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
       gwrap.querySelectorAll("video").forEach(function(v){
         var r = v.getBoundingClientRect();
         if (r.bottom > 0 && r.top < innerHeight && !rm) { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); }
       });
-    } else {
+    } else if (welche === "feed") {
       gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
       var akt = feed.querySelector(".card.aktiv video");
       if (akt && !rm) { var pl2 = akt.play(); if (pl2 && pl2.catch) pl2.catch(function(){}); }
+    } else {
+      gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      bauSuche();
     }
     localStorage.setItem("unio_explore_view", welche);
   }
   tabGrid.addEventListener("click", function(){ zeigeAnsicht("grid"); });
   tabFeed.addEventListener("click", function(){ zeigeAnsicht("feed"); });
+  tabSuch.addEventListener("click", function(){ zeigeAnsicht("such"); });
+
+  /* ---------- Liste + Karte (Leaflet, dunkle CARTO-Tiles) ---------- */
+  var suchMap = null, suchMarker = {}, suchGebaut = false;
+  function bauSuche(){
+    var objekte = POOL.filter(function(o){ return o.ll; });
+    if (!suchGebaut) {
+      suchGebaut = true;
+      document.getElementById("suchCount").textContent = objekte.length + " OBJEKTE · WIEN & UMGEBUNG";
+      var slist = document.getElementById("slist");
+      var w = tagGewichte();
+      objekte.slice().sort(function(a, b){ return score(b, w) - score(a, w); }).forEach(function(o){
+        var row = document.createElement("div");
+        row.className = "srow"; row.dataset.id = o.id; row.setAttribute("role", "button"); row.tabIndex = 0;
+        row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
+          '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis + '</div></div>' +
+          '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
+        row.addEventListener("click", function(e){
+          if (e.target.closest(".sherz")) return;
+          insFeed(o.id);
+        });
+        row.addEventListener("mouseenter", function(){ aktivPin(o.id, false); });
+        row.querySelector(".sherz").addEventListener("click", function(){
+          var on = this.classList.toggle("on");
+          if (on) likes.add(o.id); else likes.delete(o.id);
+          saveLikes(); zaehler();
+          var h = feed.querySelector('.card[data-id="' + o.id + '"] .herz');
+          if (h) h.classList.toggle("on", on);
+        });
+        slist.appendChild(row);
+      });
+    }
+    if (!suchMap && window.L) {
+      suchMap = L.map(document.getElementById("suchMap"), { scrollWheelZoom: false, zoomControl: false });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
+      }).addTo(suchMap);
+      var pts = [];
+      objekte.forEach(function(o){
+        pts.push(o.ll);
+        var icon = L.divIcon({ className: "", html: '<span class="u-xpin" data-pin="' + o.id + '"></span>', iconSize: [14, 14], iconAnchor: [7, 7] });
+        var m = L.marker(o.ll, { icon: icon, title: o.t, keyboard: false }).addTo(suchMap);
+        m.on("click", function(){
+          aktivPin(o.id, true);
+          var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+          if (row) row.scrollIntoView({ block: "center", behavior: rm ? "auto" : "smooth" });
+        });
+        suchMarker[o.id] = m;
+      });
+      suchMap.fitBounds(L.latLngBounds(pts).pad(0.2));
+    }
+    if (suchMap) setTimeout(function(){ suchMap.invalidateSize(); }, 60);
+  }
+  function aktivPin(id, mitZoom){
+    document.querySelectorAll(".u-xpin").forEach(function(x){ x.classList.toggle("on", x.dataset.pin === id); });
+    document.querySelectorAll(".srow").forEach(function(x){ x.classList.toggle("on", x.dataset.id === id); });
+    if (mitZoom && suchMap) { var o = POOL.find(function(x){ return x.id === id; }); if (o) suchMap.panTo(o.ll); }
+  }
 
   function insFeed(id){
     var o = POOL.find(function(x){ return x.id === id; });
@@ -555,7 +651,8 @@
     zeigeAnsicht("feed");
   } else {
     /* Einstieg wie bei Instagram: das Entdecken-Grid, ausser man war zuletzt im Feed */
-    zeigeAnsicht(localStorage.getItem("unio_explore_view") === "feed" ? "feed" : "grid");
+    var merkView = localStorage.getItem("unio_explore_view");
+    zeigeAnsicht(merkView === "feed" || merkView === "such" ? merkView : "grid");
   }
 })();
 </script>
