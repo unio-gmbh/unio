@@ -30,7 +30,7 @@
   .feed::-webkit-scrollbar{display:none;}
 
   .card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#1B1917;}
-  .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .card img,.card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   .card.aktiv img{animation:kenburns 9s var(--ease) forwards;}
   .card .info,.card .rail{opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease) .1s,transform .6s var(--ease) .1s;}
   .card.aktiv .info,.card.aktiv .rail{opacity:1;transform:none;}
@@ -73,6 +73,34 @@
   .topbar a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
   .topbar .hub{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.75);
     border:1px solid rgba(247,245,241,.25);border-radius:99px;padding:6px 12px;background:rgba(11,10,9,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+
+  /* Bottom-Tabbar: Entdecken (Grid) / Feed */
+  .tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;
+    display:flex;gap:4px;padding:5px;border-radius:99px;background:rgba(11,10,9,.62);border:1px solid rgba(247,245,241,.18);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+  .tabbar button{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:inherit;
+    font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:99px;background:transparent;color:rgba(247,245,241,.7);transition:all .25s var(--ease);}
+  .tabbar button.on{background:var(--orange);color:#1A1305;}
+
+  /* Grid-Ansicht (Instagram-Explore) */
+  .grid{display:none;height:100%;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;
+    padding:calc(56px + env(safe-area-inset-top)) 2px calc(86px + env(safe-area-inset-bottom));}
+  .grid::-webkit-scrollbar{display:none;}
+  .gwrap{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:calc((min(100vw,520px) - 8px)/3);gap:2px;grid-auto-flow:dense;}
+  .gtile{position:relative;overflow:hidden;border:none;padding:0;cursor:pointer;background:#1B1917;}
+  .gtile img,.gtile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .gtile.reel{grid-row:span 2;}
+  .gtile .gbadge{position:absolute;right:7px;top:7px;color:#fff;filter:drop-shadow(0 1px 6px rgba(0,0,0,.5));}
+  .gtile .gherz{position:absolute;left:7px;bottom:7px;display:inline-flex;align-items:center;gap:5px;color:#fff;
+    font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.08em;filter:drop-shadow(0 1px 6px rgba(0,0,0,.6));opacity:0;transition:opacity .25s;}
+  .gtile:hover .gherz,.gtile.geliked .gherz{opacity:1;}
+  .gtile .gscrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(11,10,9,.5));opacity:0;transition:opacity .25s;}
+  .gtile:hover .gscrim{opacity:1;}
+  @media(pointer:coarse){.gtile .gscrim{opacity:.5;}}
+
+  /* Feed-Inhalte ueber der Tabbar */
+  .info{bottom:calc(78px + env(safe-area-inset-bottom))!important;}
+  .rail{bottom:calc(84px + env(safe-area-inset-bottom))!important;}
 
   /* Erst-Besuch-Hinweis */
   .hint{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:rgba(11,10,9,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -134,6 +162,11 @@
       </span>
     </div>
     <div class="feed" id="feed"></div>
+    <div class="grid" id="grid"><div class="gwrap" id="gwrap"></div></div>
+    <div class="tabbar" role="tablist" aria-label="Ansicht">
+      <button id="tabGrid" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="1" width="5.6" height="5.6" rx="1"/><rect x="1" y="9.4" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="9.4" width="5.6" height="5.6" rx="1"/></svg>Entdecken</button>
+      <button id="tabFeed" role="tab" aria-selected="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="1.5" width="11" height="13" rx="2"/><path d="m7 5.5 3.5 2.5L7 10.5z" fill="currentColor" stroke="none"/></svg>Feed</button>
+    </div>
     <div class="toast" id="toast"></div>
     <div class="liste" id="liste" aria-hidden="true">
       <div class="lback" id="listeBack"></div>
@@ -176,6 +209,10 @@
     { id:"hufhaus-p",  img:"../../assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
     { id:"schoenbrunn",img:"../../assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
     { id:"facade",     img:"../../assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
+    /* Reels: Videoclips im Feed und als grosse Grid-Kacheln */
+    { id:"reel-hufhaus", video:"../../assets/video/hufhaus.mp4",        img:"../../assets/photos/hufhaus-front.jpg", t:"Refugium · Reel", ort:"1140 Wien · Penzing", preis:"€ 2,40 Mio", tags:["villa","garten","wald","1140","reel"] },
+    { id:"reel-riffel",  video:"../../assets/video/transition-riffel-a.mp4", img:"../../assets/img/penthouse.jpg", t:"UNIO · Reel",   ort:"Wien · Innenstadt",   preis:"€ 4,00 Mio", tags:["dach","premium","1010","reel"] },
+    { id:"reel-fenster", video:"../../assets/video/hero-fenster.mp4",   img:"../../assets/img/vienna-facades.jpg", t:"Wien · Reel",   ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","reel"] },
   ];
   var DETAIL = "/ux/objekt?von=explore";
 
@@ -231,7 +268,9 @@
     var el = document.createElement("section");
     el.className = "card"; el.dataset.id = o.id;
     el.innerHTML =
-      '<img src="' + o.img + '" alt="' + o.t + '" loading="lazy">' +
+      (o.video
+        ? '<video src="' + o.video + '" poster="' + o.img + '" muted loop playsinline preload="metadata"></video>'
+        : '<img src="' + o.img + '" alt="' + o.t + '" loading="lazy">') +
       '<div class="tint"></div>' +
       '<div class="info">' +
         (g ? '<span class="why"><i></i>' + g + '</span><br>' : '') +
@@ -302,8 +341,14 @@
   /* Gesehen-Tracking + Nachladen */
   var io = new IntersectionObserver(function(es){
     es.forEach(function(e){
-      if (!e.isIntersecting) { e.target.classList.remove("aktiv"); return; }
+      var vid = e.target.querySelector("video");
+      if (!e.isIntersecting) {
+        e.target.classList.remove("aktiv");
+        if (vid) vid.pause();
+        return;
+      }
       e.target.classList.add("aktiv");
+      if (vid && !rm) { var pl = vid.play(); if (pl && pl.catch) pl.catch(function(){}); }
       var id = e.target.dataset.id;
       seen[id] = (seen[id] || 0) + 1; saveSeen();
       var alle = [...feed.children];
@@ -411,7 +456,63 @@
     }
   });
 
-  /* Rueckkehr von der Objektseite: zuletzt gesehene Karte wieder nach oben */
+  /* ---------- Ansichten: Entdecken-Grid vs. Feed ---------- */
+  var grid = document.getElementById("grid"), gwrap = document.getElementById("gwrap");
+  var tabGrid = document.getElementById("tabGrid"), tabFeed = document.getElementById("tabFeed");
+  function zeigeAnsicht(welche){
+    var istGrid = welche === "grid";
+    grid.style.display = istGrid ? "block" : "none";
+    feed.style.display = istGrid ? "none" : "block";
+    tabGrid.classList.toggle("on", istGrid);
+    tabFeed.classList.toggle("on", !istGrid);
+    tabGrid.setAttribute("aria-selected", istGrid);
+    tabFeed.setAttribute("aria-selected", !istGrid);
+    if (istGrid) {
+      /* Grid-Videos laufen nur in der Grid-Ansicht */
+      gwrap.querySelectorAll("video").forEach(function(v){ if (!rm) { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); } });
+      feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
+    } else {
+      gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      var akt = feed.querySelector(".card.aktiv video");
+      if (akt && !rm) { var pl2 = akt.play(); if (pl2 && pl2.catch) pl2.catch(function(){}); }
+    }
+    localStorage.setItem("unio_explore_view", welche);
+  }
+  tabGrid.addEventListener("click", function(){ zeigeAnsicht("grid"); });
+  tabFeed.addEventListener("click", function(){ zeigeAnsicht("feed"); });
+
+  function insFeed(id){
+    var o = POOL.find(function(x){ return x.id === id; });
+    if (o) {
+      var alte = feed.querySelector('.card[data-id="' + id + '"]');
+      if (alte) feed.prepend(alte);
+      else { geladen.add(id); feed.prepend(karte(o)); }
+      feed.scrollTop = 0;
+    }
+    zeigeAnsicht("feed");
+  }
+
+  /* Grid fuellen: Reels als hohe Kacheln, Fotos als Quadrate, Reihenfolge nach Empfehlung */
+  (function(){
+    var w = tagGewichte();
+    var sortiert = POOL.slice().sort(function(a, b){ return score(b, w) - score(a, w); });
+    sortiert.forEach(function(o){
+      var tile = document.createElement("button");
+      tile.className = "gtile" + (o.video ? " reel" : "") + (likes.has(o.id) ? " geliked" : "");
+      tile.setAttribute("aria-label", o.t);
+      tile.innerHTML =
+        (o.video
+          ? '<video src="' + o.video + '" poster="' + o.img + '" muted loop playsinline preload="metadata"></video>' +
+            '<span class="gbadge"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.8v10.4c0 .6.7 1 1.2.7l8.2-5.2c.5-.3.5-1 0-1.3L5.7 2.1c-.5-.3-1.2.1-1.2.7z"/></svg></span>'
+          : '<img src="' + o.img + '" alt="" loading="lazy">') +
+        '<span class="gscrim"></span>' +
+        '<span class="gherz">♥ ' + (likes.has(o.id) ? "Gemerkt" : o.t) + '</span>';
+      tile.addEventListener("click", function(){ insFeed(o.id); });
+      gwrap.appendChild(tile);
+    });
+  })();
+
+  /* Rueckkehr von der Objektseite: zuletzt gesehene Karte wieder nach oben, direkt im Feed */
   var pos = sessionStorage.getItem("unio_explore_pos");
   if (pos) {
     sessionStorage.removeItem("unio_explore_pos");
@@ -421,6 +522,10 @@
       if (alte) feed.prepend(alte);
       else { geladen.add(pos); feed.prepend(karte(oPos)); }
     }
+    zeigeAnsicht("feed");
+  } else {
+    /* Einstieg wie bei Instagram: das Entdecken-Grid, ausser man war zuletzt im Feed */
+    zeigeAnsicht(localStorage.getItem("unio_explore_view") === "feed" ? "feed" : "grid");
   }
 })();
 </script>
