@@ -488,13 +488,17 @@
 
   function insFeed(id){
     var o = POOL.find(function(x){ return x.id === id; });
+    /* Erst die Feed-Ansicht einblenden, DANN positionieren: auf einem
+       versteckten Element verpufft scrollTop und der Browser stellt beim
+       Einblenden die alte Position wieder her (Klick zeigte falschen Beitrag). */
+    zeigeAnsicht("feed");
     if (o) {
       var alte = feed.querySelector('.card[data-id="' + id + '"]');
       if (alte) feed.prepend(alte);
       else { geladen.add(id); feed.prepend(karte(o)); }
       feed.scrollTop = 0;
+      requestAnimationFrame(function(){ feed.scrollTop = 0; });
     }
-    zeigeAnsicht("feed");
   }
 
   /* Grid fuellen: Reels als hohe Kacheln, Fotos als Quadrate, Reihenfolge nach
