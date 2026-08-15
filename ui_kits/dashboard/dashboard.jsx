@@ -6,6 +6,9 @@ function DashApp() {
   const [role, setRole] = React.useState("makler");
   const nav = (id) => { setScreen(id); window.scrollTo(0, 0); };
   const pickRole = (r) => { setRole(r); setScreen("dashboard"); window.scrollTo(0, 0); };
+  if (role === "endkunde") {
+    return <window.EndkundePortal role={role} onRole={pickRole} />;
+  }
   if (role === "bt") {
     return (
       <DashShell active="dashboard" onNav={nav}

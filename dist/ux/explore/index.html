@@ -53,6 +53,8 @@
   .info h2{font-size:clamp(26px,6.4vw,34px);font-weight:500;line-height:1.05;letter-spacing:-.025em;text-shadow:0 2px 26px rgba(0,0,0,.45);}
   .info .meta{margin-top:8px;font-family:var(--font-mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.85);}
   .info .preis{margin-top:10px;font-size:21px;font-weight:500;letter-spacing:-.01em;}
+  .info .rchip{display:inline-flex;margin-top:9px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.13em;
+    color:var(--orange);background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.35);border-radius:99px;padding:5px 10px;}
   .info .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;text-decoration:none;color:#1A1305;background:var(--orange);
     font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
 
@@ -130,6 +132,12 @@
   .srow .sherz{width:38px;height:38px;border-radius:50%;border:1px solid rgba(20,18,16,.18);background:transparent;color:#6E6862;
     display:grid;place-items:center;cursor:pointer;}
   .srow .sherz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
+  .srow .rbadge{display:inline-block;margin-left:7px;font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;
+    color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:3px 8px;vertical-align:1px;}
+  .sfilter{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 0;}
+  .sfilter button{font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(20,18,16,.15);background:#FFFFFF;color:#6E6862;transition:all .25s var(--ease);}
+  .sfilter button.on{background:#141210;color:#F7F5F1;border-color:#141210;}
   .such .scount{padding:14px 14px 4px;font-family:var(--font-mono),monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6862;}
   /* Topbar auf hellem Grund: dunkles Logo + dunkle Labels */
   .feedwrap.hell .topbar .mono{color:rgba(20,18,16,.7);}
@@ -198,6 +206,12 @@
     <div class="grid" id="grid"><div class="gwrap" id="gwrap"></div></div>
     <div class="such" id="such">
       <div class="smap" id="suchMap"></div>
+      <div class="sfilter" id="suchFilter" role="group" aria-label="Suchparameter">
+        <button data-f="alle" class="on">Alle</button>
+        <button data-f="r3">Rendite ≥ 3 %</button>
+        <button data-f="r35">Rendite ≥ 3,5 %</button>
+        <button data-f="u15">bis € 1,5 Mio</button>
+      </div>
       <div class="scount" id="suchCount"></div>
       <div class="slist" id="slist"></div>
     </div>
@@ -234,20 +248,20 @@
   /* ---------- Objekt-Pool mit Tags fuer die Empfehlung ---------- */
   var rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var POOL = [
-    { id:"beheim", ll:[48.2212, 16.3168],     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
-    { id:"beheim2", ll:[48.2239, 16.3121],    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
-    { id:"albrecht", ll:[48.2266, 16.3079],   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
-    { id:"albrecht-dg", ll:[48.2288, 16.3035],img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
-    { id:"ecoluxe", ll:[48.2561, 16.3452],    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","1190","premium"] },
-    { id:"ecoluxe-w", ll:[48.2589, 16.3391],  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1190"] },
-    { id:"obenzwei", ll:[48.2192, 16.3949],   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
-    { id:"obenzwei-t", ll:[48.2222, 16.4013], img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
-    { id:"penthouse", ll:[48.2089, 16.3719],  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
-    { id:"maxing", ll:[48.1862, 16.2998],     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
-    { id:"hufhaus", ll:[48.1974, 16.2352],    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
-    { id:"hufhaus-p", ll:[48.2001, 16.2291],  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
-    { id:"schoenbrunn", ll:[48.1921, 16.3671],img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
-    { id:"facade", ll:[48.2224, 16.3549],     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
+    { id:"beheim", preisNum:1700000, mieteJahr:52800, ll:[48.2212, 16.3168],     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
+    { id:"beheim2", preisNum:1650000, mieteJahr:54000, ll:[48.2239, 16.3121],    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
+    { id:"albrecht", preisNum:470000, mieteJahr:16800, ll:[48.2266, 16.3079],   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
+    { id:"albrecht-dg", preisNum:1490000, mieteJahr:49200, ll:[48.2288, 16.3035],img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
+    { id:"ecoluxe", preisNum:2400000, mieteJahr:66000, ll:[48.2561, 16.3452],    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","1190","premium"] },
+    { id:"ecoluxe-w", preisNum:2400000, mieteJahr:66000, ll:[48.2589, 16.3391],  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1190 Wien · Grinzing",    preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1190"] },
+    { id:"obenzwei", preisNum:2100000, mieteJahr:63600, ll:[48.2192, 16.3949],   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
+    { id:"obenzwei-t", preisNum:2100000, mieteJahr:63600, ll:[48.2222, 16.4013], img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
+    { id:"penthouse", preisNum:4000000, mieteJahr:100800, ll:[48.2089, 16.3719],  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
+    { id:"maxing", preisNum:980000, mieteJahr:33600, ll:[48.1862, 16.2998],     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
+    { id:"hufhaus", preisNum:2400000, mieteJahr:60000, ll:[48.1974, 16.2352],    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
+    { id:"hufhaus-p", preisNum:2400000, mieteJahr:60000, ll:[48.2001, 16.2291],  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
+    { id:"schoenbrunn", preisNum:890000, mieteJahr:31200, ll:[48.1921, 16.3671],img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
+    { id:"facade", preisNum:1100000, mieteJahr:39600, ll:[48.2224, 16.3549],     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
     /* Reels: Videoclips im Feed und als grosse Grid-Kacheln */
     { id:"reel-hufhaus", video:"/assets/video/hufhaus.mp4",        img:"/assets/photos/hufhaus-front.jpg", t:"Refugium · Reel", ort:"1140 Wien · Penzing", preis:"€ 2,40 Mio", tags:["villa","garten","wald","1140","reel"] },
     { id:"reel-riffel",  video:"/assets/video/transition-riffel-a.mp4", img:"/assets/img/penthouse.jpg", t:"UNIO · Reel",   ort:"Wien · Innenstadt",   preis:"€ 4,00 Mio", tags:["dach","premium","1010","reel"] },
@@ -255,6 +269,11 @@
     { id:"reel-kling",   video:"/assets/video/explore-kling-c.mp4", img:"/assets/img/albrechts-fassade.jpg", t:"Das Albrecht · Reel", ort:"1170 Wien · Hernals", preis:"ab € 470.000", tags:["neubau","1170","projekt","reel"] },
     { id:"reel-design",  video:"/assets/video/explore-design.mp4",  img:"/assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
   ];
+  /* Rendite aus UNIO-Vermietdaten: Jahresnettomiete / Kaufpreis (Demo-Kalkulation) */
+  function rendite(o){
+    if (!o.preisNum || !o.mieteJahr) return null;
+    return (o.mieteJahr / o.preisNum * 100).toFixed(1).replace(".", ",");
+  }
   var DETAIL = "/ux/objekt?von=explore";
 
   /* ---------- Zustand: Herzen + Gesehen (localStorage) ---------- */
@@ -318,6 +337,7 @@
         '<h2>' + o.t + '</h2>' +
         '<div class="meta">' + o.ort + '</div>' +
         '<div class="preis">' + o.preis + '</div>' +
+        (rendite(o) ? '<div class="rchip">RENDITE ' + rendite(o) + ' %</div>' : '') +
         '<a class="more" href="' + DETAIL + '&obj=' + o.id + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
       '</div>' +
       '<div class="rail">' +
@@ -547,7 +567,8 @@
         var row = document.createElement("div");
         row.className = "srow"; row.dataset.id = o.id; row.setAttribute("role", "button"); row.tabIndex = 0;
         row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
-          '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis + '</div></div>' +
+          '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
+          (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '') + '</div></div>' +
           '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
         row.addEventListener("click", function(e){
           if (e.target.closest(".sherz")) return;
@@ -585,6 +606,22 @@
     }
     if (suchMap) setTimeout(function(){ suchMap.invalidateSize(); }, 60);
   }
+  /* Suchparameter: filtern Zeilen und Pins gleichzeitig */
+  document.getElementById("suchFilter").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    var f = b.dataset.f, sichtbar = 0;
+    POOL.filter(function(o){ return o.ll; }).forEach(function(o){
+      var r = o.mieteJahr && o.preisNum ? o.mieteJahr / o.preisNum * 100 : 0;
+      var ok = f === "alle" || (f === "r3" && r >= 3) || (f === "r35" && r >= 3.5) || (f === "u15" && o.preisNum <= 1500000);
+      var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+      if (row) row.style.display = ok ? "grid" : "none";
+      var m = suchMarker[o.id];
+      if (m) { var el = m.getElement(); if (el) el.style.display = ok ? "" : "none"; }
+      if (ok) sichtbar++;
+    });
+    document.getElementById("suchCount").textContent = sichtbar + " OBJEKTE · WIEN & UMGEBUNG";
+  });
   function aktivPin(id, mitZoom){
     document.querySelectorAll(".u-xpin").forEach(function(x){ x.classList.toggle("on", x.dataset.pin === id); });
     document.querySelectorAll(".srow").forEach(function(x){ x.classList.toggle("on", x.dataset.id === id); });

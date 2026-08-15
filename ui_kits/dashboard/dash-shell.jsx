@@ -83,7 +83,7 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
 function RoleSwitch({ role, onRole }) {
   return (
     <div title="Ansicht" style={{ display: "inline-flex", gap: 3, background: "#FFFFFF", borderRadius: 999, padding: 3, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-      {[["Makler", "makler"], ["Bauträger", "bt"]].map(([l, id]) => (
+      {[["Makler", "makler"], ["Bauträger", "bt"], ["Endkunde", "endkunde"]].map(([l, id]) => (
         <button key={id} onClick={() => onRole(id)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "6px 13px", background: role === id ? "var(--signal)" : "transparent", color: role === id ? "var(--on-signal)" : "var(--text-muted)", font: "500 11.5px var(--font-display)", transition: "background .25s var(--ease-unio)" }}>{l}</button>
       ))}
     </div>

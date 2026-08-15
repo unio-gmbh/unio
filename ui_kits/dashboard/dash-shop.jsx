@@ -42,6 +42,55 @@ const HISTORIE = [
   ["06.07.2026", "Objekt-Plakat · A0", "Penthouse Beheim", "2", "€ 258", "geliefert", "Geliefert"],
 ];
 
+/* Programme, Listing-Kampagnen und Leads (aus dem UNIO Angebots- und Prozess-Dokument) */
+const PROGRAMME = [
+  { id: "basic", name: "Basic", preis: null, preisLabel: "Im Community-Abo", einheit: "inkludiert", claim: "Selbst machen, mit System.",
+    punkte: ["Zugriff auf die UNIO Content-Datenbank", "Templates und Playbooks für Social Media", "Academy-Zugang einzeln: € 490"] },
+  { id: "standard", name: "Standard", preis: 599, einheit: "/ Monat", beliebt: true, claim: "Dein Content, laufend produziert.",
+    punkte: ["3 Kurzvideos pro Monat (Reels)", "7 Grafikbeiträge pro Monat", "10 professionelle Fotos pro Monat", "Planung, Produktion und Schnitt inklusive"] },
+  { id: "premium", name: "Premium", preis: 1190, einheit: "/ Monat · ab 6 Monaten", claim: "Volle Sichtbarkeit, priorisiert.",
+    punkte: ["Monatliche Vor-Ort-Session", "5 Kurzvideos und 15 Fotos pro Monat", "Priorisierter Schnitt und Ads-Betreuung", "Quartals-Strategiecall"] },
+];
+const LISTING = [
+  { id: "boost", name: "Listing Boost", preis: 390, budget: "Ad-Budget ab € 300", dauer: "14 Tage Laufzeit",
+    punkte: ["Kampagnen-Setup Meta", "Zielgruppen aus UNIO-Daten", "Reporting am Ende der Laufzeit"] },
+  { id: "performance", name: "Listing Performance", preis: 790, budget: "Ad-Budget ab € 600", dauer: "30 Tage Laufzeit", beliebt: true,
+    punkte: ["Meta- und Google-Kampagnen", "Landingpage automatisch aus NOVA", "Wöchentliches Reporting"] },
+  { id: "lpremium", name: "Listing Premium", preis: 1490, budget: "Ad-Budget ab € 1.000", dauer: "45 Tage Laufzeit",
+    punkte: ["Vor-Ort-Dreh inklusive", "Meta, Google und YouTube", "Dediziertes Reporting-Dashboard"] },
+];
+const LEADS = [
+  { id: "kl", name: "Käufer-Lead", preis: 50, sub: "Roh · aus deiner Region" },
+  { id: "klt", name: "Käufer-Lead mit Termin", preis: 350, sub: "Qualifiziert · Termin fixiert", beliebt: true },
+  { id: "al", name: "Abgeber-Lead", preis: 129, sub: "Roh · verkaufswillige Eigentümer" },
+  { id: "alt", name: "Abgeber-Lead mit Termin", preis: 690, sub: "Qualifiziert · Termin fixiert" },
+];
+
+/* Aufträge mit Prozess: die Agentur liefert direkt in die Software, Korrekturen laufen als Schleifen */
+const AUFTRAG_STEPS = ["Briefing", "Termin", "Produktion", "Ergebnis", "Korrektur", "Freigabe"];
+const AUFTRAEGE = [
+  { id: "A-2435", datum: "14.08.2026", name: "Fotoshooting", objekt: "Das Albrecht · Top 12", preis: 249, step: 1, status: "Termin offen", tone: "hot",
+    agentur: ["Bis zu 15 bearbeitete Fotos, Out- und Indoor", "Farb-Look nach UNIO-Guide", "Lieferung 48 h nach dem Shooting"],
+    dein: ["Zugang zum Objekt sicherstellen", "Objekt besenrein oder gestagt übergeben", "Ansprechperson vor Ort nennen"],
+    termine: ["Di 19.08. · 09:00", "Mi 20.08. · 14:00", "Fr 22.08. · 10:30"], terminFix: null, ergebnisse: [], feedback: [] },
+  { id: "A-2431", datum: "05.08.2026", name: "Immoreel", objekt: "Villa Ecoluxe", preis: 599, step: 3, status: "Ergebnis liegt vor", tone: "hot",
+    agentur: ["Reel bis 60 Sekunden, 9:16", "Schnitt, Color Grading, Musik, Untertitel", "2 Korrekturschleifen inklusive"],
+    dein: ["Wunsch-Musikrichtung nennen (erledigt)", "Logo-Animation freigeben (erledigt)"],
+    termine: null, terminFix: "Dreh war am Mo 11.08. · 10:00",
+    ergebnisse: [
+      { v: 2, name: "Immoreel · Schnitt v2", typ: "video", src: "../../assets/video/explore-kling-c.mp4" },
+      { v: 2, name: "Cover-Varianten", typ: "img", src: "../../assets/img/ecoluxe.jpg" },
+    ],
+    feedback: [{ von: "Du", datum: "12.08.", txt: "Intro 2 Sekunden kürzer, Preis-Einblendung erst am Ende.", status: "Umgesetzt in v2" }] },
+  { id: "A-2427", datum: "28.07.2026", name: "Listing Performance", objekt: "Penthouse Beheim", preis: 1390, step: 2, status: "In Produktion", tone: "",
+    agentur: ["Kampagnen-Setup Meta und Google", "Landingpage automatisch aus NOVA", "30 Tage Laufzeit, wöchentliches Reporting"],
+    dein: ["Objektfotos freigeben (erledigt)", "Ad-Budget € 600 bestätigen (erledigt)"],
+    termine: null, terminFix: "Go-live geplant: Mo 18.08.", ergebnisse: [], feedback: [] },
+  { id: "A-2402", datum: "12.08.2026", name: "Faltschild · A1 · Mit Bild", objekt: "Persönlich", preis: 189, step: 5, status: "Freigegeben · im Druck", tone: "ok",
+    agentur: ["Druck A1 auf Hohlkammerplatte", "Versand an deinen Bürostandort"],
+    dein: [], termine: null, terminFix: null, ergebnisse: [], feedback: [] },
+];
+
 const eurS = (n) => "€ " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
 /* ---------- Bausteine ---------- */
@@ -342,6 +391,143 @@ function CartDrawer({ offen, onClose, items, onRemove, onOrder, ordered }) {
   );
 }
 
+/* ---------- Auftrags-Prozess: Stepper + Detail ---------- */
+function AuftragStepper({ step }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", margin: "24px 0 4px", overflowX: "auto", paddingBottom: 6 }}>
+      {AUFTRAG_STEPS.map((st, i) => (
+        <React.Fragment key={st}>
+          {i > 0 && <span style={{ flex: 1, minWidth: 16, height: 1.5, marginTop: 12, background: i <= step ? "var(--signal)" : "var(--hairline-dark)" }}></span>}
+          <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7, flex: "none", padding: "0 4px" }}>
+            <span style={{ width: 25, height: 25, borderRadius: 99, display: "grid", placeItems: "center", font: "600 10px var(--font-mono)",
+              background: i < step ? "var(--signal)" : i === step ? "var(--ink)" : "var(--card-bg, #FFFFFF)",
+              color: i < step ? "#1A1305" : i === step ? "var(--paper)" : "var(--text-muted)",
+              boxShadow: i > step ? "inset 0 0 0 1px var(--hairline-dark)" : "none" }}>{i < step ? "✓" : i + 1}</span>
+            <span className="u-label" style={{ fontSize: 7.5, color: i === step ? "var(--ink)" : "var(--text-muted)", whiteSpace: "nowrap" }}>{st.toUpperCase()}</span>
+          </span>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function AuftragDetail({ auftrag, onBack }) {
+  const { Reveal: Rv, RevealL: RvL } = window;
+  const a = auftrag;
+  const [step, setStep] = React.useState(a.step);
+  const [termin, setTermin] = React.useState(a.terminFix);
+  const [fb, setFb] = React.useState(a.feedback);
+  const [fbText, setFbText] = React.useState("");
+  const [frei, setFrei] = React.useState(a.step >= 5);
+  const waehleTermin = (t) => { setTermin(t + " · bestätigt"); setStep((x) => Math.max(x, 2)); };
+  const sendeFeedback = () => {
+    const t = fbText.trim(); if (!t) return;
+    setFb((f) => [...f, { von: "Du", datum: "Heute", txt: t, status: "Bei der Agentur" }]);
+    setFbText(""); setStep(4);
+  };
+  const karte = { background: "var(--card-bg, #FFFFFF)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "20px 22px" };
+  const h3 = { margin: "0 0 13px", font: "500 15.5px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" };
+  const li = { display: "flex", gap: 9, alignItems: "baseline", font: "400 13.5px/1.55 var(--font-display)", color: "var(--ink-2)", marginTop: 7 };
+  const pillStil = (tone) => ({ fontSize: 8.5, padding: "5px 11px", borderRadius: 99,
+    background: tone === "ok" ? "rgba(46,125,70,.1)" : tone === "hot" ? "var(--signal-soft)" : "var(--paper-2)",
+    color: tone === "ok" ? "#2E7D46" : tone === "hot" ? "var(--signal-deep)" : "var(--text-muted)" });
+  return (
+    <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+      <RvL style={{ marginTop: 36 }}>
+        <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", font: "500 13.5px var(--font-display)", fontFamily: "inherit", color: "var(--text-muted)", padding: 0 }}>← Alle Aufträge</button>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 14, flexWrap: "wrap", marginTop: 14 }}>
+          <div>
+            <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)" }}>{a.id} · BESTELLT {a.datum}</span>
+            <h1 style={{ margin: "6px 0 0", font: "500 clamp(28px, 3vw, 40px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{a.name}</h1>
+            <p style={{ margin: "8px 0 0", font: "400 14.5px var(--font-display)", color: "var(--text-muted)" }}>{a.objekt} · {eurS(a.preis)}</p>
+          </div>
+          <span className="u-label" style={pillStil(frei ? "ok" : a.tone)}>{(frei ? "Freigegeben" : a.status).toUpperCase()}</span>
+        </div>
+        <AuftragStepper step={frei ? 5 : step} />
+      </RvL>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16, marginTop: 26, alignItems: "start" }}>
+        <div style={{ display: "grid", gap: 16 }}>
+          <Rv><div style={karte}>
+            <h3 style={h3}>Das liefert die Agentur</h3>
+            {a.agentur.map((x) => <div key={x} style={li}><span style={{ color: "var(--signal-deep)" }}>✓</span>{x}</div>)}
+          </div></Rv>
+          {a.dein.length > 0 && <Rv delay={60}><div style={karte}>
+            <h3 style={h3}>Dein Part</h3>
+            {a.dein.map((x) => <div key={x} style={li}><span style={{ color: x.includes("erledigt") ? "#2E7D46" : "var(--text-muted)" }}>{x.includes("erledigt") ? "✓" : "○"}</span>{x}</div>)}
+          </div></Rv>}
+          {(a.termine || termin) && <Rv delay={100}><div style={karte}>
+            <h3 style={h3}>Termin</h3>
+            {termin ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <b style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>{termin}</b>
+                <span className="u-label" style={pillStil("ok")}>FIXIERT</span>
+              </div>
+            ) : (
+              <React.Fragment>
+                <p style={{ margin: "0 0 12px", font: "400 13.5px/1.55 var(--font-display)", color: "var(--text-muted)" }}>Die Agentur hat drei Slots vorgeschlagen. Wähle einen, der Rest läuft automatisch.</p>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {a.termine.map((t) => (
+                    <button key={t} onClick={() => waehleTermin(t)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 17px", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 13px var(--font-display)", fontFamily: "inherit", color: "var(--ink)" }}>{t}</button>
+                  ))}
+                </div>
+              </React.Fragment>
+            )}
+          </div></Rv>}
+        </div>
+
+        <div style={{ display: "grid", gap: 16 }}>
+          <Rv delay={80}><div style={karte}>
+            <h3 style={h3}>Ergebnisse</h3>
+            {a.ergebnisse.length === 0 ? (
+              <p style={{ margin: 0, font: "400 13.5px/1.6 var(--font-display)", color: "var(--text-muted)" }}>Noch nichts eingespielt. Die Agentur lädt Ergebnisse direkt hier hoch, du bekommst eine Benachrichtigung.</p>
+            ) : a.ergebnisse.map((e) => (
+              <div key={e.name} style={{ borderRadius: 13, overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", marginBottom: 12 }}>
+                {e.typ === "video"
+                  ? <video src={e.src} muted loop playsInline autoPlay style={{ display: "block", width: "100%", maxHeight: 250, objectFit: "cover" }}></video>
+                  : <img src={e.src} alt="" style={{ display: "block", width: "100%", maxHeight: 180, objectFit: "cover" }} />}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "11px 14px" }}>
+                  <span style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)" }}>{e.name}</span>
+                  <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>VERSION {e.v}</span>
+                </div>
+              </div>
+            ))}
+            {a.ergebnisse.length > 0 && !frei && (
+              <React.Fragment>
+                <div style={{ display: "flex", gap: 9, marginTop: 4 }}>
+                  <button onClick={() => setFrei(true)} style={{ flex: 1, border: "none", cursor: "pointer", borderRadius: 999, padding: "13px 0", background: "var(--signal)", color: "#1A1305", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>Freigeben</button>
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>ODER KORREKTUR ANFORDERN</span>
+                  <textarea value={fbText} onChange={(e) => setFbText(e.target.value)} rows={3} placeholder="Was soll die Agentur ändern?"
+                    style={{ width: "100%", marginTop: 8, border: "none", outline: "none", resize: "vertical", background: "var(--paper-2)", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px", font: "400 13.5px/1.55 var(--font-display)", fontFamily: "inherit", color: "var(--ink)", boxSizing: "border-box" }}></textarea>
+                  <button onClick={sendeFeedback} style={{ marginTop: 9, border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 20px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Korrektur senden</button>
+                </div>
+              </React.Fragment>
+            )}
+            {frei && a.ergebnisse.length > 0 && (
+              <p style={{ margin: "4px 0 0", font: "400 13.5px var(--font-display)", color: "#2E7D46" }}>✓ Freigegeben. Die finalen Dateien liegen in deiner Objekt-Mediathek.</p>
+            )}
+          </div></Rv>
+          {fb.length > 0 && <Rv delay={120}><div style={karte}>
+            <h3 style={h3}>Korrekturschleifen</h3>
+            {fb.map((f, i) => (
+              <div key={i} style={{ padding: "12px 0", borderTop: i > 0 ? "1px solid var(--hairline-dark)" : "none" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginBottom: 5 }}>
+                  <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{f.von.toUpperCase()} · {f.datum}</span>
+                  <span className="u-label" style={pillStil(f.status.startsWith("Umgesetzt") ? "ok" : "hot")}>{f.status.toUpperCase()}</span>
+                </div>
+                <p style={{ margin: 0, font: "400 13.5px/1.55 var(--font-display)", color: "var(--ink-2)" }}>{f.txt}</p>
+              </div>
+            ))}
+          </div></Rv>}
+        </div>
+      </div>
+      <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", margin: "20px 0 40px" }}>DEMO-ANSICHT · PROZESS UND INHALTE ARBEITSSTAND</p>
+    </div>
+  );
+}
+
 /* ---------- Shop (Stufe 1: Katalog) ---------- */
 
 function ShopKarte({ onOpen, children, name, meta, preis, delay, beliebt }) {
@@ -433,6 +619,8 @@ function ShopSeite({ onNav }) {
   const [lookDaten, setLookDaten] = React.useState(() => { try { return { ...LOOK_DEFAULTS, ...(JSON.parse(localStorage.getItem("unio_shop_look_daten")) || {}) }; } catch (e) { return LOOK_DEFAULTS; } });
   const [editor, setEditor] = React.useState(false);
   const [toast, setToast] = React.useState(null);
+  const [auftrag, setAuftrag] = React.useState(null);
+  const [kat, setKat] = React.useState("druck");
   const add = (item) => {
     setCart((c) => [...c, item]);
     setKonfig(null);
@@ -461,13 +649,16 @@ function ShopSeite({ onNav }) {
   if (konfig && konfig.typ === "content") {
     return <React.Fragment><ContentKonfigurator leistung={CONTENT_LEISTUNGEN.find((l) => l.id === konfig.id)} onBack={() => setKonfig(null)} onAdd={add} />{cartBtn}{toastEl}{drawer}</React.Fragment>;
   }
+  if (auftrag) {
+    return <React.Fragment><AuftragDetail key={auftrag.id} auftrag={auftrag} onBack={() => setAuftrag(null)} />{cartBtn}{toastEl}{drawer}</React.Fragment>;
+  }
 
-  const [kat, setKat] = React.useState("druck");
   const KATEGORIEN = [
     ["druck", "Druck & Werbemittel"],
     ["content", "Content & Personal Brand"],
     ["homepage", "Makler-Homepage"],
-    ["bestellungen", "Bestellungen"],
+    ["programme", "Pakete & Leads"],
+    ["bestellungen", "Aufträge"],
   ];
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
@@ -484,7 +675,7 @@ function ShopSeite({ onNav }) {
               style={{ font: "500 13.5px var(--font-display)", fontFamily: "inherit", padding: "10px 18px", borderRadius: 999, border: "none", cursor: "pointer",
                 background: kat === id ? "var(--ink)" : "transparent", color: kat === id ? "var(--paper)" : "var(--text-muted)",
                 transition: "all .25s var(--ease-unio)", whiteSpace: "nowrap" }}>
-              {label}{id === "bestellungen" ? " · " + HISTORIE.length : ""}
+              {label}{id === "bestellungen" ? " · " + AUFTRAEGE.length : ""}
             </button>
           ))}
         </div>
@@ -627,22 +818,124 @@ function ShopSeite({ onNav }) {
 
       </React.Fragment>}
 
+      {kat === "programme" && <React.Fragment>
+      <Rv style={{ marginTop: 36 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
+          <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Content-Programme</h2>
+          <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>MONATLICH · PRODUKTION INKLUSIVE</span>
+        </div>
+      </Rv>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+        {PROGRAMME.map((pr, i) => (
+          <Rv key={pr.id} delay={i * 70}>
+            <div style={{ position: "relative", height: "100%", boxSizing: "border-box", background: pr.beliebt ? "var(--ink)" : "var(--card-bg, #FFFFFF)", color: pr.beliebt ? "var(--paper)" : "var(--ink)", borderRadius: 18, boxShadow: pr.beliebt ? "none" : "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "26px 26px 24px", display: "flex", flexDirection: "column" }}>
+              {pr.beliebt && <span className="u-label" style={{ position: "absolute", top: 18, right: 18, fontSize: 8, padding: "5px 10px", borderRadius: 99, background: "var(--signal)", color: "#1A1305" }}>BELIEBT</span>}
+              <span className="u-label" style={{ fontSize: 9, color: pr.beliebt ? "var(--signal)" : "var(--signal-deep)" }}>{pr.name.toUpperCase()}</span>
+              <div style={{ margin: "12px 0 2px", font: "500 30px var(--font-display)", letterSpacing: "-0.02em" }}>{pr.preis ? eurS(pr.preis) : pr.preisLabel}</div>
+              <span style={{ font: "400 12.5px var(--font-display)", color: pr.beliebt ? "rgba(247,245,241,.65)" : "var(--text-muted)" }}>{pr.einheit}</span>
+              <p style={{ margin: "14px 0 4px", font: "500 15px var(--font-display)", letterSpacing: "-0.01em" }}>{pr.claim}</p>
+              {pr.punkte.map((x) => (
+                <div key={x} style={{ display: "flex", gap: 9, alignItems: "baseline", font: "400 13.5px/1.5 var(--font-display)", color: pr.beliebt ? "rgba(247,245,241,.8)" : "var(--ink-2)", marginTop: 8 }}>
+                  <span style={{ color: pr.beliebt ? "var(--signal)" : "var(--signal-deep)" }}>✓</span>{x}
+                </div>
+              ))}
+              <div style={{ marginTop: "auto", paddingTop: 20 }}>
+                {pr.preis ? (
+                  <button onClick={() => add({ titel: "Content-Programm " + pr.name, detail: pr.einheit.replace("/ Monat", "Monatlich").toUpperCase(), menge: 1, preis: pr.preis, abo: true })}
+                    style={{ width: "100%", border: "none", cursor: "pointer", borderRadius: 999, padding: "14px 0", background: pr.beliebt ? "var(--signal)" : "var(--paper-2)", color: pr.beliebt ? "#1A1305" : "var(--ink)", boxShadow: pr.beliebt ? "none" : "inset 0 0 0 1px var(--hairline-dark)", font: "500 14px var(--font-display)", fontFamily: "inherit" }}>Programm starten</button>
+                ) : (
+                  <span className="u-label" style={{ display: "block", textAlign: "center", fontSize: 8.5, color: "var(--text-muted)", padding: "15px 0 8px" }}>IN DEINEM COMMUNITY-ABO ENTHALTEN</span>
+                )}
+              </div>
+            </div>
+          </Rv>
+        ))}
+      </div>
+
+      <Rv style={{ marginTop: 48 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
+          <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Listing-Kampagnen</h2>
+          <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>PRO OBJEKT · AD-BUDGET ZUZÜGLICH</span>
+        </div>
+      </Rv>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+        {LISTING.map((l, i) => (
+          <Rv key={l.id} delay={i * 70}>
+            <div style={{ position: "relative", height: "100%", boxSizing: "border-box", background: "var(--card-bg, #FFFFFF)", borderRadius: 18, boxShadow: l.beliebt ? "inset 0 0 0 1.5px var(--signal)" : "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "24px 24px 22px", display: "flex", flexDirection: "column" }}>
+              {l.beliebt && <span className="u-label" style={{ position: "absolute", top: 16, right: 16, fontSize: 8, padding: "5px 10px", borderRadius: 99, background: "var(--signal-soft)", color: "var(--signal-deep)" }}>MEISTGEBUCHT</span>}
+              <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)" }}>{l.dauer.toUpperCase()}</span>
+              <div style={{ margin: "10px 0 0", font: "500 19px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{l.name}</div>
+              <div style={{ margin: "8px 0 2px", font: "500 26px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{eurS(l.preis)}</div>
+              <span style={{ font: "400 12.5px var(--font-display)", color: "var(--text-muted)" }}>{l.budget}</span>
+              {l.punkte.map((x) => (
+                <div key={x} style={{ display: "flex", gap: 9, alignItems: "baseline", font: "400 13.5px/1.5 var(--font-display)", color: "var(--ink-2)", marginTop: 8 }}>
+                  <span style={{ color: "var(--signal-deep)" }}>✓</span>{x}
+                </div>
+              ))}
+              <button onClick={() => add({ titel: l.name, detail: (l.dauer + " · " + l.budget).toUpperCase(), menge: 1, preis: l.preis })}
+                style={{ marginTop: "auto", border: "none", cursor: "pointer", borderRadius: 999, padding: "13px 0", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13.5px var(--font-display)", fontFamily: "inherit", marginBlockStart: "20px" }}>Für ein Objekt buchen</button>
+            </div>
+          </Rv>
+        ))}
+      </div>
+      <Rv style={{ marginTop: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, flexWrap: "wrap", background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "16px 20px" }}>
+          <div>
+            <b style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>Objektaufbereitung + 360°-Rundgang</b>
+            <span style={{ display: "block", font: "400 12.5px var(--font-display)", color: "var(--text-muted)", marginTop: 3 }}>Aufbereitung ab € 99 · 360°-Rundgang einzeln ab € 37,56</span>
+          </div>
+          <button onClick={() => add({ titel: "Objektaufbereitung + 360°", detail: "PRO OBJEKT · AB-PREIS", menge: 1, preis: 99 })}
+            style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 20px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Buchen</button>
+        </div>
+      </Rv>
+
+      <Rv style={{ marginTop: 48 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
+          <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Leads</h2>
+          <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>AUS DEINER REGION · PRO LEAD</span>
+        </div>
+      </Rv>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 14 }}>
+        {LEADS.map((l, i) => (
+          <Rv key={l.id} delay={i * 60}>
+            <div style={{ position: "relative", height: "100%", boxSizing: "border-box", background: "var(--card-bg, #FFFFFF)", borderRadius: 16, boxShadow: l.beliebt ? "inset 0 0 0 1.5px var(--signal)" : "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "20px 20px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
+              <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{l.sub.toUpperCase()}</span>
+              <b style={{ font: "500 16px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{l.name}</b>
+              <div style={{ font: "500 24px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{eurS(l.preis)}<span style={{ font: "400 11px var(--font-display)", color: "var(--text-muted)" }}> / Lead</span></div>
+              <button onClick={() => add({ titel: l.name, detail: l.sub.toUpperCase(), menge: 1, preis: l.preis })}
+                style={{ marginTop: 10, border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 0", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>In den Warenkorb</button>
+            </div>
+          </Rv>
+        ))}
+      </div>
+      <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 14 }}>ALLE PREISE NETTO · QUELLE: UNIO ANGEBOTS- UND PROZESSDOKUMENT · ARBEITSSTAND</p>
+      </React.Fragment>}
+
       {kat === "bestellungen" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
-        <h2 style={{ margin: "0 0 18px", font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Bestellhistorie</h2>
-        <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
-          {HISTORIE.map(([datum, was, motiv, stk, preis, s, label], i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "110px 1.4fr 1fr 60px 90px 110px", gap: 14, alignItems: "center", padding: "14px 20px", borderBottom: i < HISTORIE.length - 1 ? "1px solid var(--card-line, var(--hairline-dark))" : "none", font: "400 13.5px var(--font-display)", color: "var(--ink-2)" }}>
-              <span style={{ font: "11px var(--font-mono)", color: "var(--text-muted)" }}>{datum}</span>
-              <span style={{ fontWeight: 500, color: "var(--ink)" }}>{was}</span>
-              <span style={{ color: "var(--text-muted)" }}>{motiv}</span>
-              <span style={{ font: "12px var(--font-mono)", textAlign: "right" }}>{stk}×</span>
-              <span style={{ fontWeight: 500, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{preis}</span>
-              <span className="u-label" style={{ fontSize: 8.5, justifySelf: "end", padding: "5px 11px", borderRadius: 99, background: s === "geliefert" ? "var(--paper-2)" : "var(--signal-soft)", color: s === "geliefert" ? "var(--text-muted)" : "var(--signal-deep)" }}>{label.toUpperCase()}</span>
-            </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 18 }}>
+          <h2 style={{ margin: 0, font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Deine Aufträge</h2>
+          <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>KLICKE IN EINEN AUFTRAG FÜR STATUS, TERMINE UND KORREKTUREN</span>
+        </div>
+        <div style={{ display: "grid", gap: 10 }}>
+          {AUFTRAEGE.map((a) => (
+            <button key={a.id} onClick={() => setAuftrag(a)}
+              style={{ display: "grid", gridTemplateColumns: "84px 1.5fr 1fr 90px 150px 24px", gap: 14, alignItems: "center", textAlign: "left", width: "100%", border: "none", cursor: "pointer", background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "16px 20px", fontFamily: "inherit", transition: "transform .25s var(--ease-unio)" }}>
+              <span style={{ font: "11px var(--font-mono)", color: "var(--text-muted)" }}>{a.id}</span>
+              <span style={{ minWidth: 0 }}>
+                <b style={{ display: "block", font: "500 14.5px var(--font-display)", color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{a.name}</b>
+                <span style={{ font: "400 12px var(--font-display)", color: "var(--text-muted)" }}>Bestellt {a.datum}</span>
+              </span>
+              <span style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{a.objekt}</span>
+              <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)", textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{eurS(a.preis)}</span>
+              <span className="u-label" style={{ fontSize: 8, justifySelf: "end", padding: "5px 11px", borderRadius: 99,
+                background: a.tone === "ok" ? "rgba(46,125,70,.1)" : a.tone === "hot" ? "var(--signal-soft)" : "var(--paper-2)",
+                color: a.tone === "ok" ? "#2E7D46" : a.tone === "hot" ? "var(--signal-deep)" : "var(--text-muted)", whiteSpace: "nowrap" }}>{a.status.toUpperCase()}</span>
+              <span style={{ color: "var(--text-muted)" }}>→</span>
+            </button>
           ))}
         </div>
-        <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>DEMO-ANSICHT · PREISE UND HISTORIE ARBEITSSTAND</p>
+        <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>DEMO-ANSICHT · DIE AGENTUR SPIELT ERGEBNISSE DIREKT IN DEN AUFTRAG EIN</p>
       </Rv>
       </React.Fragment>}
 
