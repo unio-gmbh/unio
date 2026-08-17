@@ -53,6 +53,13 @@
   .info h2{font-size:clamp(26px,6.4vw,34px);font-weight:500;line-height:1.05;letter-spacing:-.025em;text-shadow:0 2px 26px rgba(0,0,0,.45);}
   .info .meta{margin-top:8px;font-family:var(--font-mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.85);}
   .info .preis{margin-top:10px;font-size:21px;font-weight:500;letter-spacing:-.01em;}
+  .ekkarte{display:grid;place-items:center;background:radial-gradient(90% 70% at 50% 20%, rgba(255,170,9,.12), transparent 60%), #141210;}
+  .ekkarte .ekinhalt{max-width:420px;padding:0 30px;text-align:center;}
+  .ekkarte .ekkicker{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.16em;color:var(--orange);}
+  .ekkarte h2{font-size:clamp(28px,6vw,40px);font-weight:600;letter-spacing:-.02em;line-height:1.08;margin:14px 0 10px;}
+  .ekkarte p{font-size:14.5px;line-height:1.6;color:rgba(247,245,241,.72);margin:0 0 22px;}
+  .ekkarte .ekbtn{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#1A1305;border:none;cursor:pointer;
+    border-radius:99px;padding:13px 24px;font:700 14px/1 inherit;font-family:inherit;text-decoration:none;}
   .info .rchip{display:inline-flex;margin-top:9px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.13em;
     color:var(--orange);background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.35);border-radius:99px;padding:5px 10px;}
   .info .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;text-decoration:none;color:#1A1305;background:var(--orange);
@@ -75,6 +82,8 @@
   .topbar img{height:15px;display:block;}
   .topbar .mono{color:rgba(247,245,241,.85);}
   .topbar a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  .topbar .avapill{background:var(--orange)!important;color:#1A1305!important;border-color:transparent!important;
+    font-weight:700;min-width:34px;text-align:center;}
   .topbar .hub{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.75);
     border:1px solid rgba(247,245,241,.25);border-radius:99px;padding:6px 12px;background:rgba(11,10,9,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
 
@@ -134,6 +143,10 @@
   .srow .sherz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
   .srow .rbadge{display:inline-block;margin-left:7px;font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;
     color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:3px 8px;vertical-align:1px;}
+  .srow.ueber{opacity:.55;}
+  .such.traum .srow.ueber{opacity:1;}
+  .srow .rbadge.budget{color:#8A5A00;background:rgba(20,18,16,.06);border-color:rgba(20,18,16,.18);}
+  .such.traum .srow .rbadge.budget{display:none;}
   .sfilter{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 0;}
   .sfilter button{font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;
     border:1px solid rgba(20,18,16,.15);background:#FFFFFF;color:#6E6862;transition:all .25s var(--ease);}
@@ -200,6 +213,7 @@
       <span style="display:inline-flex;gap:8px;align-items:center;">
         <button class="hub likesbtn" id="likesBtn" type="button" aria-label="Merkliste öffnen">♥ <b id="likesCount">0</b></button>
         <a class="hub" href="/ux">UX-HUB</a>
+        <a class="hub avapill" href="/ux/backend?rolle=endkunde" aria-label="Mein Portal">VH</a>
       </span>
     </div>
     <div class="feed" id="feed"></div>
@@ -211,6 +225,7 @@
         <button data-f="r3">Rendite ≥ 3 %</button>
         <button data-f="r35">Rendite ≥ 3,5 %</button>
         <button data-f="u15">bis € 1,5 Mio</button>
+        <button data-f="traum" id="traumChip" style="display:none">Träumen ✨</button>
       </div>
       <div class="scount" id="suchCount"></div>
       <div class="slist" id="slist"></div>
@@ -269,6 +284,9 @@
     { id:"reel-kling",   video:"../../assets/video/explore-kling-c.mp4", img:"../../assets/img/albrechts-fassade.jpg", t:"Das Albrecht · Reel", ort:"1170 Wien · Hernals", preis:"ab € 470.000", tags:["neubau","1170","projekt","reel"] },
     { id:"reel-design",  video:"../../assets/video/explore-design.mp4",  img:"../../assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
   ];
+  /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
+  var ekProfil = (function(){ try { return JSON.parse(localStorage.getItem("unio_ek_profil")) || {}; } catch(e){ return {}; } })();
+  function ueberBudget(o){ return !!(ekProfil.kaufkraft && o.preisNum && o.preisNum > ekProfil.kaufkraft.budget); }
   /* Rendite aus UNIO-Vermietdaten: Jahresnettomiete / Kaufpreis (Demo-Kalkulation) */
   function rendite(o){
     if (!o.preisNum || !o.mieteJahr) return null;
@@ -392,10 +410,34 @@
     }, { passive: false });
     return el;
   }
+  /* Ereignis-Karten und Caught-up-Moment: Ereignisse sind Content (Hemnet-Prinzip),
+     der ehrliche Endpunkt ist ein Trust-Signal (kein Endless-Scroll ohne Marker) */
+  var EK_FEEDKARTEN = [
+    { art: "ereignis", k: "PREIS GESENKT", h: "Villa Ecoluxe", s: "€ 2,50 Mio auf € 2,40 Mio, der Verkäufer bewegt sich.", cta: "Objekt ansehen", href: "/ux/objekt?von=explore&obj=ecoluxe" },
+    { art: "caughtup", k: "DU BIST AUF DEM STAND", h: "Alles Neue hast du gesehen.", s: "Neue Treffer melden sich von selbst, versprochen. Ab hier zeigen wir dir Ähnliches.", cta: "Merkliste ansehen" },
+    { art: "ereignis", k: "NEU FÜR DEIN SUCHPROFIL", h: "3 Treffer für Anlage bis 500k", s: "Frisch eingespielt, Rendite ab 3,5 %.", cta: "Objekt ansehen", href: "/ux/objekt?von=explore&obj=albrecht" }
+  ];
+  var ekFeedIdx = 0, ekRunde = 0;
+  function ekFeedKarte(def){
+    var sec = document.createElement("section");
+    sec.className = "card ekkarte"; sec.dataset.id = "ek-" + (ekFeedIdx);
+    sec.innerHTML = '<div class="ekinhalt">' +
+      '<span class="ekkicker">' + def.k + '</span>' +
+      '<h2>' + def.h + '</h2><p>' + def.s + '</p>' +
+      (def.art === "caughtup"
+        ? '<button class="ekbtn" type="button" data-ek="merk">' + def.cta + '</button>'
+        : '<a class="ekbtn" href="' + def.href + '">' + def.cta + '</a>') +
+      '</div>';
+    var mb = sec.querySelector('[data-ek="merk"]');
+    if (mb) mb.addEventListener("click", function(){ listeAuf(); });
+    return sec;
+  }
   function anhaengen(n){
     var batch = naechsteBatch(n, geladen);
     if (!batch.length) { geladen = new Set([...likes]); batch = naechsteBatch(n, geladen); } /* Pool durch: neu mischen */
     batch.forEach(function(o){ geladen.add(o.id); feed.appendChild(karte(o)); });
+    ekRunde++;
+    if (ekRunde % 2 === 1) { feed.appendChild(ekFeedKarte(EK_FEEDKARTEN[ekFeedIdx % EK_FEEDKARTEN.length])); ekFeedIdx++; }
   }
   anhaengen(5);
 
@@ -566,9 +608,10 @@
       objekte.slice().sort(function(a, b){ return score(b, w) - score(a, w); }).forEach(function(o){
         var row = document.createElement("div");
         row.className = "srow"; row.dataset.id = o.id; row.setAttribute("role", "button"); row.tabIndex = 0;
+        if (ueberBudget(o)) row.classList.add("ueber");
         row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
           '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
-          (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '') + '</div></div>' +
+          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' +
           '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
         row.addEventListener("click", function(e){
           if (e.target.closest(".sherz")) return;
@@ -607,8 +650,14 @@
     if (suchMap) setTimeout(function(){ suchMap.invalidateSize(); }, 60);
   }
   /* Suchparameter: filtern Zeilen und Pins gleichzeitig */
+  if (ekProfil.kaufkraft) { var tc = document.getElementById("traumChip"); if (tc) tc.style.display = ""; }
   document.getElementById("suchFilter").addEventListener("click", function(e){
     var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.f === "traum") {
+      b.classList.toggle("on");
+      document.querySelector(".such").classList.toggle("traum", b.classList.contains("on"));
+      return;
+    }
     this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
     var f = b.dataset.f, sichtbar = 0;
     POOL.filter(function(o){ return o.ll; }).forEach(function(o){

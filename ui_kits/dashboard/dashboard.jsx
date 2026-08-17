@@ -3,7 +3,7 @@ const { DashShell, DashHome, DashStats, DashObject, ProjektView, ImmoUebersicht,
 
 function DashApp() {
   const [screen, setScreen] = React.useState("dashboard");
-  const [role, setRole] = React.useState("makler");
+  const [role, setRole] = React.useState(() => (location.search.match(/[?&]rolle=([a-z]+)/) || [])[1] || "makler");
   const nav = (id) => { setScreen(id); window.scrollTo(0, 0); };
   const pickRole = (r) => { setRole(r); setScreen("dashboard"); window.scrollTo(0, 0); };
   if (role === "endkunde") {

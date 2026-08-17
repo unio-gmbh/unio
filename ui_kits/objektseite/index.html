@@ -533,9 +533,10 @@
     <aside class="rail">
       <div class="price">
         <span class="mono">Kaufpreis</span>
+        <span class="mono" id="objStatus" style="display:none;margin-top:6px;color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:5px 10px;width:max-content;"></span>
         <b>€ 1.749.000</b>
         <p class="sub">Verfügbar ab 11.05.2026 · Doppelmakler: Boom Living GmbH &amp; Co KG</p>
-        <button class="btn">Besichtigung anfragen</button>
+        <button class="btn" id="besichtRail">Besichtigung buchen</button>
         <button class="btn btn-angebot" id="angebotOpen">Angebot legen</button>
         <button class="ghost" id="objHerz" style="gap:8px;">
           <svg id="objHerzIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z"/></svg>
@@ -614,17 +615,17 @@
 <section class="similar">
   <h2>Ähnliche Objekte</h2>
   <div class="simgrid">
-    <a class="simcard" href="immobilien.html#suche">
+    <a class="simcard" href="/ux/objekt?von=objekt&obj=obenzwei">
       <img src="../../assets/img/obenzwei.jpg" alt="ObenZwei — Penthouse, Wien 1020" loading="lazy">
       <span class="scrim" aria-hidden="true"></span>
       <span class="cap"><b>ObenZwei — Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
     </a>
-    <a class="simcard" href="immobilien.html#suche">
+    <a class="simcard" href="/ux/objekt?von=objekt&obj=beheim">
       <img src="../../assets/img/beheim.jpg" alt="Penthouse Beheim, Wien 1170" loading="lazy">
       <span class="scrim" aria-hidden="true"></span>
       <span class="cap"><b>Penthouse Beheim</b><span>Wien · 1170 · € 1,7 Mio</span></span>
     </a>
-    <a class="simcard" href="immobilien.html#suche">
+    <a class="simcard" href="/ux/objekt?von=objekt&obj=penthouse">
       <img src="../../assets/img/penthouse.jpg" alt="Penthouse über den Dächern, Wien Innenstadt" loading="lazy">
       <span class="scrim" aria-hidden="true"></span>
       <span class="cap"><b>Penthouse über den Dächern</b><span>Wien · Innenstadt · € 4 Mio</span></span>
@@ -690,7 +691,7 @@
 <div class="ctabar">
   <div class="l"><b>€ 1.749.000</b><span>Verfügbar ab 11.05.2026</span></div>
   <button class="ctabar-angebot" id="angebotOpenMobil">Angebot legen</button>
-  <button>Besichtigung</button>
+  <button id="besichtMobil">Besichtigung</button>
 </div>
 
 <!-- Galerie-Overlay -->
@@ -954,7 +955,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
 </div>
 <script>
 (function(){
-  var KP = 1749000;
+  var KP = window.__EK_KP || 1749000;
   var adw = document.getElementById("adw"), inp = document.getElementById("adwSumme"),
       diff = document.getElementById("adwDiff"), presets = document.getElementById("adwPresets");
   var eur = function(n){ return "€ " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
@@ -993,7 +994,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
 <script>
 (function(){
   /* Merken + Like-Zahl: synchron mit dem Explore-Feed (localStorage) */
-  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "objekt-042";
+  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "beheim";
   var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
   var basis = 0; for (var i = 0; i < objId.length; i++) basis = (basis * 31 + objId.charCodeAt(i)) % 997;
   basis = 40 + (basis % 190); /* deterministische Demo-Basis pro Objekt */
@@ -1060,6 +1061,222 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
       if (tY - e.touches[0].clientY > 30 && amEnde()) { tY = null; commit(); }
     }, { passive: true });
   } catch (e) {}
+})();
+</script>
+<!-- ===== Endkunden-State: Objekttausch, CTA-State-Machine, Slot-Picker, Dokument-Viewer ===== -->
+<style>
+  .eksheet{position:fixed;inset:0;z-index:130;pointer-events:none;font-family:inherit;}
+  .eksheet.open{pointer-events:auto;}
+  .eksheet .back{position:absolute;inset:0;background:rgba(20,18,16,.45);opacity:0;transition:opacity .3s var(--ease);}
+  .eksheet.open .back{opacity:1;}
+  .eksheet aside{position:absolute;left:50%;bottom:0;transform:translate(-50%,105%);width:min(560px,100vw);max-height:86vh;overflow-y:auto;
+    background:var(--bg);border-radius:22px 22px 0 0;padding:14px 22px calc(24px + env(safe-area-inset-bottom));
+    transition:transform .35s cubic-bezier(0.32,0.72,0,1);}
+  .eksheet.open aside{transform:translate(-50%,0);}
+  .eksheet .griff{width:38px;height:4px;border-radius:99px;background:var(--hair);margin:0 auto 14px;}
+  .eksheet h3{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
+  .eksheet .esub{font-size:13.5px;color:var(--fg2);line-height:1.55;margin:0 0 16px;}
+  .eksheet .slots{display:grid;gap:9px;}
+  .eksheet .slots button{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--hair);background:var(--card);
+    border-radius:14px;padding:14px 17px;cursor:pointer;font:600 14px/1 inherit;font-family:inherit;color:var(--ink);}
+  .eksheet .slots .frei{font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#2E7D46;}
+  .eksheet .ghostbtn{display:block;width:100%;margin-top:12px;text-align:center;border:1px solid var(--hair);background:var(--card);color:var(--ink);
+    border-radius:99px;padding:13px 20px;font:600 13.5px inherit;font-family:inherit;cursor:pointer;text-decoration:none;box-sizing:border-box;}
+  .eksheet .docbox{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:24px 20px;margin-bottom:14px;}
+  .eksheet .docbox .kopf{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:12px;}
+  .eksheet .docbox .zl{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--hair);color:var(--fg2);}
+  .eksheet .docbox .zl b{color:var(--ink);font-weight:600;}
+</style>
+<div class="eksheet" id="ekSlot" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <div id="ekSlotWahl">
+      <h3 id="ekSlotTitel">Besichtigung buchen</h3>
+      <p class="esub">Drei bestätigbare Slots von deinem Makler. Du wählst, der Rest läuft automatisch.</p>
+      <div class="slots" id="ekSlotListe"></div>
+      <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=akt">Anderen Termin im Chat vereinbaren</a>
+    </div>
+    <div id="ekSlotFertig" style="display:none;text-align:center;padding:24px 0 10px;">
+      <h3 style="margin-bottom:6px;">Fixiert ✓</h3>
+      <p class="esub" id="ekSlotFertigTxt"></p>
+      <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=akt">Im Portal ansehen</a>
+    </div>
+  </aside>
+</div>
+<div class="eksheet" id="ekDoc" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <h3 id="ekDocTitel">Dokument</h3>
+    <p class="esub" id="ekDocSub"></p>
+    <div class="docbox" id="ekDocBox"></div>
+    <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=profil">In meinem Dokumenten-Archiv</a>
+  </aside>
+</div>
+<script>
+(function(){
+  /* Geteilter Endkunden-State: derselbe localStorage-Contract wie Portal und Explore */
+  var KATALOG = {
+    "beheim":{t:"Penthouse Beheim",ort:"1170 Wien · Hernals",preisNum:1700000,img:"../../assets/img/beheim.jpg"},
+    "beheim2":{t:"Beheim · Garten-Maisonette",ort:"1170 Wien · Hernals",preisNum:1650000,img:"../../assets/img/beheim-2.jpg"},
+    "albrecht":{t:"Das Albrecht · Top 12",ort:"1180 Wien · Währing",preisNum:470000,img:"../../assets/img/albrecht.jpg"},
+    "albrecht-dg":{t:"Das Albrecht · Dachgeschoss",ort:"1180 Wien · Währing",preisNum:1490000,img:"../../assets/img/albrechts-dachgeschoss.jpg"},
+    "ecoluxe":{t:"Villa Ecoluxe",ort:"1190 Wien · Grinzing",preisNum:2400000,img:"../../assets/img/ecoluxe.jpg"},
+    "obenzwei":{t:"ObenZwei · Penthouse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei.jpg"},
+    "obenzwei-t":{t:"ObenZwei · Terrasse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei-terrasse.jpg"},
+    "penthouse":{t:"Penthouse über den Dächern",ort:"1010 Wien · Innere Stadt",preisNum:4000000,img:"../../assets/img/penthouse.jpg"},
+    "maxing":{t:"Maxingstraße 22 · Top 7",ort:"1130 Wien · Hietzing",preisNum:980000,img:"../../assets/img/maxingstrasse-zimmer.jpg"},
+    "schoenbrunn":{t:"Schönbrunn-Blick",ort:"1130 Wien · Hietzing",preisNum:890000,img:"../../assets/img/schoenbrunn.jpg"},
+    "facade":{t:"Gründerzeit-Juwel",ort:"1050 Wien · Margareten",preisNum:1100000,img:"../../assets/img/vienna-facade.jpg"}
+  };
+  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "beheim";
+  var o = KATALOG[objId] || KATALOG["beheim"];
+  var eur = function(n){ return "€ " + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+  var lese = function(k, fb){ try { return JSON.parse(localStorage.getItem(k)) || fb; } catch(e){ return fb; } };
+  var schreibe = function(k, v){ localStorage.setItem(k, JSON.stringify(v)); };
+  var PORTAL = "/ux/backend?rolle=endkunde";
+
+  /* Objekttausch aus dem Katalog */
+  window.__EK_KP = o.preisNum;
+  var heroimg = document.getElementById("heroimg");
+  if (heroimg && KATALOG[objId]) heroimg.src = o.img;
+  var h1 = document.querySelector(".head h1");
+  if (h1) h1.innerHTML = o.t.replace(" · ", "<br>") + "<em>.</em>";
+  var hm = document.querySelector(".headmeta .mono");
+  if (hm) hm.textContent = "Zum Verkauf · Wohnung · " + o.ort;
+  document.querySelectorAll(".price > b, .ctabar .l b").forEach(function(b){ b.textContent = eur(o.preisNum); });
+  var inp = document.getElementById("adwSumme");
+  if (inp) inp.value = eur(o.preisNum);
+  var pres = document.getElementById("adwPresets");
+  if (pres) {
+    pres.innerHTML = "";
+    [[o.preisNum, "Kaufpreis"], [Math.round(o.preisNum * 0.97 / 1000) * 1000, null], [Math.round(o.preisNum * 0.95 / 1000) * 1000, null]].forEach(function(x, i){
+      var b = document.createElement("button");
+      b.dataset.v = x[0]; b.textContent = x[1] || eur(x[0]); if (i === 0) b.classList.add("on");
+      pres.appendChild(b);
+    });
+  }
+  var adiff = document.getElementById("adwDiff");
+  if (adiff) adiff.textContent = "Kaufpreis " + eur(o.preisNum) + " · Abweichung ±0 %";
+
+  /* Ereignis + Chat in den geteilten State schreiben */
+  function ereignis(typ, titel, sub){
+    var evs = lese("unio_ek_events", []);
+    evs.unshift({ id: Date.now(), typ: typ, objId: objId, titel: titel, sub: sub, zeit: "Jetzt", gelesen: false });
+    schreibe("unio_ek_events", evs);
+  }
+  function chatMsg(ich, txt){
+    var chats = lese("unio_ek_chats", {});
+    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · " + o.t, img: "../../assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+    chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
+    schreibe("unio_ek_chats", chats);
+  }
+
+  /* Slot-Picker */
+  var slotEl = document.getElementById("ekSlot");
+  var SLOTS = ["Di 19.08. · 09:00", "Mi 20.08. · 14:00", "Fr 22.08. · 10:30"];
+  function slotsAuf(){
+    var l = document.getElementById("ekSlotListe"); l.innerHTML = "";
+    SLOTS.forEach(function(t){
+      var b = document.createElement("button");
+      b.innerHTML = t + '<span class="frei">Sofort fixierbar</span>';
+      b.addEventListener("click", function(){
+        var bez = lese("unio_ek_beziehungen", {});
+        bez[objId] = Object.assign(bez[objId] || {}, { zustand: "termin", termin: t });
+        schreibe("unio_ek_beziehungen", bez);
+        ereignis("termin", "Besichtigung fixiert", o.t + " · " + t);
+        chatMsg(false, "Besichtigung fixiert: " + t + ". Ich freue mich, Adresse und Details kommen per Mail.");
+        document.getElementById("ekSlotWahl").style.display = "none";
+        document.getElementById("ekSlotFertig").style.display = "block";
+        document.getElementById("ekSlotFertigTxt").textContent = o.t + " · " + t + ". Dein Makler ist informiert, Reminder kommen automatisch.";
+        ctaAnwenden();
+      });
+      l.appendChild(b);
+    });
+    document.getElementById("ekSlotWahl").style.display = "block";
+    document.getElementById("ekSlotFertig").style.display = "none";
+    slotEl.classList.add("open"); slotEl.setAttribute("aria-hidden", "false");
+  }
+  slotEl.querySelector(".back").addEventListener("click", function(){ slotEl.classList.remove("open"); slotEl.setAttribute("aria-hidden", "true"); });
+
+  /* Dokument-Viewer */
+  var docEl = document.getElementById("ekDoc");
+  docEl.querySelector(".back").addEventListener("click", function(){ docEl.classList.remove("open"); docEl.setAttribute("aria-hidden", "true"); });
+  document.querySelectorAll(".docrow").forEach(function(row){
+    if (row.classList.contains("locked")) return;
+    row.addEventListener("click", function(ev){
+      ev.preventDefault();
+      var name = row.querySelector(".dmain b").childNodes[0].textContent.trim();
+      var sub = row.querySelector(".dmain span").textContent;
+      document.getElementById("ekDocTitel").textContent = name;
+      document.getElementById("ekDocSub").textContent = o.t + " · " + sub;
+      document.getElementById("ekDocBox").innerHTML =
+        '<div class="kopf"><b>' + name + '</b><span class="mono">UNIO · ' + o.ort + '</span></div>' +
+        [["Objekt", o.t], ["Adresse", o.ort], ["Kaufpreis", eur(o.preisNum)], ["Stand", "08/2026"]].map(function(z){
+          return '<div class="zl"><span>' + z[0] + '</span><b>' + z[1] + '</b></div>';
+        }).join("") +
+        '<p class="mono" style="margin-top:12px;color:var(--fg2);">DEMO-VORSCHAU · VOLLVERSION IM DATENRAUM</p>';
+      docEl.classList.add("open"); docEl.setAttribute("aria-hidden", "false");
+    });
+  });
+
+  /* Zustandsabhaengige CTA-Leiste (Tabelle 5 der Prozesslogik) */
+  function neuBinden(id, label, fn){
+    var alt = document.getElementById(id); if (!alt) return;
+    var neu = alt.cloneNode(true); neu.textContent = label;
+    alt.parentNode.replaceChild(neu, alt);
+    neu.addEventListener("click", fn);
+  }
+  function ctaAnwenden(){
+    var bez = lese("unio_ek_beziehungen", {});
+    var z = (bez[objId] || {}).zustand || null;
+    var termin = (bez[objId] || {}).termin;
+    var pill = document.getElementById("objStatus");
+    var PILLS = { termin: "Termin fixiert", besichtigt: "Besichtigt", anbot_aktiv: "Anbot in Prüfung", gegenangebot: "Gegenangebot · Frist läuft", angenommen: "In Abwicklung", abwicklung: "In Abwicklung", eigentum: "Dein Eigentum" };
+    if (pill) { pill.style.display = PILLS[z] ? "inline-block" : "none"; pill.textContent = (PILLS[z] || "").toUpperCase(); }
+    var zurKaufreise = function(){ location.href = PORTAL + "&kaufreise=" + objId; };
+    var zumChat = function(){ location.href = PORTAL + "&tab=akt&chat=" + objId; };
+    if (z === "anbot_aktiv") {
+      neuBinden("angebotOpen", "Anbot ansehen", zurKaufreise); neuBinden("angebotOpenMobil", "Anbot ansehen", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "gegenangebot") {
+      neuBinden("angebotOpen", "Auf Gegenangebot reagieren", zurKaufreise); neuBinden("angebotOpenMobil", "Reagieren", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "angenommen" || z === "abwicklung") {
+      neuBinden("angebotOpen", "Kaufreise öffnen", zurKaufreise); neuBinden("angebotOpenMobil", "Kaufreise", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "eigentum") {
+      neuBinden("angebotOpen", "Mein Objekt öffnen", function(){ location.href = PORTAL + "&tab=profil"; });
+      neuBinden("angebotOpenMobil", "Mein Objekt", function(){ location.href = PORTAL + "&tab=profil"; });
+      neuBinden("besichtRail", "Dokumente ansehen", function(){ location.href = PORTAL + "&tab=profil"; });
+      neuBinden("besichtMobil", "Dokumente", function(){ location.href = PORTAL + "&tab=profil"; });
+    } else if (z === "termin") {
+      neuBinden("besichtRail", "Termin: " + termin, slotsAuf); neuBinden("besichtMobil", "Termin ✓", slotsAuf);
+    } else if (z === "besichtigt") {
+      neuBinden("besichtRail", "Feedback geben", function(){ location.href = PORTAL + "&tab=akt"; });
+      neuBinden("besichtMobil", "Feedback", function(){ location.href = PORTAL + "&tab=akt"; });
+    } else {
+      neuBinden("besichtRail", "Besichtigung buchen", slotsAuf);
+      neuBinden("besichtMobil", "Besichtigung", slotsAuf);
+    }
+  }
+  ctaAnwenden();
+
+  /* Anbot aus dem Drawer landet im geteilten State (zusaetzlicher Listener) */
+  var send = document.getElementById("adwSend");
+  if (send) send.addEventListener("click", function(){
+    var v = parseInt(String(document.getElementById("adwSumme").value).replace(/\D/g, ""), 10) || o.preisNum;
+    var bez = lese("unio_ek_beziehungen", {});
+    var alt = bez[objId] || {};
+    var verlauf = (alt.anbot && alt.anbot.verlauf) ? alt.anbot.verlauf : [];
+    verlauf.push({ wer: "du", betrag: v, zeit: "Jetzt" });
+    bez[objId] = Object.assign(alt, { zustand: "anbot_aktiv", anbot: { betrag: v, frist: new Date(Date.now() + 10 * 86400000).toISOString(), gegen: null, verlauf: verlauf } });
+    schreibe("unio_ek_beziehungen", bez);
+    ereignis("anbot", "Anbot übermittelt", o.t + " · " + eur(v) + " · 10 Tage bindend");
+    chatMsg(false, "Ihr Anbot über " + eur(v) + " ist eingegangen. Ich lege es dem Verkäufer heute noch vor.");
+    setTimeout(ctaAnwenden, 400);
+  });
 })();
 </script>
 </body>
