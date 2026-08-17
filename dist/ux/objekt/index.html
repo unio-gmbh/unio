@@ -535,6 +535,7 @@
         <span class="mono">Kaufpreis</span>
         <span class="mono" id="objStatus" style="display:none;margin-top:6px;color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:5px 10px;width:max-content;"></span>
         <b>€ 1.749.000</b>
+        <button id="rateZeile" style="display:none;margin:2px 0 4px;text-align:left;background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-size:12.5px;line-height:1.5;color:var(--fg2);text-decoration:underline;text-decoration-color:rgba(20,18,16,.25);text-underline-offset:3px;"></button>
         <p class="sub">Verfügbar ab 11.05.2026 · Doppelmakler: Boom Living GmbH &amp; Co KG</p>
         <button class="btn" id="besichtRail">Besichtigung buchen</button>
         <button class="btn btn-angebot" id="angebotOpen">Angebot legen</button>
@@ -1104,6 +1105,16 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     </div>
   </aside>
 </div>
+<div class="eksheet" id="ekRate" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <h3>Was kostet dich das im Monat?</h3>
+    <p class="esub" id="ekRateSub"></p>
+    <div class="docbox" id="ekRateBox"></div>
+    <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=profil" id="ekRateCta">Kaufkraft anpassen</a>
+  </aside>
+</div>
 <div class="eksheet" id="ekDoc" aria-hidden="true">
   <div class="back"></div>
   <aside>
@@ -1227,6 +1238,38 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
       docEl.classList.add("open"); docEl.setAttribute("aria-hidden", "false");
     });
   });
+
+  /* Kaufkraft: personalisierte Rate direkt an der Preis-Karte (BuyAbility-Prinzip) */
+  var kk = (lese("unio_ek_profil", {}) || {}).kaufkraft || null;
+  function rateFuer(preis){ if (!kk) return null; var rest = preis * 1.102 - kk.ek; return rest <= 0 ? 0 : Math.round(rest * 0.00466 / 10) * 10; }
+  (function(){
+    var z = document.getElementById("rateZeile"); if (!z) return;
+    z.style.display = "block";
+    if (kk) {
+      var r = rateFuer(o.preisNum), passt = r <= kk.rate;
+      z.innerHTML = "Deine Rate: ≈ <b style='color:var(--ink)'>" + eur(r) + "/Monat</b> · " +
+        (passt ? "<span style='color:#2E7D46'>in deinem Rahmen" + (kk.status === "verifiziert" ? " · verifiziert ✓" : "") + "</span>" : "<span style='color:#B84A00'>über deinem Rahmen</span>") + " · Rechenweg";
+    } else {
+      z.textContent = "Was kostet dich das im Monat? Kaufkraft hinterlegen →";
+    }
+    var sheet = document.getElementById("ekRate");
+    sheet.querySelector(".back").addEventListener("click", function(){ sheet.classList.remove("open"); sheet.setAttribute("aria-hidden", "true"); });
+    z.addEventListener("click", function(){
+      if (!kk) { obenNav("/ux/backend?rolle=endkunde&tab=profil"); return; }
+      var nk = Math.round(o.preisNum * 0.102), kredit = Math.max(0, o.preisNum * 1.102 - kk.ek), r = rateFuer(o.preisNum);
+      document.getElementById("ekRateSub").textContent = o.t + " · transparente Demo-Rechnung, keine Finanzberatung.";
+      document.getElementById("ekRateBox").innerHTML = [
+        ["Kaufpreis", eur(o.preisNum)],
+        ["+ Nebenkosten (~10,2 %: GrESt, Grundbuch, Vertrag, Provision)", eur(nk)],
+        ["- Dein Eigenkapital", eur(kk.ek)],
+        ["= Kreditbedarf", eur(kredit)],
+        ["Rate (3,8 % eff., 30 Jahre)", "≈ " + eur(r) + "/Monat"],
+        ["Dein Rahmen (Wunschrate)", eur(kk.rate) + "/Monat"]
+      ].map(function(x){ return '<div class="zl"><span>' + x[0] + '</span><b>' + x[1] + '</b></div>'; }).join("") +
+      '<p class="mono" style="margin-top:12px;color:var(--fg2);">' + (r <= kk.rate ? "PASST IN DEINEN RAHMEN ✓" : "ÜBER DEINEM RAHMEN · DER CONCIERGE PRÜFT GERN ALTERNATIVEN") + '</p>';
+      sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false");
+    });
+  })();
 
   /* Zustandsabhaengige CTA-Leiste (Tabelle 5 der Prozesslogik) */
   function neuBinden(id, label, fn){

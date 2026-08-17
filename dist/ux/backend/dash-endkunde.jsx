@@ -25,6 +25,10 @@ function EkStart({ ek, tue, oeffneSheet, go, oeffneKaufreise, oeffneStory }) {
     { id: "beheim2", profil: "Dachgeschoss Wien West", neu: "Vor 3 Tagen" },
   ];
   const kk = ek.profil.kaufkraft;
+  const matchId = kk
+    ? (["albrecht-dg", "facade", "maxing", "schoenbrunn", "albrecht"].find((id) => ekLeistbar(ekObj(id).preisNum, kk) && !["eigentum", "abgelehnt"].includes((ek.bez[id] || {}).zustand)) || "albrecht")
+    : "albrecht-dg";
+  const matchObj = ekObj(matchId);
   return (
     <div>
       <span className="ek-mono" style={{ color: "var(--signal-deep)" }}>Willkommen zurück</span>
@@ -67,13 +71,13 @@ function EkStart({ ek, tue, oeffneSheet, go, oeffneKaufreise, oeffneStory }) {
       <div className="ek-secthead">
         <div><span className="ek-mono" style={{ color: "var(--signal-deep)" }}>Kuratiert, einmal pro Woche</span><h2>Dein Match der Woche</h2></div>
       </div>
-      <a className="ek-match" href={ekObjektUrl("albrecht-dg")}>
-        <img src={ekObj("albrecht-dg").img} alt="" />
+      <a className="ek-match" href={ekObjektUrl(matchId)}>
+        <img src={matchObj.img} alt="" />
         <span className="sc" aria-hidden="true"></span>
         <span className="mk">Match der Woche</span>
         <span className="cap">
-          <b>{ekObj("albrecht-dg").t}</b>
-          <span className="why">Passt zu „Dachgeschoss Wien West": Terrasse, 4 Zimmer, unter Budget{kk ? ", Rate ≈ " + ekEur(ekRate(ekObj("albrecht-dg").preisNum, kk)) + "/Monat" : ""}</span>
+          <b>{matchObj.t}</b>
+          <span className="why">Passt zu deiner Suche: {matchObj.zi} Zimmer, {matchObj.ort.split(" · ")[1]}{kk ? " · Rate ≈ " + ekEur(ekRate(matchObj.preisNum, kk)) + "/Monat, in deinem Rahmen" : " · unter Budget"}</span>
         </span>
       </a>
 
@@ -212,6 +216,7 @@ function EkAktivitaet({ ek, tue, oeffneSheet, oeffneKaufreise, chatId, setChatId
     if (ev.typ === "termin") return oeffneSheet({ typ: "termindetail", objId: ev.objId });
     if (ev.typ === "projekt") return oeffneSheet({ typ: "story" });
     if (ev.typ === "graetzl") return oeffneSheet({ typ: "preisarchiv", bezirk: ekObj(ev.objId).bezirk });
+    if (ev.typ === "kaufkraft") return oeffneSheet({ typ: "kaufkraft" });
     if (ev.typ === "phase" || ev.typ === "anbot") return oeffneKaufreise(ev.objId);
     window.location.href = ekObjektUrl(ev.objId);
   };
@@ -381,6 +386,13 @@ function EkKaufreise({ ek, tue, objId, oeffneSheet, zurueck, setChatId, go }) {
         <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0 0", fontSize: 14.5 }}>
           <b style={{ fontWeight: 500 }}>Gesamt inkl. Kaufpreis</b><b style={{ fontWeight: 500 }}>{ekEur(kaufpreis * 1.102)}</b>
         </div>
+        {ek.profil.kaufkraft && (
+          <p style={{ margin: "9px 0 0", fontSize: 12.5, color: ekLeistbar(kaufpreis, ek.profil.kaufkraft) ? "#2E7D46" : "#B84A00" }}>
+            {ekLeistbar(kaufpreis, ek.profil.kaufkraft)
+              ? "✓ In deinem Rahmen: Rate ≈ " + ekEur(ekRate(kaufpreis, ek.profil.kaufkraft)) + "/Monat" + (ek.profil.kaufkraft.status === "verifiziert" ? " · Finanzierung verifiziert" : "")
+              : "Über deinem Rahmen (Rate ≈ " + ekEur(ekRate(kaufpreis, ek.profil.kaufkraft)) + "/Monat). Der Concierge prüft gern Alternativen."}
+          </p>
+        )}
       </div>
 
       <div className="ek-card" style={{ marginTop: 14 }}>
@@ -626,7 +638,8 @@ function EndkundePortal({ role, onRole }) {
       const alt = d.bez[objId] || {};
       d.bez[objId] = { ...alt, zustand: "anbot_aktiv", anbot: { betrag, frist: new Date(Date.now() + 10 * 86400000).toISOString(), gegen: null, verlauf: [...(alt.anbot ? alt.anbot.verlauf : []), { wer: "du", betrag, zeit: "Jetzt" }] } };
       ekNeuesEvent(d, "anbot", objId, "Anbot übermittelt", ekObj(objId).t + " · " + ekEur(betrag) + " · 10 Tage bindend");
-      ekChatNachricht(d, objId, false, "Ihr Anbot über " + ekEur(betrag) + " ist eingegangen. Ich lege es dem Verkäufer heute noch vor.");
+      const verif = d.profil.kaufkraft && d.profil.kaufkraft.status === "verifiziert";
+      ekChatNachricht(d, objId, false, "Ihr Anbot über " + ekEur(betrag) + " ist eingegangen" + (verif ? ", inklusive Ihres verifizierten Finanzierungs-Badges. Das erhöht die Annahme-Wahrscheinlichkeit deutlich" : "") + ". Ich lege es dem Verkäufer heute noch vor.");
     });
     schliesse(); zeigToast("Anbot übermittelt · 10 Tage bindend");
   };
@@ -634,9 +647,9 @@ function EndkundePortal({ role, onRole }) {
   const sheetInhalt = () => {
     if (!sheet) return null;
     const s = sheet;
-    if (s.typ === "quiz") return <EkQuizSheet profil={s.profilId} onFertig={quizFertig} onSkip={() => { tue((d) => { d.profil.onboarding = true; }); schliesse(); }} />;
+    if (s.typ === "quiz") return <EkQuizSheet profil={s.profilId} kaufkraft={ek.profil.kaufkraft} onFertig={quizFertig} onSkip={() => { tue((d) => { d.profil.onboarding = true; }); schliesse(); }} />;
     if (s.typ === "kaufkraft") return <EkKaufkraftSheet ek={ek}
-      onSpeichern={(kk) => { tue((d) => { d.profil.kaufkraft = kk; }); schliesse(); zeigToast("Kaufkraft gespeichert"); }}
+      onSpeichern={(kk) => { tue((d) => { d.profil.kaufkraft = kk; const n = Object.values(window.EK_KATALOG).filter((o) => ekLeistbar(o.preisNum, kk)).length; ekNeuesEvent(d, "kaufkraft", "maxing", "Kaufkraft aktualisiert: bis " + ekEur(kk.budget), n + " Objekte in deinem Feed sind damit leistbar"); }); schliesse(); zeigToast("Kaufkraft gespeichert · Feed sortiert sich neu"); }}
       onPruefen={(kk) => { tue((d) => { d.profil.kaufkraft = kk; ekChatNachricht(d, "concierge", true, "Ich möchte meine Finanzierung prüfen lassen. Budget laut Selbstangabe: " + ekEur(kk.budget) + "."); ekChatNachricht(d, "concierge", false, "Gern! Ich habe Ihre Daten an unseren Finanzierungspartner übergeben. Sie hören binnen 24 h von uns, die Indikation liegt aktuell bei 3,4 % effektiv."); }); schliesse(); setChatId("concierge"); }} />;
     if (s.typ === "anbot") return <EkAnbotSheet objId={s.objId} vorschlag={s.vorschlag} ek={ek} onSenden={(b) => anbotSenden(s.objId, b)} />;
     if (s.typ === "reaktion") return <EkReaktionSheet objId={s.objId} ek={ek}
@@ -667,7 +680,7 @@ function EndkundePortal({ role, onRole }) {
         </div>
       </React.Fragment>);
     if (s.typ === "dokument") return <EkDokumentSheet name={s.name} objId={s.objId} unter={s.unter} />;
-    if (s.typ === "preisarchiv") return <EkPreisarchivSheet bezirk={s.bezirk} />;
+    if (s.typ === "preisarchiv") return <EkPreisarchivSheet bezirk={s.bezirk} kk={ek.profil.kaufkraft} />;
     if (s.typ === "vergleich") return <EkVergleichSheet ids={s.ids} ek={ek} />;
     if (s.typ === "partner") return (
       <React.Fragment>

@@ -478,6 +478,21 @@ function EkReaktionSheet({ objId, ek, onAnnehmen, onNeuesAnbot, onAblehnen }) {
     <React.Fragment>
       <h3>Gegenangebot: {ekEur(b.anbot.gegen)}</h3>
       <p className="sub">{o.t} · Dein Anbot war {ekEur(b.anbot.betrag)}. Das Gegenangebot ist noch <b>{tage} {tage === 1 ? "Tag" : "Tage"}</b> gültig (echte Bindungsfrist).</p>
+      {ek.profil.kaufkraft && (() => {
+        const kk = ek.profil.kaufkraft;
+        const rNeu = ekRate(b.anbot.gegen, kk), rAlt = ekRate(b.anbot.betrag, kk);
+        return (
+          <div className="ek-card" style={{ background: "#FFFFFF", padding: "12px 16px", marginBottom: 14 }}>
+            <span className="ek-mono" style={{ color: "var(--signal-deep)" }}>Was das für dich heißt</span>
+            <p style={{ margin: "5px 0 0", fontSize: 13.5, lineHeight: 1.55 }}>
+              Rate bei Annahme: <b>≈ {ekEur(rNeu)}/Monat</b> ({ekEur(rNeu - rAlt)} mehr als dein Anbot).{" "}
+              {rNeu <= kk.rate
+                ? <span style={{ color: "#2E7D46" }}>Bleibt in deinem Rahmen{kk.status === "verifiziert" ? ", verifiziert ✓" : ""}.</span>
+                : <span style={{ color: "#B84A00" }}>Liegt über deinem Rahmen von {ekEur(kk.rate)}/Monat.</span>}
+            </p>
+          </div>
+        );
+      })()}
       <div style={{ display: "grid", gap: 9 }}>
         <button className="ek-btn signal" style={{ padding: "15px 20px" }} onClick={onAnnehmen}>Annehmen · {ekEur(b.anbot.gegen)}</button>
         <button className="ek-btn ghost" style={{ padding: "15px 20px" }} onClick={onNeuesAnbot}>Neues Anbot legen (Vorschlag: {ekEur(Math.round((b.anbot.betrag + b.anbot.gegen) / 2 / 1000) * 1000)})</button>
@@ -527,10 +542,10 @@ function EkKaufkraftSheet({ ek, onSpeichern, onPruefen }) {
 }
 
 /* ---------- Onboarding- und Suchprofil-Quiz (5 Screens) ---------- */
-function EkQuizSheet({ profil, onFertig, onSkip }) {
+function EkQuizSheet({ profil, kaufkraft, onFertig, onSkip }) {
   const [schritt, setSchritt] = React.useState(0);
   const [bez, setBez] = React.useState(profil ? [] : ["1170", "1180"]);
-  const [budget, setBudget] = React.useState(1500000);
+  const [budget, setBudget] = React.useState(kaufkraft ? Math.min(4000000, Math.round(kaufkraft.budget / 50000) * 50000) : 1500000);
   const [zi, setZi] = React.useState("3 bis 4");
   const [typ, setTyp] = React.useState("eigennutzung");
   const [stil, setStil] = React.useState(null);
@@ -541,7 +556,7 @@ function EkQuizSheet({ profil, onFertig, onSkip }) {
       <div className="ek-quizopts">{BEZIRKE.map((b) => (
         <button key={b} className={bez.includes(b) ? "on" : ""} onClick={() => setBez(bez.includes(b) ? bez.filter((x) => x !== b) : [...bez, b])}>{b}</button>
       ))}</div>) },
-    { t: "Dein Budget?", sub: "Grob reicht, du kannst es jederzeit ändern.", body: (
+    { t: "Dein Budget?", sub: kaufkraft ? "Vorbefüllt aus deiner Kaufkraft, du kannst frei anpassen." : "Grob reicht, du kannst es jederzeit ändern.", body: (
       <div>
         <b style={{ font: "500 30px var(--font-display)", letterSpacing: "-.02em", display: "block", textAlign: "center", marginBottom: 12 }}>{ekEur(budget)}</b>
         <input type="range" min="300000" max="4000000" step="50000" value={budget} onChange={(e) => setBudget(parseInt(e.target.value, 10))} style={{ width: "100%", accentColor: "var(--signal)" }} />
@@ -601,7 +616,7 @@ function EkDokumentSheet({ name, objId, unter }) {
 }
 
 /* ---------- Grätzl-Preisarchiv ---------- */
-function EkPreisarchivSheet({ bezirk }) {
+function EkPreisarchivSheet({ bezirk, kk }) {
   const DATEN = {
     "1170": { schnitt: "€ 6.900", zeilen: [["Rötzergasse", "102 m²", "€ 890.000", "07/2026"], ["Hernalser Hauptstraße", "76 m²", "€ 512.000", "06/2026"], ["Beheimgasse", "134 m²", "€ 1.180.000", "05/2026"], ["Kalvarienberggasse", "88 m²", "€ 604.000", "04/2026"], ["Wattgasse", "64 m²", "€ 398.000", "03/2026"]] },
     "std":  { schnitt: "€ 7.400", zeilen: [["Musterg. (anonymisiert)", "95 m²", "€ 720.000", "07/2026"], ["Musterg. (anonymisiert)", "81 m²", "€ 615.000", "06/2026"], ["Musterg. (anonymisiert)", "120 m²", "€ 990.000", "05/2026"]] },
@@ -610,7 +625,7 @@ function EkPreisarchivSheet({ bezirk }) {
   return (
     <React.Fragment>
       <h3>Verkauft im Grätzl: {bezirk || "Wien"}</h3>
-      <p className="sub">Echte finale Kaufpreise aus Grundbuchdaten (Demo, Quelle IMMOunited). Durchschnitt: <b>{d.schnitt}/m²</b>, letzte 12 Monate.</p>
+      <p className="sub">Echte finale Kaufpreise aus Grundbuchdaten (Demo, Quelle IMMOunited). Durchschnitt: <b>{d.schnitt}/m²</b>, letzte 12 Monate.{kk ? <span> Dein Budget von {ekEur(kk.budget)} entspricht hier etwa <b>{Math.round(kk.budget / parseInt(d.schnitt.replace(/\D/g, ""), 10))} m²</b>.</span> : null}</p>
       <div className="ek-card" style={{ background: "#FFFFFF", padding: "6px 18px" }}>
         {d.zeilen.map(([s, qm, p, dat]) => (
           <div key={s + dat} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "12px 0", borderBottom: "1px solid var(--hairline-dark)", fontSize: 13.5 }}>
