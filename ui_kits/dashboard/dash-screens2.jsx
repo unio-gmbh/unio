@@ -86,7 +86,7 @@ function KalenderMonatUNUSED() {
         </WFilterBar>
       </WReveal>
       <div style={{ background: "#FFFFFF", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", overflow: "hidden" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
           {wd.map((w, i) => <div key={w} className="u-label" style={{ fontSize: 8.5, color: "rgba(20,18,16,0.4)", padding: "16px 16px 12px", textAlign: "right", background: i >= 5 ? "rgba(239,234,226,0.4)" : "transparent" }}>{w}</div>)}
           {cells.map((d, i) => {
             const col = i % 7;
@@ -162,7 +162,7 @@ function Kalender() {
         <WReveal>
         <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
           {/* Tageskopf */}
-          <div style={{ display: "grid", gridTemplateColumns: "56px repeat(7, 1fr)", borderBottom: "1px solid var(--hairline-dark)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))", borderBottom: "1px solid var(--hairline-dark)" }}>
             <span></span>
             {week.map((d, i) => (
               <div key={d} style={{ padding: "14px 12px", textAlign: "center", background: i >= 5 ? "rgba(239,234,226,0.4)" : "transparent" }}>
@@ -172,7 +172,7 @@ function Kalender() {
             ))}
           </div>
           {/* Zeitraster */}
-          <div style={{ position: "relative", display: "grid", gridTemplateColumns: "56px repeat(7, 1fr)", height: (H1 - H0) * PXH }}>
+          <div style={{ position: "relative", display: "grid", gridTemplateColumns: "56px repeat(7, minmax(0, 1fr))", height: (H1 - H0) * PXH }}>
             <div style={{ position: "relative" }}>
               {Array.from({ length: H1 - H0 }, (_, i) => (
                 <span key={i} className="u-label" style={{ position: "absolute", top: i * PXH - 5, right: 10, fontSize: 7.5, color: "rgba(20,18,16,0.35)" }}>{String(H0 + i).padStart(2, "0")}:00</span>
@@ -199,7 +199,7 @@ function Kalender() {
       ) : (
         <WReveal>
         <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
             {wd.map((w, i) => <div key={w} className="u-label" style={{ fontSize: 8.5, color: "rgba(20,18,16,0.4)", padding: "16px 16px 12px", textAlign: "right", background: i >= 5 ? "rgba(239,234,226,0.4)" : "transparent" }}>{w}</div>)}
             {cells.map((d, i) => {
               const col = i % 7;
@@ -287,7 +287,7 @@ function AnlageWizard({ onNav }) {
           <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>Art der Immobilie</div>
           <h1 style={{ margin: "14px 0 0", font: "500 clamp(30px, 3vw, 46px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Wähle den passenden Einstieg.</h1>
           <p style={{ margin: "16px 0 40px", font: "400 16px var(--font-display)", color: "var(--text-muted)" }}>Die Objektart bestimmt Felder, KI-Analyse und Exposé-Vorlage.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16 }}>
             {ARTEN.map(([label, ic, desc], i) => {
               const on = art === i;
               return (

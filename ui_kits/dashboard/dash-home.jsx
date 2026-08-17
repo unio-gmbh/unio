@@ -39,7 +39,7 @@ const OBJ = [
   { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", loc: "1170 Wien", score: 91, price: "€ 7 480/m²" },
 ];
 
-function DashHome({ onNav }) {
+function DashHome({ onNav, kopfAus }) {
   const [custom, setCustom] = React.useState(false);
   const [classic, setClassic] = React.useState(() => { try { return localStorage.getItem("unio-dash-style") === "classic"; } catch (e) { return false; } });
   React.useEffect(() => { document.body.classList.toggle("dash-classic", classic); try { localStorage.setItem("unio-dash-style", classic ? "classic" : "light"); } catch (e) {} window.dispatchEvent(new CustomEvent("unio-style", { detail: classic })); }, [classic]);
@@ -165,7 +165,7 @@ function DashHome({ onNav }) {
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto", paddingBottom: custom ? 80 : 0 }}>
       {/* Utility-Leiste (Datum · Anpassen · Live) */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginTop: 4 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginTop: 4, flexWrap: "wrap" }}>
         <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>Donnerstag, 16. Juli 2026</span>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <button aria-label="Anpassen" onClick={() => setCustom((v) => !v)} style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "none", cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: custom ? "var(--ink)" : "transparent", boxShadow: custom ? "none" : "inset 0 0 0 1px var(--hairline-dark)", font: "500 12px var(--font-display)", color: custom ? "var(--paper)" : "var(--text-muted)" }}><window.Icon name="sliders" size={14} stroke={custom ? "var(--paper)" : "var(--text-muted)"} />{custom ? "Fertig" : "Anpassen"}</button>
@@ -174,16 +174,18 @@ function DashHome({ onNav }) {
       </div>
 
       {/* ZONE 1 · Kopf: Textblock, darunter das Stat-Band (eine Achse, eine Baseline) */}
-      <DRvL style={{ marginTop: 72 }}>
-        <h1 style={{ margin: 0, font: "600 64px/1.05 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>Guten Morgen, Daniel.</h1>
-        <p style={{ margin: "22px 0 0", font: "400 17px/1.55 var(--font-display)", color: "rgba(20,18,16,.55)", maxWidth: 480 }}>Seit gestern: 2 neue Leads, die Nachfrage zur Villa Ecoluxe zieht an. Dein stärkster Hebel heute: Antwortzeit.</p>
-      </DRvL>
-      <DRv><StatBand onNav={onNav} /></DRv>
+      {!kopfAus && (
+        <DRvL style={{ marginTop: 72 }}>
+          <h1 style={{ margin: 0, font: "600 clamp(38px, 4.6vw, 64px)/1.05 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>Guten Morgen, Daniel.</h1>
+          <p style={{ margin: "22px 0 0", font: "400 17px/1.55 var(--font-display)", color: "rgba(20,18,16,.55)", maxWidth: 480 }}>Seit gestern: 2 neue Leads, die Nachfrage zur Villa Ecoluxe zieht an. Dein stärkster Hebel heute: Antwortzeit.</p>
+        </DRvL>
+      )}
+      <DRv style={kopfAus ? { marginTop: 8 } : null}><StatBand onNav={onNav} /></DRv>
       {/* Erstkontakt-Quote — 1:1 das Statistik-Modul, direkt unter den Zahlen */}
       <DRv style={{ marginTop: 56 }}><ErstkontaktModul /></DRv>
 
       {/* ZONE 2 · Drei-Spalten-Bento (Reihe A+B verzahnt) */}
-      <div style={{ marginTop: 72, display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gridAutoRows: 8, columnGap: 24, rowGap: 24, gridAutoFlow: "row dense", alignItems: "start" }}>
+      <div className="dash-bento" style={{ marginTop: kopfAus ? 40 : 72, display: "grid", gridTemplateColumns: "repeat(12, minmax(0, 1fr))", gridAutoRows: 8, columnGap: 24, rowGap: 24, gridAutoFlow: "row dense", alignItems: "start" }}>
         {/* Links, 4 Spalten — der Tages-Anker in natürlicher Höhe */}
         <Mason span={4}><TagesTimeline onNav={onNav} /></Mason>
         {order.map((id, i) => {
@@ -264,14 +266,14 @@ function DashHome({ onNav }) {
       )}
 
       {/* ZONE 3 · Reihe C: Performance + Watchlist */}
-      <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "7fr 5fr", gap: 24, alignItems: "start" }}>
+      <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "minmax(0, 7fr) minmax(0, 5fr)", gap: 24, alignItems: "start" }}>
         <DRv><DCard style={{ height: "100%" }}>
           <CardHead title="Reichweite & Anfragen" right={<DChip>30 Tage</DChip>} />
           <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 32, alignItems: "center" }}>
             <BigNum value={48200} sub="Impressionen · 30 Tage" />
             <Bars data={[8, 12, 9, 15, 13, 18, 16, 22, 19, 24, 21, 27]} height={96} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--hairline-dark)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 0, marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--hairline-dark)" }}>
             {[["Ø Score", "87"], ["Ø Antwortzeit", "< 2 h"], ["Qualifiziert", "41 %"]].map(([k, v], i) => (
               <div key={k} style={{ paddingLeft: i === 0 ? 0 : 20, boxShadow: i === 0 ? "none" : "inset 1px 0 0 var(--hairline-dark)" }}>
                 <div style={{ font: "17px var(--font-mono)", color: "var(--ink)" }}>{v}</div>
@@ -290,7 +292,7 @@ function DashHome({ onNav }) {
           <button onClick={() => onNav && onNav("objekte")} style={{ background: "none", border: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "var(--signal-deep)" }}>Alle ansehen →</button>
         </div>
       </DRv>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24 }}>
         {OBJ.map((o, i) => (
           <DRv key={o.t} delay={i * 70}>
             <div onClick={() => onNav && onNav("objekte")} style={{ cursor: "pointer" }}>
@@ -345,9 +347,9 @@ function NakedKpi({ k, first, onNav }) {
 function StatBand({ onNav }) {
   const { useCountUp, useInView } = window;
   const [ref, run] = useInView(0.4);
-  const divider = <span aria-hidden="true" style={{ width: 1, height: 44, alignSelf: "baseline", background: "rgba(20,18,16,.14)", fontSize: 0 }}></span>;
+  const divider = <span className="dash-kpi-div" aria-hidden="true" style={{ width: 1, height: 44, alignSelf: "baseline", background: "rgba(20,18,16,.14)", fontSize: 0 }}></span>;
   return (
-    <div ref={ref} style={{ display: "flex", alignItems: "baseline", columnGap: "clamp(20px, 2.4vw, 44px)", rowGap: 40, marginTop: 64, flexWrap: "nowrap" }}>
+    <div ref={ref} className="dash-statband" style={{ display: "flex", alignItems: "baseline", columnGap: "clamp(20px, 2.4vw, 44px)", rowGap: 28, marginTop: 64, flexWrap: "wrap" }}>
       {/* Vier KPIs: Neue Leads · Aktive Leads · In Vermarktung · Offene Angebote */}
       {KPI.map((k, i) => <React.Fragment key={k.sub}>{i > 0 && divider}{k.kind === "provision" ? <ProvisionBandKpi k={k} onNav={onNav} /> : <BandKpi k={k} onNav={onNav} />}</React.Fragment>)}
     </div>
@@ -362,7 +364,7 @@ function BandKpi({ k, onNav }) {
   const dPos = k.deltaN > 0;
   return (
     <div ref={ref} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={() => onNav && onNav("stats")} style={{ cursor: "pointer" }}>
-      <div style={{ font: "600 46px/1 var(--font-display)", letterSpacing: "-0.01em", color: hov ? "var(--signal-deep)" : "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", transition: "color 300ms var(--ease-unio)" }}>
+      <div style={{ font: "600 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.01em", color: hov ? "var(--signal-deep)" : "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", transition: "color 300ms var(--ease-unio)" }}>
         {k.prefix && <span style={{ fontSize: 24, color: "rgba(20,18,16,.4)", marginRight: 4, fontWeight: 500 }}>{k.prefix}</span>}{val}{k.unit && <span style={{ fontSize: 20, color: "rgba(20,18,16,.4)", marginLeft: 6, fontWeight: 500 }}>{k.unit}</span>}
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12, whiteSpace: "nowrap" }}>
@@ -398,7 +400,7 @@ function ProvisionBandKpi({ k, onNav }) {
   return (
     <div ref={ref} style={{ position: "relative" }} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={() => onNav && onNav("stats")}>
       <div style={{ cursor: "pointer" }}>
-        <div style={{ font: "600 46px/1 var(--font-display)", letterSpacing: "-0.01em", color: hov ? "var(--signal-deep)" : "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", transition: "color 300ms var(--ease-unio)", display: "inline-flex", alignItems: "flex-start" }}>
+        <div style={{ font: "600 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.01em", color: hov ? "var(--signal-deep)" : "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", transition: "color 300ms var(--ease-unio)", display: "inline-flex", alignItems: "flex-start" }}>
           <span><span style={{ fontSize: 24, color: "rgba(20,18,16,.4)", marginRight: 4, fontWeight: 500 }}>€</span>{val}</span>
           <sup style={{ font: "600 10px var(--font-mono)", letterSpacing: "0.1em", color: "var(--signal-deep)", background: "var(--signal-soft)", borderRadius: 999, padding: "4px 9px", marginLeft: 8, top: 2, position: "relative", whiteSpace: "nowrap" }}>TOP {k.percentile}&nbsp;%</sup>
         </div>
@@ -492,7 +494,7 @@ function TagesTimeline({ onNav }) {
     <C style={{ height: "100%", display: "flex", flexDirection: "column", maxHeight: 560, minHeight: 0 }}>
       <CardHead title="Dein Tag" right={<ArrowCircle onClick={() => onNav && onNav("kalender")} />} />
       {/* Wochenstrip */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 26 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 4, marginBottom: 26 }}>
         {WOCHE.map(([d, n, today]) => (
           <div key={d} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "6px 0", cursor: "pointer" }}>
             <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{d}</span>
@@ -555,7 +557,7 @@ function KalenderPreview({ onNav }) {
         ))}
       </div>
       {/* Punktraster — echte Wochenspalten (Juli 2026: 1. = Mittwoch), Heute mit Ring */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 7, marginTop: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 7, marginTop: 24 }}>
         {["M", "D", "M", "D", "F", "S", "S"].map((d, i) => <span key={i} className="u-label" style={{ fontSize: 7, color: "rgba(247,245,241,0.4)", textAlign: "center" }}>{d}</span>)}
         {days.map((d, i) => {
           const valid = d >= 1 && d <= 31;
@@ -586,7 +588,7 @@ function Arbeitsbereich({ onNav }) {
       <div style={{ display: "flex", alignItems: "baseline", margin: "40px 4px 20px" }}>
         <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Mein Arbeitsbereich</h2>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 20 }}>
         {ARBEIT.map(([ic, title, n, rows], k) => (
           <Rv key={title} delay={k * 70}>
             <C style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -723,7 +725,7 @@ function HomeBelowFold({ onNav }) {
               ))}
             </C>
             <C>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 16 }}>
                 {[["1 : 9", "Matching-Quote"], ["< 2 h", "Ø Antwortzeit"]].map(([v, k]) => (
                   <div key={k}>
                     <div style={{ font: "500 24px var(--font-mono)", color: "var(--ink)" }}>{v}</div>
@@ -946,7 +948,7 @@ function StreakWidget() {
         <span style={{ font: "500 40px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>9</span>
         <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Tage in Folge</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, marginTop: 18, maxWidth: 150 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 6, marginTop: 18, maxWidth: 150 }}>
         {days.map((d, i) => (
           <span key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: d === 1 ? "var(--signal)" : d === 0 ? "var(--paper-2)" : "transparent", boxShadow: d === 2 ? "0 0 0 2px var(--signal)" : "none", opacity: d === null ? 0 : 1, transform: run ? "scale(1)" : "scale(0)", transition: `transform 300ms var(--ease-unio) ${i * 20}ms` }}></span>
         ))}
@@ -985,7 +987,7 @@ function DashStats({ onNav }) {
       </div>
       {/* nackte KPI-Zeile (§7: Sekundär-KPIs als nackte Gruppe) */}
       <DRv>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", marginTop: 48 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", marginTop: 48 }}>
           {STAT_KPI.map((k, i) => <NakedKpi key={k.sub} k={k} first={i === 0} onNav={onNav} />)}
         </div>
       </DRv>
@@ -993,4 +995,32 @@ function DashStats({ onNav }) {
     </div>
   );
 }
-Object.assign(window, { DashHome, DashStats, PipeBar });
+/* Eigenstaendige Original-Kacheln fuer die neue Heute-Startseite */
+function PipelineCard() {
+  return (
+    <DCard style={{ height: "100%" }}>
+      <CardHead title="Vom Lead zum Abschluss" right={<DChip>Q3 2026</DChip>} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 6 }}>
+        {PIPE.map(([n, v, pct], i) => (
+          <div key={n} style={{ display: "grid", gridTemplateColumns: "minmax(0, 110px) minmax(0, 1fr) 46px", gap: 14, alignItems: "center" }}>
+            <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 9.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{n}</span>
+            <PipeBar pct={pct} i={i} />
+            <span style={{ font: "14px var(--font-mono)", color: "var(--ink)", textAlign: "right" }}>{v}</span>
+          </div>
+        ))}
+      </div>
+    </DCard>
+  );
+}
+function ReichweiteCard() {
+  return (
+    <DCard style={{ height: "100%" }}>
+      <CardHead title="Reichweite & Anfragen" right={<DChip>30 Tage</DChip>} />
+      <div className="mk-reich" style={{ display: "grid", gridTemplateColumns: "auto minmax(0, 1fr)", gap: 28, alignItems: "center" }}>
+        <BigNum value={48200} sub="Impressionen · 30 Tage" />
+        <Bars data={[8, 12, 9, 15, 13, 18, 16, 22, 19, 24, 21, 27]} height={96} />
+      </div>
+    </DCard>
+  );
+}
+Object.assign(window, { DashHome, DashStats, PipeBar, TagesTimeline, ErstkontaktModul, PipelineCard, ReichweiteCard, HomeBelowFold, Watchlist });

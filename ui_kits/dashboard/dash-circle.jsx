@@ -34,7 +34,44 @@ function PulsItem({ e, compact }) {
   );
 }
 
-function DashCircle({ onNav }) {
+/* Lead-Pool (Pond): ungeclaimte Community-Leads, Claim + Auto-Rueckfall-Regel */
+const POND = [
+  { id: "pond1", name: "Ehepaar Novak", was: "Käufer · 1190, bis € 1,2 Mio", quelle: "unio.at · vor 22 Min" },
+  { id: "pond2", name: "S. Okafor", was: "Käufer · Anlage, 2 bis 3 Zimmer", quelle: "Kampagne Herbst · vor 1 h" },
+  { id: "pond3", name: "Fam. Wieser", was: "Eigentümer · Reihenhaus 1220", quelle: "Bewertungs-Widget · vor 3 h" },
+];
+function CirclePond({ tueMk, geheZu }) {
+  const [geclaimt, setGeclaimt] = React.useState([]);
+  const offen = POND.filter((x) => !geclaimt.includes(x.id));
+  return (
+    <div style={{ background: "var(--surface-raised)", borderRadius: 18, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "20px 22px", marginTop: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+        <b style={{ font: "500 17px var(--font-display)", color: "var(--ink)" }}>Lead-Pool · {offen.length} offen</b>
+        <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>CLAIM = 4 H ERSTKONTAKT-REGEL · SONST AUTO-RÜCKFALL IN DEN POOL</span>
+      </div>
+      {offen.length === 0 && <p style={{ margin: 0, font: "400 13.5px var(--font-display)", color: "var(--text-muted)" }}>Pool leer. Kein Lead stirbt heute.</p>}
+      {offen.map((x) => (
+        <div key={x.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <b style={{ font: "500 14px var(--font-display)", color: "var(--ink)", display: "block" }}>{x.name}</b>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{x.was} · {x.quelle}</span>
+          </div>
+          <button onClick={() => {
+            setGeclaimt([...geclaimt, x.id]);
+            if (tueMk) tueMk((d) => {
+              d.kontakte.unshift({ id: x.id, name: x.name, initials: x.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(), typ: x.was.startsWith("Eigentümer") ? "eigentuemer" : "kaeufer", phase: "Neu", tel: "", mail: "", seit: "Jetzt", letzter: "Noch kein Kontakt", kaufkraft: null, budget: null, sequenz: null, neuSeit: Date.now(), quelle: "CIRCLE-Pool · " + x.quelle, notiz: "" });
+            });
+            if (geheZu) geheZu({ art: "kontakt", id: x.id });
+          }} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "9px 16px", background: "var(--signal)", color: "#1A1305", font: "500 12.5px var(--font-display)", fontFamily: "inherit" }}>Claimen · 4 h Timer</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DashCircle({ onNav, geheZu, tueMk, ohnePond }) {
+  const [profilOffen, setProfilOffen] = React.useState(null);
+  const [alleAkt, setAlleAkt] = React.useState(false);
   const [voted, setVoted] = React.useState(false);
   const [ref, run] = window.useInView(0.3);
   const [sheet, setSheet] = React.useState(false);
@@ -45,7 +82,7 @@ function DashCircle({ onNav }) {
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
       {/* Kopfzone (v2.8-Maße) */}
       <CRvL style={{ marginTop: 72 }}>
-        <h1 style={{ margin: 0, font: "600 clamp(38px, 4.4vw, 64px)/1.05 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>CIRCLE<span style={{ color: "var(--signal)" }}>.</span></h1>
+        <h1 style={{ margin: 0, font: "600 clamp(34px, 4.4vw, 64px)/1.05 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>CIRCLE<span style={{ color: "var(--signal)" }}>.</span></h1>
         <p style={{ margin: "22px 0 0", font: "400 17px/1.55 var(--font-display)", color: "rgba(20,18,16,.55)", maxWidth: 520 }}>Was sich in der Community bewegt: Meilensteine, Deals, Votings und deine Saison Q3.</p>
       </CRvL>
       <CRv>
@@ -54,13 +91,14 @@ function DashCircle({ onNav }) {
             <React.Fragment key={l}>
               {i > 0 && <span style={{ width: 1, height: 44, background: "rgba(20,18,16,.14)", alignSelf: "center" }}></span>}
               <div>
-                <div style={{ font: "600 46px/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{v}{suf && <span style={{ fontSize: 20, color: "rgba(20,18,16,.4)", marginLeft: 6, fontWeight: 500 }}>{suf}</span>}</div>
+                <div style={{ font: "600 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{v}{suf && <span style={{ fontSize: 20, color: "rgba(20,18,16,.4)", marginLeft: 6, fontWeight: 500 }}>{suf}</span>}</div>
                 <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>{l}</div>
               </div>
             </React.Fragment>
           ))}
         </div>
       </CRv>
+      {!ohnePond && <CRv><CirclePond tueMk={tueMk} geheZu={geheZu} /></CRv>}
 
       {/* Bento 5/4/3 */}
       <div style={{ marginTop: 120, display: "grid", gridTemplateColumns: "5fr 4fr 3fr", gap: 24, alignItems: "start" }}>
@@ -76,7 +114,17 @@ function DashCircle({ onNav }) {
                 </div>
               ))}
               {loaded && PULS.map((e, i) => <PulsItem key={i} e={e} />)}
-              <button style={{ marginTop: "auto", paddingTop: 18, alignSelf: "flex-start", border: "none", background: "none", cursor: "pointer", font: "500 15px var(--font-display)", color: "var(--signal-deep)" }}>Alle Aktivitäten →</button>
+              <button onClick={() => setAlleAkt(!alleAkt)} style={{ marginTop: "auto", paddingTop: 18, alignSelf: "flex-start", border: "none", background: "none", cursor: "pointer", font: "500 15px var(--font-display)", fontFamily: "inherit", color: "var(--signal-deep)" }}>{alleAkt ? "Weniger anzeigen ←" : "Alle Aktivitäten →"}</button>
+              {alleAkt && (
+                <div style={{ marginTop: 12, borderTop: "1px solid var(--hairline-dark)", paddingTop: 10 }}>
+                  {[["L. Brandtner hat einen Deal abgeschlossen", "Penthouse Beheim · vor 2 h"], ["Voting beendet: Q4-Event in der Kärntnerstraße", "38 Stimmen · gestern"], ["Neues Mitglied: Petra Steindl (1090)", "vorgestern"], ["S. Leitner hat 2 Leads in den Pool gegeben", "vorgestern"]].map(([t, u]) => (
+                    <div key={t} style={{ padding: "8px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
+                      <b style={{ font: "500 13px var(--font-display)", color: "var(--ink)", display: "block" }}>{t}</b>
+                      <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>{u}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </CCard>
         </CRv>
@@ -176,9 +224,32 @@ function DashCircle({ onNav }) {
                 <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{m}</span>
               </div>
             ))}
-            <button style={{ marginTop: 16, border: "none", background: "none", cursor: "pointer", padding: 0, font: "500 15px var(--font-display)", color: "var(--signal-deep)" }}>Profil ansehen →</button>
+            <button onClick={() => setProfilOffen(true)} style={{ marginTop: 16, border: "none", background: "none", cursor: "pointer", padding: 0, font: "500 15px var(--font-display)", fontFamily: "inherit", color: "var(--signal-deep)" }}>Profil ansehen →</button>
           </CCard>
         </CRv>
+
+        <window.MkOver offen={!!profilOffen} onClose={() => setProfilOffen(null)}>
+          <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+            <img src="../../assets/team/portrait-02.jpg" alt="" style={{ width: 52, height: 52, borderRadius: 99, objectFit: "cover" }} />
+            <div>
+              <h3 style={{ font: "500 21px var(--font-display)", letterSpacing: "-.02em", margin: 0, color: "var(--ink)" }}>Lukas Brandtner</h3>
+              <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>CIRCLE-MITGLIED SEIT 2025 · FOKUS 1170 / 1180 / 1190</span>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 10, margin: "16px 0" }}>
+            {[["Deals 2026", "9"], ["Ø Antwortzeit", "1,4 h"], ["Gemeinsame Deals mit dir", "2"], ["Referrals an dich", "3"]].map(([l, v]) => (
+              <div key={l} style={{ background: "#fff", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px" }}>
+                <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{l.toUpperCase()}</span>
+                <b style={{ display: "block", font: "500 20px var(--font-display)", color: "var(--ink)", marginTop: 3 }}>{v}</b>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button onClick={() => geheZu && geheZu({ art: "kontakt", id: "valentina" })} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "10px 18px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Gemeinsamen Deal öffnen</button>
+            <button onClick={() => setProfilOffen(null)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "10px 18px", background: "#fff", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Lead weitergeben · 25 % Referral</button>
+          </div>
+          <p className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 14 }}>REFERRAL-SPLIT DEMO · 25 % DES UNIO-ANTEILS AUS VERMITTELTEN DEALS</p>
+        </window.MkOver>
       </div>
       {sheet && <IndexSheet onClose={() => setSheet(false)} member={member} onLeave={() => { setMember(false); setSheet(false); }} />}
     </div>
@@ -224,7 +295,7 @@ function SaisonRueckblick({ onNav }) {
         <p style={{ margin: "18px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(20,18,16,.55)", maxWidth: 480 }}>Der Rückblick erscheint am 30.09. — das hier ist dein Zwischenstand, ruhig zusammengefasst.</p>
       </CRvL>
       <CRv>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", marginTop: 64 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", marginTop: 64 }}>
           {[["24", "%", "Besichtigungsquote · Ziel 30 %"], ["84", "%", "Erstkontakt-Quote · Top 18 %"], ["3", null, "Deals diese Saison"]].map(([v, suf, l], i) => (
             <div key={l} style={{ padding: i === 0 ? "4px 28px 4px 0" : "4px 28px", boxShadow: i === 0 ? "none" : "inset 1px 0 0 var(--hairline-dark)" }}>
               <div style={{ font: "600 clamp(38px,4vw,54px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{v}{suf && <span style={{ fontSize: 22, color: "var(--signal)", marginLeft: 4 }}>{suf}</span>}</div>
@@ -246,7 +317,12 @@ function SaisonRueckblick({ onNav }) {
       </CRv>
       <CRv>
         <div style={{ display: "flex", justifyContent: "center", gap: 14, margin: "48px 0 80px" }}>
-          <button style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "12px 24px", background: "transparent", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 14px var(--font-display)", color: "var(--ink)" }}>Als Bild teilen</button>
+          <button onClick={() => {
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080"><rect width="1080" height="1080" fill="#141210"/><text x="80" y="180" font-family="Helvetica" font-size="34" letter-spacing="6" fill="#FFAA09">UNIO CIRCLE · SAISON 2026</text><text x="80" y="330" font-family="Helvetica" font-size="88" font-weight="600" fill="#F7F5F1">Daniel Hayden</text><text x="80" y="560" font-family="Helvetica" font-size="46" fill="#F7F5F1">23 Tage beste Serie</text><text x="80" y="640" font-family="Helvetica" font-size="46" fill="#F7F5F1">1 Mio. Euro begleitetes Volumen</text><text x="80" y="720" font-family="Helvetica" font-size="46" fill="#F7F5F1">Antwortzeit: Top 10 Prozent</text><text x="80" y="980" font-family="Helvetica" font-size="30" fill="#8A857D">unio.at · Raum. Technologie. Mensch.</text></svg>';
+            const a = document.createElement("a");
+            a.href = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+            a.download = "unio-circle-saison.svg"; a.click();
+          }} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "12px 24px", background: "transparent", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 14px var(--font-display)", fontFamily: "inherit", color: "var(--ink)" }}>Als Bild teilen</button>
         </div>
       </CRv>
     </div>
@@ -329,4 +405,4 @@ function CircleHomeWidget({ onNav }) {
   );
 }
 
-Object.assign(window, { DashCircle, CircleHomeWidget, SaisonRueckblick, ReferralCard });
+Object.assign(window, { DashCircle, CircleHomeWidget, SaisonRueckblick, ReferralCard, CirclePond });

@@ -296,7 +296,7 @@ function MiniKalender() {
         <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)" }}>Juli 2026</span>
         <button aria-label="Nächster Monat" style={{ border: "none", background: "none", cursor: "pointer", color: "var(--text-muted)" }}><LIc name="arrow" size={15} /></button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 4, marginTop: 14 }}>
         {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((d) => <span key={d} className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", textAlign: "center", padding: "6px 0" }}>{d}</span>)}
         {weeks.flat().map((d, i) => {
           const off = (i < 7 && d > 20) || (i > 27 && d < 10);

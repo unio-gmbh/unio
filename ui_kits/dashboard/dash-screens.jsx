@@ -63,7 +63,7 @@ function ImmoUebersicht({ onNav }) {
         <span className="u-label" style={{ color: "var(--text-muted)", fontSize: 9 }}>{list.length} Einträge</span>
       </div>
       {view === "grid" ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(248px, 1fr))", gap: 24 }}>
           {list.map((o, i) => <SObjektCard key={o.id} o={o} delay={i * 60} onOpen={() => onNav && onNav(o.projekt ? "projekt" : "objekt")} />)}
         </div>
       ) : (
@@ -119,7 +119,7 @@ function Leads() {
         </SFilterBar>
       </SReveal>
       {/* Tages-Strip */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 10, marginBottom: 30 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(104px, 1fr))", gap: 10, marginBottom: 30 }}>
         {TAGE.map(([label, n], i) => {
           const on = i === sel;
           return (

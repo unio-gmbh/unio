@@ -2,11 +2,13 @@
 const { Button: DBtn } = window.UNIODesignSystem_b6216a;
 const { Icon: DIcon } = window;
 
+/* 8 Arbeitsbereiche statt 18 Punkte: kein Eintrag ohne vollwertigen Screen.
+   Portale und Medien leben in der Objekt-Akte, System-Punkte im Zahnrad (Einstellungen). */
 const NAV = [
-  ["", [["Dashboard", "dashboard", "dashboard"], ["Suggested Actions", "actions", "actions"], ["Leads", "leads", "leads"], ["Kalender", "kalender", "kalender"], ["CIRCLE", "circle", "kontakte"]]],
-  ["Verwaltung", [["Immobilien", "objekte", "objekte"], ["Entwürfe & Anlage", "anlage", "plus"], ["Kontakte", "kontakte", "kontakte"], ["Angebote", "angebote", "angebote"], ["Abgeber-Leads", "abgeber", "leads"]]],
-  ["Marketing", [["Meta Marketing", "meta", "spark"], ["Shop", "shop", "grid"], ["Portale", "portale", "portale"], ["Medien", "medien", "layers"]]],
-  ["System", [["Statistiken", "stats", "stats"], ["Integrationen", "integ", "layers"], ["Rollen & Rechte", "rollen", "benutzer"], ["Einstellungen", "settings", "settings"]]],
+  ["", [["Heute", "dashboard", "dashboard"], ["Kalender", "kalender", "kalender"]]],
+  ["Arbeit", [["Kontakte", "kontakte", "kontakte"], ["Objekte", "objekte", "objekte"], ["Deals", "deals", "angebote"]]],
+  ["Netzwerk", [["CIRCLE", "circle", "benutzer"], ["Marketing", "marketing", "spark"]]],
+  ["Steuerung", [["Ziele", "ziele", "stats"], ["Einstellungen", "settings", "settings"]]],
 ];
 
 /* Darstellung Klassisch/Leicht — global im Header, gilt auf allen Seiten */
@@ -25,13 +27,27 @@ function StylePillSwitch() {
 }
 
 function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
-  const [open, setOpen] = React.useState(true);
+  /* Sidebar: Spalte am Desktop, Overlay-Drawer auf schmalen Screens (reaktiv per matchMedia) */
+  const mq = typeof window !== "undefined" && window.matchMedia ? window.matchMedia("(max-width: 1000px)") : null;
+  const [mobil, setMobil] = React.useState(() => !!(mq && mq.matches));
+  const [open, setOpen] = React.useState(() => !(mq && mq.matches));
+  React.useEffect(() => {
+    if (!mq) return;
+    const f = (e) => { const m = e.matches; setMobil(m); setOpen(!m); };
+    mq.addEventListener ? mq.addEventListener("change", f) : mq.addListener(f);
+    return () => { mq.removeEventListener ? mq.removeEventListener("change", f) : mq.removeListener(f); };
+  }, []);
+  const navUndZu = (id) => { if (onNav) onNav(id); if (mobil) setOpen(false); };
   const navItems = nav || NAV;
   const u = user || { initials: "DH", name: "Daniel Hayden", mail: "daniel@unio.at" };
   const c = cta || { label: "Immobilie anlegen", glyph: "+", onClick: () => onNav && onNav("objekte") };
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F4F2EE", fontFamily: "var(--font-display)" }}>
-      <aside style={{ width: open ? 250 : 0, flex: "none", background: "#FBFAF7", overflow: "hidden", transition: "width .5s var(--ease-unio)", position: "sticky", top: 0, height: "100vh", display: "flex", flexDirection: "column", boxShadow: "1px 0 0 var(--hairline-dark)" }}>
+    <div className="dash-shell" style={{ display: "flex", minHeight: "100vh", background: "#F4F2EE", fontFamily: "var(--font-display)" }}>
+      <aside className="dash-side" style={mobil
+        ? { width: 250, flex: "none", background: "#FBFAF7", overflow: "hidden", position: "fixed", left: 0, top: 0, zIndex: 70, height: "100vh", display: "flex", flexDirection: "column",
+            transform: open ? "translateX(0)" : "translateX(-100%)", transition: "transform .28s var(--ease-unio)",
+            boxShadow: open ? "24px 0 70px -30px rgba(11,10,9,.5)" : "none" }
+        : { width: open ? 250 : 0, flex: "none", background: "#FBFAF7", overflow: "hidden", transition: "width .5s var(--ease-unio)", position: "sticky", top: 0, height: "100vh", display: "flex", flexDirection: "column", boxShadow: "1px 0 0 var(--hairline-dark)" }}>
         <div style={{ width: 250, display: "flex", flexDirection: "column", height: "100%" }}>
           <div style={{ padding: "26px 24px 22px", display: "flex", alignItems: "center", gap: 10 }}>
             <img src="/assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18 }} />
@@ -44,7 +60,7 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
                 {items.map(([label, id, gl]) => {
                   const on = active === id;
                   return (
-                    <button key={id} onClick={() => onNav && onNav(id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 13, padding: "10px 12px", borderRadius: 10, border: "none", cursor: "pointer", background: on ? "#FFFFFF" : "transparent", color: on ? "var(--ink)" : "var(--text-muted)", font: `${on ? 600 : 500} 14px var(--font-display)`, textAlign: "left", boxShadow: on ? "inset 0 0 0 1px var(--hairline-dark)" : "none", transition: "background .2s var(--ease-unio), color .2s" }}
+                    <button key={id} onClick={() => navUndZu(id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 13, padding: "10px 12px", borderRadius: 10, border: "none", cursor: "pointer", background: on ? "#FFFFFF" : "transparent", color: on ? "var(--ink)" : "var(--text-muted)", font: `${on ? 600 : 500} 14px var(--font-display)`, textAlign: "left", boxShadow: on ? "inset 0 0 0 1px var(--hairline-dark)" : "none", transition: "background .2s var(--ease-unio), color .2s" }}
                       onMouseEnter={(e) => { if (!on) e.currentTarget.style.color = "var(--ink)"; }}
                       onMouseLeave={(e) => { if (!on) e.currentTarget.style.color = "var(--text-muted)"; }}>
                       <span aria-hidden="true" style={{ width: 18, display: "inline-flex", justifyContent: "center", color: on ? "var(--signal-deep)" : "inherit" }}><DIcon name={gl} size={17} /></span>
@@ -64,17 +80,25 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
           </div>
         </div>
       </aside>
+      {mobil && (
+        <div onClick={() => setOpen(false)} aria-hidden="true"
+          style={{ position: "fixed", inset: 0, zIndex: 65, background: "rgba(11,10,9,.35)",
+            opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity .28s var(--ease-unio)" }}></div>
+      )}
 
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <header style={{ position: "sticky", top: 0, zIndex: 30, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", height: 72, background: "rgba(244,242,238,0.8)", WebkitBackdropFilter: "blur(16px)", backdropFilter: "blur(16px)" }}>
+        <header className="dash-head" style={{ position: "sticky", top: 0, zIndex: 30, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "0 40px", height: 72, background: "rgba(244,242,238,0.8)", WebkitBackdropFilter: "blur(16px)", backdropFilter: "blur(16px)" }}>
           <button onClick={() => setOpen((v) => !v)} aria-label="Menü" style={{ width: 38, height: 38, borderRadius: 10, border: "none", cursor: "pointer", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--ink-2)" }}><DIcon name="layers" size={17} /></button>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="dash-headright" style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
             {headerExtra}
-            <StylePillSwitch />
-            <DBtn variant="signal" size="sm" knob={c.glyph || "+"} onClick={c.onClick}>{c.label}</DBtn>
+            <span className="dash-stylepill"><StylePillSwitch /></span>
+            <span className="dash-cta"><DBtn variant="signal" size="sm" knob={c.glyph || "+"} onClick={c.onClick}>{c.label}</DBtn></span>
           </div>
         </header>
-        <main style={{ flex: 1, minWidth: 0, padding: "8px 40px 80px" }}>{children}</main>
+        <main className="dash-main" style={{ flex: 1, minWidth: 0, padding: "8px 40px 80px" }}>
+          <style>{window.MK_CSS}{window.MK_HEUTE_CSS || ""}</style>
+          {children}
+        </main>
       </div>
     </div>
   );

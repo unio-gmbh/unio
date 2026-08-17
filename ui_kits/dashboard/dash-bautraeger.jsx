@@ -78,7 +78,7 @@ function BtProjektCard({ p, on, onPick }) {
 /* ===== Übersicht ===== */
 function BtKpiRow() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 18 }}>
       {BT_KPI.map((k, i) => (
         <BRv key={k.sub} delay={i * 50}><BCard pad={22}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -177,7 +177,7 @@ function BtHeatmap() {
   return (
     <BCard pad={28}>
       <BHead title="Lead-Eingangszeiten" sub="Lead-Eingänge nach lokaler Uhrzeit." right={<BChip>Top: Di 21–23 Uhr · 19</BChip>} />
-      <div style={{ display: "grid", gridTemplateColumns: "34px repeat(7, 1fr)", gap: 5, marginTop: 22 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "34px repeat(7, minmax(0, 1fr))", gap: 5, marginTop: 22 }}>
         <span></span>
         {BT_HEAT.cols.map((c) => <span key={c} className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", textAlign: "center" }}>{c}</span>)}
         {BT_HEAT.rows.map(([day, vals]) => (
@@ -311,7 +311,7 @@ function BtUebersicht() {
         <BRv delay={60}><BtPipeline /></BRv>
         <BRv delay={120}><BtHandlungsbedarf /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
         <BRv><BCard pad={28}>
           <BHead title="Leads pro Woche" sub="Eingegangene Interessen der letzten 12 Wochen · laufende Woche gedämpft." right={<span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>331 gesamt</span>} />
           <div style={{ marginTop: 24 }}><BBars data={BT_WEEKS.data} height={150} /></div>
@@ -319,11 +319,11 @@ function BtUebersicht() {
         </BCard></BRv>
         <BRv delay={60}><BtHeatmap /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
         <BRv><BtDonut /></BRv>
         <BRv delay={60}><BtQuellen /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
         <BRv><BtKampagnenBars /></BRv>
         <BRv delay={60}><BtEinheiten /></BRv>
       </div>
@@ -385,7 +385,7 @@ function BtMarketing() {
           <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginLeft: "auto" }}>Daten der letzten 90 Tage verfügbar</span>
         </div>
       </BCard></BRv>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 18 }}>
         {KPIS.map(([l, v, note, bar], i) => (
           <BRv key={l} delay={i * 40}><BCard pad={24}>
             <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>{l}</span>

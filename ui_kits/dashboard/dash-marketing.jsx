@@ -155,7 +155,7 @@ function KampagnenKarte({ k, delay, onBoost, onPreview, angefragt }) {
             <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 22 }}>
               <button onClick={onBoost} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "10px 20px", background: "transparent", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 13px var(--font-display)", color: "var(--ink)" }}>Boost anfragen</button>
               <button onClick={onPreview} style={{ border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "var(--signal-deep)", padding: 0 }}>Creatives ansehen</button>
-              <button style={{ border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "rgba(20,18,16,0.55)", padding: 0, marginLeft: "auto" }}>Pausieren</button>
+              <button onClick={(e) => { const b = e.currentTarget; const pausiert = b.dataset.p === "1"; b.dataset.p = pausiert ? "0" : "1"; b.textContent = pausiert ? "Pausieren" : "Pausiert · Budget angehalten · Fortsetzen"; b.style.color = pausiert ? "rgba(20,18,16,0.55)" : "#B3261E"; }} style={{ border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", fontFamily: "inherit", color: "rgba(20,18,16,0.55)", padding: 0, marginLeft: "auto" }}>Pausieren</button>
               <span style={{ font: "7.5px var(--font-mono)", letterSpacing: "0.1em", color: "rgba(20,18,16,0.35)" }}>WIRKT AB MORGEN 00:00</span>
             </div>
           </div>

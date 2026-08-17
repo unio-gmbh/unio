@@ -16,6 +16,75 @@ const INT = [
   ["Laurenz Wurzer", "Top 3 · 100 m²", "€ 100.000", "neg", "Abgelehnt"],
 ];
 
+function MkAkteBloecke() {
+  const [checks, setChecks] = React.useState({ fotos: true, energie: true, grundbuch: true, preis: true, expose: false });
+  const [syncFehler, setSyncFehler] = React.useState(true);
+  const [report, setReport] = React.useState(() => sessionStorage.getItem("unio_mk_report") === "1");
+  const [gesendet, setGesendet] = React.useState(false);
+  React.useEffect(() => { sessionStorage.removeItem("unio_mk_report"); }, []);
+  const fertig = Object.values(checks).filter(Boolean).length;
+  const CHECKS = [["fotos", "Professionelle Fotos (12+)"], ["energie", "Energieausweis (HWB im Inserat, Pflicht)"], ["grundbuch", "Grundbuchauszug aktuell (ImmoUnited)"], ["preis", "Preisstrategie freigegeben"], ["expose", "Exposé final (mit FAGG-Belehrung)"]];
+  const karte = { background: "var(--surface-raised)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "18px 20px", marginTop: 14 };
+  return (
+    <div style={{ maxWidth: 1360, margin: "0 auto", padding: "0 0 10px" }}>
+      <style>{window.MK_CSS}</style>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 14 }}>
+        <div style={karte}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+            <b style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>Vermarktungsreife</b>
+            <span className={"mk-pill " + (fertig === 5 ? "ok" : "hot")}>{fertig}/5</span>
+          </div>
+          {CHECKS.map(([k, l]) => (
+            <div key={k} className={"mk-check" + (checks[k] ? " done" : "")}>
+              <span className="box" onClick={() => setChecks({ ...checks, [k]: !checks[k] })}>{checks[k] ? "✓" : ""}</span>
+              <span style={{ flex: 1 }}>{l}</span>
+            </div>
+          ))}
+          <button className="mk-btn signal" disabled={fertig < 5} style={{ width: "100%", marginTop: 12, opacity: fertig < 5 ? .45 : 1, cursor: fertig < 5 ? "not-allowed" : "pointer" }}>
+            {fertig < 5 ? "Veröffentlichen · gesperrt bis 5/5 (Gate)" : "Auf allen Kanälen veröffentlichen"}
+          </button>
+        </div>
+        <div style={karte}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+            <b style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>Portal-Sync</b>
+            <span className="mk-mono">Live-Status je Kanal</span>
+          </div>
+          {[["unio.at + Explore-Feed", "ok", "Synchron · 118 Aufrufe heute"], ["willhaben", "ok", "Synchron · Anfragen-Import aktiv"], ["ImmoScout24", syncFehler ? "fehler" : "ok", syncFehler ? "Fehler: Titelbild unter Mindestauflösung" : "Synchron · neu übertragen"]].map(([kanal, st, sub]) => (
+            <div key={kanal} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
+              <span style={{ width: 9, height: 9, borderRadius: 99, background: st === "ok" ? "#2E7D46" : "#B3261E", flex: "0 0 auto" }}></span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <b style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)", display: "block" }}>{kanal}</b>
+                <span style={{ fontSize: 11.5, color: st === "fehler" ? "#B3261E" : "var(--text-muted)" }}>{sub}</span>
+              </div>
+              {st === "fehler" && <button className="mk-btn ghost tiny" onClick={() => setSyncFehler(false)}>Neu übertragen</button>}
+            </div>
+          ))}
+          <p className="mk-mono" style={{ marginTop: 10 }}>Einmal erfasst, überall synchron · keine Doppeleingabe</p>
+        </div>
+        <div style={karte}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+            <b style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>Eigentümer-Report</b>
+            <span className="mk-mono">Auf Knopfdruck</span>
+          </div>
+          <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.55, color: "var(--text-muted)" }}>Reichweite, Anfragen, Besichtigungen und Feedback der Woche, automatisch aus der Akte aggregiert. Kein Zusammensuchen mehr.</p>
+          {report ? (
+            <div style={{ background: "#fff", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "13px 15px" }}>
+              {[["Exposé-Aufrufe", "118 (+22 %)"], ["Anfragen", "12"], ["Besichtigungen", "2 · nächste Sa 10:00"], ["Feedback", "„Sehr hell, Preis ambitioniert“ (2x)"], ["Empfehlung", "Preis halten, 2 Wochen beobachten"]].map(([k, v]) => (
+                <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "6px 0", borderBottom: "1px dashed var(--hairline-dark)", fontSize: 12.5 }}>
+                  <span style={{ color: "var(--text-muted)" }}>{k}</span><b style={{ fontWeight: 500, color: "var(--ink)", textAlign: "right" }}>{v}</b>
+                </div>
+              ))}
+              <button className="mk-btn signal" style={{ width: "100%", marginTop: 10 }} disabled={gesendet} onClick={() => setGesendet(true)}>{gesendet ? "Gesendet ✓ · Kopie im Audit-Trail" : "An H. Schuster senden"}</button>
+            </div>
+          ) : (
+            <button className="mk-btn" style={{ width: "100%" }} onClick={() => setReport(true)}>Report für diese Woche erstellen</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DashObject({ onNav }) {
   const [tab, setTab] = React.useState("daten");
   const [g, setG] = React.useState(0);
@@ -40,13 +109,13 @@ function DashObject({ onNav }) {
       <React.Fragment>
       {/* Galerie: großes Bild + Miniaturen */}
       <ORv style={{ marginTop: 20 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12, height: 380 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: 12, height: 380 }}>
           <div style={{ position: "relative", borderRadius: 14, overflow: "hidden" }}>
             {GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === g ? 1 : 0, transition: "opacity 600ms var(--ease-unio)" }} />)}
           </div>
           <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 12, minHeight: 0 }}>
             {[1, 2].map((row) => (
-              <div key={row} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, minHeight: 0 }}>
+              <div key={row} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 12, minHeight: 0 }}>
                 {GAL.slice(row * 2 - 1, row * 2 + 1).map((s, i) => {
                   const idx = row * 2 - 1 + i;
                   const last = row === 2 && i === 1;
@@ -90,6 +159,7 @@ function DashObject({ onNav }) {
         </OCard>
       </ORv>
 
+      <MkAkteBloecke />
       <window.ProjektBanner onNav={onNav} />
       <div style={{ margin: "28px 0 24px" }}><OTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 5], ["export", "Plattform Export"], ["abschluss", "Abschluss"], ["aktivitaet", "Aktivität"], ["ki", "KI-Analyse"]]} active={tab} onPick={setTab} /></div>
 
@@ -127,7 +197,7 @@ function ExposePublic() {
   return (
     <div style={{ marginTop: 20 }}>
       {/* Galerie: großes Bild + Miniaturen (Text NUR unter dem Bild) */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
         <div style={{ gridColumn: "span 4", position: "relative", borderRadius: 16, overflow: "hidden", height: 440 }}>
           {GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === big ? 1 : 0, transition: "opacity 500ms var(--ease-unio)" }} />)}
           <span className="u-label" style={{ position: "absolute", right: 16, bottom: 16, fontSize: 9, padding: "8px 14px", borderRadius: 999, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)" }}>{big + 1} / 33 · Galerie öffnen</span>
@@ -147,7 +217,7 @@ function ExposePublic() {
             <window.StatusPill kind="aktiv">Aktiv</window.StatusPill>
             {["Zum Verkauf", "Villa", "#57", "1140 Wien"].map((t) => <window.StatusPill key={t} kind="neutral">{t}</window.StatusPill>)}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginTop: 28 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginTop: 28 }}>
             {stat("242,7", "Wohnfläche", "m²", true)}{stat("3", "Bäder", "+ 2 WC")}{stat("15.000", "Grund", "m²")}{stat("2022", "Baujahr", "Erstbezug")}
           </div>
 
@@ -184,7 +254,7 @@ function ExposePublic() {
             <div style={{ font: "500 34px var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>€ 4.950.000</div>
             <p style={{ margin: "12px 0 20px", font: "400 13px/1.5 var(--font-display)", color: "var(--text-muted)" }}>Verfügbar ab Bezugsfertig · Makler: Boom Living GmbH</p>
             <Btn variant="solid" size="md" knob style={{ width: "100%", justifyContent: "center" }}>Besichtigung anfragen</Btn>
-            <button style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", marginTop: 14, border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "var(--ink-2)" }}>Exposé erhalten <Ic name="download" size={14} stroke="var(--ink-2)" /></button>
+            <button onClick={(e) => { e.currentTarget.textContent = "Zugestellt ✓ · Namhaftmachung dokumentiert (17.08., 11:58)"; }} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", marginTop: 14, border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", fontFamily: "inherit", color: "var(--ink-2)" }}>Exposé erhalten <Ic name="download" size={14} stroke="var(--ink-2)" /></button>
           </div>
           {/* Marktdaten LIVE */}
           <div style={{ background: "#FFFFFF", borderRadius: 16, padding: 26, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
@@ -202,7 +272,7 @@ function ExposePublic() {
                 </div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 12, marginTop: 16 }}>
               <div style={{ borderRadius: 12, padding: "16px 18px", background: "var(--signal-soft)" }}><div style={{ font: "500 24px var(--font-display)", color: "var(--ink)" }}>72 %</div><div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 8 }}>Nachfrage über Bezirksschnitt</div></div>
               <div style={{ borderRadius: 12, padding: "16px 18px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}><div style={{ font: "500 24px var(--font-display)", color: "var(--ink)" }}>46</div><div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 8 }}>Auf Merklisten vorgemerkt</div></div>
             </div>
@@ -261,7 +331,7 @@ function ExposePublicOLD2() {
           <div>
             <h2 style={{ margin: 0, font: "500 clamp(28px,3vw,44px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Natur, Ruhe und Weltstadt in einem.</h2>
             <p style={{ margin: "22px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Auf fast 15.000 m² Privatgrund, eingebettet in Wald und Natur, erwartet Sie dieses außergewöhnliche Refugium am westlichen Rand Wiens. Zwei Häuser mit rund 195 m² Wohnfläche, ein Naturpool, Sauna, weitläufige Terrassen und ein großzügiger Garten.</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 40px", marginTop: 32 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "0 40px", marginTop: 32 }}>
               {[["Grundstück", "14.830 m²"], ["Anbindung", "25 Min. ins Zentrum"], ["Ausstattung", "Naturpool, Sauna, Kamin"], ["Status", "Bezugsfertig"]].map(([k, v]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "13px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
                   <span className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>{k}</span>
@@ -326,7 +396,7 @@ function ExposePublicOLD() {
 function DatenTab() {
   return (
     <React.Fragment>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
         {FACTS.map((f, i) => (
           <ORv key={f[0]} delay={i * 50}><OCard pad={20} style={{ height: "100%" }}>
             <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{f[0]}</div>
@@ -339,7 +409,7 @@ function DatenTab() {
       <ORv style={{ marginTop: 20 }}>
         <OCard>
           <OHead label="Einheiten-Profil" title="Wo die Einheiten im Projekt liegen" right={<OChip>10 Einheiten</OChip>} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 48px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "0 48px" }}>
             <window.Ruler label="Preisspanne" value="€ 539k" poleL="€ 279k" poleR="€ 1,6 Mio" pos={34} note="Median bei € 539.000, 4 Einheiten unter € 400.000." />
             <window.Ruler label="Fläche je Zimmer" value="24 m²" poleL="Kompakt" poleR="Großzügig" pos={58} note="Durchschnittlich 24 m² je Zimmer — leicht über Neubauschnitt." />
           </div>
@@ -378,7 +448,7 @@ function DatenTab() {
       <ORv style={{ marginTop: 20 }}>
         <OCard>
           <OHead label="Umgebung" title="Projektumgebung im Überblick" right={<OChip>20 POIs</OChip>} />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 0 }}>
             {POI.map(([k, v, s], i) => (
               <div key={k} style={{ padding: "8px 24px", borderLeft: i ? "1px solid var(--hairline-dark)" : "none" }}>
                 <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{k}</div>
@@ -472,7 +542,7 @@ function UnitRow({ u, i, last }) {
       </div>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 300ms var(--ease-unio)" }}>
         <div style={{ overflow: "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 48px", padding: "4px 26px 22px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "0 48px", padding: "4px 26px 22px" }}>
             <window.Ruler label="Preis / m²" value={u[6] || "€ 5 390"} poleL="€ 4 200" poleR="€ 9 100" pos={u[7] || 42} cmp={60} cmpLabel="Projekt-Ø" note="Preis/m² dieser Einheit gegen Projektspanne." />
             <window.Ruler label="Fläche je Zimmer" value={u[8] || "25 m²"} poleL="Kompakt" poleR="Großzügig" pos={u[9] || 55} cmp={50} cmpLabel="Projekt-Ø" note="Zimmergröße gegen Projektschnitt." />
           </div>

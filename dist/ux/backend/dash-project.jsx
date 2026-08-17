@@ -29,13 +29,13 @@ function ProjektView({ onNav }) {
 
       {/* Galerie */}
       <PjRev style={{ marginTop: 20 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12, height: 400 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: 12, height: 400 }}>
           <div style={{ position: "relative", borderRadius: 14, overflow: "hidden" }}>
             {PJ_GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === g ? 1 : 0, transition: "opacity 600ms var(--ease-unio)" }} />)}
           </div>
           <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 12, minHeight: 0 }}>
             {[1, 2].map((row) => (
-              <div key={row} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, minHeight: 0 }}>
+              <div key={row} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 12, minHeight: 0 }}>
                 {PJ_GAL.slice(row * 2 - 1, row * 2 + 1).map((s, i) => {
                   const idx = row * 2 - 1 + i, last = row === 2 && i === 1;
                   return (
@@ -86,7 +86,7 @@ function ProjektView({ onNav }) {
 
       {tab === "daten" && (
         <React.Fragment>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
             {PJ_FACTS.map(([ic, k, v], i) => (
               <PjRev key={k} delay={i * 50}><div style={{ background: "#FFFFFF", borderRadius: 12, padding: 20, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", height: "100%" }}>
                 <PjIcon name={ic} size={16} stroke="var(--signal-deep)" />
@@ -101,7 +101,7 @@ function ProjektView({ onNav }) {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                 <div><div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>Einheiten-Profil</div><div style={{ font: "500 19px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 10 }}>Wo die Einheiten im Projekt liegen</div></div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 48px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "0 48px" }}>
                 <window.Ruler label="Preisspanne" value="€ 539k" poleL="€ 279k" poleR="€ 1,6 Mio" pos={34} note="Median bei € 539.000, 4 Einheiten unter € 400.000." />
                 <window.Ruler label="Fläche je Zimmer" value="24 m²" poleL="Kompakt" poleR="Großzügig" pos={58} note="Ø 24 m² je Zimmer — leicht über Neubauschnitt." />
               </div>
@@ -136,7 +136,7 @@ function ProjektView({ onNav }) {
             <div style={{ background: "#FFFFFF", borderRadius: 14, padding: 30, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
               <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>Umgebung</div>
               <div style={{ font: "500 19px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", margin: "10px 0 24px" }}>Projektumgebung im Überblick</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
                 {PJ_POI.map(([k, v, s], i) => (
                   <div key={k} style={{ padding: "8px 24px", borderLeft: i ? "1px solid var(--hairline-dark)" : "none" }}>
                     <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{k}</div>
