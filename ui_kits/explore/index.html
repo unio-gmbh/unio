@@ -82,6 +82,8 @@
   .topbar img{height:15px;display:block;}
   .topbar .mono{color:rgba(247,245,241,.85);}
   .topbar a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  html.embed .topbar{display:none!important;}
+  html.embed .gridwrap,html.embed .feedwrap,html.embed .such{padding-top:0!important;}
   .topbar .avapill{background:var(--orange)!important;color:#1A1305!important;border-color:transparent!important;
     font-weight:700;min-width:34px;text-align:center;}
   .topbar .hub{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.75);
@@ -285,6 +287,8 @@
     { id:"reel-design",  video:"../../assets/video/explore-design.mp4",  img:"../../assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
   ];
   /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
+  /* Embed-Modus: laeuft als nativer Tab im Endkunden-Portal (iframe), eigene Topbar weg */
+  if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");
   var ekProfil = (function(){ try { return JSON.parse(localStorage.getItem("unio_ek_profil")) || {}; } catch(e){ return {}; } })();
   function ueberBudget(o){ return !!(ekProfil.kaufkraft && o.preisNum && o.preisNum > ekProfil.kaufkraft.budget); }
   /* Rendite aus UNIO-Vermietdaten: Jahresnettomiete / Kaufpreis (Demo-Kalkulation) */

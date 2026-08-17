@@ -1136,6 +1136,13 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   var lese = function(k, fb){ try { return JSON.parse(localStorage.getItem(k)) || fb; } catch(e){ return fb; } };
   var schreibe = function(k, v){ localStorage.setItem(k, JSON.stringify(v)); };
   var PORTAL = "/ux/backend?rolle=endkunde";
+  var obenNav = function(u){ try { (window.top || window).location.href = u; } catch(e){ location.href = u; } };
+  if (window.self !== window.top) {
+    document.addEventListener("click", function(e){
+      var a = e.target.closest('a[href^="/ux/backend"]');
+      if (a) { e.preventDefault(); obenNav(a.getAttribute("href")); }
+    });
+  }
 
   /* Objekttausch aus dem Katalog */
   window.__EK_KP = o.preisNum;
@@ -1235,8 +1242,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     var pill = document.getElementById("objStatus");
     var PILLS = { termin: "Termin fixiert", besichtigt: "Besichtigt", anbot_aktiv: "Anbot in Prüfung", gegenangebot: "Gegenangebot · Frist läuft", angenommen: "In Abwicklung", abwicklung: "In Abwicklung", eigentum: "Dein Eigentum" };
     if (pill) { pill.style.display = PILLS[z] ? "inline-block" : "none"; pill.textContent = (PILLS[z] || "").toUpperCase(); }
-    var zurKaufreise = function(){ location.href = PORTAL + "&kaufreise=" + objId; };
-    var zumChat = function(){ location.href = PORTAL + "&tab=akt&chat=" + objId; };
+    var zurKaufreise = function(){ obenNav(PORTAL + "&kaufreise=" + objId); };
+    var zumChat = function(){ obenNav(PORTAL + "&tab=akt&chat=" + objId); };
     if (z === "anbot_aktiv") {
       neuBinden("angebotOpen", "Anbot ansehen", zurKaufreise); neuBinden("angebotOpenMobil", "Anbot ansehen", zurKaufreise);
       neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
@@ -1247,15 +1254,15 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
       neuBinden("angebotOpen", "Kaufreise öffnen", zurKaufreise); neuBinden("angebotOpenMobil", "Kaufreise", zurKaufreise);
       neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
     } else if (z === "eigentum") {
-      neuBinden("angebotOpen", "Mein Objekt öffnen", function(){ location.href = PORTAL + "&tab=profil"; });
-      neuBinden("angebotOpenMobil", "Mein Objekt", function(){ location.href = PORTAL + "&tab=profil"; });
-      neuBinden("besichtRail", "Dokumente ansehen", function(){ location.href = PORTAL + "&tab=profil"; });
-      neuBinden("besichtMobil", "Dokumente", function(){ location.href = PORTAL + "&tab=profil"; });
+      neuBinden("angebotOpen", "Mein Objekt öffnen", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("angebotOpenMobil", "Mein Objekt", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("besichtRail", "Dokumente ansehen", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("besichtMobil", "Dokumente", function(){ obenNav(PORTAL + "&tab=profil"); });
     } else if (z === "termin") {
       neuBinden("besichtRail", "Termin: " + termin, slotsAuf); neuBinden("besichtMobil", "Termin ✓", slotsAuf);
     } else if (z === "besichtigt") {
-      neuBinden("besichtRail", "Feedback geben", function(){ location.href = PORTAL + "&tab=akt"; });
-      neuBinden("besichtMobil", "Feedback", function(){ location.href = PORTAL + "&tab=akt"; });
+      neuBinden("besichtRail", "Feedback geben", function(){ obenNav(PORTAL + "&tab=akt"); });
+      neuBinden("besichtMobil", "Feedback", function(){ obenNav(PORTAL + "&tab=akt"); });
     } else {
       neuBinden("besichtRail", "Besichtigung buchen", slotsAuf);
       neuBinden("besichtMobil", "Besichtigung", slotsAuf);

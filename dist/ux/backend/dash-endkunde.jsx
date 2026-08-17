@@ -38,27 +38,25 @@ function EkStart({ ek, tue, oeffneSheet, go, oeffneKaufreise, oeffneStory }) {
             <b>Deine Kaufreise · {prozesse.length} {prozesse.length === 1 ? "Objekt" : "Objekte"}</b>
             <span className="s">{gegen ? "Gegenangebot " + ekEur(gegen[1].anbot.gegen) + " · noch " + ekFristTage(gegen[1].anbot.frist) + " Tage" : "Alles im Plan, nichts offen"}</span>
           </span>
-          <span className="ek-pill hot" style={{ background: "rgba(255,170,9,.2)", borderColor: "rgba(255,170,9,.4)", color: "var(--signal)" }}>{gegen ? "Reagieren" : "Öffnen"}</span>
+          <span className="ek-pill" style={{ background: "rgba(255,255,255,.22)", borderColor: "rgba(255,255,255,.45)", color: "#FFFFFF" }}>{gegen ? "Reagieren" : "Öffnen"}</span>
         </button>
       )}
 
-      {!ek.profil.storyGesehen && (
-        <div className="ek-story">
-          <button onClick={oeffneStory}>
-            <span className="ring"><img src="/assets/img/albrecht.jpg" alt="" /></span>
-            <span>Das Albrecht</span>
-          </button>
-        </div>
-      )}
+      <div className="ek-story">
+        <button onClick={oeffneStory}>
+          <span className={"ring" + (ek.profil.storyGesehen ? " aus" : "")}><img src="/assets/img/albrecht.jpg" alt="" /></span>
+          <span>Das Albrecht</span>
+        </button>
+      </div>
 
-      <a className="ek-hero" href="/ux/explore" style={{ marginTop: 6 }}>
+      <button className="ek-hero" onClick={() => go("explore")} style={{ marginTop: 6, width: "100%", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", padding: 0 }}>
         <img src="/assets/img/obenzwei-terrasse.jpg" alt="" />
         <span className="sc" aria-hidden="true"></span>
         <span className="in">
-          <span><span className="k">Entdecken · Feed · Liste</span><b>Explore öffnen</b></span>
+          <span><span className="k">Entdecken · Feed · Liste</span><b style={{ color: "#fff" }}>Explore öffnen</b></span>
           <span className="go">Los geht's →</span>
         </span>
-      </a>
+      </button>
 
       <div className="ek-stats">
         <button className="ek-stat" onClick={() => go("profil")}><b>{profile.length}</b><span>aktive Suchprofile</span></button>
@@ -458,7 +456,7 @@ function EkProfil({ ek, tue, oeffneSheet, setChatId, go, onRole }) {
           </div>
           <div className="params">{sp.params.map((x) => <span key={x} className="ek-pill" style={{ fontSize: 9, padding: "6px 11px" }}>{x}</span>)}</div>
           <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
-            <a className="ek-btn tiny" href="/ux/explore">Treffer in der Explore →</a>
+            <button className="ek-btn tiny" onClick={() => go("explore")}>Treffer in der Explore →</button>
             <button className="ek-btn ghost tiny" onClick={() => oeffneSheet({ typ: "quiz", profilId: sp.id })}>Bearbeiten</button>
             <span className="ek-mono" style={{ marginLeft: "auto" }}>Alerts:</span>
             {["sofort", "taeglich", "aus"].map((f) => (
@@ -514,9 +512,6 @@ function EkProfil({ ek, tue, oeffneSheet, setChatId, go, onRole }) {
                 <span className="ek-pill ok">Eigentum</span>
               </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", padding: "0 16px 14px" }}>
-                {["Kaufvertrag", "Übergabeprotokoll", "Betriebskosten 2025"].map((n) => (
-                  <button key={n} className="ek-btn ghost tiny" onClick={() => oeffneSheet({ typ: "dokument", name: n, objId: id, unter: "PDF · Archiv" })}>{n}</button>
-                ))}
                 <button className="ek-btn ghost tiny" onClick={() => setChatId("concierge")}>Vermietung mit UNIO</button>
                 <button className="ek-btn ghost tiny" onClick={() => oeffneSheet({ typ: "preisarchiv", bezirk: o.bezirk })}>Marktwert im Grätzl</button>
               </div>
@@ -524,6 +519,34 @@ function EkProfil({ ek, tue, oeffneSheet, setChatId, go, onRole }) {
           );
         })}
       </React.Fragment>}
+
+      <div className="ek-secthead"><h2>Dokumente</h2><span className="ek-mono">Pro Objekt · entsperren sich mit dem Fortschritt</span></div>
+      {(() => {
+        const gruppen = Object.entries(ek.bez).filter(([, b]) => ["anbot_aktiv", "gegenangebot", "angenommen", "abwicklung", "eigentum"].includes(b.zustand));
+        if (gruppen.length === 0) return <div className="ek-card"><span style={{ fontSize: 13.5, color: "var(--text-muted)" }}>Noch keine Dokumente. Sie erscheinen hier, sobald du ein Anbot legst.</span></div>;
+        return gruppen.map(([id, b]) => {
+          const o = ekObj(id);
+          return (
+            <div key={id} className="ek-card" style={{ padding: "14px 16px", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 10 }}>
+                <img src={o.img} alt="" style={{ width: 38, height: 38, borderRadius: 10, objectFit: "cover" }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <b style={{ font: "500 14.5px var(--font-display)", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{o.t}</b>
+                </div>
+                <span className={"ek-pill " + (b.zustand === "eigentum" ? "ok" : "hot")}>{window.EK_ZUSTAND_LABEL[b.zustand]}</span>
+              </div>
+              <div style={{ display: "grid", gap: 6 }}>
+                {window.ekDokumente(b.zustand, b.phase).map(([n, u]) => (
+                  <button key={n} className="ek-row" style={{ marginBottom: 0, padding: "10px 12px" }} onClick={() => oeffneSheet({ typ: "dokument", name: n, objId: id, unter: u })}>
+                    <span className="mid"><b style={{ fontSize: 13.5 }}>{n}</b><span className="s">{u}</span></span>
+                    <span className="ek-mono">Ansehen →</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        });
+      })()}
 
       <div className="ek-secthead"><h2>Benachrichtigungen</h2></div>
       <div className="ek-card" style={{ paddingTop: 4, paddingBottom: 4 }}>
@@ -668,6 +691,11 @@ function EndkundePortal({ role, onRole }) {
   const ungelesen = ek.events.filter((e) => !e.gelesen).length;
   let view;
   if (kaufreiseObj) view = <EkKaufreise ek={ek} tue={tue} objId={kaufreiseObj} oeffneSheet={oeffneSheet} zurueck={() => setKaufreiseObj(null)} setChatId={setChatId} go={setKaufreiseObj} />;
+  else if (tab === "explore") view = (
+    <div className="ek-explframe">
+      <iframe src="/ux/explore?embed=1" title="Explore" allow="autoplay"></iframe>
+    </div>
+  );
   else if (tab === "merk") view = <EkMerkliste ek={ek} tue={tue} oeffneSheet={oeffneSheet} />;
   else if (tab === "akt") view = <EkAktivitaet ek={ek} tue={tue} oeffneSheet={oeffneSheet} oeffneKaufreise={oeffneKaufreise} chatId={chatId} setChatId={setChatIdRaw} />;
   else if (tab === "profil") view = <EkProfil ek={ek} tue={tue} oeffneSheet={oeffneSheet} setChatId={setChatId} go={go} onRole={onRole} />;
@@ -675,7 +703,6 @@ function EndkundePortal({ role, onRole }) {
 
   const tabItem = ([id, l], mobil) => {
     const inhalt = mobil ? <React.Fragment><window.EkI d={window.EK_ICONS[id === "merk" ? "merk" : id === "akt" ? "akt" : id === "explore" ? "explore" : id]} s={19} />{l}</React.Fragment> : l;
-    if (id === "explore") return <a key={id} href="/ux/explore">{inhalt}</a>;
     return (
       <button key={id} className={tab === id && !kaufreiseObj ? "on" : ""} onClick={() => go(id)}>
         {inhalt}{id === "akt" && ungelesen > 0 && <span className="ek-dot"></span>}
