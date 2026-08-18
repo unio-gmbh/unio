@@ -232,6 +232,48 @@ const MK_CSS = `
     .dash-stylepill{display:none;}
     .dash-main{padding-top:4px!important;}
   }
+  /* Alt-Screens (Projekt, Objekt-Akte, CIRCLE) mobil entspannen: mehrspaltige Grids
+     werden schmaler, fixe Breiten geben nach, Flex-Reihen brechen um. */
+  @media (max-width:860px){
+    .mk-drei{grid-template-columns:minmax(0,1fr)!important;}
+    .mk-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+    main [style*="display: flex"]{flex-wrap:wrap;}
+  }
+  @media (max-width:520px){
+    .mk-facts{grid-template-columns:minmax(0,1fr)!important;}
+  }
+  /* Kennzahlen-Reihen (Research: 2 Spalten mobil statt horizontalem Scrollen,
+     lange Werte ueber beide Spalten, nichts abschneiden) */
+  @media (max-width:760px){
+    .mk-kennz{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+    .mk-kennz > *:nth-child(1),.mk-kennz > *:nth-child(2){grid-column:span 2;}
+    .mk-kennz > * > div{min-height:56px;}
+  }
+  @media (max-width:380px){
+    .mk-kennz{grid-template-columns:minmax(0,1fr)!important;}
+    .mk-kennz > *:nth-child(1),.mk-kennz > *:nth-child(2){grid-column:auto;}
+  }
+  /* Sub-Navigation mobil: eine Zeile scrollende Pills mit Snap (Material 3 / HIG) */
+  @media (max-width:760px){
+    .mk-subnav{flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x proximity;
+      width:100%;border-radius:14px;scrollbar-width:none;}
+    .mk-subnav::-webkit-scrollbar{display:none;}
+    .mk-subnav button{scroll-snap-align:start;min-height:40px;}
+  }
+  /* Detailseiten-Kopf mobil: Zurueck links, Aktion rechts, beide mit Label */
+  @media (max-width:760px){
+    main [style*="justify-content: space-between"] > button[class]{white-space:nowrap;}
+    .mkg + * ,.mkg{max-width:100%;}
+  }
+  .mk-projkarte{padding:30px;}
+  @media (max-width:900px){
+    .mk-projkopf{grid-template-columns:minmax(0,1fr)!important;gap:22px!important;}
+    .mk-projzahlen{width:100%;}
+    .mk-projzahlen > div{flex:1 1 140px!important;}
+  }
+  @media (max-width:700px){
+    .mk-projkarte{padding:20px!important;}
+  }
   @media (max-width:860px){
     /* Der Kopf traegt mobil nur Menue und Rollenwahl; "Immobilie anlegen" lebt in Objekte > Entwuerfe */
     .dash-cta{display:none;}

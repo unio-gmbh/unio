@@ -27,34 +27,15 @@ function ProjektView({ onNav }) {
         </div>
       </PjRev>
 
-      {/* Galerie */}
+      {/* Galerie: eine Komponente für alle Flächen (Hero mit Swipe, Thumbnails, Lightbox) */}
       <PjRev style={{ marginTop: 20 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: 12, height: 400 }}>
-          <div style={{ position: "relative", borderRadius: 14, overflow: "hidden" }}>
-            {PJ_GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === g ? 1 : 0, transition: "opacity 600ms var(--ease-unio)" }} />)}
-          </div>
-          <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 12, minHeight: 0 }}>
-            {[1, 2].map((row) => (
-              <div key={row} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 12, minHeight: 0 }}>
-                {PJ_GAL.slice(row * 2 - 1, row * 2 + 1).map((s, i) => {
-                  const idx = row * 2 - 1 + i, last = row === 2 && i === 1;
-                  return (
-                    <div key={s} onMouseEnter={() => setG(idx)} style={{ position: "relative", borderRadius: 12, overflow: "hidden", cursor: "pointer", minHeight: 0, boxShadow: idx === g ? "inset 0 0 0 2px var(--signal)" : "none" }}>
-                      <img src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                      {last && <div style={{ position: "absolute", inset: 0, background: "rgba(11,10,9,0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--paper)", font: "500 12px var(--font-mono)", letterSpacing: "0.1em" }}>+4 FOTOS</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+        <window.MkGalerie bilder={PJ_GAL} cover />
       </PjRev>
 
       {/* Kopf */}
       <PjRev delay={60}>
-        <div style={{ background: "#FFFFFF", borderRadius: 14, padding: 30, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", marginTop: 20 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 32, alignItems: "start" }}>
+        <div className="mk-projkarte" style={{ background: "#FFFFFF", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", marginTop: 20 }}>
+          <div className="mk-projkopf" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 32, alignItems: "start" }}>
             <div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <PjStatus kind="aktiv">Status: Aktiv</PjStatus><PjStatus kind="reserviert">In Planung</PjStatus><PjStatus kind="neutral">Wohnbau</PjStatus>
@@ -62,18 +43,18 @@ function ProjektView({ onNav }) {
               <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Albrechts Townhouses</h1>
               <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7 }}><PjIcon name="pin" size={14} stroke="var(--text-muted)" />Stockerauer Straße 53, 2100 Korneuburg</p>
               <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Neubauprojekt in Korneuburg mit Dachgeschosswohnungen und Reihenhäusern — hochwertige Ausstattung, Gärten, Terrassen und optionale Stellplätze.</p>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 12, marginTop: 20, padding: "12px 18px", borderRadius: 12, background: "var(--signal-soft)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginTop: 20, padding: "12px 18px", borderRadius: 12, background: "var(--signal-soft)", width: "max-content", maxWidth: "100%" }}>
                 <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Projektlead</span>
                 <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)" }}>Johannes Lindner</span>
                 <span style={{ font: "12px var(--font-mono)", color: "var(--text-muted)" }}>johannes@unio.at · +43 676 5027473</span>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 12 }}>
-              <div style={{ borderRadius: 12, padding: "20px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 110 }}>
+            <div className="mk-projzahlen" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ borderRadius: 12, padding: "20px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 110, flex: "1 1 110px" }}>
                 <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>Einheiten</div>
                 <div style={{ font: "500 36px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>10</div>
               </div>
-              <div style={{ borderRadius: 12, padding: "20px 24px", background: "var(--signal-soft)", minWidth: 180 }}>
+              <div style={{ borderRadius: 12, padding: "20px 24px", background: "var(--signal-soft)", minWidth: 180, flex: "1 1 180px" }}>
                 <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>Preisspanne</div>
                 <div style={{ font: "500 20px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k – 1,6 Mio.</div>
               </div>
@@ -86,12 +67,12 @@ function ProjektView({ onNav }) {
 
       {tab === "daten" && (
         <React.Fragment>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
+          <div className="mk-kennz" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(168px, 1fr))", gap: 16 }}>
             {PJ_FACTS.map(([ic, k, v], i) => (
               <PjRev key={k} delay={i * 50}><div style={{ background: "#FFFFFF", borderRadius: 12, padding: 20, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", height: "100%" }}>
                 <PjIcon name={ic} size={16} stroke="var(--signal-deep)" />
                 <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5, marginTop: 16 }}>{k}</div>
-                <div style={{ font: "500 16px/1.3 var(--font-display)", color: "var(--ink)", marginTop: 8 }}>{v}</div>
+                <div style={{ font: "500 17px/1.25 var(--font-display)", color: "var(--ink)", marginTop: 8, fontVariantNumeric: "tabular-nums", overflowWrap: "anywhere" }}>{v}</div>
               </div></PjRev>
             ))}
           </div>

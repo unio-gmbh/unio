@@ -101,7 +101,7 @@ function DashCircle({ onNav, geheZu, tueMk, ohnePond }) {
       {!ohnePond && <CRv><CirclePond tueMk={tueMk} geheZu={geheZu} /></CRv>}
 
       {/* Bento 5/4/3 */}
-      <div style={{ marginTop: 120, display: "grid", gridTemplateColumns: "5fr 4fr 3fr", gap: 24, alignItems: "start" }}>
+      <div className="mk-drei" style={{ marginTop: 120, display: "grid", gridTemplateColumns: "minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr)", gap: 24, alignItems: "start" }}>
         {/* Puls, hoch */}
         <CRv style={{ gridRow: "span 2", height: "100%" }}>
           <CCard style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -139,9 +139,9 @@ function DashCircle({ onNav, geheZu, tueMk, ohnePond }) {
               <span style={{ font: "500 18px var(--font-display)" }}>Saison Q3</span>
               <span style={{ width: 34, height: 34, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "inset 0 0 0 1px rgba(247,245,241,0.2)" }}><CIc name="arrow" size={14} stroke="var(--paper)" style={{ transform: "rotate(-45deg)" }} /></span>
             </div>
-            <div style={{ font: "600 56px/1 var(--font-display)", letterSpacing: "-0.03em", marginTop: 22, fontVariantNumeric: "tabular-nums" }}>46<span style={{ fontSize: 20, color: "rgba(251,250,246,.5)", marginLeft: 6, fontWeight: 500 }}>Tage</span></div>
+            <div style={{ font: "600 clamp(38px, 5vw, 56px)/1 var(--font-display)", letterSpacing: "-0.03em", marginTop: 22, fontVariantNumeric: "tabular-nums" }}>46<span style={{ fontSize: 20, color: "rgba(251,250,246,.5)", marginLeft: 6, fontWeight: 500 }}>Tage</span></div>
             <div className="u-label" style={{ fontSize: 8, color: "rgba(251,250,246,.55)", marginTop: 12 }}>verbleibend · Rückblick am 30.09.</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(13, 10px)", gap: 7, marginTop: 22 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(13, minmax(6px, 10px))", gap: 7, marginTop: 22 }}>
               {Array.from({ length: 13 }, (_, i) => (
                 <span key={i} style={{ width: 10, height: 10, borderRadius: 3, background: i < 6 ? "var(--signal)" : i === 6 ? "var(--paper)" : "rgba(251,250,246,.18)", outline: i === 6 ? "2px solid var(--signal)" : "none", outlineOffset: 1 }}></span>
               ))}
@@ -338,9 +338,9 @@ function SaisonzielCard({ refEl, run }) {
   return (
     <CCard>
       <CHead title="Mein Saisonziel" right={<CChip>Q3 2026</CChip>} />
-      <div style={{ font: "600 56px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>24<span style={{ fontSize: 24, color: "var(--signal-deep)", marginLeft: 3 }}>%</span></div>
+      <div style={{ font: "600 clamp(38px, 5vw, 56px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>24<span style={{ fontSize: 24, color: "var(--signal-deep)", marginLeft: 3 }}>%</span></div>
       <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>Besichtigungsquote · Ziel {ziel} %</div>
-      <div ref={refEl} style={{ position: "relative", width: 220, height: 3, borderRadius: 2, background: "var(--paper-2)", marginTop: 14 }}>
+      <div ref={refEl} style={{ position: "relative", width: "min(220px, 100%)", height: 3, borderRadius: 2, background: "var(--paper-2)", marginTop: 14 }}>
         <div style={{ position: "absolute", left: 0, top: 0, height: 3, borderRadius: 2, background: "var(--signal)", width: run ? pct + "%" : "0%", transition: "width 1000ms var(--ease-unio)" }}></div>
         <span style={{ position: "absolute", left: "100%", top: -4, width: 1, height: 11, background: "rgba(20,18,16,.35)" }}></span>
       </div>

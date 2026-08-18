@@ -203,6 +203,7 @@ async function main() {
 
   /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
         Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
+  const BUILD_STAMP = Date.now().toString(36);
   const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"]];
   for (const [kit, out] of UX_KITS) {
     const kitDir = join(ROOT, "ui_kits", kit);
@@ -216,8 +217,10 @@ async function main() {
       s = rewriteUrls(s);
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
       /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
-         relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite). */
-      if (f.endsWith(".html")) s = s.replace(/src="([a-zA-Z0-9_.-]+\.jsx)"/g, `src="/ux/${out}/$1"`);
+         relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite).
+         Der Build-Stempel bricht Browser-Caches: die UX-Vorschauen laufen mit
+         Runtime-Babel, ohne Stempel liefern Browser nach Deploys alte JSX aus. */
+      if (f.endsWith(".html")) s = s.replace(/src="([a-zA-Z0-9_.-]+\.jsx)"/g, `src="/ux/${out}/$1?v=${BUILD_STAMP}"`);
       writeFileSync(join(outDir, f), s);
     }
     if (kit === "property") {

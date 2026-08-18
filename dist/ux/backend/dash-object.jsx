@@ -109,27 +109,7 @@ function DashObject({ onNav }) {
       <React.Fragment>
       {/* Galerie: großes Bild + Miniaturen */}
       <ORv style={{ marginTop: 20 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: 12, height: 380 }}>
-          <div style={{ position: "relative", borderRadius: 14, overflow: "hidden" }}>
-            {GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === g ? 1 : 0, transition: "opacity 600ms var(--ease-unio)" }} />)}
-          </div>
-          <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 12, minHeight: 0 }}>
-            {[1, 2].map((row) => (
-              <div key={row} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 12, minHeight: 0 }}>
-                {GAL.slice(row * 2 - 1, row * 2 + 1).map((s, i) => {
-                  const idx = row * 2 - 1 + i;
-                  const last = row === 2 && i === 1;
-                  return (
-                    <div key={s} onMouseEnter={() => setG(idx)} style={{ position: "relative", borderRadius: 12, overflow: "hidden", cursor: "pointer", minHeight: 0, boxShadow: idx === g ? "inset 0 0 0 2px var(--signal)" : "none" }}>
-                      <img src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                      {last && <div style={{ position: "absolute", inset: 0, background: "rgba(11,10,9,0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--paper)", font: "500 12px var(--font-mono)", letterSpacing: "0.1em", textTransform: "uppercase" }}>+4 Fotos</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+        <window.MkGalerie bilder={GAL} cover />
       </ORv>
 
       {/* Kopf-Karte */}

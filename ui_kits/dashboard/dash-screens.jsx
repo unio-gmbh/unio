@@ -37,12 +37,12 @@ function ImmoUebersicht({ onNav }) {
           <h1 style={{ margin: 0, font: "500 clamp(34px, 3.4vw, 52px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Immobilien<span style={{ color: "var(--signal)" }}>.</span></h1>
         </div>
         {/* Mini-KPIs als nacktes Band (v3 §4.3) */}
-        <div style={{ display: "flex", alignItems: "baseline", columnGap: 28 }}>
+        <div className="dash-statband" style={{ display: "flex", alignItems: "baseline", columnGap: 28, rowGap: 16, flexWrap: "wrap" }}>
           {[[OBJEKTE_DB.length, "Objekte"], [ENTWUERFE_DB.length, "Entwürfe"], ["6", "In Vermarktung"]].map(([v, l], i) => (
             <React.Fragment key={l}>
-              {i > 0 && <span style={{ width: 1, height: 32, background: "rgba(20,18,16,.14)", alignSelf: "center" }}></span>}
+              {i > 0 && <span className="dash-kpi-div" style={{ width: 1, height: 32, background: "rgba(20,18,16,.14)", alignSelf: "center" }}></span>}
               <div style={{ display: "flex", alignItems: "baseline", gap: 11 }}>
-                <span style={{ font: "500 32px/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
+                <span style={{ font: "500 clamp(24px, 3vw, 32px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>{v}</span>
                 <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", whiteSpace: "nowrap" }}>{l}</span>
               </div>
             </React.Fragment>
