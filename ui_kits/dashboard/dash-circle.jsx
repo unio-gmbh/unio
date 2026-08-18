@@ -86,15 +86,16 @@ function DashCircle({ onNav, geheZu, tueMk, ohnePond }) {
         <p style={{ margin: "22px 0 0", font: "400 17px/1.55 var(--font-display)", color: "rgba(20,18,16,.55)", maxWidth: 520 }}>Was sich in der Community bewegt: Meilensteine, Deals, Votings und deine Saison Q3.</p>
       </CRvL>
       <CRv>
-        <div style={{ display: "flex", alignItems: "baseline", columnGap: 44, marginTop: 56, flexWrap: "wrap" }}>
-          {[["38", null, "Aktive Makler"], ["12", null, "Deals diese Saison"], ["€ 212", "Mio", "Umgesetztes Volumen · gesamt"], ["18", "%", "Dein Perzentil · Top-Segment"]].map(([v, suf, l], i) => (
-            <React.Fragment key={l}>
-              {i > 0 && <span style={{ width: 1, height: 44, background: "rgba(20,18,16,.14)", alignSelf: "center" }}></span>}
-              <div>
-                <div style={{ font: "600 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{v}{suf && <span style={{ fontSize: 20, color: "rgba(20,18,16,.4)", marginLeft: 6, fontWeight: 500 }}>{suf}</span>}</div>
-                <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>{l}</div>
-              </div>
-            </React.Fragment>
+        {/* Kennzahlenband als Raster mit Zeilenabstand. Vorher eine Flex-Reihe mit
+            Trennstrichen fester Hoehe: beim Umbruch fehlte der Zeilenabstand und
+            Zahlen lagen auf den Beschriftungen der Zeile darueber. Jetzt trennt
+            eine Haarlinie oben, das haelt in jeder Umbruch-Variante. */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 168px), 1fr))", gap: "22px 32px", marginTop: 56 }}>
+          {[["38", null, "Aktive Makler"], ["12", null, "Deals diese Saison"], ["€ 212", "Mio", "Umgesetztes Volumen · gesamt"], ["18", "%", "Dein Perzentil · Top-Segment"]].map(([v, suf, l]) => (
+            <div key={l} style={{ minWidth: 0, paddingTop: 18, borderTop: "1px solid rgba(20,18,16,.14)" }}>
+              <div style={{ font: "600 clamp(28px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{v}{suf && <span style={{ fontSize: 20, color: "rgba(20,18,16,.4)", marginLeft: 6, fontWeight: 500 }}>{suf}</span>}</div>
+              <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12, overflowWrap: "anywhere" }}>{l}</div>
+            </div>
           ))}
         </div>
       </CRv>

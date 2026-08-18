@@ -156,6 +156,13 @@ const MK_CSS = `
     box-shadow:-30px 0 80px -30px rgba(11,10,9,.45);transform:translateX(105%);transition:transform .3s cubic-bezier(0.32,0.72,0,1);padding:22px 24px;}
   .mk-overwrap.open .mk-over{transform:translateX(0);}
   .mk-over h3{font:500 21px var(--font-display);letter-spacing:-.02em;margin:0;color:var(--ink);}
+  .mk-overkopf{position:sticky;top:0;z-index:5;padding:12px 16px;
+    background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--hairline-dark);}
+  .mk-overkopf button{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;
+    background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--hairline-dark);border-radius:999px;
+    padding:9px 16px;min-height:40px;font:500 13.5px var(--font-display);font-family:inherit;color:var(--ink);}
+  .mk-overkopf button span{font-size:16px;line-height:1;color:var(--signal-deep);}
   /* Thread */
   .mk-msg{max-width:82%;border-radius:13px;padding:9px 13px;font-size:13px;line-height:1.5;margin-bottom:7px;}
   .mk-msg.ich{margin-left:auto;background:var(--ink);color:#F7F5F1;border-bottom-right-radius:4px;}
@@ -235,8 +242,18 @@ const MK_CSS = `
      werden schmaler, fixe Breiten geben nach, Flex-Reihen brechen um. */
   @media (max-width:860px){
     .mk-drei{grid-template-columns:minmax(0,1fr)!important;}
+    /* Entscheidend: ohne das Aufheben der Spannen erzeugt ein Kind mit
+       "grid-column: span 2" in einem einspaltigen Raster eine zweite,
+       automatisch breite Spalte. Die echte Spalte schrumpft dann auf die
+       Breite ihres kuerzesten Inhalts und alles ueberlappt. */
+    .mk-drei > *,.dash-bento > *{grid-column:auto!important;grid-row:auto!important;}
+    /* Desktop-Abstaende (120 px zwischen den Zonen) sind mobil zu viel Leerlauf */
+    .mk-drei{margin-top:34px!important;gap:14px!important;}
     .mk-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
-    main [style*="display: flex"]{flex-wrap:wrap;}
+    /* Nur Reihen umbrechen lassen. Bei einer Spalte mit Hoehenbegrenzung
+       (z. B. der Tages-Timeline mit maxHeight) erzeugt flex-wrap sonst eine
+       zweite Spalte, und der Inhalt wandert seitlich aus der Karte. */
+    main [style*="display: flex"]:not([style*="column"]){flex-wrap:wrap;}
   }
   @media (max-width:520px){
     .mk-facts{grid-template-columns:minmax(0,1fr)!important;}
@@ -293,7 +310,19 @@ function MkOver({ offen, onClose, children, breit }) {
   return (
     <div className={"mk-overwrap" + (offen ? " open" : "")} aria-hidden={!offen}>
       <div className="back" onClick={onClose}></div>
-      <aside className="mk-over" style={breit ? { width: "min(680px,100vw)" } : null}>{offen ? children : null}</aside>
+      <aside className="mk-over" style={breit ? { width: "min(680px,100vw)" } : null}>
+        {/* Zurueck-Leiste immer sichtbar. Mobil deckt das Panel die ganze Breite,
+            dann ist der Backdrop unerreichbar und ohne diesen Knopf gibt es
+            keinen Weg zurueck (Escape hilft am Telefon nicht). */}
+        {offen && (
+          <div className="mk-overkopf">
+            <button type="button" onClick={onClose} aria-label="Zurück">
+              <span aria-hidden="true">‹</span> Zurück
+            </button>
+          </div>
+        )}
+        {offen ? children : null}
+      </aside>
     </div>
   );
 }

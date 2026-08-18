@@ -128,6 +128,17 @@ function Kalender() {
   const [view, setView] = React.useState("woche");
   const [sheet, setSheet] = React.useState(null); // Tag für Tages-Sheet
   const today = 16;
+  /* Sieben Spalten passen mobil nicht: unter 760 px zeigen wir einen Tag als
+     Agenda mit Tagesstreifen darüber, so wie es Kalender am Telefon machen. */
+  const [schmal, setSchmal] = React.useState(() => window.matchMedia("(max-width: 760px)").matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 760px)");
+    const f = (e) => setSchmal(e.matches);
+    mq.addEventListener("change", f);
+    return () => mq.removeEventListener("change", f);
+  }, []);
+  const [tag, setTag] = React.useState(16);
+  const uhr = (t) => String(Math.floor(t)).padStart(2, "0") + ":" + (t % 1 ? "30" : "00");
   const week = [13, 14, 15, 16, 17, 18, 19];
   const wd = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
   const H0 = 8, H1 = 18, PXH = 52;
@@ -146,7 +157,7 @@ function Kalender() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
           <div style={{ display: "inline-flex", gap: 4, background: "#FFFFFF", borderRadius: 999, padding: 4, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-            {[["woche", "Woche"], ["monat", "Monat"]].map(([id, l]) => (
+            {[["woche", schmal ? "Tag" : "Woche"], ["monat", "Monat"]].map(([id, l]) => (
               <button key={id} onClick={() => setView(id)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "8px 18px", background: view === id ? "var(--ink)" : "transparent", color: view === id ? "var(--paper)" : "var(--text-muted)", font: "500 12.5px var(--font-display)", transition: "background .25s var(--ease-unio)" }}>{l}</button>
             ))}
           </div>
@@ -158,7 +169,61 @@ function Kalender() {
         </div>
       </div>
 
-      {view === "woche" ? (
+      {schmal && view === "woche" ? (
+        /* ===== Mobil: ein Tag als Agenda ===== */
+        <WReveal>
+        <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
+          {/* nowrap inline: MK_CSS laesst mobil pauschal alle Flex-Reihen umbrechen,
+              hier soll der Streifen aber in einer Zeile scrollen. */}
+          <div style={{ display: "flex", flexWrap: "nowrap", gap: 6, overflowX: "auto", padding: "12px 12px 10px", scrollbarWidth: "none", borderBottom: "1px solid var(--hairline-dark)" }}>
+            {week.map((d, i) => {
+              const on = d === tag, hat = (WEEK_EV[d] || []).length > 0;
+              return (
+                <button key={d} onClick={() => setTag(d)} aria-pressed={on}
+                  style={{ flex: "0 0 auto", border: "none", cursor: "pointer", borderRadius: 12, padding: "9px 12px 8px", minWidth: 46,
+                    background: on ? "var(--ink)" : "transparent", boxShadow: on ? "none" : "inset 0 0 0 1px var(--hairline-dark)",
+                    display: "grid", justifyItems: "center", gap: 4, fontFamily: "inherit" }}>
+                  <span className="u-label" style={{ fontSize: 7.5, color: on ? "rgba(247,245,241,.65)" : "var(--text-muted)" }}>{wd[i]}</span>
+                  <span style={{ font: "500 15px var(--font-mono)", color: on ? "var(--paper)" : "var(--ink)" }}>{d}</span>
+                  <span style={{ width: 5, height: 5, borderRadius: 99, background: hat ? "var(--signal)" : "transparent" }}></span>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ padding: "16px 16px 18px" }}>
+            <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>
+              {tag === today ? "Heute" : wd[week.indexOf(tag)] + ", " + tag + ". August"} · {(WEEK_EV[tag] || []).length} {(WEEK_EV[tag] || []).length === 1 ? "Termin" : "Termine"}
+            </div>
+            {(WEEK_EV[tag] || []).length === 0 ? (
+              <p style={{ margin: "14px 0 0", font: "400 14px/1.6 var(--font-display)", color: "var(--text-muted)" }}>
+                Kein Termin an diesem Tag. Gute Gelegenheit für Rückrufe.
+              </p>
+            ) : (
+              <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                {WEEK_EV[tag].slice().sort((a, b) => a[0] - b[0]).map(([t, dur, titel, bes], k) => (
+                  <div key={k} style={{ display: "flex", gap: 13, alignItems: "flex-start", padding: "13px 15px", borderRadius: 12,
+                    background: bes ? "var(--signal-soft)" : "#FFFFFF", boxShadow: bes ? "inset 0 0 0 1px rgba(255,170,9,0.3)" : "inset 0 0 0 1px var(--hairline-dark)",
+                    borderLeft: "3px solid var(--signal)" }}>
+                    <span style={{ font: "13px var(--font-mono)", color: bes ? "var(--signal-deep)" : "var(--text-muted)", flex: "0 0 auto", paddingTop: 2 }}>{uhr(t)}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <b style={{ display: "block", font: "500 15px var(--font-display)", color: "var(--ink)" }}>{titel}</b>
+                      <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 5, display: "block" }}>
+                        {dur >= 1 ? dur + " Std" : "30 Min"}{bes ? " · Besichtigung" : ""} · bis {uhr(t + dur)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button onClick={() => setSheet(tag)}
+              style={{ width: "100%", marginTop: 16, border: "none", cursor: "pointer", borderRadius: 999, padding: "13px 20px",
+                background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 14px var(--font-display)", fontFamily: "inherit", color: "var(--ink)" }}>
+              Tag im Detail öffnen
+            </button>
+          </div>
+        </div>
+        </WReveal>
+      ) : view === "woche" ? (
         <WReveal>
         <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", overflow: "hidden" }}>
           {/* Tageskopf */}
@@ -206,7 +271,7 @@ function Kalender() {
               const ev = d ? EVENTS[d] : null;
               const extra = ev && ev.length > 2 ? ev.length - 2 : 0;
               return (
-                <div key={i} onClick={() => d && setSheet(d)} style={{ height: 96, overflow: "hidden", padding: "8px 10px 10px", borderTop: "1px solid var(--hairline-dark)", borderLeft: col ? "1px solid var(--hairline-dark)" : "none", background: col >= 5 ? "rgba(239,234,226,0.4)" : "transparent", cursor: d ? "pointer" : "default" }}>
+                <div key={i} onClick={() => d && setSheet(d)} style={{ height: schmal ? 58 : 96, overflow: "hidden", padding: schmal ? "6px 4px" : "8px 10px 10px", borderTop: "1px solid var(--hairline-dark)", borderLeft: col ? "1px solid var(--hairline-dark)" : "none", background: col >= 5 ? "rgba(239,234,226,0.4)" : "transparent", cursor: d ? "pointer" : "default" }}>
                   {d && <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: "50%", font: "11px var(--font-mono)", color: d === today ? "var(--ink)" : "var(--text-muted)", boxShadow: d === today ? "0 0 0 2px var(--signal)" : "none" }}>{d}</span>
                   </div>}
@@ -230,7 +295,7 @@ function Kalender() {
       {/* Tages-Sheet von rechts */}
       {sheet != null && (
         <div onClick={() => setSheet(null)} style={{ position: "fixed", inset: 0, zIndex: 120, background: "rgba(11,10,9,0.25)" }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 420, maxWidth: "92vw", background: "#FBFAF6", borderLeft: "1px solid var(--hairline-dark)", boxShadow: "-24px 0 60px -30px rgba(11,10,9,0.4)", animation: "dashPanelIn 400ms var(--ease-unio)", display: "flex", flexDirection: "column" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: schmal ? 0 : "auto", width: schmal ? "auto" : 420, maxWidth: "100%", background: "#FBFAF6", borderLeft: "1px solid var(--hairline-dark)", boxShadow: "-24px 0 60px -30px rgba(11,10,9,0.4)", animation: "dashPanelIn 400ms var(--ease-unio)", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 26px", borderBottom: "1px solid var(--hairline-dark)" }}>
               <div>
                 <div style={{ font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{wd[(sheet + offset - 1) % 7] ? "" : ""}{sheet}. Juli 2026</div>

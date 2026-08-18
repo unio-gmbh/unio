@@ -632,7 +632,7 @@ function ShopSeite({ onNav }) {
   const [editor, setEditor] = React.useState(false);
   const [toast, setToast] = React.useState(null);
   const [auftrag, setAuftrag] = React.useState(null);
-  const [kat, setKat] = React.useState("druck");
+  const [kat, setKat] = React.useState("start");
   const add = (item) => {
     setCart((c) => [...c, item]);
     setKonfig(null);
@@ -666,6 +666,7 @@ function ShopSeite({ onNav }) {
   }
 
   const KATEGORIEN = [
+    ["start", "Empfehlungen"],
     ["druck", "Druck & Werbemittel"],
     ["content", "Content & Personal Brand"],
     ["homepage", "Makler-Homepage"],
@@ -690,34 +691,49 @@ function ShopSeite({ onNav }) {
     ],
   };
   const [shopObj, setShopObj] = React.useState("schoenbrunn");
-  const [katalogAuf, setKatalogAuf] = React.useState(false);
   const empf = EMPFEHLUNG[shopObj] || EMPFEHLUNG.ohne;
   const objName = (SHOP_OBJEKTE.find(([id]) => id === shopObj) || [])[1];
 
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
+      {/* Kopf: Mono-Kicker, Titel, ein Satz. Keine konkurrierenden Knöpfe. */}
       <RvL style={{ marginTop: 40 }}>
-        <h1 style={{ margin: 0, font: "500 clamp(34px, 3.4vw, 52px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Shop<span style={{ color: "var(--signal)" }}>.</span></h1>
-        <p style={{ margin: "16px 0 0", font: "400 16px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>Wähle das Objekt, wir schlagen vor, was fehlt. Preise inklusive Versand, Lieferdatum steht auf der Karte.</p>
-        {/* Zweiter Einstieg schon oben: wer den Katalog sucht, muss nicht scrollen */}
-        <button onClick={() => { setKatalogAuf(true); setTimeout(() => { const el = document.getElementById("shop-katalog"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60); }}
-          style={{ marginTop: 18, border: "none", cursor: "pointer", borderRadius: 999, padding: "13px 22px", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 14px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", display: "inline-flex", alignItems: "center", gap: 9 }}>
-          Gesamtes Angebot ansehen <span aria-hidden="true" style={{ font: "11px var(--font-mono)", color: "var(--signal-deep)" }}>▼</span>
-        </button>
+        <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)" }}>Shop · Produktion und Material</span>
+        <h1 style={{ margin: "12px 0 0", font: "500 clamp(34px, 3.4vw, 52px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Shop<span style={{ color: "var(--signal)" }}>.</span></h1>
+        <p style={{ margin: "16px 0 0", font: "400 16px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 540 }}>Wähle das Objekt, wir schlagen vor, was fehlt. Alle Preise inklusive Versand, das Lieferdatum steht auf der Karte.</p>
       </RvL>
 
-      {/* Zone 1: Objekt-Einstieg */}
-      <RvL style={{ marginTop: 26 }}>
-        <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>Für welches Objekt?</span>
-        <div className="mk-subnav" style={{ marginTop: 10 }}>
-          {SHOP_OBJEKTE.map(([id, l]) => (
-            <button key={id} className={shopObj === id ? "on" : ""} onClick={() => setShopObj(id)}>{l}</button>
-          ))}
+      {/* Eine Steuerleiste für alles: links das Objekt, darunter der Bereich.
+          Vorher lag die Bereichswahl hinter einem Aufklapper, dadurch war nicht
+          erkennbar, wie man zwischen den Shop-Bereichen wechselt. */}
+      <RvL style={{ marginTop: 28 }}>
+        <div style={{ background: "#FFFFFF", borderRadius: 18, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "16px 18px", display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 16 }}>
+          <div style={{ minWidth: 0 }}>
+            <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Für welches Objekt</span>
+            <div className="mk-subnav" style={{ marginTop: 9, background: "var(--paper-2)", boxShadow: "none" }}>
+              {SHOP_OBJEKTE.map(([id, l]) => (
+                <button key={id} className={shopObj === id ? "on" : ""} onClick={() => setShopObj(id)}>{l}</button>
+              ))}
+            </div>
+          </div>
+          <div style={{ minWidth: 0, borderTop: "1px solid var(--hairline-dark)", paddingTop: 16 }}>
+            <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Bereich · das gesamte Angebot</span>
+            <div className="mk-subnav" role="tablist" aria-label="Shop-Bereiche" style={{ marginTop: 9, background: "var(--paper-2)", boxShadow: "none" }}>
+              {KATEGORIEN.map(([id, label]) => (
+                <button key={id} role="tab" aria-selected={kat === id} className={kat === id ? "on" : ""}
+                  onClick={() => { setKat(id); window.scrollTo(0, 0); }}>
+                  {label}
+                  {id === "bestellungen" && <span className="zahl">{AUFTRAEGE.length}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </RvL>
 
-      {/* Zone 2: Empfohlen, mit zwei gleichwertigen Wegen je Karte */}
-      <Rv style={{ marginTop: 24 }}>
+      {kat === "start" && <React.Fragment>
+      {/* Empfohlen, mit zwei gleichwertigen Wegen je Karte */}
+      <Rv style={{ marginTop: 26 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 14, flexWrap: "wrap", marginBottom: 14 }}>
           <h2 style={{ margin: 0, font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>
             {shopObj === "ohne" ? "Für dich empfohlen" : "Empfohlen für " + objName}
@@ -779,7 +795,7 @@ function ShopSeite({ onNav }) {
         {(() => {
           const prem = PROGRAMME.find((p) => p.id === "premium");
           const std = PROGRAMME.find((p) => p.id === "standard");
-          const zumPaket = () => { setKatalogAuf(true); setKat("programme"); setTimeout(() => { const el = document.getElementById("shop-katalog"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60); };
+          const zumPaket = () => { setKat("programme"); window.scrollTo(0, 0); };
           return (
             <div style={{ background: "var(--signal-soft)", borderRadius: 16, padding: "18px 22px", marginTop: 12, boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.35)", display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
               <div style={{ flex: "1 1 300px", minWidth: 0 }}>
@@ -791,8 +807,8 @@ function ShopSeite({ onNav }) {
                   ))}
                 </div>
               </div>
-              <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-                <div>
+              <div style={{ flex: "1 1 260px", minWidth: 0, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <div style={{ minWidth: 0 }}>
                   <div style={{ font: "500 22px var(--font-display)", color: "var(--ink)" }}>€ {prem.preis.toLocaleString("de-AT")}</div>
                   <div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 4 }}>{prem.einheit} · heute € {(prem.preis - std.preis).toLocaleString("de-AT")} mehr</div>
                 </div>
@@ -804,46 +820,28 @@ function ShopSeite({ onNav }) {
         })()}
       </Rv>
 
-      {/* Zone 5: der vollständige Katalog. Bewusst als eigene, sichtbare Karte
-          und nicht als dünne Zeile: das gesamte Angebot muss auffindbar sein. */}
+      {/* Wegweiser am Ende der Empfehlungen: von hier direkt in einen Bereich */}
       <Rv style={{ marginTop: 26 }}>
-        <div id="shop-katalog" style={{ background: "var(--signal-soft)", color: "var(--ink)", borderRadius: 18, padding: "clamp(20px, 3.5vw, 30px)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.35)", display: "flex", flexWrap: "wrap", gap: 22, alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ flex: "1 1 320px", minWidth: 0 }}>
-            <div className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Gesamtes Angebot</div>
-            <div style={{ font: "500 clamp(20px, 2.4vw, 26px)/1.2 var(--font-display)", letterSpacing: "-0.02em", marginTop: 10 }}>
-              Alles, was UNIO für dich produziert
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 14px", marginTop: 14 }}>
-              {[["Druck und Werbemittel", PRINT_PRODUKTE.length], ["Content und Personal Brand", CONTENT_LEISTUNGEN.length], ["Makler-Homepage", SHOP_LOOKS.length], ["Pakete", PROGRAMME.length], ["Aufträge", AUFTRAEGE.length]].map(([l, z]) => (
-                <span key={l} style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)" }}>
-                  {l} <span style={{ font: "11px var(--font-mono)", color: "var(--signal-deep)" }}>{z}</span>
-                </span>
-              ))}
-            </div>
+        <div style={{ borderTop: "1px solid var(--hairline-dark)", paddingTop: 22 }}>
+          <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Weiter im Angebot</span>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: 12, marginTop: 14 }}>
+            {[["druck", "Druck und Werbemittel", PRINT_PRODUKTE.length + " Produkte"],
+              ["content", "Content und Personal Brand", CONTENT_LEISTUNGEN.length + " Leistungen"],
+              ["homepage", "Makler-Homepage", SHOP_LOOKS.length + " Looks"],
+              ["programme", "Pakete und Leads", PROGRAMME.length + " Pakete"]].map(([id, l, sub]) => (
+              <button key={id} onClick={() => { setKat(id); window.scrollTo(0, 0); }}
+                style={{ textAlign: "left", border: "none", cursor: "pointer", background: "#FFFFFF", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "16px 18px", fontFamily: "inherit", display: "grid", gap: 6 }}>
+                <b style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>{l}</b>
+                <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{sub}</span>
+                <span style={{ font: "500 13px var(--font-display)", color: "var(--signal-deep)", marginTop: 4 }}>Ansehen ›</span>
+              </button>
+            ))}
           </div>
-          <button onClick={() => setKatalogAuf((v) => !v)}
-            style={{ flex: "0 0 auto", border: "none", cursor: "pointer", borderRadius: 999, padding: "16px 26px", background: katalogAuf ? "#FFFFFF" : "var(--signal)", color: katalogAuf ? "var(--ink)" : "var(--on-signal)", boxShadow: katalogAuf ? "inset 0 0 0 1px var(--hairline-dark)" : "none", font: "500 15px var(--font-display)", fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 10 }}>
-            {katalogAuf ? "Katalog schließen" : "Gesamtes Angebot anzeigen"}
-            <span aria-hidden="true" style={{ font: "12px var(--font-mono)" }}>{katalogAuf ? "▲" : "▼"}</span>
-          </button>
         </div>
       </Rv>
+      </React.Fragment>}
 
-      {/* Reiter durch die Meta-Kategorien */}
-      {katalogAuf && <RvL style={{ marginTop: 20 }}>
-        <div role="tablist" aria-label="Shop-Kategorien" style={{ display: "inline-flex", gap: 6, flexWrap: "wrap", padding: 5, borderRadius: 999, background: "var(--card-bg, #FFFFFF)", boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))" }}>
-          {KATEGORIEN.map(([id, label]) => (
-            <button key={id} role="tab" aria-selected={kat === id} onClick={() => { setKat(id); window.scrollTo(0, 0); }}
-              style={{ font: "500 13.5px var(--font-display)", fontFamily: "inherit", padding: "10px 18px", borderRadius: 999, border: "none", cursor: "pointer",
-                background: kat === id ? "var(--ink)" : "transparent", color: kat === id ? "var(--paper)" : "var(--text-muted)",
-                transition: "all .25s var(--ease-unio)", whiteSpace: "nowrap" }}>
-              {label}{id === "bestellungen" ? " · " + AUFTRAEGE.length : ""}
-            </button>
-          ))}
-        </div>
-      </RvL>}
-
-      {katalogAuf && kat === "druck" && <React.Fragment>
+      {kat === "druck" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Druck &amp; Werbemittel</h2>
@@ -860,7 +858,7 @@ function ShopSeite({ onNav }) {
 
       </React.Fragment>}
 
-      {katalogAuf && kat === "content" && <React.Fragment>
+      {kat === "content" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Content &amp; Personal Brand</h2>
@@ -918,7 +916,7 @@ function ShopSeite({ onNav }) {
 
       </React.Fragment>}
 
-      {katalogAuf && kat === "homepage" && <React.Fragment>
+      {kat === "homepage" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 8 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Deine Makler-Homepage</h2>
@@ -988,7 +986,7 @@ function ShopSeite({ onNav }) {
 
       </React.Fragment>}
 
-      {katalogAuf && kat === "programme" && <React.Fragment>
+      {kat === "programme" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
           <h2 style={{ margin: 0, font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Content-Programme</h2>
@@ -1081,7 +1079,7 @@ function ShopSeite({ onNav }) {
       <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 14 }}>ALLE PREISE NETTO · QUELLE: UNIO ANGEBOTS- UND PROZESSDOKUMENT · ARBEITSSTAND</p>
       </React.Fragment>}
 
-      {katalogAuf && kat === "bestellungen" && <React.Fragment>
+      {kat === "bestellungen" && <React.Fragment>
       <Rv style={{ marginTop: 36 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, marginBottom: 18 }}>
           <h2 style={{ margin: 0, font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Deine Aufträge</h2>
