@@ -2,7 +2,12 @@
 const { Icon: PjIcon, Reveal: PjRev, Tabs: PjTabs, StatusPill: PjStatus, Table: PjTable, Row: PjRow, Cell2: PjCell2 } = window;
 const { Button: PjBtn } = window.UNIODesignSystem_b6216a;
 
-const PJ_GAL = ["/assets/img/albrecht.jpg", "/assets/img/albrecht-dusk.jpg", "/assets/img/beheim.jpg", "/assets/img/int-bath.jpg", "/assets/img/int-kitchen.jpg"];
+const PJ_GAL = [
+  "/assets/img/albrecht.jpg",
+  { typ: "video", src: "/assets/video/explore-design.mp4", poster: "/assets/img/albrechts-fassade.jpg", dauer: "0:48" },
+  { typ: "tour", embed: "about:blank", poster: "/assets/img/albrechts-wohnen.jpg" },
+  "/assets/img/albrecht-dusk.jpg", "/assets/img/beheim.jpg", "/assets/img/int-bath.jpg", "/assets/img/int-kitchen.jpg",
+];
 const PJ_FACTS = [["objekte", "Bauträger", "neopartement VI"], ["objekte", "Architekt", "Dipl.-Ing. Paul Prinz"], ["actions", "Preis von", "€ 279.000"], ["actions", "Preis bis", "€ 1.599.000"], ["objekte", "Fläche gesamt", "857,28 m²"]];
 const PJ_UNITS = [
   ["Ruhiges Leben im Grünen", "Top 1", "€ 279.000", "50,24 m²", 2, "Marcus Anthofer-Weiss", "Aktiv"],
@@ -35,28 +40,30 @@ function ProjektView({ onNav }) {
       {/* Kopf */}
       <PjRev delay={60}>
         <div className="mk-projkarte" style={{ background: "#FFFFFF", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", marginTop: 20 }}>
-          <div className="mk-projkopf" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 32, alignItems: "start" }}>
-            <div>
+          {/* Kopf bricht intrinsisch um (Flex-Wrap statt Media-Query): die Kennzahlen
+              rutschen unter den Text, sobald sie nicht mehr daneben passen. */}
+          <div className="mk-projkopf" style={{ display: "flex", flexWrap: "wrap", gap: 32, alignItems: "flex-start" }}>
+            <div style={{ flex: "1 1 340px", minWidth: 0 }}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <PjStatus kind="aktiv">Status: Aktiv</PjStatus><PjStatus kind="reserviert">In Planung</PjStatus><PjStatus kind="neutral">Wohnbau</PjStatus>
               </div>
               <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Albrechts Townhouses</h1>
               <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7 }}><PjIcon name="pin" size={14} stroke="var(--text-muted)" />Stockerauer Straße 53, 2100 Korneuburg</p>
-              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Neubauprojekt in Korneuburg mit Dachgeschosswohnungen und Reihenhäusern — hochwertige Ausstattung, Gärten, Terrassen und optionale Stellplätze.</p>
+              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Neubauprojekt in Korneuburg mit Dachgeschosswohnungen und Reihenhäusern: hochwertige Ausstattung, Gärten, Terrassen und optionale Stellplätze.</p>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginTop: 20, padding: "12px 18px", borderRadius: 12, background: "var(--signal-soft)", width: "max-content", maxWidth: "100%" }}>
                 <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Projektlead</span>
                 <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)" }}>Johannes Lindner</span>
                 <span style={{ font: "12px var(--font-mono)", color: "var(--text-muted)" }}>johannes@unio.at · +43 676 5027473</span>
               </div>
             </div>
-            <div className="mk-projzahlen" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <div style={{ borderRadius: 12, padding: "20px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 110, flex: "1 1 110px" }}>
+            <div className="mk-projzahlen" style={{ display: "flex", gap: 12, flexWrap: "wrap", flex: "1 1 302px", minWidth: 0 }}>
+              <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 0, flex: "1 1 104px" }}>
                 <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>Einheiten</div>
                 <div style={{ font: "500 36px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>10</div>
               </div>
-              <div style={{ borderRadius: 12, padding: "20px 24px", background: "var(--signal-soft)", minWidth: 180, flex: "1 1 180px" }}>
+              <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", background: "var(--signal-soft)", minWidth: 0, flex: "1 1 160px" }}>
                 <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>Preisspanne</div>
-                <div style={{ font: "500 20px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k – 1,6 Mio.</div>
+                <div style={{ font: "500 clamp(17px, 4.6vw, 20px)/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k bis 1,6 Mio.</div>
               </div>
             </div>
           </div>
@@ -67,7 +74,7 @@ function ProjektView({ onNav }) {
 
       {tab === "daten" && (
         <React.Fragment>
-          <div className="mk-kennz" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(168px, 1fr))", gap: 16 }}>
+          <div className="mk-kennz" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))", gap: 16 }}>
             {PJ_FACTS.map(([ic, k, v], i) => (
               <PjRev key={k} delay={i * 50}><div style={{ background: "#FFFFFF", borderRadius: 12, padding: 20, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", height: "100%" }}>
                 <PjIcon name={ic} size={16} stroke="var(--signal-deep)" />
@@ -131,14 +138,18 @@ function ProjektView({ onNav }) {
         </React.Fragment>
       )}
 
+      {tab === "daten" && (
+        <PjRev style={{ marginTop: 20 }}><window.MkLage exakt ort="2100 Korneuburg, Stockerauer Straße" datenId="korneuburg" /></PjRev>
+      )}
+
       {tab === "interessenten" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {[["Nikita Neznamov", "DG-Maisonette · 137 m²", "€ 250.000", "aktiv", "Angenommen"], ["Marcin Fituch", "Traum Penthouse Hernals", "€ 666.000", "aktiv", "Angenommen"], ["Laurenz Wurzer", "Top 3 · 100 m²", "€ 100.000", "verloren", "Abgelehnt"]].map((r, i) => (
             <PjRev key={r[0]} delay={i * 60}>
-              <div style={{ background: "#FFFFFF", borderRadius: 12, padding: 20, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "grid", gridTemplateColumns: "auto 1fr auto auto", gap: 20, alignItems: "center" }}>
-                <span style={{ width: 42, height: 42, borderRadius: "50%", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 14px var(--font-display)", color: "var(--ink)" }}>{r[0].split(" ").map((w) => w[0]).join("")}</span>
-                <div><div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>{r[0]}</div><div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 5 }}>{r[1]}</div></div>
-                <span style={{ font: "16px var(--font-mono)", color: "var(--ink)" }}>{r[2]}</span>
+              <div className="mk-intzeile" style={{ background: "#FFFFFF", borderRadius: 12, padding: "clamp(14px, 3vw, 20px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "flex", flexWrap: "wrap", gap: "12px 20px", alignItems: "center" }}>
+                <span style={{ flex: "0 0 auto", width: 42, height: 42, borderRadius: "50%", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 14px var(--font-display)", color: "var(--ink)" }}>{r[0].split(" ").map((w) => w[0]).join("")}</span>
+                <div style={{ flex: "1 1 160px", minWidth: 0 }}><div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>{r[0]}</div><div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 5 }}>{r[1]}</div></div>
+                <span style={{ flex: "0 0 auto", font: "16px var(--font-mono)", color: "var(--ink)" }}>{r[2]}</span>
                 <PjStatus kind={r[3]}>{r[4]}</PjStatus>
               </div>
             </PjRev>

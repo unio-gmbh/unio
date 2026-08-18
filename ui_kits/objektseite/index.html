@@ -76,7 +76,8 @@
     background:rgba(20,18,16,.5);color:#fff;font-size:12px;font-weight:600;
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
     border:1px solid rgba(255,255,255,.18);}
-  .trow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;}
+  /* Kachelreihe traegt jetzt auch Video und Tour, deshalb intrinsisch statt vier fix */
+  .trow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,116px),1fr));gap:8px;margin-top:8px;}
   .trow .t{border-radius:14px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;}
   .trow img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
   .trow .t:hover img{transform:scale(1.04)}
@@ -367,10 +368,148 @@
   .pfoot-bar{display:flex;justify-content:space-between;align-items:center;
     border-top:1px solid var(--hair);margin-top:56px;padding-top:24px;}
   .pfoot-bar img{height:18px;width:auto;}
+
+  /* ===== Medien: Video und 360-Tour liegen als eigene Kacheln in der Galerie.
+     Regel aus dem Research: Bild 1 bleibt Bild (Ladezeit), kein Autoplay,
+     Tour-iframe erst auf Klick. ===== */
+  .trow .t{position:relative;}
+  .trow .t .medb{position:absolute;left:8px;bottom:8px;display:inline-flex;align-items:center;gap:5px;
+    padding:5px 10px;border-radius:99px;background:rgba(20,18,16,.72);color:#F7F5F1;
+    font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    backdrop-filter:blur(8px);}
+  .trow .t.tour .medb{background:var(--orange);color:#1A1305;}
+  .medstage{position:absolute;inset:0;z-index:5;background:#0B0B0C;display:none;}
+  .medstage.on{display:block;}
+  .medstage video,.medstage iframe{position:absolute;inset:0;width:100%;height:100%;border:none;
+    object-fit:contain;background:#0B0B0C;}
+  .medstage .zu{position:absolute;right:12px;top:12px;z-index:3;border:none;cursor:pointer;
+    padding:9px 15px;border-radius:99px;background:rgba(247,245,241,.94);color:var(--ink);
+    font-weight:500;font-size:12.5px;font-family:inherit;}
+  .medplay{position:absolute;inset:0;width:100%;height:100%;border:none;padding:0;cursor:pointer;
+    background:#0B0B0C;display:grid;place-items:center;}
+  .medplay img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.8;}
+  .medplay .knopf{position:relative;width:66px;height:66px;border-radius:99px;background:rgba(247,245,241,.95);
+    color:var(--ink);display:grid;place-items:center;font-size:23px;
+    box-shadow:0 14px 40px -12px rgba(11,10,9,.6);}
+  .medplay .lab{position:absolute;left:14px;bottom:14px;padding:7px 13px;border-radius:99px;
+    background:rgba(20,18,16,.7);color:#F7F5F1;font-family:var(--font-mono),monospace;font-size:9px;
+    letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);}
+
+  /* ===== Lage und Infrastruktur ===== */
+  .lg{padding:34px 0;border-top:1px solid var(--hair);}
+  .lg .lgtop{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;}
+  .lg h2{font-weight:500;font-size:22px;letter-spacing:-.02em;}
+  .lg .lgscores{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));
+    gap:14px;margin-top:20px;}
+  .lg .sc{background:var(--card);border-radius:16px;padding:20px;box-shadow:inset 0 0 0 1px var(--hair);
+    display:flex;align-items:center;gap:16px;}
+  .lg .sc .ring{position:relative;width:58px;height:58px;flex:0 0 auto;}
+  .lg .sc .ring b{position:absolute;inset:0;display:grid;place-items:center;font-weight:500;font-size:15px;}
+  .lg .sc .txt b{display:block;font-weight:500;font-size:14.5px;}
+  .lg .sc .txt .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--fg3);}
+  .lg .sc .txt p{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--fg2);}
+  .lg .lgsplit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px;}
+  @media (max-width:820px){ .lg .lgsplit{grid-template-columns:minmax(0,1fr);} }
+  .lg .poi{background:var(--card);border-radius:16px;padding:22px;box-shadow:inset 0 0 0 1px var(--hair);}
+  .lg .poigrp + .poigrp{margin-top:16px;border-top:1px solid var(--hair);padding-top:14px;}
+  .lg .poigrp .h{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);}
+  .lg .poigrp .z{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:13.5px;}
+  .lg .poigrp .z span:last-child{font-family:var(--font-mono),monospace;font-size:11.5px;color:var(--fg2);
+    white-space:nowrap;}
+  .lg .karte{position:relative;border-radius:16px;overflow:hidden;background:var(--card);
+    box-shadow:inset 0 0 0 1px var(--hair);min-height:280px;display:grid;place-items:center;}
+  .lg .karte .platz{text-align:center;padding:26px;}
+  .lg .karte .platz b{display:block;font-weight:500;font-size:15px;margin-bottom:8px;}
+  .lg .karte .platz p{font-size:12.5px;color:var(--fg2);max-width:280px;margin:0 auto 16px;line-height:1.5;}
+  .lg .karte iframe{width:100%;height:100%;border:none;min-height:280px;}
+  .lg .oeffi{margin-top:14px;background:var(--card);color:var(--ink);border-radius:16px;padding:18px 22px;
+    font-size:13.5px;line-height:1.5;box-shadow:inset 0 0 0 1px var(--hair);}
+  .lg .oeffi .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);display:block;margin-bottom:7px;}
+  .lg .wie{margin-top:12px;}
+  .lg .wie button{border:none;background:none;cursor:pointer;font-family:inherit;font-weight:500;
+    font-size:13px;color:var(--fg2);padding:0;text-decoration:underline;text-underline-offset:3px;}
+  .lg .wie p{margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--fg2);max-width:640px;}
+
+  /* ===== UNIO Concierge ===== */
+  /* Helle Flaeche: schwarze Bloecke passen nicht in die Objektseite */
+  .cc{background:var(--card);border-radius:20px;padding:24px;margin-top:26px;
+    box-shadow:inset 0 0 0 1px var(--hair);}
+  .cc .cchead{display:flex;align-items:center;gap:12px;}
+  .cc .ccav{width:38px;height:38px;border-radius:99px;background:var(--orange);color:#1A1305;
+    display:grid;place-items:center;flex:0 0 auto;font-size:17px;}
+  .cc .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);}
+  .cc h3{margin-top:4px;font-weight:500;font-size:19px;letter-spacing:-.02em;}
+  .cc .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .cc .chips button{border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;
+    padding:10px 15px;border-radius:99px;background:var(--bg);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--hair);transition:background .2s var(--ease);}
+  .cc .chips button:hover{background:#EFEBE3;}
+  .cc .chips button.mk{background:var(--orange);color:#1A1305;box-shadow:none;}
+  .ccl{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:60;
+    width:60px;height:60px;border-radius:99px;border:none;cursor:pointer;background:var(--orange);
+    color:#1A1305;font-size:22px;box-shadow:0 18px 44px -14px rgba(20,18,16,.4);}
+  .ccw{position:fixed;inset:0;z-index:130;pointer-events:none;}
+  .ccw.auf{pointer-events:auto;}
+  .ccw .back{position:absolute;inset:0;background:rgba(11,10,9,.42);opacity:0;transition:opacity .25s;}
+  .ccw.auf .back{opacity:1;}
+  .ccs{position:absolute;right:20px;bottom:20px;width:min(400px,calc(100% - 40px));max-height:70vh;
+    background:var(--bg);border-radius:20px;display:flex;flex-direction:column;overflow:hidden;
+    transform:translateY(16px) scale(.98);opacity:0;transition:all .28s var(--ease);
+    box-shadow:0 30px 70px -20px rgba(11,10,9,.5);}
+  .ccw.auf .ccs{transform:none;opacity:1;}
+  @media (max-width:760px){ .ccs{left:0;right:0;bottom:0;width:auto;max-height:88vh;border-radius:20px 20px 0 0;} }
+  .ccs .kopf{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--hair);}
+  .ccs .kopf .av{width:34px;height:34px;border-radius:99px;background:var(--orange);color:#1A1305;
+    display:grid;place-items:center;flex:0 0 auto;}
+  .ccs .kopf b{display:block;font-weight:500;font-size:14.5px;}
+  .ccs .verlauf{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:9px;}
+  .ccs .m{max-width:84%;padding:11px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;}
+  .ccs .m.du{align-self:flex-end;background:var(--ink);color:#F3F0EA;}
+  .ccs .m.ai{align-self:flex-start;background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);}
+  .ccs .m.hand{align-self:stretch;max-width:100%;background:rgba(255,170,9,.14);
+    box-shadow:inset 0 0 0 1px rgba(255,170,9,.35);}
+  .ccs .m.hand button{margin-top:10px;border:none;cursor:pointer;font-family:inherit;font-weight:500;
+    font-size:13px;padding:10px 16px;border-radius:99px;background:var(--orange);color:#1A1305;}
+  .ccs .fuss{padding:12px;border-top:1px solid var(--hair);display:flex;gap:8px;}
+  .ccs .fuss input{flex:1;min-width:0;border:none;border-radius:99px;padding:11px 15px;
+    background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);font-family:inherit;font-size:13.5px;color:var(--ink);}
+  .ccs .fuss button{border:none;cursor:pointer;font-family:inherit;font-weight:500;font-size:13px;
+    padding:11px 18px;border-radius:99px;background:var(--ink);color:#F3F0EA;}
+  .ccs .x{margin-left:auto;width:34px;height:34px;border-radius:99px;border:none;cursor:pointer;
+    background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);color:var(--ink);font-size:15px;}
+  /* Objektbezug im Makler-Chat: immer sichtbar, immer ein Weg zurück */
+  .mkobj{display:flex;align-items:center;gap:11px;padding:11px 16px;text-decoration:none;color:var(--ink);
+    background:var(--card);border-bottom:1px solid var(--hair);}
+  .mkobj img{width:44px;height:34px;border-radius:8px;object-fit:cover;flex:0 0 auto;}
+  .mkobj b{display:block;font-weight:500;font-size:13.5px;}
+  .mkobj .mono{font-size:8.5px;color:var(--orange);}
+
+  /* ===== Einbettungs-Modus (?embed=1) =====
+     Wird die Seite in einer anderen Oberflaeche gezeigt (Makler-Vorschau, Portal),
+     traegt die Huelle schon Navigation und Rahmen. Dann faellt hier die eigene Chrome weg,
+     der Inhalt selbst bleibt exakt derselbe. */
+  html.embed .top,
+  html.embed .pfoot,
+  html.embed .weiter,
+  html.embed .mmenu,
+  html.embed .ctabar{display:none!important;}
+  html.embed,html.embed body{background:transparent;}
+  html.embed .shell{padding-top:0;}
+  /* Ohne eigene Kopfzeile darf die Preis-Spalte weiter oben kleben */
+  html.embed .rail{top:16px;}
+  html.embed body::after{display:none;}
 </style>
 </head>
 <body>
 
+<script>
+  /* Einbettungs-Modus so früh wie möglich setzen, damit die Chrome nicht aufblitzt */
+  if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");
+</script>
 <div class="shell">
   <div class="top">
     <div class="cir" onclick="history.length>1?history.back():location.assign('immobilien.html')"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg></div>
@@ -418,6 +557,8 @@
   <div class="hero" id="heroBtn">
     <img src="../../assets/photos/skyline-terrasse.png" alt="Dachterrasse mit Blick über Wien" id="heroimg">
     <span class="count">1 / 33 · Galerie öffnen</span>
+    <!-- Bühne für Video und 360-Tour, liegt über dem Hero und lädt erst auf Klick -->
+    <div class="medstage" id="medstage"></div>
   </div>
   <div class="trow" id="trow"></div>
 
@@ -462,6 +603,18 @@
         weitere Schlafzimmer realisieren.</p>
         <button class="more">Vollständige Beschreibung
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5 7 9.5l4-4"/></svg></button>
+
+        <!-- Concierge dort, wo beim Lesen die Fragen entstehen -->
+        <div class="cc">
+          <div class="cchead">
+            <span class="ccav">✦</span>
+            <div>
+              <span class="lab">UNIO Concierge · KI-Assistent</span>
+              <h3>Fragen zu diesem Objekt?</h3>
+            </div>
+          </div>
+          <div class="chips" id="ccchips"></div>
+        </div>
       </div>
 
       <div class="sec">
@@ -584,6 +737,94 @@
   </div>
 
   <p class="foot mono">Demo-Ansicht · Fotos Platzhalter · Marktdaten Demo · Objektdaten: app.unio.at/property/2</p>
+</div>
+
+<!-- Lage und Infrastruktur: nach der Beschreibung, vor den Dokumenten -->
+<section class="shell lg" id="lage" aria-label="Lage und Infrastruktur">
+  <div class="lgtop">
+    <div>
+      <span class="mono">Lage und Infrastruktur</span>
+      <h2 style="margin-top:8px">Wie es sich hier lebt</h2>
+    </div>
+    <span class="mono" id="lgort">1170 Wien, Hernals</span>
+  </div>
+  <div class="lgscores" id="lgscores"></div>
+  <div class="lgsplit">
+    <div class="poi" id="lgpoi"></div>
+    <div>
+      <div class="karte" id="lgkarte">
+        <div class="platz">
+          <b>Karte ansehen</b>
+          <p>Die Karte lädt erst auf Klick, damit die Seite schnell bleibt.</p>
+          <button class="pfoot-ghost" id="lgkbtn" style="cursor:pointer;border:none;background:var(--card);font-family:inherit">Karte laden</button>
+        </div>
+      </div>
+      <div class="oeffi">
+        <span class="lab">Öffentlich unterwegs</span>
+        Stephansplatz in 21 Min mit U4 und U1 · Hauptbahnhof in 18 Min · Nachtbus N43 vor dem Haus.
+      </div>
+    </div>
+  </div>
+  <div class="wie">
+    <button id="lgwie" aria-expanded="false">Wie wird das berechnet?</button>
+    <p id="lgwiep" hidden>Die Werte kommen aus offenen Daten und werden je Objekt neu berechnet:
+    Haltestellen, Linien und Takte aus den Fahrplandaten der Wiener Linien, Gehzeiten über ein
+    Routing auf dem Straßennetz, Nahversorgung, Schulen, Ärzte und Grünflächen aus dem
+    Stadt-Wien-Datenkatalog und OpenStreetMap, Ruhe aus der strategischen Lärmkarte der Stadt.
+    Kein Schätzwert und keine Handeingabe.</p>
+    <p class="mono" style="margin-top:12px">Datenquellen: Stadt Wien · Wiener Linien · OpenStreetMap</p>
+  </div>
+</section>
+
+<!-- Makler-Chat direkt am Objekt: die Verbindung zur Immobilie bleibt sichtbar,
+     dieselbe Unterhaltung erscheint im Portal unter Aktivität. -->
+<div class="ccw" id="mkw" aria-hidden="true">
+  <div class="back" id="mkback"></div>
+  <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
+    <div class="kopf">
+      <img id="mkfoto" src="../../assets/team/portrait-02.jpg" alt=""
+        style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
+      <div>
+        <b id="mkname">Lukas Brandtner</b>
+        <span class="mono" style="font-size:8.5px">Makler · antwortet in unter 2 Stunden</span>
+      </div>
+      <button class="x" id="mkx" aria-label="Schließen">✕</button>
+    </div>
+    <!-- Objektbezug: der Chat gehört sichtbar zu dieser Immobilie -->
+    <a class="mkobj" id="mkobj" href="#top">
+      <img src="../../assets/photos/skyline-terrasse.png" alt="">
+      <span>
+        <b>Traum Penthouse in Hernals</b>
+        <span class="mono">Zum Objekt zurück</span>
+      </span>
+    </a>
+    <div class="verlauf" id="mkverlauf"></div>
+    <div class="fuss">
+      <input id="mkinput" placeholder="Nachricht an den Makler …" aria-label="Nachricht an den Makler">
+      <button id="mksend">Senden</button>
+    </div>
+  </div>
+</div>
+
+<!-- Persistenter Concierge-Einstieg -->
+<button class="ccl" id="ccl" aria-label="UNIO Concierge öffnen">✦</button>
+<div class="ccw" id="ccw" aria-hidden="true">
+  <div class="back" id="ccback"></div>
+  <div class="ccs" role="dialog" aria-modal="true" aria-label="UNIO Concierge">
+    <div class="kopf">
+      <span class="av">✦</span>
+      <div>
+        <b>UNIO Concierge</b>
+        <span class="mono" style="font-size:8.5px">KI-Assistent · Antworten können Fehler enthalten</span>
+      </div>
+      <button class="x" id="ccx" aria-label="Schließen">✕</button>
+    </div>
+    <div class="verlauf" id="ccverlauf"></div>
+    <div class="fuss">
+      <input id="ccinput" placeholder="Frage zum Objekt …" aria-label="Frage zum Objekt">
+      <button id="ccsend">Fragen</button>
+    </div>
+  </div>
 </div>
 
 <section class="docs" id="dokumente">
@@ -716,12 +957,52 @@ const HERO='../../assets/photos/skyline-terrasse.png',
 const ALL=[HERO,...THUMBS];
 const CAPS=['Dachterrasse','Küche','Bad','Dachlounge','Umgebung'];
 
-/* Thumbs auf der Seite */
-const trow=document.getElementById('trow'),heroimg=document.getElementById('heroimg');
+/* Medien am Objekt: Video und 360-Tour stehen als eigene Kacheln neben den Fotos.
+   Sie liegen vor den Foto-Thumbs, damit sie nicht untergehen. Fehlt ein Medium,
+   entfaellt die Kachel einfach, es bleibt keine Leerstelle. */
+const MEDIEN=[
+  {typ:'video',src:'../../assets/video/explore-kling-c.mp4',poster:'../../assets/photos/dachlounge.jpg',dauer:'1:12'},
+  {typ:'tour',embed:'about:blank',poster:'../../assets/img/int-bath.jpg'}
+];
+
+const trow=document.getElementById('trow'),heroimg=document.getElementById('heroimg'),
+      medstage=document.getElementById('medstage');
+
+function medZu(){ medstage.classList.remove('on'); medstage.innerHTML=''; }
+function medAuf(m){
+  medstage.innerHTML='';
+  const zu=document.createElement('button');
+  zu.className='zu'; zu.textContent='Zurück zum Foto';
+  zu.addEventListener('click',e=>{e.stopPropagation();medZu();});
+  if(m.typ==='video'){
+    const v=document.createElement('video');
+    v.src=m.src; v.poster=m.poster; v.controls=true; v.autoplay=true; v.playsInline=true;
+    medstage.appendChild(v);
+  }else{
+    const f=document.createElement('iframe');
+    f.src=m.embed; f.title='360-Grad-Tour'; f.allow='xr-spatial-tracking; fullscreen'; f.allowFullscreen=true;
+    medstage.appendChild(f);
+  }
+  medstage.appendChild(zu);
+  medstage.classList.add('on');
+  medstage.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+/* Medien-Kacheln zuerst */
+MEDIEN.forEach(m=>{
+  const t=document.createElement('div');
+  t.className='t'+(m.typ==='tour'?' tour':'');
+  t.innerHTML='<img src="'+m.poster+'" alt=""><span class="medb">'+
+    (m.typ==='video'?'▶ Video · '+m.dauer:'⟳ 360-Tour')+'</span>';
+  t.addEventListener('click',e=>{e.stopPropagation();medAuf(m);});
+  trow.appendChild(t);
+});
+
+/* Foto-Thumbs */
 THUMBS.forEach((s,i)=>{
   const t=document.createElement('div');t.className='t';
   t.innerHTML='<img src="'+s+'" alt="">';
-  t.addEventListener('click',e=>{e.stopPropagation();openOv(i+1);});
+  t.addEventListener('click',e=>{e.stopPropagation();medZu();openOv(i+1);});
   trow.appendChild(t);
 });
 
@@ -1286,7 +1567,9 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     var PILLS = { termin: "Termin fixiert", besichtigt: "Besichtigt", anbot_aktiv: "Anbot in Prüfung", gegenangebot: "Gegenangebot · Frist läuft", angenommen: "In Abwicklung", abwicklung: "In Abwicklung", eigentum: "Dein Eigentum" };
     if (pill) { pill.style.display = PILLS[z] ? "inline-block" : "none"; pill.textContent = (PILLS[z] || "").toUpperCase(); }
     var zurKaufreise = function(){ obenNav(PORTAL + "&kaufreise=" + objId); };
-    var zumChat = function(){ obenNav(PORTAL + "&tab=akt&chat=" + objId); };
+    /* Der Chat öffnet am Objekt, nicht im Portal: so bleibt der Bezug zur
+       Immobilie erhalten und man landet nicht in einer fremden Ansicht. */
+    var zumChat = function(){ if (window.mkChatAuf) window.mkChatAuf(); else obenNav(PORTAL + "&tab=akt&chat=" + objId); };
     if (z === "anbot_aktiv") {
       neuBinden("angebotOpen", "Anbot ansehen", zurKaufreise); neuBinden("angebotOpenMobil", "Anbot ansehen", zurKaufreise);
       neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
@@ -1327,6 +1610,233 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     chatMsg(false, "Ihr Anbot über " + eur(v) + " ist eingegangen. Ich lege es dem Verkäufer heute noch vor.");
     setTimeout(ctaAnwenden, 400);
   });
+})();
+</script>
+
+<!-- Lage und Infrastruktur: Ringe, POI-Listen, Karte auf Klick.
+     Die Werte kommen im Betrieb aus offenen Daten (siehe "Wie wird das berechnet?"). -->
+<script>
+(function(){
+  var LAGE = {
+    ort: "1170 Wien, Hernals",
+    scores: [
+      { k: "Öffi-Anbindung", wert: 92, label: "Hervorragend", sub: "U4 und zwei Buslinien im Gehradius" },
+      { k: "Alltag zu Fuß", wert: 78, label: "Sehr gut", sub: "Nahversorgung, Arzt, Schule unter 10 Min" },
+      { k: "Ruhe", wert: 64, label: "Gut", sub: "Wohnstraße, kein Durchzugsverkehr" }
+    ],
+    poi: [
+      ["Öffentlich", [["U4 Meidling Hauptstraße", "4 Min zu Fuß"], ["Bus 10A Steinbruchstraße", "2 Min zu Fuß"], ["S-Bahn Hernals", "11 Min zu Fuß"]]],
+      ["Nahversorgung", [["Billa Plus", "5 Min zu Fuß"], ["Apotheke zur Hoffnung", "6 Min zu Fuß"], ["Bäckerei Grimm", "3 Min zu Fuß"]]],
+      ["Bildung", [["Volksschule Rosensteingasse", "7 Min zu Fuß"], ["Kindergarten Wichtelhaus", "4 Min zu Fuß"], ["Gymnasium Geblergasse", "12 Min zu Fuß"]]],
+      ["Grün und Freizeit", [["Schwarzenbergpark", "9 Min zu Fuß"], ["Sportanlage Hernals", "8 Min zu Fuß"], ["Wienerwald-Einstieg", "14 Min zu Fuß"]]]
+    ]
+  };
+  var farbe = function(w){ return w >= 85 ? "#2E7D46" : w >= 65 ? "var(--orange)" : "#B87400"; };
+  var sc = document.getElementById("lgscores");
+  if (!sc) return;
+
+  /* Berechnete Werte aus offenen Daten nachladen (build/lage.mjs schreibt sie).
+     Fehlt die Datei, bleiben die eingebauten Werte stehen. */
+  fetch("/assets/data/lage/hernals.json").then(function(a){ return a.ok ? a.json() : null; })
+    .then(function(d){
+      if (!d || !d.scores) return;
+      LAGE.ort = d.ort;
+      LAGE.scores = d.scores;
+      LAGE.poi = d.poi.map(function(g){ return [g.kat, g.zeilen]; });
+      sc.innerHTML = ""; document.getElementById("lgpoi").innerHTML = "";
+      zeichne();
+      var oe = document.querySelector(".lg .oeffi");
+      if (oe) oe.innerHTML = '<span class="lab">Öffentlich unterwegs</span>' + d.oeffiSatz;
+      var q = document.querySelector(".lg .wie p + p, .lg .wie .mono");
+      if (q) q.textContent = "Berechnet am " + d.stand.split("-").reverse().join(".") + " · Datenquellen: " + d.quellen.join(" · ");
+    }).catch(function(){ /* offline oder noch nicht berechnet */ });
+
+  function zeichne(){
+  document.getElementById("lgort").textContent = LAGE.ort;
+  LAGE.scores.forEach(function(s){
+    var R = 22, U = 2 * Math.PI * R;
+    var d = document.createElement("div");
+    d.className = "sc";
+    d.innerHTML =
+      '<div class="ring"><svg viewBox="0 0 58 58" width="58" height="58">' +
+        '<circle cx="29" cy="29" r="' + R + '" fill="none" stroke="var(--hair)" stroke-width="5"></circle>' +
+        '<circle cx="29" cy="29" r="' + R + '" fill="none" stroke="' + farbe(s.wert) + '" stroke-width="5" ' +
+          'stroke-linecap="round" stroke-dasharray="' + U + '" stroke-dashoffset="' + (U * (1 - s.wert / 100)) + '" ' +
+          'transform="rotate(-90 29 29)"></circle>' +
+      '</svg><b>' + s.wert + '</b></div>' +
+      '<div class="txt"><span class="lab">' + s.k + '</span><b>' + s.label + '</b><p>' + s.sub + '</p></div>';
+    sc.appendChild(d);
+  });
+  var poi = document.getElementById("lgpoi");
+  LAGE.poi.forEach(function(g){
+    var w = document.createElement("div");
+    w.className = "poigrp";
+    var h = '<div class="h">' + g[0] + '</div>';
+    g[1].forEach(function(z){ h += '<div class="z"><span>' + z[0] + '</span><span>' + z[1] + '</span></div>'; });
+    w.innerHTML = h;
+    poi.appendChild(w);
+  });
+  }
+  zeichne();
+  /* Karte laedt erst auf Klick: schnelle Seite, kein Drittanbieter vor der Zustimmung */
+  var kbtn = document.getElementById("lgkbtn");
+  kbtn.addEventListener("click", function(){
+    var k = document.getElementById("lgkarte");
+    k.innerHTML = '<iframe title="Karte" loading="lazy" referrerpolicy="no-referrer-when-downgrade" ' +
+      'src="https://www.openstreetmap.org/export/embed.html?bbox=16.30%2C48.21%2C16.34%2C48.23&amp;layer=mapnik"></iframe>';
+  });
+  var wie = document.getElementById("lgwie"), wiep = document.getElementById("lgwiep");
+  wie.addEventListener("click", function(){
+    var auf = wiep.hidden;
+    wiep.hidden = !auf;
+    wie.setAttribute("aria-expanded", auf ? "true" : "false");
+  });
+})();
+</script>
+
+<!-- UNIO Concierge: Chips im Text, dazu ein persistenter Einstieg unten rechts.
+     Kennzeichnung als KI-Assistent (EU AI Act), Übergabe an den Makler bei Unsicherheit. -->
+<script>
+(function(){
+  var CHIPS = [
+    ["Was kostet der Betrieb?", "Die Betriebskosten liegen bei rund € 2,90 je m² und Monat, also etwa € 410 für diese Wohnung, plus Rücklage. Die genaue Abrechnung des Vorjahres liegt in den Dokumenten."],
+    ["Wann ist Bezug möglich?", "Die Übergabe ist ab 11.05.2026 geplant. Bei einem Anbot im laufenden Monat ist ein früherer Bezug in Absprache mit dem Bauträger möglich."],
+    ["Ist ein Parkplatz dabei?", "Zwei Tiefgaragenplätze sind optional zubuchbar, je € 28.000. Ein Platz ist aktuell noch frei."],
+    ["Wie ist die Anbindung?", "Die U4 Meidling Hauptstraße erreichst du in 4 Minuten zu Fuß, den Stephansplatz in 21 Minuten. Der Öffi-Score liegt bei 92 von 100."]
+  ];
+  var chips = document.getElementById("ccchips"), verlauf = document.getElementById("ccverlauf"),
+      w = document.getElementById("ccw"), input = document.getElementById("ccinput");
+  if (!chips) return;
+
+  function add(wer, txt){
+    var d = document.createElement("div");
+    d.className = "m " + wer;
+    d.textContent = txt;
+    verlauf.appendChild(d);
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+  function handoff(){
+    var d = document.createElement("div");
+    d.className = "m hand";
+    d.innerHTML = "Das kann ich nicht sicher beantworten. Wenzel Wächter, dein Makler für dieses Objekt, " +
+      "antwortet im Schnitt in unter zwei Stunden.<br><button>Frage an den Makler geben</button>";
+    d.querySelector("button").addEventListener("click", function(){
+      this.disabled = true; this.textContent = "Übergeben ✓ · Chat geöffnet";
+      /* Direkt in den Makler-Chat am Objekt, nicht in eine fremde Ansicht */
+      zu();
+      if (window.mkChatMitFrage) window.mkChatMitFrage("");
+    });
+    verlauf.appendChild(d);
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+  function auf(){
+    w.classList.add("auf"); w.setAttribute("aria-hidden", "false");
+    if (!verlauf.childElementCount) add("ai", "Ich bin ein KI-Assistent und kenne die Daten zu diesem Penthouse. Frag mich nach Kosten, Ausstattung, Lage oder Terminen.");
+  }
+  function zu(){ w.classList.remove("auf"); w.setAttribute("aria-hidden", "true"); }
+
+  CHIPS.forEach(function(c){
+    var b = document.createElement("button");
+    b.textContent = c[0];
+    b.addEventListener("click", function(){ auf(); add("du", c[0]); setTimeout(function(){ add("ai", c[1]); }, 260); });
+    chips.appendChild(b);
+  });
+  var mk = document.createElement("button");
+  mk.className = "mk"; mk.textContent = "Mit Makler sprechen";
+  mk.addEventListener("click", function(){ auf(); handoff(); });
+  chips.appendChild(mk);
+
+  document.getElementById("ccl").addEventListener("click", auf);
+  document.getElementById("ccx").addEventListener("click", zu);
+  document.getElementById("ccback").addEventListener("click", zu);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") zu(); });
+
+  function frage(){
+    var t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    add("du", t);
+    var tr = CHIPS.filter(function(c){
+      var wort = t.toLowerCase();
+      return (c[0].toLowerCase().split(" ").some(function(x){ return x.length > 4 && wort.indexOf(x) > -1; }));
+    })[0];
+    setTimeout(function(){ tr ? add("ai", tr[1]) : handoff(); }, 300);
+  }
+  document.getElementById("ccsend").addEventListener("click", frage);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") frage(); });
+})();
+</script>
+
+<!-- Makler-Chat am Objekt. Liest und schreibt unio_ek_chats, dieselbe
+     Unterhaltung erscheint im Portal unter Aktivität. -->
+<script>
+(function(){
+  var w = document.getElementById("mkw"), verlauf = document.getElementById("mkverlauf"),
+      input = document.getElementById("mkinput");
+  if (!w) return;
+  var objId = new URLSearchParams(location.search).get("obj") || "albrecht";
+
+  function lese(k, f){ try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? f : v; } catch (e) { return f; } }
+  function schreibe(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* Speicher gesperrt */ } }
+
+  function zeichne(){
+    var chats = lese("unio_ek_chats", {});
+    var c = chats[objId];
+    verlauf.innerHTML = "";
+    if (!c || !c.msgs.length) {
+      var leer = document.createElement("div");
+      leer.className = "m ai";
+      leer.textContent = "Guten Tag! Ich bin Ihr Ansprechpartner für dieses Penthouse. Fragen zum Objekt, zum Preis oder zu einem Termin beantworte ich gern persönlich.";
+      verlauf.appendChild(leer);
+      return;
+    }
+    if (c.name) document.getElementById("mkname").textContent = c.name;
+    c.msgs.forEach(function(m){
+      var d = document.createElement("div");
+      d.className = "m " + (m.ich ? "du" : "ai");
+      d.textContent = m.txt;
+      verlauf.appendChild(d);
+    });
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+
+  function auf(){ w.classList.add("auf"); w.setAttribute("aria-hidden", "false"); zeichne(); }
+  function zu(){ w.classList.remove("auf"); w.setAttribute("aria-hidden", "true"); }
+  window.mkChatAuf = auf;
+
+  document.getElementById("mkx").addEventListener("click", zu);
+  document.getElementById("mkback").addEventListener("click", zu);
+  document.getElementById("mkobj").addEventListener("click", function(e){
+    e.preventDefault(); zu();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") zu(); });
+
+  function senden(){
+    var t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    var chats = lese("unio_ek_chats", {});
+    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · Traum Penthouse in Hernals",
+      img: "../../assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+    chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
+    schreibe("unio_ek_chats", chats);
+    zeichne();
+    setTimeout(function(){
+      var c2 = lese("unio_ek_chats", {});
+      c2[objId].msgs.push({ ich: false, txt: "Danke für Ihre Nachricht, ich melde mich heute noch dazu. Wenn es dringend ist, erreichen Sie mich auch telefonisch.", t: "Jetzt" });
+      schreibe("unio_ek_chats", c2);
+      zeichne();
+    }, 900);
+  }
+  document.getElementById("mksend").addEventListener("click", senden);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") senden(); });
+
+  /* Handoff aus dem Concierge landet ebenfalls hier, nicht in einer fremden Ansicht */
+  window.mkChatMitFrage = function(frage){
+    auf();
+    if (frage) { input.value = frage; }
+  };
 })();
 </script>
 </body>

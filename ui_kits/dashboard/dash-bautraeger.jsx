@@ -453,10 +453,177 @@ function BtMarketing() {
 }
 
 /* ===== Bauträger-Dashboard (Screen) ===== */
+/* ===== Makler-Berichte =====
+   Der Makler erstellt in seiner Objekt-Akte einen Bericht und sendet ihn.
+   Er landet über unio_bt_reports hier und ist kein Zahlenabwurf, sondern eine
+   Erzählung: was getan wurde, was daraus wurde, was Interessenten sagen,
+   was als Nächstes passiert. Zahlen stehen nur als Belege darunter. */
+const BT_REPORT_KEY = "unio_bt_reports";
+
+function btBerichteLesen() {
+  try {
+    const r = JSON.parse(localStorage.getItem(BT_REPORT_KEY) || "null");
+    if (Array.isArray(r) && r.length) return r;
+  } catch (e) { /* defekter Eintrag: Beispiel zeigen */ }
+  return [BT_BEISPIEL_BERICHT];
+}
+
+const BT_BEISPIEL_BERICHT = {
+  id: "demo-1",
+  objekt: "Das Albrecht, Haus 4",
+  makler: "Wenzel Wächter",
+  zeitraum: "11. bis 17. August 2026",
+  erstellt: "17. August 2026",
+  gelesen: false,
+  lage: "Auf Kurs, mit einer offenen Frage beim Preis",
+  getan: [
+    "Das Exposé neu aufgesetzt, nachdem die ersten Fotos zu dunkel wirkten. Neue Aufnahmen am Donnerstag, seither deutlich längere Verweildauer.",
+    "Acht Interessenten persönlich angerufen statt nur angeschrieben. Sechs haben abgenommen.",
+    "Zwei Besichtigungen begleitet, eine dritte für Samstag vereinbart.",
+    "Das Objekt auf willhaben und ImmoScout neu ausgespielt, nachdem ImmoScout das Titelbild abgelehnt hatte.",
+  ],
+  passiert: "Die Nachfrage hat nach dem Fototausch klar angezogen. Aus zwölf Anfragen sind zwei ernste Interessenten geworden, einer davon hat die Finanzierung bereits vorliegen. Ein Anbot über € 1,18 Mio. liegt am Tisch, also rund vier Prozent unter dem Angebotspreis.",
+  feedback: [
+    ["Zwei Interessenten unabhängig voneinander", "Sehr hell, der Schnitt gefällt, der Preis ist ambitioniert."],
+    ["Ein Interessent nach der Besichtigung", "Die Terrasse ist das Argument, der fehlende zweite Stellplatz stört."],
+  ],
+  muster: "Der Preis wird angesprochen, aber nie als Ausschlusskriterium. Der zweite Stellplatz kommt inzwischen in drei von vier Gesprächen vor.",
+  empfehlung: "Preis zwei Wochen halten. Die Nachfrage steigt gerade, ein Nachgeben wäre jetzt verfrüht. Parallel klären wir, ob ein zweiter Tiefgaragenplatz aus dem Kontingent zugeordnet werden kann. Das entkräftet den häufigsten Einwand, ohne am Preis zu drehen.",
+  naechste: [
+    "Samstag 10:00 dritte Besichtigung, danach Rückmeldung noch am Wochenende",
+    "Antwort auf das Anbot bis Mittwoch, nach Absprache mit dir",
+    "Stellplatz-Frage mit der Bauleitung klären",
+  ],
+  belege: [["Exposé-Aufrufe", "118", "+22 % zur Vorwoche"], ["Anfragen", "12", "davon 2 ernsthaft"], ["Besichtigungen", "2", "eine weitere geplant"], ["Ø Antwortzeit", "unter 24 h", "eigener Anspruch: 2 h"]],
+};
+
+function BtBerichte() {
+  const [berichte, setBerichte] = React.useState(btBerichteLesen);
+  const [offen, setOffen] = React.useState(null);
+  /* Frische Daten, wenn der Makler im zweiten Fenster gerade gesendet hat */
+  React.useEffect(() => {
+    const f = () => setBerichte(btBerichteLesen());
+    window.addEventListener("storage", f);
+    document.addEventListener("visibilitychange", f);
+    return () => { window.removeEventListener("storage", f); document.removeEventListener("visibilitychange", f); };
+  }, []);
+  const b = offen ? berichte.find((x) => x.id === offen) : null;
+  const karte = { background: "var(--surface-raised, #FFFFFF)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "20px 22px" };
+  const h3 = { margin: 0, font: "500 15px var(--font-display)", color: "var(--ink)" };
+  const lab = { fontSize: 8.5, color: "var(--signal-deep)" };
+
+  const alsGelesen = (id) => {
+    const neu = berichte.map((x) => (x.id === id ? Object.assign({}, x, { gelesen: true }) : x));
+    setBerichte(neu);
+    try { localStorage.setItem(BT_REPORT_KEY, JSON.stringify(neu)); } catch (e) { /* nur Anzeige */ }
+  };
+
+  if (b) {
+    return (
+      <BRv>
+        <div style={{ maxWidth: 820 }}>
+          <button onClick={() => setOffen(null)} style={{ border: "none", background: "none", cursor: "pointer", font: "500 14px var(--font-display)", fontFamily: "inherit", color: "var(--text-muted)", padding: 0, marginBottom: 18 }}>‹ Alle Berichte</button>
+          <div className="u-label" style={lab}>Bericht deines Maklers · {b.zeitraum}</div>
+          <h2 style={{ margin: "12px 0 0", font: "500 clamp(24px,2.6vw,32px)/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>{b.objekt}</h2>
+          <p style={{ margin: "14px 0 0", font: "400 16px/1.6 var(--font-display)", color: "var(--ink-2)" }}>{b.lage}</p>
+          <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 12 }}>Von {b.makler} · erstellt am {b.erstellt}</p>
+
+          <div style={Object.assign({}, karte, { marginTop: 24 })}>
+            <h3 style={h3}>Was ich in dieser Woche getan habe</h3>
+            <ul style={{ margin: "14px 0 0", padding: "0 0 0 18px", display: "grid", gap: 10 }}>
+              {b.getan.map((t, i) => <li key={i} style={{ font: "400 14.5px/1.6 var(--font-display)", color: "var(--text-body)" }}>{t}</li>)}
+            </ul>
+          </div>
+
+          <div style={Object.assign({}, karte, { marginTop: 14 })}>
+            <h3 style={h3}>Was daraus geworden ist</h3>
+            <p style={{ margin: "12px 0 0", font: "400 14.5px/1.7 var(--font-display)", color: "var(--text-body)" }}>{b.passiert}</p>
+          </div>
+
+          <div style={Object.assign({}, karte, { marginTop: 14 })}>
+            <h3 style={h3}>Was Interessenten sagen</h3>
+            {b.feedback.map(([wer, zitat], i) => (
+              <div key={i} style={{ marginTop: 14, paddingLeft: 14, borderLeft: "2px solid var(--signal)" }}>
+                <p style={{ margin: 0, font: "400 14.5px/1.6 var(--font-display)", color: "var(--ink-2)" }}>„{zitat}“</p>
+                <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 7 }}>{wer}</p>
+              </div>
+            ))}
+            <p style={{ margin: "18px 0 0", font: "400 14px/1.6 var(--font-display)", color: "var(--text-muted)" }}><b style={{ fontWeight: 500, color: "var(--ink)" }}>Das Muster dahinter: </b>{b.muster}</p>
+          </div>
+
+          <div style={{ background: "var(--signal-soft)", borderRadius: 16, padding: "22px 24px", marginTop: 14, boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.3)" }}>
+            <div className="u-label" style={lab}>Meine Empfehlung</div>
+            <p style={{ margin: "12px 0 0", font: "400 15px/1.7 var(--font-display)", color: "var(--ink)" }}>{b.empfehlung}</p>
+          </div>
+
+          <div style={Object.assign({}, karte, { marginTop: 14 })}>
+            <h3 style={h3}>Was als Nächstes passiert</h3>
+            <div style={{ marginTop: 14 }}>
+              {b.naechste.map((t, i) => (
+                <div key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderTop: i ? "1px solid var(--hairline-dark)" : "none" }}>
+                  <span style={{ font: "11px var(--font-mono)", color: "var(--signal-deep)", flex: "0 0 auto", paddingTop: 3 }}>{String(i + 1).padStart(2, "0")}</span>
+                  <span style={{ font: "400 14.5px/1.55 var(--font-display)", color: "var(--text-body)" }}>{t}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 22 }}>
+            <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Zahlen als Belege</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%,150px), 1fr))", gap: 12, marginTop: 12 }}>
+              {b.belege.map(([k, v, sub]) => (
+                <div key={k} style={{ background: "#FFFFFF", borderRadius: 12, padding: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+                  <div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{k}</div>
+                  <div style={{ font: "500 20px/1.2 var(--font-display)", color: "var(--ink)", marginTop: 9 }}>{v}</div>
+                  <div style={{ font: "400 11.5px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 6 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 22 }}>
+            <button className="mk-btn signal" onClick={() => setOffen(null)}>Empfehlung mittragen</button>
+            <button className="mk-btn" onClick={() => setOffen(null)}>Rückfrage an {b.makler.split(" ")[0]}</button>
+          </div>
+        </div>
+      </BRv>
+    );
+  }
+
+  return (
+    <BRv>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <div className="u-label" style={lab}>Berichte</div>
+          <h2 style={{ margin: "8px 0 0", font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Was dein Makler erreicht hat</h2>
+        </div>
+        <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{berichte.length} {berichte.length === 1 ? "Bericht" : "Berichte"}</span>
+      </div>
+      <div style={{ display: "grid", gap: 12, marginTop: 20 }}>
+        {berichte.map((r) => (
+          <button key={r.id} onClick={() => { setOffen(r.id); alsGelesen(r.id); window.scrollTo(0, 0); }}
+            style={{ textAlign: "left", border: "none", cursor: "pointer", background: "#FFFFFF", borderRadius: 16, padding: "20px 22px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "flex", gap: 18, alignItems: "center", flexWrap: "wrap", fontFamily: "inherit" }}>
+            <div style={{ flex: "1 1 260px", minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap" }}>
+                {!r.gelesen && <span className="mk-pill hot">Neu</span>}
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{r.zeitraum}</span>
+              </div>
+              <div style={{ font: "500 17px var(--font-display)", color: "var(--ink)", marginTop: 10 }}>{r.objekt}</div>
+              <div style={{ font: "400 14px/1.5 var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{r.lage}</div>
+            </div>
+            <span style={{ flex: "0 0 auto", font: "500 13.5px var(--font-display)", color: "var(--signal-deep)" }}>Bericht lesen ›</span>
+          </button>
+        ))}
+      </div>
+    </BRv>
+  );
+}
+
 function BautraegerHome() {
   const [proj, setProj] = React.useState("all");
   const [tab, setTab] = React.useState("uebersicht");
   const { Tabs: BTabs } = window;
+  const neueBerichte = btBerichteLesen().filter((r) => !r.gelesen).length;
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
       <BRv>
@@ -478,13 +645,14 @@ function BautraegerHome() {
       </BRv>
       <BRv delay={100}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 18, margin: "30px 0 26px", flexWrap: "wrap" }}>
-          <BTabs items={[["uebersicht", "Übersicht"], ["leads", "Leads"], ["marketing", "Marketing"]]} active={tab} onPick={setTab} />
+          <BTabs items={[["uebersicht", "Übersicht"], ["leads", "Leads"], ["marketing", "Marketing"], ["berichte", "Berichte", neueBerichte || undefined]]} active={tab} onPick={setTab} />
           <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>297 Kontakte / 331 Interessen</span>
         </div>
       </BRv>
       {tab === "uebersicht" && <BtUebersicht />}
       {tab === "leads" && <BtLeads />}
       {tab === "marketing" && <BtMarketing />}
+      {tab === "berichte" && <BtBerichte />}
     </div>
   );
 }

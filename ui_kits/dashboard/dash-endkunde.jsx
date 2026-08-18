@@ -13,6 +13,34 @@ const ekObjektUrl = (id) => "/ux/objekt?von=portal&obj=" + id;
 const ekAktiveProzesse = (bez) => Object.entries(bez).filter(([, b]) => ["anbot_aktiv", "gegenangebot", "angenommen", "abwicklung"].includes(b.zustand));
 
 /* ---------- Start (Für dich) ---------- */
+/* KI-Suche direkt auf der Startseite: ein Satz genügt, die Kriterien landen
+   sichtbar im Chat und von dort in der Listenansicht. */
+function EkKiEinstieg({ oeffneSheet }) {
+  const [text, setText] = React.useState("");
+  const los = (t) => oeffneSheet({ typ: "ki", start: t || "" });
+  return (
+    <div className="ek-kicard" style={{ marginTop: 22 }}>
+      <div className="ek-kikopfzeile">
+        <span className="stern" aria-hidden="true">✦</span>
+        <div>
+          <span className="k">Suche mit KI</span>
+          <h3>Sag einfach, wonach du suchst</h3>
+        </div>
+      </div>
+      <p>Ein Satz reicht. Wir lesen Zimmer, Budget und Ausstattung heraus, zeigen dir offen, was verstanden wurde, und führen dich in die Liste.</p>
+      <div className="ek-kifeld">
+        <input value={text} onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") los(text); }}
+          placeholder="Zum Beispiel: 3 Zimmer mit Balkon bis 650.000" aria-label="Suchbeschreibung" />
+        <button onClick={() => los(text)}>Suchen</button>
+      </div>
+      <div className="ek-kibsp">
+        {window.EK_KI_BEISPIELE.map((b) => <button key={b} onClick={() => los(b)}>{b}</button>)}
+      </div>
+    </div>
+  );
+}
+
 function EkStart({ ek, tue, oeffneSheet, go, oeffneKaufreise, oeffneStory }) {
   const prozesse = ekAktiveProzesse(ek.bez);
   const gegen = prozesse.find(([, b]) => b.zustand === "gegenangebot");
@@ -34,6 +62,8 @@ function EkStart({ ek, tue, oeffneSheet, go, oeffneKaufreise, oeffneStory }) {
       <span className="ek-mono" style={{ color: "var(--signal-deep)" }}>Willkommen zurück</span>
       <h1>Guten Morgen, Valentina<i>.</i></h1>
       <p className="ek-sub">{neuGesamt} neue Objekte passen zu deinen Suchprofilen{gegen ? ", ein Gegenangebot wartet auf dich" : ""}.</p>
+
+      <EkKiEinstieg oeffneSheet={oeffneSheet} />
 
       {prozesse.length > 0 && (
         <button className="ek-kaufreise" onClick={() => oeffneKaufreise(gegen ? gegen[0] : prozesse[0][0])}>
@@ -596,6 +626,7 @@ function EndkundePortal({ role, onRole }) {
   const [kaufreiseObj, setKaufreiseObj] = React.useState(null);
   const [chatId, setChatIdRaw] = React.useState(null);
   const [story, setStory] = React.useState(false);
+  const [kiSuche, setKiSuche] = React.useState(null);
   const [toast, setToast] = React.useState(null);
 
   const tue = (fn) => setEk((prev) => { const d = JSON.parse(JSON.stringify(prev)); fn(d); ekPersist(d); return d; });
@@ -647,6 +678,8 @@ function EndkundePortal({ role, onRole }) {
   const sheetInhalt = () => {
     if (!sheet) return null;
     const s = sheet;
+    if (s.typ === "ki") return <window.EkKiSheet ek={ek} start={s.start}
+      onSuchen={(k) => { setKiSuche(k); schliesse(); go("explore"); zeigToast("Liste gefiltert nach deiner Suche"); }} />;
     if (s.typ === "quiz") return <EkQuizSheet profil={s.profilId} kaufkraft={ek.profil.kaufkraft} onFertig={quizFertig} onSkip={() => { tue((d) => { d.profil.onboarding = true; }); schliesse(); }} />;
     if (s.typ === "kaufkraft") return <EkKaufkraftSheet ek={ek}
       onSpeichern={(kk) => { tue((d) => { d.profil.kaufkraft = kk; const n = Object.values(window.EK_KATALOG).filter((o) => ekLeistbar(o.preisNum, kk)).length; ekNeuesEvent(d, "kaufkraft", "maxing", "Kaufkraft aktualisiert: bis " + ekEur(kk.budget), n + " Objekte in deinem Feed sind damit leistbar"); }); schliesse(); zeigToast("Kaufkraft gespeichert · Feed sortiert sich neu"); }}
@@ -706,7 +739,11 @@ function EndkundePortal({ role, onRole }) {
   if (kaufreiseObj) view = <EkKaufreise ek={ek} tue={tue} objId={kaufreiseObj} oeffneSheet={oeffneSheet} zurueck={() => setKaufreiseObj(null)} setChatId={setChatId} go={setKaufreiseObj} />;
   else if (tab === "explore") view = (
     <div className="ek-explframe">
-      <iframe src="/ux/explore?embed=1" title="Explore" allow="autoplay"></iframe>
+      {/* Die KI-Kriterien reisen als Parameter mit: Explore öffnet direkt die
+          Listenansicht und zeigt oben, wonach gefiltert wird. */}
+      <iframe key={kiSuche ? kiSuche.text : "frei"}
+        src={"/ux/explore?embed=1" + (kiSuche ? "&ki=" + encodeURIComponent(JSON.stringify(kiSuche)) : "")}
+        title="Explore" allow="autoplay"></iframe>
     </div>
   );
   else if (tab === "merk") view = <EkMerkliste ek={ek} tue={tue} oeffneSheet={oeffneSheet} />;

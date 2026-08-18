@@ -134,9 +134,14 @@ const EK_CSS = `
   .ek{min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--font-display),'Helvetica Neue',sans-serif;}
   .ek *{box-sizing:border-box;}
   .ek-mono{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);}
-  .ek-top{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  /* Drei Spalten statt space-between: die Tab-Pille sitzt exakt in der Mitte,
+     unabhaengig davon wie breit Logo links und Rollenwahl rechts sind. */
+  .ek-top{position:sticky;top:0;z-index:40;display:grid;grid-template-columns:1fr auto 1fr;
+    align-items:center;gap:14px;
     padding:14px clamp(16px,4vw,40px);background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(14px);
     border-bottom:1px solid var(--hairline-dark);}
+  .ek-top > :first-child{justify-self:start;}
+  .ek-top > :last-child{justify-self:end;}
   .ek-top img{height:15px;display:block;}
   .ek-nav{display:flex;gap:4px;background:#FFFFFF;border-radius:999px;padding:4px;box-shadow:inset 0 0 0 1px var(--hairline-dark);}
   .ek-nav button,.ek-nav a{border:none;cursor:pointer;border-radius:999px;padding:8px 16px;background:transparent;text-decoration:none;
@@ -387,6 +392,53 @@ const EK_CSS = `
     .ek-stat{padding:13px 14px;}
     .ek-stat b{font-size:21px;}
   }
+
+  /* ===== KI-Suche: Einstieg auf der Startseite und Chat im Sheet ===== */
+  /* Helle Flaeche mit orangem Akzent: kein schwarzer Block im Portal */
+  .ek-kicard{background:#FFFFFF;color:var(--ink);border-radius:20px;padding:clamp(20px,3.5vw,28px);
+    box-shadow:inset 0 0 0 1px var(--hairline-dark);}
+  .ek-kikopfzeile{display:flex;align-items:center;gap:13px;}
+  .ek-kicard .stern{width:40px;height:40px;border-radius:99px;background:var(--signal);color:var(--on-signal);
+    display:grid;place-items:center;flex:0 0 auto;font-size:18px;}
+  .ek-kicard .k{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--signal-deep);}
+  .ek-kicard h3{margin:4px 0 0;font:500 clamp(19px,2.3vw,24px)/1.2 var(--font-display);letter-spacing:-.02em;}
+  .ek-kicard p{margin:12px 0 0;font:400 14px/1.55 var(--font-display);color:var(--text-muted);max-width:460px;}
+  .ek-kifeld{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;}
+  .ek-kifeld input{flex:1 1 220px;min-width:0;border:none;border-radius:99px;padding:14px 18px;
+    background:var(--paper-2);color:var(--ink);font-family:inherit;font-size:14.5px;
+    box-shadow:inset 0 0 0 1px var(--hairline-dark);}
+  .ek-kifeld input::placeholder{color:var(--text-muted);}
+  .ek-kifeld button{flex:0 0 auto;border:none;cursor:pointer;border-radius:99px;padding:14px 22px;
+    background:var(--signal);color:var(--on-signal);font-family:inherit;font:500 14.5px var(--font-display);}
+  .ek-kibsp{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .ek-kibsp button{border:none;cursor:pointer;border-radius:99px;padding:9px 14px;
+    background:var(--paper-2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--hairline-dark);
+    font-family:inherit;font-size:12.5px;font-weight:500;}
+  .ek-kibsp button:hover{background:#EFEBE3;}
+
+  .ek-ki{display:flex;flex-direction:column;}
+  .ek-kikopf{display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--hairline-dark);}
+  .ek-kikopf .av{width:36px;height:36px;border-radius:99px;background:var(--ink);color:var(--signal);
+    display:grid;place-items:center;flex:0 0 auto;}
+  .ek-kikopf b{display:block;font:500 15px var(--font-display);}
+  .ek-kistart{padding:16px 0 0;}
+  .ek-kistart p{font:400 14px/1.6 var(--font-display);color:var(--text-muted);}
+  .ek-ki .ek-kibsp button{background:var(--paper-2);color:var(--ink);}
+  .ek-kiverlauf{display:flex;flex-direction:column;gap:9px;padding:16px 0 0;max-height:38vh;overflow-y:auto;}
+  .ek-kiverlauf .m{max-width:86%;padding:11px 14px;border-radius:14px;font:400 13.5px/1.5 var(--font-display);}
+  .ek-kiverlauf .m.du{align-self:flex-end;background:var(--ink);color:var(--paper);}
+  .ek-kiverlauf .m.ai{align-self:flex-start;background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--hairline-dark);}
+  .ek-kitreffer{margin-top:16px;background:var(--signal-soft);border-radius:16px;padding:16px 18px;
+    box-shadow:inset 0 0 0 1px rgba(255,170,9,.3);}
+  .ek-kitreffer .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+  .ek-kitreffer .chips span{background:#FFFFFF;border-radius:99px;padding:7px 13px;
+    font:500 12.5px var(--font-display);color:var(--ink);}
+  .ek-kifuss{display:flex;gap:8px;margin-top:16px;}
+  .ek-kifuss input{flex:1;min-width:0;border:none;border-radius:99px;padding:12px 16px;background:#FFFFFF;
+    box-shadow:inset 0 0 0 1px var(--hairline-dark);font-family:inherit;font-size:13.5px;color:var(--ink);}
+  .ek-kifuss button{border:none;cursor:pointer;border-radius:99px;padding:12px 20px;background:var(--ink);
+    color:var(--paper);font-family:inherit;font:500 13.5px var(--font-display);}
 `;
 
 /* ---------- Icons ---------- */
@@ -693,7 +745,137 @@ function EkStoryViewer({ onEnde }) {
   );
 }
 
+/* ===== KI-Suche =====
+   Der Endkunde beschreibt in eigenen Worten, was er sucht. Die Suche liest
+   daraus Kriterien, zeigt sie offen als Chips (korrigierbar, nichts Verstecktes)
+   und übergibt sie an die Listenansicht. Regel aus dem Research: eine KI-Suche
+   darf nie eine Blackbox sein, der Nutzer muss sehen, was verstanden wurde. */
+const EK_KI_BEISPIELE = [
+  "3 Zimmer mit Balkon bis 650.000",
+  "Ruhig, aber U-Bahn in 10 Minuten",
+  "Anlage ab 3,5 % Rendite",
+];
+
+/* Sehr einfache Ableitung aus dem Satz. Im Betrieb macht das ein Modell,
+   die Ausgabe bleibt dieselbe Struktur. */
+function ekKiLesen(satz) {
+  const s = " " + satz.toLowerCase().replace(/\./g, "").replace(/,/g, ".") + " ";
+  const k = { text: satz.trim() };
+  const zi = s.match(/(\d)\s*(zimmer|zi\b)/);
+  if (zi) k.zimmer = parseInt(zi[1], 10);
+  const mio = s.match(/(\d+([.]\d+)?)\s*mio/);
+  const tsd = s.match(/(\d{3})\s*(k|tausend)\b/);
+  const voll = s.match(/(\d{6,7})/);
+  if (mio) k.maxPreis = Math.round(parseFloat(mio[1]) * 1000000);
+  else if (tsd) k.maxPreis = parseInt(tsd[1], 10) * 1000;
+  else if (voll) k.maxPreis = parseInt(voll[1], 10);
+  const ren = s.match(/(\d+([.]\d+)?)\s*(%|prozent)/);
+  if (ren) k.rendite = parseFloat(ren[1]);
+  if (/balkon|terrasse|freifläche|garten/.test(s)) k.aussen = true;
+  if (/ruhig|leise|grün/.test(s)) k.ruhig = true;
+  if (/u-?bahn|öffi|anbindung|bim|verkehr/.test(s)) k.oeffi = true;
+  if (/anlage|rendite|vermiet|invest/.test(s)) k.anlage = true;
+  return k;
+}
+
+function ekKiChips(k) {
+  const c = [];
+  if (k.zimmer) c.push(k.zimmer + " Zimmer oder mehr");
+  if (k.maxPreis) c.push("bis " + ekEur(k.maxPreis));
+  if (k.rendite) c.push("Rendite ab " + String(k.rendite).replace(".", ",") + " %");
+  if (k.aussen) c.push("Balkon, Terrasse oder Garten");
+  if (k.ruhig) c.push("ruhige Lage");
+  if (k.oeffi) c.push("gute Öffi-Anbindung");
+  if (k.anlage) c.push("als Anlage gedacht");
+  return c;
+}
+
+function ekKiTreffer(k) {
+  return Object.values(EK_KATALOG).filter((o) => {
+    if (k.maxPreis && o.preisNum > k.maxPreis) return false;
+    if (k.zimmer && o.zimmer && o.zimmer < k.zimmer) return false;
+    if (k.rendite && ekRendite(o) < k.rendite) return false;
+    return true;
+  });
+}
+
+function EkKiSheet({ ek, onSuchen, start }) {
+  const [msgs, setMsgs] = React.useState([]);
+  const [text, setText] = React.useState("");
+  const [krit, setKrit] = React.useState(null);
+  const endRef = React.useRef(null);
+  const gestartet = React.useRef(false);
+  React.useEffect(() => { if (endRef.current) endRef.current.scrollIntoView({ block: "end" }); }, [msgs]);
+  /* Kam der Satz schon von der Startseite, direkt auswerten */
+  React.useEffect(() => {
+    if (start && start.trim() && !gestartet.current) { gestartet.current = true; fragen(start); }
+  }, [start]);
+
+  const fragen = (satz) => {
+    if (!satz.trim()) return;
+    const k = ekKiLesen(satz);
+    const kk = ek.profil.kaufkraft;
+    if (!k.maxPreis && kk) k.maxPreis = kk.budget;
+    const treffer = ekKiTreffer(k);
+    const chips = ekKiChips(k);
+    setMsgs((m) => m.concat([{ du: true, t: satz.trim() },
+      { du: false, t: chips.length
+        ? "Verstanden: " + chips.join(" · ") + ". Ich habe " + treffer.length + " passende Objekte gefunden."
+        : "Ich habe daraus noch keine harten Kriterien gelesen. Nenn mir Zimmer, Budget oder Ausstattung, dann wird die Liste genauer." }]));
+    setKrit(chips.length ? { k: k, chips: chips, n: treffer.length } : null);
+    setText("");
+  };
+
+  return (
+    <div className="ek-ki">
+      <div className="ek-kikopf">
+        <span className="av">✦</span>
+        <div>
+          <b>KI-Suche</b>
+          <span className="ek-mono" style={{ fontSize: 8.5 }}>Sag in eigenen Worten, was du suchst</span>
+        </div>
+      </div>
+
+      {msgs.length === 0 && (
+        <div className="ek-kistart">
+          <p>Ich lese aus deinem Satz Kriterien heraus und zeige dir, was ich verstanden habe. Du kannst jederzeit nachschärfen.</p>
+          <div className="ek-kibsp">
+            {EK_KI_BEISPIELE.map((b) => <button key={b} onClick={() => fragen(b)}>{b}</button>)}
+          </div>
+        </div>
+      )}
+
+      {msgs.length > 0 && (
+        <div className="ek-kiverlauf">
+          {msgs.map((m, i) => <div key={i} className={"m " + (m.du ? "du" : "ai")}>{m.t}</div>)}
+          <div ref={endRef}></div>
+        </div>
+      )}
+
+      {krit && (
+        <div className="ek-kitreffer">
+          <div className="ek-mono">Verstandene Kriterien</div>
+          <div className="chips">
+            {krit.chips.map((c) => <span key={c}>{c}</span>)}
+          </div>
+          <button className="ek-btn signal" style={{ width: "100%", marginTop: 14 }} onClick={() => onSuchen(krit.k)}>
+            {krit.n} {krit.n === 1 ? "Objekt" : "Objekte"} in der Liste ansehen
+          </button>
+        </div>
+      )}
+
+      <div className="ek-kifuss">
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Zum Beispiel: 3 Zimmer, Balkon, bis 650.000"
+          onKeyDown={(e) => { if (e.key === "Enter") fragen(text); }} aria-label="Suchbeschreibung" />
+        <button onClick={() => fragen(text)}>Suchen</button>
+      </div>
+      <p className="ek-mono" style={{ marginTop: 10, fontSize: 8.5 }}>KI-Assistent · Kriterien immer sichtbar, nichts wird still gefiltert</p>
+    </div>
+  );
+}
+
 Object.assign(window, {
+  EK_KI_BEISPIELE, ekKiLesen, ekKiChips, ekKiTreffer, EkKiSheet,
   EK_KATALOG, ekObj, ekEur, ekRendite, ekRate, ekLeistbar, ekBudget, ekFristTage, EK_NK,
   EK_K, ekLese, ekSchreibe, ekSeed, ekLadeAlles, ekPersist, ekNeuesEvent, ekChatNachricht,
   ekCta, EK_ZUSTAND_LABEL, EK_STEPS_ABW, ekDokumente, EK_CSS, EkI, EK_ICONS,

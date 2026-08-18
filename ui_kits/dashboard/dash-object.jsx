@@ -1,7 +1,14 @@
 /* UNIO LENS — Objekt/Projektdetail v2: Galerie, Tabs, Einheiten, Umgebung, Export. */
 const { Reveal: ORv, RevealL: ORvL, Card: OCard, CardHead: OHead, Ring: ORing, Tabs: OTabs, Chip: OChip, useInView: oInView } = window;
 
-const GAL = ["../../assets/img/albrecht.jpg", "../../assets/img/albrecht-dusk.jpg", "../../assets/img/beheim.jpg", "../../assets/img/int-bath.jpg", "../../assets/img/int-kitchen.jpg"];
+/* Medien-Slides: Bild 1 zuerst (LCP), Video als Slide 2, 360-Tour als Slide 3.
+   Fehlt ein Medium, zeigt der Makler-Slot "beauftragen" statt einer Leerstelle. */
+const GAL = [
+  "../../assets/img/albrecht.jpg",
+  { typ: "video", src: "../../assets/video/explore-kling-c.mp4", poster: "../../assets/img/albrecht-dusk.jpg", dauer: "1:12" },
+  { typ: "tour", embed: "about:blank", poster: "../../assets/img/int-kitchen.jpg" },
+  "../../assets/img/albrecht-dusk.jpg", "../../assets/img/beheim.jpg", "../../assets/img/int-bath.jpg", "../../assets/img/int-kitchen.jpg",
+];
 const FACTS = [["Bauträger", "neopartement VI"], ["Architekt", "Dipl.-Ing. Paul Prinz"], ["Preis von", "€ 279.000"], ["Preis bis", "€ 1.599.000"], ["Fläche gesamt", "857 m²"]];
 const UNITS = [
   ["Top 1", "€ 279.000", "50 m²", 2, 100, "Aktiv"], ["Top 2", "€ 399.000", "74 m²", 4, 100, "Aktiv"],
@@ -15,6 +22,43 @@ const INT = [
   ["Marcin Fituch", "Traum Penthouse Hernals", "€ 666.000", "pos", "Angenommen"],
   ["Laurenz Wurzer", "Top 3 · 100 m²", "€ 100.000", "neg", "Abgelehnt"],
 ];
+
+/* Bericht senden: schreibt in unio_bt_reports, wo das Bauträger-Dashboard liest.
+   Ein Zustand, zwei Perspektiven, wie bei den Deals. */
+window.mkBerichtSenden = function () {
+  const bericht = {
+    id: "r" + Date.now().toString(36),
+    objekt: "Das Albrecht, Haus 4",
+    makler: "Wenzel Wächter",
+    zeitraum: "11. bis 17. August 2026",
+    erstellt: "17. August 2026",
+    gelesen: false,
+    lage: "Auf Kurs, mit einer offenen Frage beim Preis",
+    getan: [
+      "Das Exposé neu aufgesetzt, nachdem die ersten Fotos zu dunkel wirkten. Neue Aufnahmen am Donnerstag, seither deutlich längere Verweildauer.",
+      "Acht Interessenten persönlich angerufen statt nur angeschrieben. Sechs haben abgenommen.",
+      "Zwei Besichtigungen begleitet, eine dritte für Samstag vereinbart.",
+      "Das Objekt auf willhaben und ImmoScout neu ausgespielt, nachdem ImmoScout das Titelbild abgelehnt hatte.",
+    ],
+    passiert: "Die Nachfrage hat nach dem Fototausch klar angezogen. Aus zwölf Anfragen sind zwei ernste Interessenten geworden, einer davon hat die Finanzierung bereits vorliegen. Ein Anbot über € 1,18 Mio. liegt am Tisch, also rund vier Prozent unter dem Angebotspreis.",
+    feedback: [
+      ["Zwei Interessenten unabhängig voneinander", "Sehr hell, der Schnitt gefällt, der Preis ist ambitioniert."],
+      ["Ein Interessent nach der Besichtigung", "Die Terrasse ist das Argument, der fehlende zweite Stellplatz stört."],
+    ],
+    muster: "Der Preis wird angesprochen, aber nie als Ausschlusskriterium. Der zweite Stellplatz kommt inzwischen in drei von vier Gesprächen vor.",
+    empfehlung: "Preis zwei Wochen halten. Die Nachfrage steigt gerade, ein Nachgeben wäre jetzt verfrüht. Parallel klären wir, ob ein zweiter Tiefgaragenplatz aus dem Kontingent zugeordnet werden kann. Das entkräftet den häufigsten Einwand, ohne am Preis zu drehen.",
+    naechste: [
+      "Samstag 10:00 dritte Besichtigung, danach Rückmeldung noch am Wochenende",
+      "Antwort auf das Anbot bis Mittwoch, nach Absprache mit dir",
+      "Stellplatz-Frage mit der Bauleitung klären",
+    ],
+    belege: [["Exposé-Aufrufe", "118", "+22 % zur Vorwoche"], ["Anfragen", "12", "davon 2 ernsthaft"], ["Besichtigungen", "2", "eine weitere geplant"], ["Ø Antwortzeit", "unter 24 h", "eigener Anspruch: 2 h"]],
+  };
+  try {
+    const alt = JSON.parse(localStorage.getItem("unio_bt_reports") || "[]");
+    localStorage.setItem("unio_bt_reports", JSON.stringify([bericht].concat(Array.isArray(alt) ? alt : [])));
+  } catch (e) { /* Speicher gesperrt: Bericht bleibt in dieser Sitzung */ }
+};
 
 function MkAkteBloecke() {
   const [checks, setChecks] = React.useState({ fotos: true, energie: true, grundbuch: true, preis: true, expose: false });
@@ -41,7 +85,7 @@ function MkAkteBloecke() {
             </div>
           ))}
           <button className="mk-btn signal" disabled={fertig < 5} style={{ width: "100%", marginTop: 12, opacity: fertig < 5 ? .45 : 1, cursor: fertig < 5 ? "not-allowed" : "pointer" }}>
-            {fertig < 5 ? "Veröffentlichen · gesperrt bis 5/5 (Gate)" : "Auf allen Kanälen veröffentlichen"}
+            {fertig < 5 ? "Gesperrt bis 5/5 erledigt" : "Auf allen Kanälen veröffentlichen"}
           </button>
         </div>
         <div style={karte}>
@@ -66,18 +110,23 @@ function MkAkteBloecke() {
             <b style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>Eigentümer-Report</b>
             <span className="mk-mono">Auf Knopfdruck</span>
           </div>
-          <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.55, color: "var(--text-muted)" }}>Reichweite, Anfragen, Besichtigungen und Feedback der Woche, automatisch aus der Akte aggregiert. Kein Zusammensuchen mehr.</p>
+          <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.55, color: "var(--text-muted)" }}>Kein Zahlenabwurf: der Bericht erklärt, was du getan hast, was daraus wurde und was Interessenten sagen. Aus der Akte vorgeschrieben, von dir freigegeben.</p>
           {report ? (
             <div style={{ background: "#fff", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "13px 15px" }}>
-              {[["Exposé-Aufrufe", "118 (+22 %)"], ["Anfragen", "12"], ["Besichtigungen", "2 · nächste Sa 10:00"], ["Feedback", "„Sehr hell, Preis ambitioniert“ (2x)"], ["Empfehlung", "Preis halten, 2 Wochen beobachten"]].map(([k, v]) => (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "6px 0", borderBottom: "1px dashed var(--hairline-dark)", fontSize: 12.5 }}>
-                  <span style={{ color: "var(--text-muted)" }}>{k}</span><b style={{ fontWeight: 500, color: "var(--ink)", textAlign: "right" }}>{v}</b>
+              {[["Was du getan hast", "4 Punkte, aus Anrufen, Terminen und Portal-Aktionen"], ["Was daraus wurde", "12 Anfragen, 2 ernsthaft, ein Anbot am Tisch"], ["Was Interessenten sagen", "2 Zitate, ein Muster erkannt"], ["Deine Empfehlung", "Preis halten, Stellplatz-Frage klären"]].map(([k, v]) => (
+                <div key={k} style={{ padding: "7px 0", borderBottom: "1px dashed var(--hairline-dark)", fontSize: 12.5 }}>
+                  <b style={{ fontWeight: 500, color: "var(--ink)", display: "block" }}>{k}</b>
+                  <span style={{ color: "var(--text-muted)" }}>{v}</span>
                 </div>
               ))}
-              <button className="mk-btn signal" style={{ width: "100%", marginTop: 10 }} disabled={gesendet} onClick={() => setGesendet(true)}>{gesendet ? "Gesendet ✓ · Kopie im Audit-Trail" : "An H. Schuster senden"}</button>
+              <button className="mk-btn signal" style={{ width: "100%", marginTop: 10 }} disabled={gesendet}
+                onClick={() => { window.mkBerichtSenden && window.mkBerichtSenden(); setGesendet(true); }}>
+                {gesendet ? "Gesendet ✓ · liegt im Bauträger-Dashboard" : "An H. Schuster senden"}
+              </button>
+              {gesendet && <p className="mk-mono" style={{ marginTop: 9 }}>Sichtbar unter Bauträger › Berichte</p>}
             </div>
           ) : (
-            <button className="mk-btn" style={{ width: "100%" }} onClick={() => setReport(true)}>Report für diese Woche erstellen</button>
+            <button className="mk-btn" style={{ width: "100%" }} onClick={() => setReport(true)}>Bericht für diese Woche vorschreiben</button>
           )}
         </div>
       </div>
@@ -105,7 +154,7 @@ function DashObject({ onNav }) {
         </div>
       </ORvL>
 
-      {mode === "public" ? <ExposePublic /> : (
+      {mode === "public" ? <EndkundenVorschau /> : (
       <React.Fragment>
       {/* Galerie: großes Bild + Miniaturen */}
       <ORv style={{ marginTop: 20 }}>
@@ -114,25 +163,27 @@ function DashObject({ onNav }) {
 
       {/* Kopf-Karte */}
       <ORv delay={60}>
-        <OCard style={{ marginTop: 20 }} pad={30}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 32, alignItems: "start" }}>
-            <div>
+        <OCard style={{ marginTop: 20 }} pad="clamp(18px, 4vw, 30px)">
+          {/* Kopf bricht intrinsisch um: die Kennzahlen rutschen unter den Text,
+              sobald sie nicht mehr daneben passen (kein Breakpoint nötig). */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 32, alignItems: "flex-start" }}>
+            <div style={{ flex: "1 1 320px", minWidth: 0 }}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <OChip tone="pos"><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Status: Aktiv</OChip>
                 <OChip tone="warn">In Planung</OChip><OChip>Wohnbau</OChip>
               </div>
               <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Albrechts Townhouses</h1>
               <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)" }}>◎ Stockerauer Straße 53, 2100 Korneuburg</p>
-              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 520 }}>Neubauprojekt mit Dachgeschoßwohnungen und Reihenhäusern — hochwertige Ausstattung, Gärten, Terrassen und optionalen Stellplätzen.</p>
+              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 520 }}>Neubauprojekt mit Dachgeschoßwohnungen und Reihenhäusern: hochwertige Ausstattung, Gärten, Terrassen und optionalen Stellplätzen.</p>
             </div>
-            <div style={{ display: "flex", gap: 12 }}>
-              <div style={{ borderRadius: 12, padding: "20px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 120 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, flex: "1 1 312px", minWidth: 0 }}>
+              <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 0, flex: "1 1 104px" }}>
                 <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>Einheiten</div>
                 <div style={{ font: "500 36px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>10</div>
               </div>
-              <div style={{ borderRadius: 12, padding: "20px 24px", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.3)", minWidth: 180 }}>
+              <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.3)", minWidth: 0, flex: "1 1 160px" }}>
                 <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>Preisspanne</div>
-                <div style={{ font: "500 22px/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k – 1,6 Mio.</div>
+                <div style={{ font: "500 clamp(17px, 4.6vw, 22px)/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k bis 1,6 Mio.</div>
               </div>
             </div>
           </div>
@@ -140,6 +191,11 @@ function DashObject({ onNav }) {
       </ORv>
 
       <MkAkteBloecke />
+      {/* Lage-Bewertung sieht der Makler auch (Verkaufsargument). Der Concierge
+          gehoert dagegen in die Endkunden-Ansicht, nicht ins Backend. */}
+      <div style={{ maxWidth: 1360, margin: "0 auto", display: "grid", gap: 14, padding: "14px 0 0" }} className="mk-detailzone">
+        <window.MkLage exakt ort="1170 Wien, Hernals" datenId="hernals" />
+      </div>
       <window.ProjektBanner onNav={onNav} />
       <div style={{ margin: "28px 0 24px" }}><OTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 5], ["export", "Plattform Export"], ["abschluss", "Abschluss"], ["aktivitaet", "Aktivität"], ["ki", "KI-Analyse"]]} active={tab} onPick={setTab} /></div>
 
@@ -155,13 +211,43 @@ function DashObject({ onNav }) {
   );
 }
 
-/* Endkunden-Exposé — öffentliche Property-Seite (wie Homepage-Property). */
-function ExposePublic() {
+/* Endkunden-Vorschau: zeigt die echte Objektseite aus dem Endkundenbereich
+   (/ux/objekt im Einbettungs-Modus). So kann die Vorschau nie von dem abweichen,
+   was Interessenten wirklich sehen, inklusive Video, 360-Tour, Lage und Concierge. */
+function EndkundenVorschau() {
+  /* Feste Rahmenhöhe mit eigenem Scrollen. Wichtig: ein mitwachsender Rahmen
+     scrollt nie in sich, dadurch greifen im Inneren weder position:fixed
+     (Galerie-Lightbox) noch position:sticky (Preis-Spalte). Der Rahmen ist also
+     absichtlich ein eigenes Fenster und keine endlose Fläche. */
+  return (
+    <div style={{ marginTop: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
+        <span className="mk-pill ok">Live-Vorschau</span>
+        <span className="mk-mono">Genau diese Seite sehen Interessenten · unio.at/objekt</span>
+        <a className="mk-btn ghost tiny" href="/ux/objekt" target="_blank" rel="noreferrer" style={{ marginLeft: "auto", textDecoration: "none" }}>In neuem Tab öffnen</a>
+      </div>
+      <div style={{ borderRadius: 18, overflow: "hidden", background: "var(--paper)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+        <iframe src="/ux/objekt?embed=1&von=makler" title="Endkunden-Ansicht des Objekts"
+          style={{ display: "block", width: "100%", height: "min(1100px, calc(100vh - 190px))", border: "none" }} />
+      </div>
+      <p className="mk-mono" style={{ marginTop: 10 }}>Im Rahmen scrollen wie auf dem Handy oder Desktop des Interessenten</p>
+    </div>
+  );
+}
+
+/* Alte, eigenständig nachgebaute Exposé-Variante. Nicht mehr eingehängt: die
+   Vorschau zeigt jetzt die echte Endkundenseite, damit nichts auseinanderläuft. */
+function ExposePublicUnbenutzt() {
   const { Button: EBtn, Icon: EIcon } = window.UNIODesignSystem_b6216a.Button ? window.UNIODesignSystem_b6216a : {};
   const Btn = window.UNIODesignSystem_b6216a.Button;
   const Ic = window.Icon, Rl = window.Ruler;
-  const GAL = ["../../assets/img/ecoluxe.jpg", "../../assets/img/int-kitchen.jpg", "../../assets/img/int-bath.jpg", "../../assets/img/vienna-garden.jpg", "../../assets/img/vienna-facade.jpg"];
-  const [big, setBig] = React.useState(0);
+  /* Gleiche Medien-Struktur wie im Endkundenbereich: Bild, Video, 360-Tour, Bilder. */
+  const GAL = [
+    "../../assets/img/ecoluxe.jpg",
+    { typ: "video", src: "../../assets/video/explore-kling-c.mp4", poster: "../../assets/img/int-kitchen.jpg", dauer: "1:12" },
+    { typ: "tour", embed: "about:blank", poster: "../../assets/img/int-bath.jpg" },
+    "../../assets/img/vienna-garden.jpg", "../../assets/img/vienna-facade.jpg", "../../assets/img/int-kitchen.jpg",
+  ];
   const stat = (v, k, sub, inv) => (
     <div style={{ borderRadius: 14, padding: "20px 22px", background: inv ? "var(--ink)" : "#FFFFFF", color: inv ? "var(--paper)" : "var(--ink)", boxShadow: inv ? "none" : "inset 0 0 0 1px var(--hairline-dark)", minWidth: 120 }}>
       <div className="u-label" style={{ fontSize: 8, color: inv ? "rgba(247,245,241,0.6)" : "var(--text-muted)" }}>{k}{sub && <span style={{ marginLeft: 6, opacity: 0.7 }}>{sub}</span>}</div>
@@ -176,18 +262,9 @@ function ExposePublic() {
   );
   return (
     <div style={{ marginTop: 20 }}>
-      {/* Galerie: großes Bild + Miniaturen (Text NUR unter dem Bild) */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-        <div style={{ gridColumn: "span 4", position: "relative", borderRadius: 16, overflow: "hidden", height: 440 }}>
-          {GAL.map((s, i) => <img key={s} src={s} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === big ? 1 : 0, transition: "opacity 500ms var(--ease-unio)" }} />)}
-          <span className="u-label" style={{ position: "absolute", right: 16, bottom: 16, fontSize: 9, padding: "8px 14px", borderRadius: 999, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)" }}>{big + 1} / 33 · Galerie öffnen</span>
-        </div>
-        {GAL.slice(1, 5).map((s, i) => (
-          <div key={s} onMouseEnter={() => setBig(i + 1)} style={{ position: "relative", borderRadius: 12, overflow: "hidden", height: 118, cursor: "pointer", boxShadow: big === i + 1 ? "inset 0 0 0 2px var(--signal)" : "none" }}>
-            <img src={s} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          </div>
-        ))}
-      </div>
+      {/* Dieselbe Galerie-Komponente wie im Endkundenbereich: Mosaik am Desktop,
+          Hero mit Wischen mobil, Video und 360-Tour als eigene Slides. */}
+      <window.MkGalerie bilder={GAL} cover />
 
       {/* Zwei Spalten: Inhalt + Sticky-Sidebar */}
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.5fr) minmax(0,1fr)", gap: 32, marginTop: 40, alignItems: "start" }}>
@@ -204,6 +281,11 @@ function ExposePublic() {
           <h2 style={{ margin: "44px 0 0", font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Über dieses Objekt</h2>
           <p style={{ margin: "18px 0 0", font: "400 15px/1.75 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Auf fast 15.000 m² Privatgrund, eingebettet in Wald und Natur, erwartet Sie dieses außergewöhnliche Refugium am westlichen Rand Wiens. Zwei Häuser mit rund 195 m² Wohnfläche, ein Naturpool, Sauna, weitläufige Terrassen und ein großzügiger Garten.</p>
           <button style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 18, border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "var(--signal-deep)" }}>Vollständige Beschreibung <Ic name="arrow" size={13} stroke="var(--signal-deep)" style={{ transform: "rotate(90deg)" }} /></button>
+
+          {/* Concierge dort, wo die Fragen entstehen: direkt nach der Beschreibung */}
+          <div style={{ marginTop: 28 }}>
+            <window.MkConcierge objekt="ECOLUX, 1140 Wien" inline />
+          </div>
 
           <h2 style={{ margin: "44px 0 8px", font: "500 22px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Raumprofil</h2>
           <Rl label="Fläche je Zimmer" value="47 m²" poleL="Effizient" poleR="Großzügig" pos={62} note="Sehr großzügige Raumzuschnitte." />
@@ -263,9 +345,14 @@ function ExposePublic() {
               <span style={{ width: 42, height: 42, borderRadius: "50%", background: "var(--signal)", color: "var(--on-signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "500 14px var(--font-display)", flex: "none" }}>WW</span>
               <div><div style={{ font: "500 15px var(--font-display)", color: "var(--ink)" }}>Wenzel Wächter</div><div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 4 }}>UNIO Partner · Boom Living</div></div>
             </div>
-            <p className="u-label" style={{ margin: "16px 0 0", fontSize: 8.5, color: "var(--text-muted)" }}>Kontaktdaten geschützt — nach Login sichtbar.</p>
+            <p className="u-label" style={{ margin: "16px 0 0", fontSize: 8.5, color: "var(--text-muted)" }}>Kontaktdaten geschützt, nach Login sichtbar.</p>
           </div>
         </div>
+      </div>
+
+      {/* Lage und Infrastruktur über die volle Breite, wie im Endkundenbereich */}
+      <div style={{ marginTop: 40 }}>
+        <window.MkLage exakt ort="1140 Wien, Hütteldorf" datenId="huetteldorf" />
       </div>
     </div>
   );
@@ -376,7 +463,8 @@ function ExposePublicOLD() {
 function DatenTab() {
   return (
     <React.Fragment>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
+      {/* Faktenreihe: bricht selbst um, statt fuenf Spalten auf 60 px zu quetschen */}
+      <div className="mk-kennz" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))", gap: 16 }}>
         {FACTS.map((f, i) => (
           <ORv key={f[0]} delay={i * 50}><OCard pad={20} style={{ height: "100%" }}>
             <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{f[0]}</div>

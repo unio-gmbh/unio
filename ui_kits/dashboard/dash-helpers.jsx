@@ -127,18 +127,21 @@ function Ring({ value, size = 92, label, color = "var(--signal)" }) {
   );
 }
 
-/* Pill-Tabs */
+/* Pill-Tabs. Die Leiste scrollt bei Platzmangel selbst, ohne Media-Query:
+   so bleibt sie auf jeder Detailseite und jeder Screenbreite vollstaendig erreichbar. */
 function Tabs({ items, active, onPick }) {
   return (
-    <div style={{ display: "inline-flex", gap: 4, background: "#FFFFFF", borderRadius: 999, padding: 5, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-      {items.map(([id, label, badge]) => {
-        const on = active === id;
-        return (
-          <button key={id} onClick={() => onPick(id)} style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "none", cursor: "pointer", borderRadius: 999, padding: "9px 16px", font: "500 13.5px var(--font-display)", background: on ? "var(--ink)" : "transparent", color: on ? "var(--paper)" : "var(--text-muted)", transition: "all .25s var(--ease-unio)" }}>
-            {label}{badge != null && <span style={{ font: "10px var(--font-mono)", padding: "2px 7px", borderRadius: 999, background: on ? "rgba(255,255,255,0.16)" : "var(--paper-2)", color: on ? "var(--paper)" : "var(--text-muted)" }}>{badge}</span>}
-          </button>
-        );
-      })}
+    <div className="u-tabscroll" style={{ display: "flex", maxWidth: "100%", overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", padding: 2, margin: -2 }}>
+      <div style={{ display: "inline-flex", flex: "0 0 auto", gap: 4, background: "#FFFFFF", borderRadius: 999, padding: 5, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+        {items.map(([id, label, badge]) => {
+          const on = active === id;
+          return (
+            <button key={id} onClick={() => onPick(id)} style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "none", cursor: "pointer", borderRadius: 999, padding: "9px 16px", font: "500 13.5px var(--font-display)", whiteSpace: "nowrap", background: on ? "var(--ink)" : "transparent", color: on ? "var(--paper)" : "var(--text-muted)", transition: "all .25s var(--ease-unio)" }}>
+              {label}{badge != null && <span style={{ font: "10px var(--font-mono)", padding: "2px 7px", borderRadius: 999, background: on ? "rgba(255,255,255,0.16)" : "var(--paper-2)", color: on ? "var(--paper)" : "var(--text-muted)" }}>{badge}</span>}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

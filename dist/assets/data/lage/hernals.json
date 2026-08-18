@@ -1,0 +1,118 @@
+{
+  "id": "hernals",
+  "ort": "1170 Wien, Hernals",
+  "koordinaten": [
+    48.2265,
+    16.3195
+  ],
+  "stand": "2026-08-18",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 86,
+      "label": "Sehr gut",
+      "sub": "Bus Hernalser Friedhof in 3 Min zu Fuß · U-Bahn Hernals in 7 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 62,
+      "label": "Gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Hernalser Friedhof",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Leopold-Kunschak-Platz 7",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Richthausenstraße",
+          "6 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Hofer",
+          "7 Min zu Fuß"
+        ],
+        [
+          "miso",
+          "8 Min zu Fuß"
+        ],
+        [
+          "Ströck",
+          "8 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Marianum",
+          "12 Min zu Fuß"
+        ],
+        [
+          "Integrative Schule Hernals",
+          "12 Min zu Fuß"
+        ],
+        [
+          "Städt. Kindergarten Wattgasse",
+          "7 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Hautzentrum Hernals",
+          "7 Min zu Fuß"
+        ],
+        [
+          "Dr. El-Fadel",
+          "9 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Park",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Spielplatz",
+          "5 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Hernalser Friedhof in 3 Min zu Fuß · U-Bahn Hernals in 7 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

@@ -87,15 +87,17 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
       )}
 
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <header className="dash-head" style={{ position: "sticky", top: 0, zIndex: 30, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "0 40px", height: 72, background: "rgba(244,242,238,0.8)", WebkitBackdropFilter: "blur(16px)", backdropFilter: "blur(16px)" }}>
+        {/* Innenabstaende skalieren inline mit der Flaeche, damit der Kopf auch dann
+            haelt, wenn das Makler-Stylesheet (noch) nicht geladen ist. */}
+        <header className="dash-head" style={{ position: "sticky", top: 0, zIndex: 30, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "0 clamp(16px, 3vw, 40px)", height: 72, background: "rgba(244,242,238,0.8)", WebkitBackdropFilter: "blur(16px)", backdropFilter: "blur(16px)" }}>
           <button onClick={() => setOpen((v) => !v)} aria-label="Menü" style={{ width: 38, height: 38, borderRadius: 10, border: "none", cursor: "pointer", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--ink-2)" }}><DIcon name="layers" size={17} /></button>
-          <div className="dash-headright" style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
+          <div className="dash-headright" style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0, overflow: "hidden" }}>
             {headerExtra}
             <span className="dash-stylepill"><StylePillSwitch /></span>
             <span className="dash-cta"><DBtn variant="signal" size="sm" knob={c.glyph || "+"} onClick={c.onClick}>{c.label}</DBtn></span>
           </div>
         </header>
-        <main className="dash-main" style={{ flex: 1, minWidth: 0, padding: "8px 40px 80px" }}>
+        <main className="dash-main" style={{ flex: 1, minWidth: 0, padding: "8px clamp(16px, 3vw, 40px) 80px" }}>
           <style>{window.MK_CSS}{window.MK_HEUTE_CSS || ""}</style>
           {children}
         </main>

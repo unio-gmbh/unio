@@ -221,14 +221,13 @@ const MK_CSS = `
   }
   @media (max-width:900px){
     .mk-chatwrap,.mk-two{grid-template-columns:minmax(0,1fr)!important;}
-    .mk-over{width:100vw!important;}
+    /* left/right statt 100vw: 100vw zaehlt die Scrollbar mit und laeuft ueber. */
+    .mk-over{left:0!important;right:0!important;width:auto!important;}
   }
-  @media (max-width:760px){
-    main{padding-left:16px!important;padding-right:16px!important;}
-  }
-  /* ===== Sidebar wird auf schmalen Screens ein Overlay-Drawer ===== */
+  /* ===== Sidebar wird auf schmalen Screens ein Overlay-Drawer =====
+     Die Innenabstaende von Kopf und Inhalt stehen inline (clamp) in dash-shell.jsx. */
   @media (max-width:1000px){
-    .dash-head{padding:0 16px!important;height:64px!important;}
+    .dash-head{height:64px!important;}
     .dash-stylepill{display:none;}
     .dash-main{padding-top:4px!important;}
   }
@@ -242,17 +241,11 @@ const MK_CSS = `
   @media (max-width:520px){
     .mk-facts{grid-template-columns:minmax(0,1fr)!important;}
   }
-  /* Kennzahlen-Reihen (Research: 2 Spalten mobil statt horizontalem Scrollen,
-     lange Werte ueber beide Spalten, nichts abschneiden) */
-  @media (max-width:760px){
-    .mk-kennz{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
-    .mk-kennz > *:nth-child(1),.mk-kennz > *:nth-child(2){grid-column:span 2;}
-    .mk-kennz > * > div{min-height:56px;}
-  }
-  @media (max-width:380px){
-    .mk-kennz{grid-template-columns:minmax(0,1fr)!important;}
-    .mk-kennz > *:nth-child(1),.mk-kennz > *:nth-child(2){grid-column:auto;}
-  }
+  /* Kennzahlen-Reihen: die Spaltenzahl steckt intrinsisch im Element
+     (auto-fit + min()), damit sie auch ohne dieses Stylesheet stimmt.
+     Hier nur noch das engere Raster fuer kleine Flaechen. */
+  .mk-kennz{gap:clamp(10px,2vw,16px);}
+  .mk-kennz > * > div{overflow-wrap:anywhere;}
   /* Sub-Navigation mobil: eine Zeile scrollende Pills mit Snap (Material 3 / HIG) */
   @media (max-width:760px){
     .mk-subnav{flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x proximity;
@@ -265,15 +258,13 @@ const MK_CSS = `
     main [style*="justify-content: space-between"] > button[class]{white-space:nowrap;}
     .mkg + * ,.mkg{max-width:100%;}
   }
-  .mk-projkarte{padding:30px;}
-  @media (max-width:900px){
-    .mk-projkopf{grid-template-columns:minmax(0,1fr)!important;gap:22px!important;}
-    .mk-projzahlen{width:100%;}
-    .mk-projzahlen > div{flex:1 1 140px!important;}
-  }
-  @media (max-width:700px){
-    .mk-projkarte{padding:20px!important;}
-  }
+  /* Die Tab-Leiste scrollt in der Komponente selbst (dash-helpers.jsx),
+     hier nur die Leiste ohne sichtbaren Scrollbalken. */
+  .u-tabscroll::-webkit-scrollbar{display:none;}
+  /* Interessenten-Zeilen brechen intrinsisch um (Flex-Wrap im Element selbst). */
+  /* Padding und Kennzahlen skalieren mit der Flaeche, nicht mit Breakpoints:
+     der Kopf selbst bricht per Flex-Wrap um (siehe dash-project.jsx). */
+  .mk-projkarte{padding:clamp(18px,4vw,30px);}
   @media (max-width:860px){
     /* Der Kopf traegt mobil nur Menue und Rollenwahl; "Immobilie anlegen" lebt in Objekte > Entwuerfe */
     .dash-cta{display:none;}

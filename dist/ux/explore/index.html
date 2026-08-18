@@ -149,6 +149,16 @@
   .such.traum .srow.ueber{opacity:1;}
   .srow .rbadge.budget{color:#8A5A00;background:rgba(20,18,16,.06);border-color:rgba(20,18,16,.18);}
   .such.traum .srow .rbadge.budget{display:none;}
+  /* KI-Suche: Kriterien stehen offen über der Liste */
+  .skiband{margin:12px 14px 0;background:#141210;color:#F7F5F1;border-radius:16px;padding:14px 16px;}
+  .skiband .skitop{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .skiband .skitop .mono{color:var(--orange);}
+  .skiband .skitop button{border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;
+    padding:7px 13px;border-radius:99px;background:rgba(247,245,241,.12);color:#F7F5F1;}
+  .skiband p{margin-top:9px;font-size:14px;line-height:1.45;}
+  .skiband .skichips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}
+  .skiband .skichips span{background:rgba(247,245,241,.12);border-radius:99px;padding:6px 11px;
+    font-size:12px;font-weight:500;}
   .sfilter{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 0;}
   .sfilter button{font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;
     border:1px solid rgba(20,18,16,.15);background:#FFFFFF;color:#6E6862;transition:all .25s var(--ease);}
@@ -222,6 +232,15 @@
     <div class="grid" id="grid"><div class="gwrap" id="gwrap"></div></div>
     <div class="such" id="such">
       <div class="smap" id="suchMap"></div>
+      <!-- Banner der KI-Suche: zeigt offen, wonach gefiltert wird, und lässt sich verlassen -->
+      <div class="skiband" id="skiband" hidden>
+        <div class="skitop">
+          <span class="mono">KI-Suche</span>
+          <button id="skiweg">Suche verlassen</button>
+        </div>
+        <p id="skitext"></p>
+        <div class="skichips" id="skichips"></div>
+      </div>
       <div class="sfilter" id="suchFilter" role="group" aria-label="Suchparameter">
         <button data-f="alle" class="on">Alle</button>
         <button data-f="r3">Rendite ≥ 3 %</button>
@@ -687,6 +706,55 @@
     });
     document.getElementById("suchCount").textContent = sichtbar + " OBJEKTE · WIEN & UMGEBUNG";
   });
+
+  /* ===== KI-Suche aus dem Portal (?ki=…) =====
+     Die Kriterien kommen als Parameter herein, werden sichtbar angezeigt und
+     auf Zeilen und Kartenpins gleichzeitig angewandt. */
+  function kiAnwenden(k){
+    var band = document.getElementById("skiband");
+    document.getElementById("skitext").textContent = "„" + (k.text || "Deine Suche") + "“";
+    var chips = document.getElementById("skichips");
+    chips.innerHTML = "";
+    var lesbar = [];
+    if (k.zimmer) lesbar.push(k.zimmer + " Zimmer oder mehr");
+    if (k.maxPreis) lesbar.push("bis € " + Math.round(k.maxPreis / 1000) + "k");
+    if (k.rendite) lesbar.push("Rendite ab " + String(k.rendite).replace(".", ",") + " %");
+    if (k.aussen) lesbar.push("Balkon, Terrasse oder Garten");
+    if (k.ruhig) lesbar.push("ruhige Lage");
+    if (k.oeffi) lesbar.push("gute Öffi-Anbindung");
+    lesbar.forEach(function(t){ var s = document.createElement("span"); s.textContent = t; chips.appendChild(s); });
+    band.hidden = false;
+
+    var sichtbar = 0;
+    POOL.filter(function(o){ return o.ll; }).forEach(function(o){
+      var r = o.mieteJahr && o.preisNum ? o.mieteJahr / o.preisNum * 100 : 0;
+      var ok = true;
+      if (k.maxPreis && o.preisNum > k.maxPreis) ok = false;
+      if (k.zimmer && o.zimmer && o.zimmer < k.zimmer) ok = false;
+      if (k.rendite && r < k.rendite) ok = false;
+      var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+      if (row) row.style.display = ok ? "grid" : "none";
+      var m = suchMarker[o.id];
+      if (m) { var el = m.getElement(); if (el) el.style.display = ok ? "" : "none"; }
+      if (ok) sichtbar++;
+    });
+    document.getElementById("suchCount").textContent = sichtbar + " TREFFER · KI-SUCHE";
+    document.querySelectorAll("#suchFilter button").forEach(function(x){ x.classList.remove("on"); });
+  }
+  document.getElementById("skiweg").addEventListener("click", function(){
+    document.getElementById("skiband").hidden = true;
+    var alle = document.querySelector('#suchFilter button[data-f="alle"]');
+    if (alle) alle.click();
+  });
+  (function(){
+    var roh = new URLSearchParams(location.search).get("ki");
+    if (!roh) return;
+    var k;
+    try { k = JSON.parse(decodeURIComponent(roh)); } catch (e) { return; }
+    zeigeAnsicht("such");
+    /* Die Liste wird beim Ansichtswechsel gebaut, deshalb einen Tick später filtern */
+    setTimeout(function(){ kiAnwenden(k); }, 120);
+  })();
   function aktivPin(id, mitZoom){
     document.querySelectorAll(".u-xpin").forEach(function(x){ x.classList.toggle("on", x.dataset.pin === id); });
     document.querySelectorAll(".srow").forEach(function(x){ x.classList.toggle("on", x.dataset.id === id); });
