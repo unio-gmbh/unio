@@ -15,7 +15,7 @@
    - Strategische Lärmkarte Wien (CC BY) für den Ruhe-Score. Bis dahin nähern wir
      über Straßenklasse und Bahnnähe an, das Feld "naeherung" sagt das offen. */
 
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile, readFile, mkdir, readdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,13 +23,46 @@ const WURZEL = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ZIEL = join(WURZEL, "assets", "data", "lage");
 const OVERPASS = "https://overpass-api.de/api/interpreter";
 
-/* Objekte mit Koordinaten. Im Betrieb kommt das aus der Objektdatenbank,
-   die Geokodierung liefert das BEV-Adressregister. */
+/* Objekte der Demo. Koordinaten sind optional: fehlen sie, wird die Adresse
+   geokodiert (Nominatim). Im Betrieb kommt die Liste aus der Objektdatenbank
+   und die Geokodierung aus dem BEV-Adressregister, die Struktur bleibt gleich. */
 const OBJEKTE = [
-  { id: "hernals", ort: "1170 Wien, Hernals", lat: 48.2265, lon: 16.3195, stadt: "wien" },
-  { id: "korneuburg", ort: "2100 Korneuburg, Stockerauer Straße", lat: 48.3452, lon: 16.3339, stadt: "umland" },
-  { id: "huetteldorf", ort: "1140 Wien, Hütteldorf", lat: 48.1957, lon: 16.2591, stadt: "wien" },
+  /* Makler-Flächen mit konkreter Adresse */
+  { id: "korneuburg", ort: "2100 Korneuburg, Stockerauer Straße", adresse: "Stockerauer Straße, 2100 Korneuburg, Österreich" },
+  { id: "hernals", ort: "1170 Wien, Hernals", adresse: "Hernalser Hauptstraße, 1170 Wien, Österreich" },
+  { id: "huetteldorf", ort: "1140 Wien, Hütteldorf", adresse: "Hütteldorf, 1140 Wien, Österreich" },
+  /* Der komplette Demo-Katalog (EK_KATALOG in dash-ek-basis.jsx) */
+  { id: "beheim", ort: "1170 Wien, Hernals", adresse: "Beheimgasse, 1170 Wien, Österreich" },
+  { id: "beheim2", ort: "1170 Wien, Hernals", adresse: "Beheimgasse, 1170 Wien, Österreich" },
+  { id: "albrecht", ort: "1180 Wien, Währing", adresse: "Währinger Straße, 1180 Wien, Österreich" },
+  { id: "albrecht-dg", ort: "1180 Wien, Währing", adresse: "Währinger Straße, 1180 Wien, Österreich" },
+  { id: "ecoluxe", ort: "1140 Wien, Hadersdorf", adresse: "Hühnersteigstraße 19, 1140 Wien, Österreich" },
+  { id: "obenzwei", ort: "1020 Wien, Leopoldstadt", adresse: "Vorgartenstraße, 1020 Wien, Österreich" },
+  { id: "obenzwei-t", ort: "1020 Wien, Leopoldstadt", adresse: "Vorgartenstraße, 1020 Wien, Österreich" },
+  { id: "penthouse", ort: "1010 Wien, Innere Stadt", adresse: "Seilergasse, 1010 Wien, Österreich" },
+  { id: "maxing", ort: "1130 Wien, Hietzing", adresse: "Maxingstraße, 1130 Wien, Österreich" },
+  { id: "schoenbrunn", ort: "1130 Wien, Hietzing", adresse: "Grünbergstraße, 1130 Wien, Österreich" },
+  { id: "facade", ort: "1050 Wien, Margareten", adresse: "Margaretenstraße, 1050 Wien, Österreich" },
 ];
+
+/* ---------- Geokodierung ----------
+   Nominatim ist frei nutzbar, verlangt aber eine sprechende Kennung und
+   maximal eine Anfrage je Sekunde. Ergebnisse landen in einem Cache, damit
+   wiederholte Laeufe die Adressen nicht erneut abfragen. */
+const GEO_CACHE = join(ZIEL, "_geocache.json");
+
+async function geokodieren(adresse, cache) {
+  if (cache[adresse]) return cache[adresse];
+  const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=" + encodeURIComponent(adresse);
+  const antwort = await fetch(url, { headers: { "User-Agent": "UNIO Lage-Scores (daniel@ad.boutique)", "Accept": "application/json" } });
+  if (!antwort.ok) throw new Error("Nominatim antwortete mit " + antwort.status);
+  const treffer = await antwort.json();
+  if (!treffer.length) throw new Error("Adresse nicht gefunden: " + adresse);
+  const koord = { lat: parseFloat(treffer[0].lat), lon: parseFloat(treffer[0].lon) };
+  cache[adresse] = koord;
+  await new Promise((r) => setTimeout(r, 1200)); /* Nominatim fair benutzen */
+  return koord;
+}
 
 /* ---------- Geometrie und Gehzeit ---------- */
 
@@ -91,10 +124,18 @@ const ausgabe = (el) => {
 /* Gewichte nach Verkehrsmittelklasse. U-Bahn trägt am meisten, weil Takt und
    Kapazität in Wien in dieser Reihenfolge stehen. */
 const MODI = [
-  { key: "ubahn", name: "U-Bahn", gewicht: 40, filter: 'nwr["station"="subway"](around:RADIUS,LAT,LON);nwr["railway"="subway_entrance"](around:RADIUS,LAT,LON);' },
-  { key: "bahn", name: "S-Bahn und Zug", gewicht: 30, filter: 'nwr["railway"="station"]["station"!="subway"](around:RADIUS,LAT,LON);nwr["railway"="halt"](around:RADIUS,LAT,LON);' },
-  { key: "tram", name: "Straßenbahn", gewicht: 22, filter: 'nwr["railway"="tram_stop"](around:RADIUS,LAT,LON);' },
-  { key: "bus", name: "Bus", gewicht: 14, filter: 'nwr["highway"="bus_stop"](around:RADIUS,LAT,LON);' },
+  { key: "ubahn", name: "U-Bahn", gewicht: 40,
+    filter: 'nwr["station"="subway"];nwr["railway"="subway_entrance"];',
+    passt: (t) => t.station === "subway" || t.railway === "subway_entrance" },
+  { key: "bahn", name: "S-Bahn und Zug", gewicht: 30,
+    filter: 'nwr["railway"="station"]["station"!="subway"];nwr["railway"="halt"];',
+    passt: (t) => (t.railway === "station" && t.station !== "subway") || t.railway === "halt" },
+  { key: "tram", name: "Straßenbahn", gewicht: 22,
+    filter: 'nwr["railway"="tram_stop"];',
+    passt: (t) => t.railway === "tram_stop" },
+  { key: "bus", name: "Bus", gewicht: 14,
+    filter: 'nwr["highway"="bus_stop"];',
+    passt: (t) => t.highway === "bus_stop" },
 ];
 
 /* Abklingen über die Gehzeit. 20 Minuten ist die Grenze, ab der eine Haltestelle
@@ -103,42 +144,43 @@ const abfall = (min, grenze = 20) => Math.max(0, 1 - min / grenze);
 
 async function oeffi(o) {
   const radius = 1400;
+  /* Eine gebuendelte Abfrage statt vier: Overpass ist ein freier Dienst und
+     drosselt bei vielen Einzelanfragen. Die Zuordnung zum Verkehrsmittel
+     passiert danach anhand der Tags. */
+  const inneres = MODI.map((m) => m.filter).join("")
+    .replaceAll(";", "(around:" + radius + "," + o.lat + "," + o.lon + ");");
+  const daten = await overpass("[out:json][timeout:60];(" + inneres + ");out center tags;");
   const gefunden = [];
-  for (const m of MODI) {
-    const q = "[out:json][timeout:40];(" +
-      m.filter.replaceAll("RADIUS", String(radius)).replaceAll("LAT", String(o.lat)).replaceAll("LON", String(o.lon)) +
-      ");out center tags;";
-    const daten = await overpass(q);
-    const treffer = (daten.elements || []).map(ausgabe).filter(Boolean).map((e) => ({
-      modus: m.key,
-      modusName: m.name,
-      gewicht: m.gewicht,
+  (daten.elements || []).map(ausgabe).filter(Boolean).forEach((e) => {
+    const m = MODI.find((x) => x.passt(e.tags));
+    if (!m) return;
+    gefunden.push({
+      modus: m.key, modusName: m.name, gewicht: m.gewicht,
       name: e.tags.name || m.name,
       min: gehMin(meter(o.lat, o.lon, e.lat, e.lon)),
-    }));
-    /* Je Modus nur die nächste Haltestelle je Name, sonst zählen Steige doppelt */
-    const perName = new Map();
-    for (const t of treffer) if (!perName.has(t.name) || perName.get(t.name).min > t.min) perName.set(t.name, t);
-    gefunden.push(...perName.values());
-    await new Promise((r) => setTimeout(r, 1200)); /* Overpass fair benutzen */
+    });
+  });
+  /* Je Modus und Name nur die naechste Haltestelle, sonst zaehlen Steige doppelt */
+  const perSchluessel = new Map();
+  for (const g of gefunden) {
+    const k = g.modus + "|" + g.name;
+    if (!perSchluessel.has(k) || perSchluessel.get(k).min > g.min) perSchluessel.set(k, g);
   }
+  const halte = [...perSchluessel.values()];
   /* Score: bester Beitrag je Modus voll, weitere Modi mit halbem Gewicht dazu.
      So belohnt der Score Vielfalt, ohne dass zwanzig Bushaltestellen ein
      fehlendes U-Bahn-Netz überdecken. */
   const bestePro = new Map();
-  for (const g of gefunden) {
+  for (const g of halte) {
     const wert = g.gewicht * abfall(g.min);
     if (!bestePro.has(g.modus) || bestePro.get(g.modus) < wert) bestePro.set(g.modus, wert);
   }
   const werte = [...bestePro.values()].sort((a, b) => b - a);
   const rohwert = werte.reduce((s, w, i) => s + (i === 0 ? w : w * 0.5), 0);
-  /* Kalibrierung: der Bezugswert ist eine sehr gut angebundene Wiener Adresse,
-     also U-Bahn in wenigen Minuten plus zwei weitere Verkehrsmittel. Das ergibt
-     rund 55 Rohpunkte und soll 100 entsprechen. Ohne diese Skalierung wirken
-     selbst gute Lagen zu schlecht: U-Bahn in 7 Minuten ist in Wien keine
-     eingeschraenkte Anbindung. */
+  /* Kalibrierung: Bezugswert ist eine sehr gut angebundene Wiener Adresse,
+     also U-Bahn in wenigen Minuten plus zwei weitere Verkehrsmittel. */
   const punkte = Math.min(100, Math.round((rohwert / 55) * 100));
-  return { punkte, halte: gefunden.sort((a, b) => a.min - b.min) };
+  return { punkte, halte: halte.sort((a, b) => a.min - b.min) };
 }
 
 /* ---------- Alltag zu Fuß ---------- */
@@ -154,27 +196,29 @@ const TYPEN = {
 const typName = (tags) => TYPEN[tags.leisure] || TYPEN[tags.shop] || TYPEN[tags.amenity] || null;
 
 const ALLTAG = [
-  { kat: "Nahversorgung", gewicht: 26, filter: '["shop"~"^(supermarket|convenience|greengrocer)$"]' },
-  { kat: "Nahversorgung", gewicht: 10, filter: '["shop"="bakery"]' },
-  { kat: "Nahversorgung", gewicht: 14, filter: '["amenity"="pharmacy"]' },
-  { kat: "Bildung", gewicht: 14, filter: '["amenity"="school"]' },
-  { kat: "Bildung", gewicht: 12, filter: '["amenity"="kindergarten"]' },
-  { kat: "Gesundheit", gewicht: 12, filter: '["amenity"="doctors"]' },
-  { kat: "Grün und Freizeit", gewicht: 12, filter: '["leisure"~"^(park|garden|playground)$"]' },
+  { kat: "Nahversorgung", gewicht: 26, filter: '["shop"~"^(supermarket|convenience|greengrocer)$"]',
+    passt: (t) => ["supermarket", "convenience", "greengrocer"].includes(t.shop) },
+  { kat: "Nahversorgung", gewicht: 10, filter: '["shop"="bakery"]', passt: (t) => t.shop === "bakery" },
+  { kat: "Nahversorgung", gewicht: 14, filter: '["amenity"="pharmacy"]', passt: (t) => t.amenity === "pharmacy" },
+  { kat: "Bildung", gewicht: 14, filter: '["amenity"="school"]', passt: (t) => t.amenity === "school" },
+  { kat: "Bildung", gewicht: 12, filter: '["amenity"="kindergarten"]', passt: (t) => t.amenity === "kindergarten" },
+  { kat: "Gesundheit", gewicht: 12, filter: '["amenity"="doctors"]', passt: (t) => t.amenity === "doctors" },
+  { kat: "Grün und Freizeit", gewicht: 12, filter: '["leisure"~"^(park|garden|playground)$"]',
+    passt: (t) => ["park", "garden", "playground"].includes(t.leisure) },
 ];
 
 async function alltag(o) {
   const radius = 1300;
-  const ergebnis = [];
-  for (const a of ALLTAG) {
-    const q = `[out:json][timeout:40];nwr${a.filter}(around:${radius},${o.lat},${o.lon});out center tags;`;
-    const daten = await overpass(q);
-    const treffer = (daten.elements || []).map(ausgabe).filter(Boolean)
+  /* Auch hier eine gebuendelte Abfrage statt sieben. */
+  const inneres = ALLTAG.map((a) => "nwr" + a.filter + "(around:" + radius + "," + o.lat + "," + o.lon + ");").join("");
+  const daten = await overpass("[out:json][timeout:60];(" + inneres + ");out center tags;");
+  const treffer = (daten.elements || []).map(ausgabe).filter(Boolean);
+  const ergebnis = ALLTAG.map((a) => {
+    const passend = treffer.filter((e) => a.passt(e.tags))
       .map((e) => ({ name: e.tags.name || typName(e.tags) || a.kat, min: gehMin(meter(o.lat, o.lon, e.lat, e.lon)) }))
       .sort((x, y) => x.min - y.min);
-    ergebnis.push({ ...a, naechste: treffer.slice(0, 3) });
-    await new Promise((r) => setTimeout(r, 1200));
-  }
+    return { ...a, naechste: passend.slice(0, 3) };
+  });
   const gesamt = ALLTAG.reduce((s, a) => s + a.gewicht, 0);
   const erreicht = ergebnis.reduce((s, e) => s + (e.naechste[0] ? e.gewicht * abfall(e.naechste[0].min) : 0), 0);
   return { punkte: Math.min(100, Math.round((erreicht / gesamt) * 100)), gruppen: ergebnis };
@@ -218,7 +262,11 @@ function poiGruppen(al, halte) {
     if (!nach.has(g.kat)) nach.set(g.kat, []);
     for (const n of g.naechste.slice(0, 2)) nach.get(g.kat).push([n.name, n.min + " Min zu Fuß"]);
   }
-  return [oeff, ...[...nach.entries()].map(([kat, zeilen]) => ({ kat, zeilen: zeilen.slice(0, 3) }))];
+  /* Kategorien ohne Treffer weglassen: eine Ueberschrift ohne Zeilen sieht
+     wie ein Fehler aus. Der Score sagt ueber die fehlende Kategorie ohnehin
+     schon etwas ("3 von 7 Kategorien im Gehradius"). */
+  return [oeff, ...[...nach.entries()].map(([kat, zeilen]) => ({ kat, zeilen: zeilen.slice(0, 3) }))]
+    .filter((g) => g.zeilen.length > 0);
 }
 
 /* ---------- Lauf ---------- */
@@ -251,14 +299,38 @@ async function rechne(o) {
 
 async function main() {
   const nur = process.argv[2];
-  const liste = nur ? OBJEKTE.filter((o) => o.id === nur) : OBJEKTE;
-  if (!liste.length) { console.error("Kein Objekt mit der Kennung " + nur); process.exit(1); }
+  const nurFehlende = nur === "--fehlende";
+  let liste = OBJEKTE;
+  if (nur && !nurFehlende) {
+    liste = OBJEKTE.filter((o) => o.id === nur);
+    if (!liste.length) { console.error("Kein Objekt mit der Kennung " + nur); process.exit(1); }
+  }
   await mkdir(ZIEL, { recursive: true });
-  console.log("Lage-Scores aus offenen Daten (Overpass). Das dauert je Objekt rund 15 Sekunden.");
+
+  /* Geo-Cache laden, damit ein zweiter Lauf die Adressen nicht neu abfragt */
+  let cache = {};
+  try { cache = JSON.parse(await readFile(GEO_CACHE, "utf8")); } catch (e) { /* erster Lauf */ }
+
+  if (nurFehlende) {
+    const vorhanden = new Set((await readdir(ZIEL).catch(() => [])).filter((f) => f.endsWith(".json") && !f.startsWith("_")).map((f) => f.replace(".json", "")));
+    liste = OBJEKTE.filter((o) => !vorhanden.has(o.id));
+    if (!liste.length) { console.log("Alle Objekte haben schon Lage-Daten."); return; }
+    console.log(liste.length + " Objekte ohne Lage-Daten.");
+  }
+
+  console.log("Lage-Scores aus offenen Daten (Adresse → Koordinaten → Overpass). Rund 20 Sekunden je Objekt.");
   for (const o of liste) {
     try {
-      const ergebnis = await rechne(o);
+      /* Koordinaten: entweder mitgegeben oder aus der Adresse geokodiert */
+      let ziel = o;
+      if (o.lat == null || o.lon == null) {
+        if (!o.adresse) throw new Error("weder Koordinaten noch Adresse");
+        const k = await geokodieren(o.adresse, cache);
+        ziel = { ...o, lat: k.lat, lon: k.lon };
+      }
+      const ergebnis = await rechne(ziel);
       await writeFile(join(ZIEL, o.id + ".json"), JSON.stringify(ergebnis, null, 2) + "\n", "utf8");
+      await writeFile(GEO_CACHE, JSON.stringify(cache, null, 2) + "\n", "utf8");
     } catch (e) {
       console.error("  Fehler bei " + o.id + ": " + e.message + " (bestehende Datei bleibt)");
     }

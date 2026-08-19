@@ -1,0 +1,89 @@
+{
+  "id": "ecoluxe",
+  "ort": "1140 Wien, Hadersdorf",
+  "koordinaten": [
+    48.2262475,
+    16.1972394
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 15,
+      "label": "Eingeschränkt",
+      "sub": "Bus Wien Hohe-Wand-Wiese in 8 Min zu Fuß"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 11,
+      "label": "Eingeschränkt",
+      "sub": "3 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Wien Hohe-Wand-Wiese",
+          "8 Min zu Fuß"
+        ],
+        [
+          "Wien Greutberggasse",
+          "10 Min zu Fuß"
+        ],
+        [
+          "Vorderhainbach/Augustinerwaldgasse",
+          "10 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Apotheke Mauerbach",
+          "14 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Marieta Grigorova",
+          "16 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Spielplatz",
+          "12 Min zu Fuß"
+        ],
+        [
+          "Grünanlage",
+          "17 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Wien Hohe-Wand-Wiese in 8 Min zu Fuß",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

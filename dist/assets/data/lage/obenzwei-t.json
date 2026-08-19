@@ -1,0 +1,118 @@
+{
+  "id": "obenzwei-t",
+  "ort": "1020 Wien, Leopoldstadt",
+  "koordinaten": [
+    48.2236245,
+    16.4010515
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 100,
+      "label": "Hervorragend",
+      "sub": "U-Bahn Radingerstraße in 1 Min zu Fuß · Bus Vorgartenstraße in 1 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 64,
+      "label": "Gut",
+      "sub": "Hauptverkehr oder Bahn in der Nähe"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Radingerstraße",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Vorgartenstraße",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Vorgartenstraße",
+          "1 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Vitaminstation 2",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Nah & Frisch Punkt",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Vorgarten Bäckerei",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "VS Vorgartenstraße 191",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Sigmund Freud-Gymnasium",
+          "5 Min zu Fuß"
+        ],
+        [
+          "Kindergarten Kindergruppe Dorainsel",
+          "5 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Claudia Radbauer",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Dr. Rossella Angotti-Arthofer",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Grünanlage",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Grünanlage",
+          "1 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "U-Bahn Radingerstraße in 1 Min zu Fuß · Bus Vorgartenstraße in 1 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

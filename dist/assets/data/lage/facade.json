@@ -1,0 +1,118 @@
+{
+  "id": "facade",
+  "ort": "1050 Wien, Margareten",
+  "koordinaten": [
+    48.1872587,
+    16.349074
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 76,
+      "label": "Sehr gut",
+      "sub": "Bus Am Hundsturm in 2 Min zu Fuß · U-Bahn Morizgasse in 7 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 90,
+      "label": "Hervorragend",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Am Hundsturm",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Kohlgasse",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Reinprechtsdorfer Brücke",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Die Speisz",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Billa",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Bäckerei Hafner",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Musikschule Margareten",
+          "3 Min zu Fuß"
+        ],
+        [
+          "GTVS Am Hundsturm 18",
+          "3 Min zu Fuß"
+        ],
+        [
+          "St. Johannes",
+          "1 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Wilhelm Binder",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Dr. Edith Roth-Schiffl",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Park am Hundsturm",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Spielplatz",
+          "2 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Am Hundsturm in 2 Min zu Fuß · U-Bahn Morizgasse in 7 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

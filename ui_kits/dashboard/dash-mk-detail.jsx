@@ -155,7 +155,7 @@ function MkLage({ exakt, ort, datenId }) {
 
       <div className="mkd-poi">
         {/* Berechnete Daten liefern {kat, zeilen}, die eingebauten Demo-Werte ein Paar. */}
-        {(daten ? daten.poi.map((g) => [g.kat, g.zeilen]) : MKD_LAGE.poi).map(([kat, liste]) => (
+        {(daten ? daten.poi.map((g) => [g.kat, g.zeilen]) : MKD_LAGE.poi).filter(([, liste]) => liste && liste.length).map(([kat, liste]) => (
           <div key={kat}>
             <div className="kat">{kat}</div>
             {liste.map(([n, min]) => (

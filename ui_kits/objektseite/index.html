@@ -1434,7 +1434,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     "beheim2":{t:"Beheim · Garten-Maisonette",ort:"1170 Wien · Hernals",preisNum:1650000,img:"../../assets/img/beheim-2.jpg"},
     "albrecht":{t:"Das Albrecht · Top 12",ort:"1180 Wien · Währing",preisNum:470000,img:"../../assets/img/albrecht.jpg"},
     "albrecht-dg":{t:"Das Albrecht · Dachgeschoss",ort:"1180 Wien · Währing",preisNum:1490000,img:"../../assets/img/albrechts-dachgeschoss.jpg"},
-    "ecoluxe":{t:"Villa Ecoluxe",ort:"1190 Wien · Grinzing",preisNum:2400000,img:"../../assets/img/ecoluxe.jpg"},
+    "ecoluxe":{t:"Villa Ecoluxe",ort:"1140 Wien · Hadersdorf",preisNum:2400000,img:"../../assets/img/ecoluxe.jpg"},
     "obenzwei":{t:"ObenZwei · Penthouse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei.jpg"},
     "obenzwei-t":{t:"ObenZwei · Terrasse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei-terrasse.jpg"},
     "penthouse":{t:"Penthouse über den Dächern",ort:"1010 Wien · Innere Stadt",preisNum:4000000,img:"../../assets/img/penthouse.jpg"},
@@ -1657,7 +1657,10 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
 
   /* Berechnete Werte aus offenen Daten nachladen (build/lage.mjs schreibt sie).
      Fehlt die Datei, bleiben die eingebauten Werte stehen. */
-  fetch("/assets/data/lage/hernals.json").then(function(a){ return a.ok ? a.json() : null; })
+  /* Die Lage-Datei folgt der Objekt-Kennung aus der URL. So zeigt jedes Objekt
+     seine eigene Adresse und nicht die eines anderen. */
+  var lgObj = new URLSearchParams(location.search).get("obj") || "beheim";
+  fetch("/assets/data/lage/" + lgObj + ".json").then(function(a){ return a.ok ? a.json() : null; })
     .then(function(d){
       if (!d || !d.scores) return; /* keine Daten: Sektion bleibt versteckt */
       document.getElementById("lage").hidden = false;
@@ -1690,6 +1693,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   });
   var poi = document.getElementById("lgpoi");
   LAGE.poi.forEach(function(g){
+    if (!g[1] || !g[1].length) return; /* Kategorie ohne Treffer nicht anzeigen */
     var w = document.createElement("div");
     w.className = "poigrp";
     var h = '<div class="h">' + g[0] + '</div>';
@@ -1794,7 +1798,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   var w = document.getElementById("mkw"), verlauf = document.getElementById("mkverlauf"),
       input = document.getElementById("mkinput");
   if (!w) return;
-  var objId = new URLSearchParams(location.search).get("obj") || "albrecht";
+  var objId = new URLSearchParams(location.search).get("obj") || "beheim";
 
   function lese(k, f){ try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? f : v; } catch (e) { return f; } }
   function schreibe(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* Speicher gesperrt */ } }
@@ -1826,6 +1830,20 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
 
   document.getElementById("mkx").addEventListener("click", zu);
   document.getElementById("mkback").addEventListener("click", zu);
+  /* Titel und Bild der Objektzeile aus der Seite uebernehmen, damit der Chat
+     zum wirklich gezeigten Objekt gehoert und nicht zu einem festen Text. */
+  (function(){
+    var h1 = document.querySelector(".head h1");
+    var titel = h1 ? h1.textContent.replace(/\.$/, "").replace(/\s+/g, " ").trim() : null;
+    if (titel) {
+      var b = document.querySelector("#mkobj b");
+      if (b) b.textContent = titel;
+    }
+    var hero = document.getElementById("heroimg");
+    var mini = document.querySelector("#mkobj img");
+    if (hero && mini) mini.src = hero.getAttribute("src");
+  })();
+
   document.getElementById("mkobj").addEventListener("click", function(e){
     e.preventDefault(); zu();
     window.scrollTo({ top: 0, behavior: "smooth" });

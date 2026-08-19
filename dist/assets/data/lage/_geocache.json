@@ -1,0 +1,38 @@
+{
+  "Beheimgasse, 1170 Wien, Österreich": {
+    "lat": 48.2198914,
+    "lon": 16.3355796
+  },
+  "Währinger Straße, 1180 Wien, Österreich": {
+    "lat": 48.2302487,
+    "lon": 16.3291347
+  },
+  "Cobenzlgasse, 1190 Wien, Österreich": {
+    "lat": 48.2565432,
+    "lon": 16.3404303
+  },
+  "Vorgartenstraße, 1020 Wien, Österreich": {
+    "lat": 48.2236245,
+    "lon": 16.4010515
+  },
+  "Seilergasse, 1010 Wien, Österreich": {
+    "lat": 48.206651,
+    "lon": 16.3703571
+  },
+  "Maxingstraße, 1130 Wien, Österreich": {
+    "lat": 48.1846724,
+    "lon": 16.3005621
+  },
+  "Grünbergstraße, 1130 Wien, Österreich": {
+    "lat": 48.1828829,
+    "lon": 16.3190766
+  },
+  "Margaretenstraße, 1050 Wien, Österreich": {
+    "lat": 48.1872587,
+    "lon": 16.349074
+  },
+  "Hühnersteigstraße 19, 1140 Wien, Österreich": {
+    "lat": 48.2262475,
+    "lon": 16.1972394
+  }
+}

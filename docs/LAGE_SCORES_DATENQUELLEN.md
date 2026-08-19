@@ -105,11 +105,40 @@ weil sich Fahrplan und Nahversorgung selten ändern.
 
 ## 5. Was heute in der Demo steht
 
-Die Werte in `MKD_LAGE` (Makler-Ansicht) und im Lage-Skript der Endkundenseite sind
-Beispielwerte für Hernals beziehungsweise Korneuburg. Sie haben genau die Struktur, die
-die Pipeline liefern würde: drei Scores mit Textlabel und Begründung, POI-Kategorien mit
-Gehminuten, ein Öffi-Satz. Beim Anschluss an echte Daten wird nur die Datenquelle
-getauscht, nicht die Darstellung.
+**Alle Demo-Objekte haben echte, berechnete Werte.** `build/lage.mjs` geokodiert die
+Adresse (Nominatim, mit Cache in `_geocache.json`) und rechnet daraus die drei Scores.
+Ergebnisse liegen als `assets/data/lage/<objekt-id>.json` im Repo, die Seiten lesen die
+Datei zur jeweiligen Objekt-Kennung.
+
+Aufrufe:
+
+```
+node build/lage.mjs              # alle Objekte
+node build/lage.mjs --fehlende   # nur die ohne Datei
+node build/lage.mjs ecoluxe      # ein einzelnes
+```
+
+**Kein Fallback.** Fehlt die Datei zu einem Objekt, wird die Lage-Sektion nicht
+angezeigt. Vorher stand dort ein Beispielwert, wodurch eine Korneuburger Adresse Wiener
+Verbindungen behauptete. Ein falscher Score ist schlimmer als kein Score.
+
+**Overpass fair benutzen.** Je Objekt laufen genau drei gebündelte Abfragen (Verkehr,
+Alltag, Ruhe) statt zwölf einzelner. Der Dienst drosselt sonst und ein Lauf dauert
+Minuten statt Sekunden. Bei 429 oder 504 wird über drei Spiegel wiederholt.
+
+Beispielwerte aus dem Lauf vom 18.08.2026, sie zeigen, dass der Score differenziert:
+
+| Objekt | Lage | Öffi | Alltag | Ruhe |
+|---|---|---|---|---|
+| ObenZwei | 1020 Leopoldstadt | 100 | 88 | 64 |
+| Penthouse | 1010 Innere Stadt | 90 | 85 | 88 |
+| Das Albrecht | 1180 Währing | 82 | 86 | 67 |
+| Penthouse Beheim | 1170 Hernals | 77 | 84 | 88 |
+| Villa Ecoluxe | 1190 Grinzing | 45 | 86 | 88 |
+| Albrechts Townhouses | 2100 Korneuburg | 46 | 86 | 88 |
+
+Grinzing und Korneuburg fallen beim Öffi-Score deutlich ab, Leopoldstadt verliert bei der
+Ruhe. Genau diese Spreizung macht die Kennzahl im Verkaufsgespräch brauchbar.
 
 ## Quellen
 

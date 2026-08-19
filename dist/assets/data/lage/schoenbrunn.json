@@ -1,0 +1,118 @@
+{
+  "id": "schoenbrunn",
+  "ort": "1130 Wien, Hietzing",
+  "koordinaten": [
+    48.1828829,
+    16.3190766
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 70,
+      "label": "Gut",
+      "sub": "Bus Meidlinger Tor in 2 Min zu Fuß · U-Bahn Schloß Schönbrunn in 6 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 75,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 64,
+      "label": "Gut",
+      "sub": "Hauptverkehr oder Bahn in der Nähe"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Meidlinger Tor",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Schönbrunn",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Bischoffgasse",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Spar",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Nahversorger",
+          "6 Min zu Fuß"
+        ],
+        [
+          "Der Mann",
+          "11 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Volksschule Jean Pictet",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Volksschule Jean Pictet",
+          "9 Min zu Fuß"
+        ],
+        [
+          "Kindergarten Weiglgasse",
+          "9 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Karin Schmetterer",
+          "5 Min zu Fuß"
+        ],
+        [
+          "Dr. Friedrich Hitsch",
+          "8 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Grünanlage",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Park",
+          "1 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Meidlinger Tor in 2 Min zu Fuß · U-Bahn Schloß Schönbrunn in 6 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

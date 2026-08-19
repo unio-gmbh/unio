@@ -6,7 +6,7 @@
 const SHOP_OBJ = [
   { id: "063", img: "/assets/img/beheim.jpg", title: "Penthouse Beheim", price: "€ 1,70 Mio", addr: "Beheimgasse 5, 1170 Wien" },
   { id: "042", img: "/assets/img/albrecht.jpg", title: "Das Albrecht — Haus 4", price: "€ 1,29 Mio", addr: "Hernalser Hauptstraße 132, 1170 Wien" },
-  { id: "029", img: "/assets/img/ecoluxe.jpg", title: "Villa Ecoluxe", price: "€ 2,40 Mio", addr: "Cobenzlgasse 42, 1190 Wien" },
+  { id: "029", img: "/assets/img/ecoluxe.jpg", title: "Villa Ecoluxe", price: "€ 2,40 Mio", addr: "Hühnersteigstraße 19, 1140 Wien" },
   { id: "017", img: "/assets/img/obenzwei.jpg", title: "ObenZwei — Dachgeschoss", price: "Auf Anfrage", addr: "Vorgartenstraße 128, 1020 Wien" },
 ];
 

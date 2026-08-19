@@ -802,7 +802,7 @@ const WATCH = [
   ["Top 5 · Das Albrecht", "1170 Wien · 137 m²", "/assets/img/albrecht.jpg", 18, 22, { anf: 18, bes: 4, exp: 240, pm: "6 240" }, 72, 58],
   ["Penthouse S · Origins", "1180 Wien · 168 m²", "/assets/img/penthouse.jpg", 14, 15, { anf: 14, bes: 3, exp: 190, pm: "9 100" }, 88, 60],
   ["DG · ObenZwei", "1020 Wien · 112 m²", "/assets/img/obenzwei.jpg", 11, 8, { anf: 11, bes: 2, exp: 150, pm: "8 950" }, 84, 60],
-  ["Villa Ecoluxe", "1190 Wien · 210 m²", "/assets/img/ecoluxe.jpg", 9, -6, { anf: 9, bes: 1, exp: 120, pm: "11 400" }, 96, 55],
+  ["Villa Ecoluxe", "1140 Wien · 210 m²", "/assets/img/ecoluxe.jpg", 9, -6, { anf: 9, bes: 1, exp: 120, pm: "11 400" }, 96, 55],
   ["Top 3 · Beheim", "1170 Wien · 100 m²", "/assets/img/beheim.jpg", 6, -12, { anf: 6, bes: 0, exp: 80, pm: "7 480" }, 64, 58],
 ];
 function Watchlist({ onNav }) {

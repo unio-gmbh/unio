@@ -194,7 +194,7 @@ function DashObject({ onNav }) {
       {/* Lage-Bewertung sieht der Makler auch (Verkaufsargument). Der Concierge
           gehoert dagegen in die Endkunden-Ansicht, nicht ins Backend. */}
       <div style={{ maxWidth: 1360, margin: "0 auto", display: "grid", gap: 14, padding: "14px 0 0" }} className="mk-detailzone">
-        <window.MkLage exakt ort="1170 Wien, Hernals" datenId="hernals" />
+        <window.MkLage exakt datenId="korneuburg" />
       </div>
       <window.ProjektBanner onNav={onNav} />
       <div style={{ margin: "28px 0 24px" }}><OTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 5], ["export", "Plattform Export"], ["abschluss", "Abschluss"], ["aktivitaet", "Aktivität"], ["ki", "KI-Analyse"]]} active={tab} onPick={setTab} /></div>
@@ -227,7 +227,7 @@ function EndkundenVorschau() {
         <a className="mk-btn ghost tiny" href="/ux/objekt" target="_blank" rel="noreferrer" style={{ marginLeft: "auto", textDecoration: "none" }}>In neuem Tab öffnen</a>
       </div>
       <div style={{ borderRadius: 18, overflow: "hidden", background: "var(--paper)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-        <iframe src="/ux/objekt?embed=1&von=makler" title="Endkunden-Ansicht des Objekts"
+        <iframe src="/ux/objekt?embed=1&von=makler&obj=beheim" title="Endkunden-Ansicht des Objekts"
           style={{ display: "block", width: "100%", height: "min(1100px, calc(100vh - 190px))", border: "none" }} />
       </div>
       <p className="mk-mono" style={{ marginTop: 10 }}>Im Rahmen scrollen wie auf dem Handy oder Desktop des Interessenten</p>

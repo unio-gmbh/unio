@@ -8,7 +8,7 @@ const OBJEKTE_DB = [
   { id: "042", img: "/assets/img/albrecht.jpg", price: "€ 1,29 Mio", type: "Townhaus", title: "Das Albrecht — Haus 4", addr: "Hernalser Hauptstraße, 1170 Wien", qm: 168, rooms: 5, demand: 94, projekt: "Das Albrecht" },
   { id: "017", img: "/assets/img/obenzwei.jpg", price: "Auf Anfrage", type: "Penthouse", title: "ObenZwei — Dachgeschoss", addr: "Vorgartenstraße, 1020 Wien", qm: 124, rooms: 4, demand: 88, projekt: "ObenZwei" },
   { id: "063", img: "/assets/img/beheim.jpg", price: "€ 1,70 Mio", type: "Penthouse", title: "Penthouse Beheim", addr: "Beheimgasse, 1170 Wien", qm: 138, rooms: 4, demand: 91 },
-  { id: "029", img: "/assets/img/ecoluxe.jpg", price: "€ 2,40 Mio", type: "Villa", title: "Villa Ecoluxe", addr: "Cobenzlgasse, 1190 Wien", qm: 240, rooms: 6, demand: 96, projekt: "Ecoluxe" },
+  { id: "029", img: "/assets/img/ecoluxe.jpg", price: "€ 2,40 Mio", type: "Villa", title: "Villa Ecoluxe", addr: "Hühnersteigstraße 19, 1140 Wien", qm: 240, rooms: 6, demand: 96, projekt: "Ecoluxe" },
   { id: "071", img: "/assets/img/penthouse.jpg", price: "€ 3,95 Mio", type: "Penthouse", title: "Origins — Penthouse S", addr: "Gersthofer Straße, 1180 Wien", qm: 210, rooms: 5, demand: 89 },
   { id: "088", img: "/assets/img/vienna-garden.jpg", price: "€ 1,90 Mio", type: "Haus", title: "Garten-Refugium Wienerwald", addr: "Sieveringer Straße, 1190 Wien", qm: 195, rooms: 6, demand: 82 },
   { id: "094", img: "/assets/img/int-kitchen.jpg", price: "€ 890.000", type: "Wohnung", title: "Stadtwohnung Wieden", addr: "Favoritenstraße, 1040 Wien", qm: 84, rooms: 3, demand: 78 },
@@ -93,9 +93,9 @@ const TAGE = [
 const LEADS_DB = [
   { day: 3, t: "17.07. · 14:32", id: "491", name: "Sophie Berger", mail: "s.berger@gmx.at", tel: "+43 660 1234567", kind: "IMMOBILIE", obj: "Penthouse Beheim", addr: "Beheimgasse, 1170", status: "neu", src: "meta", msg: "Ist die Dachterrasse nach Süden ausgerichtet? Wir hätten Interesse an einer Besichtigung." },
   { day: 3, t: "17.07. · 11:08", id: "490", name: "Markus Wolf", mail: "m.wolf@firma.at", tel: "+43 664 9988776", kind: "PROJEKT", obj: "Das Albrecht", addr: "Hernalser Hauptstraße, 1170", status: "qualifiziert", src: "willhaben", msg: "Finanzierung steht, suche 4-Zimmer ab Herbst. Bitte um Rückruf." },
-  { day: 3, t: "17.07. · 09:41", id: "489", name: "Elena Novak", mail: "elena.novak@outlook.com", tel: "+43 699 2020202", kind: "IMMOBILIE", obj: "Villa Ecoluxe", addr: "Cobenzlgasse, 1190", status: "kontaktiert", src: "meta", msg: "Danke für die Unterlagen — wir besprechen es im Kreis der Familie." },
+  { day: 3, t: "17.07. · 09:41", id: "489", name: "Elena Novak", mail: "elena.novak@outlook.com", tel: "+43 699 2020202", kind: "IMMOBILIE", obj: "Villa Ecoluxe", addr: "Hühnersteigstraße, 1140", status: "kontaktiert", src: "meta", msg: "Danke für die Unterlagen — wir besprechen es im Kreis der Familie." },
   { day: 1, t: "15.07. · 16:20", id: "486", name: "Thomas Gruber", mail: "t.gruber@gmail.com", tel: "+43 650 4433221", kind: "IMMOBILIE", obj: "ObenZwei — Dachgeschoss", addr: "Vorgartenstraße, 1020", status: "kontaktversuch", src: "willhaben", msg: "Wie hoch sind die monatlichen Betriebskosten?" },
-  { day: 1, t: "15.07. · 10:03", id: "485", name: "Andrea Fischer", mail: "a.fischer@gmx.net", tel: "+43 676 5551234", kind: "PROJEKT", obj: "Ecoluxe", addr: "Cobenzlgasse, 1190", status: "verloren", src: "meta", msg: "Budget passt leider nicht, danke trotzdem." },
+  { day: 1, t: "15.07. · 10:03", id: "485", name: "Andrea Fischer", mail: "a.fischer@gmx.net", tel: "+43 676 5551234", kind: "PROJEKT", obj: "Ecoluxe", addr: "Hühnersteigstraße, 1140", status: "verloren", src: "meta", msg: "Budget passt leider nicht, danke trotzdem." },
 ];
 
 function Leads() {

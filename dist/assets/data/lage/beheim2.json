@@ -1,0 +1,118 @@
+{
+  "id": "beheim2",
+  "ort": "1170 Wien, Hernals",
+  "koordinaten": [
+    48.2198914,
+    16.3355796
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 77,
+      "label": "Sehr gut",
+      "sub": "Straßenbahn Palffygasse in 4 Min zu Fuß · Bus Palffygasse in 4 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 84,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Palffygasse",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Palffygasse",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Elterleinplatz",
+          "5 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Hofer",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Akşam market",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Felber",
+          "5 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Musikschule Hernals",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Volkshochschule Hernals",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Therapieinstitut Keil",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Gynhernals - Dr. Gabriele Dinhof & Dr. Dolores Gettinger",
+          "1 Min zu Fuß"
+        ],
+        [
+          "MRT Open",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Grünanlage",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Grünanlage",
+          "1 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Straßenbahn Palffygasse in 4 Min zu Fuß · Bus Palffygasse in 4 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "id": "albrecht",
+  "ort": "1180 Wien, Währing",
+  "koordinaten": [
+    48.2302487,
+    16.3291347
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 82,
+      "label": "Sehr gut",
+      "sub": "S-Bahn und Zug Wien Gersthof in 1 Min zu Fuß · Bus Gersthof in 1 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 86,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 67,
+      "label": "Gut",
+      "sub": "Hauptverkehr oder Bahn in der Nähe"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Wien Gersthof",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Gersthof",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Gersthof",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Gersthofer Obst & Gemüse",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Billa",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Anker",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Marianum",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Hans-Radl-Schule",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Kindergarten",
+          "6 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Eva Riz-Bohdal",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Dr. Heinz Metzenroth",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Spielplatz",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Spielplatz",
+          "5 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "S-Bahn und Zug Wien Gersthof in 1 Min zu Fuß · Bus Gersthof in 1 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

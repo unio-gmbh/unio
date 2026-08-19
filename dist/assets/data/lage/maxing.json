@@ -1,0 +1,118 @@
+{
+  "id": "maxing",
+  "ort": "1130 Wien, Hietzing",
+  "koordinaten": [
+    48.1846724,
+    16.3005621
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 80,
+      "label": "Sehr gut",
+      "sub": "Bus Am Platz in 2 Min zu Fuß · Straßenbahn Dommayergasse in 4 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 80,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Am Platz",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Tiergarten / Palmenhaus",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Dommayergasse",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "SPAR Gourmet",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Denns BioMarkt",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Der Mann",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Volksschule Am Platz",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Bundesgymnasium, Bundesrealgymnasium, wirtschaftliches Realgymnasium Wenzgasse",
+          "11 Min zu Fuß"
+        ],
+        [
+          "Kindergarten",
+          "14 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Monika Matal",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Anzenhofer",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Park",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Spielplatz",
+          "2 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Am Platz in 2 Min zu Fuß · Straßenbahn Dommayergasse in 4 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

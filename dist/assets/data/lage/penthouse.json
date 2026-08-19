@@ -1,0 +1,118 @@
+{
+  "id": "penthouse",
+  "ort": "1010 Wien, Innere Stadt",
+  "koordinaten": [
+    48.206651,
+    16.3703571
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 90,
+      "label": "Hervorragend",
+      "sub": "Bus Plankengasse in 1 Min zu Fuß · U-Bahn Kärntner Straße in 3 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 85,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Plankengasse",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Kärntner Straße",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Graben",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Billa",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Billa",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Oliver's Teigwerkstatt",
+          "1 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Religionspädagogische Akademie",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Gastgewerbefachschule der Wiener Gastwirte",
+          "8 Min zu Fuß"
+        ],
+        [
+          "Wiener Städtische Versicherung",
+          "13 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Beauty Embassy",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Augenärztliches Zentrum Innere Stadt",
+          "5 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Grünanlage",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Park",
+          "4 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Plankengasse in 1 Min zu Fuß · U-Bahn Kärntner Straße in 3 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

@@ -8,7 +8,7 @@ const EK_KATALOG = {
   "beheim2":      { t: "Beheim · Garten-Maisonette", ort: "1170 Wien · Hernals",  bezirk: "1170", preisNum: 1650000, mieteJahr: 54000, qm: 138, zi: 4, img: "/assets/img/beheim-2.jpg" },
   "albrecht":     { t: "Das Albrecht · Top 12",  ort: "1180 Wien · Währing",      bezirk: "1180", preisNum: 470000,  mieteJahr: 16800, qm: 54,  zi: 2, img: "/assets/img/albrecht.jpg" },
   "albrecht-dg":  { t: "Das Albrecht · Dachgeschoss", ort: "1180 Wien · Währing", bezirk: "1180", preisNum: 1490000, mieteJahr: 49200, qm: 122, zi: 4, img: "/assets/img/albrechts-dachgeschoss.jpg" },
-  "ecoluxe":      { t: "Villa Ecoluxe",          ort: "1190 Wien · Grinzing",     bezirk: "1190", preisNum: 2400000, mieteJahr: 66000, qm: 210, zi: 6, img: "/assets/img/ecoluxe.jpg" },
+  "ecoluxe":      { t: "Villa Ecoluxe",          ort: "1140 Wien · Hadersdorf",   bezirk: "1140", preisNum: 2400000, mieteJahr: 66000, qm: 210, zi: 6, img: "/assets/img/ecoluxe.jpg" },
   "obenzwei":     { t: "ObenZwei · Penthouse",   ort: "1020 Wien · Leopoldstadt", bezirk: "1020", preisNum: 2100000, mieteJahr: 63600, qm: 168, zi: 4, img: "/assets/img/obenzwei.jpg" },
   "obenzwei-t":   { t: "ObenZwei · Terrasse",    ort: "1020 Wien · Leopoldstadt", bezirk: "1020", preisNum: 2100000, mieteJahr: 63600, qm: 168, zi: 4, img: "/assets/img/obenzwei-terrasse.jpg" },
   "penthouse":    { t: "Penthouse über den Dächern", ort: "1010 Wien · Innere Stadt", bezirk: "1010", preisNum: 4000000, mieteJahr: 100800, qm: 245, zi: 5, img: "/assets/img/penthouse.jpg" },
