@@ -696,10 +696,10 @@ function ShopSeite({ onNav }) {
 
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
-      {/* Kopf: Mono-Kicker, Titel, ein Satz. Keine konkurrierenden Knöpfe. */}
+      {/* Kopf: Titel und ein Satz. Kein Eyebrow-Kicker (UNIO-Regel: Kicker-Pills
+          sind kein Hierarchie-Ersatz), keine konkurrierenden Knöpfe. */}
       <RvL style={{ marginTop: 40 }}>
-        <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)" }}>Shop · Produktion und Material</span>
-        <h1 style={{ margin: "12px 0 0", font: "500 clamp(34px, 3.4vw, 52px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Shop<span style={{ color: "var(--signal)" }}>.</span></h1>
+        <h1 style={{ margin: 0, font: "500 clamp(34px, 3.4vw, 52px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Shop<span style={{ color: "var(--signal)" }}>.</span></h1>
         <p style={{ margin: "16px 0 0", font: "400 16px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 540 }}>Wähle das Objekt, wir schlagen vor, was fehlt. Alle Preise inklusive Versand, das Lieferdatum steht auf der Karte.</p>
       </RvL>
 
@@ -762,63 +762,53 @@ function ShopSeite({ onNav }) {
         </div>
       </Rv>
 
-      {/* Zone 3: Wiederbestellung (im B2B das Killer-Feature) */}
-      <Rv style={{ marginTop: 20 }}>
-        <div style={{ background: "var(--card-bg, #FFFFFF)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "16px 20px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Nochmal wie beim letzten Objekt</span>
-            <b style={{ display: "block", font: "500 15px var(--font-display)", color: "var(--ink)", marginTop: 4 }}>Exposé-Paket, Fensterplakat und Immoreel · zusammen {eurS(1037)}</b>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Objekt- und Markendaten werden automatisch getauscht</span>
+      {/* Zone 3: Wiederbestellung als schlanke Zeile, bewusst kein eigener Kartenblock:
+          nach den Empfehlungskarten braucht die Seite Ruhe statt einer vierten Karte. */}
+      <Rv style={{ marginTop: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", padding: "14px 4px", borderTop: "1px solid var(--hairline-dark)", borderBottom: "1px solid var(--hairline-dark)" }}>
+          <div style={{ flex: "1 1 260px", minWidth: 0 }}>
+            <b style={{ font: "500 14.5px var(--font-display)", color: "var(--ink)" }}>Nochmal wie beim letzten Objekt: </b>
+            <span style={{ font: "400 14px var(--font-display)", color: "var(--text-muted)" }}>Exposé-Paket, Fensterplakat und Immoreel, zusammen {eurS(1037)}. Objekt- und Markendaten tauschen wir automatisch.</span>
           </div>
           <button onClick={() => { add({ titel: "Startpaket (3 Positionen)", detail: (objName || "").toUpperCase() + " · WIE LETZTES OBJEKT", menge: 3, preis: 1037 }); }}
-            style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "12px 22px", background: "var(--ink)", color: "var(--paper)", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>In 30 Sekunden übernehmen</button>
+            style={{ flex: "0 0 auto", border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 20px", background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>Übernehmen</button>
         </div>
       </Rv>
 
-      {/* Zone 4: Abo mit Kontingent, getrennt vom Katalog */}
-      <Rv style={{ marginTop: 14 }}>
-        <div style={{ background: "#FFFFFF", borderRadius: 16, padding: "18px 22px", color: "var(--ink)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Dein Abo · Personal Brand</span>
-            <b style={{ display: "block", font: "500 16px var(--font-display)", marginTop: 4 }}>3 von 5 Videos diesen Monat verbraucht</b>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Kontingent wird beim Bestellen verrechnet, nicht bezahlt</span>
-          </div>
-          <div style={{ display: "flex", gap: 6 }}>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <span key={n} style={{ width: 22, height: 6, borderRadius: 99, background: n <= 3 ? "var(--signal)" : "var(--paper-2)" }}></span>
-            ))}
-          </div>
-        </div>
-
-        {/* Aufstieg ins größere Paket direkt neben dem Kontingent: sonst wird
-            Premium nie gesehen und damit auch nicht verkauft. */}
-        {(() => {
-          const prem = PROGRAMME.find((p) => p.id === "premium");
-          const std = PROGRAMME.find((p) => p.id === "standard");
-          const zumPaket = () => { setKat("programme"); window.scrollTo(0, 0); };
-          return (
-            <div style={{ background: "var(--signal-soft)", borderRadius: 16, padding: "18px 22px", marginTop: 12, boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.35)", display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
-              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
-                <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Mehr Reichweite · {prem.name}</span>
-                <b style={{ display: "block", font: "500 16px var(--font-display)", color: "var(--ink)", marginTop: 5 }}>{prem.claim}</b>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px", marginTop: 9 }}>
-                  {prem.punkte.slice(0, 3).map((p) => (
-                    <span key={p} style={{ font: "400 13px var(--font-display)", color: "var(--text-muted)" }}>{p}</span>
+      {/* Zone 4: eine Abo-Karte statt zwei fast gleicher. Links der Stand,
+          rechts der Aufstieg, durch eine Haarlinie getrennt. */}
+      {(() => {
+        const prem = PROGRAMME.find((p) => p.id === "premium");
+        const std = PROGRAMME.find((p) => p.id === "standard");
+        const zumPaket = () => { setKat("programme"); window.scrollTo(0, 0); };
+        return (
+          <Rv style={{ marginTop: 22 }}>
+            <div className="shop-abo" style={{ background: "#FFFFFF", borderRadius: 18, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", overflow: "hidden" }}>
+              <div style={{ padding: "22px 24px" }}>
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Dein Abo · {std.name}</span>
+                <b style={{ display: "block", font: "500 17px var(--font-display)", color: "var(--ink)", marginTop: 8 }}>3 von 5 Videos diesen Monat verbraucht</b>
+                <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <span key={n} style={{ width: 26, height: 6, borderRadius: 99, background: n <= 3 ? "var(--signal)" : "var(--paper-2)" }}></span>
                   ))}
                 </div>
+                <p style={{ margin: "12px 0 0", font: "400 13px/1.5 var(--font-display)", color: "var(--text-muted)" }}>Kontingent wird beim Bestellen verrechnet, nicht bezahlt.</p>
               </div>
-              <div style={{ flex: "1 1 260px", minWidth: 0, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ font: "500 22px var(--font-display)", color: "var(--ink)" }}>€ {prem.preis.toLocaleString("de-AT")}</div>
-                  <div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 4 }}>{prem.einheit} · heute € {(prem.preis - std.preis).toLocaleString("de-AT")} mehr</div>
+              <div style={{ padding: "22px 24px", background: "var(--signal-soft)" }}>
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Nächste Stufe · {prem.name}</span>
+                <b style={{ display: "block", font: "500 17px var(--font-display)", color: "var(--ink)", marginTop: 8 }}>{prem.claim}</b>
+                <p style={{ margin: "8px 0 0", font: "400 13px/1.55 var(--font-display)", color: "var(--text-muted)" }}>
+                  Vor-Ort-Session, 5 Videos und 15 Fotos im Monat, Ads-Betreuung. {prem.einheit.replace("/ ", "Je ")}, heute € {(prem.preis - std.preis).toLocaleString("de-AT")} mehr.
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginTop: 14 }}>
+                  <button className="mk-btn signal" onClick={zumPaket}>Auf {prem.name} wechseln</button>
+                  <button onClick={zumPaket} style={{ border: "none", background: "none", cursor: "pointer", padding: 0, font: "500 13px var(--font-display)", fontFamily: "inherit", color: "var(--ink-2)", textDecoration: "underline", textUnderlineOffset: 3 }}>Pakete vergleichen</button>
                 </div>
-                <button className="mk-btn signal" onClick={zumPaket}>Auf {prem.name} wechseln</button>
-                <button className="mk-btn ghost" onClick={zumPaket}>Alle Pakete vergleichen</button>
               </div>
             </div>
-          );
-        })()}
-      </Rv>
+          </Rv>
+        );
+      })()}
 
       {/* Wegweiser am Ende der Empfehlungen: von hier direkt in einen Bereich */}
       <Rv style={{ marginTop: 26 }}>

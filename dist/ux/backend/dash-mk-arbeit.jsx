@@ -44,6 +44,52 @@ function MkKontakte({ mk, tueMk, geheZu, offenId, setOffenId }) {
     ? Object.entries(window.EK_KATALOG).filter(([, o]) => !k.budget || o.preisNum <= k.budget * 1.15).slice(0, 3)
     : [];
 
+  /* Anbieten auf Kundenebene: mehrere Objekte auswaehlen und in einem Zug senden.
+     Landet als eine Nachricht im Thread und als Auswahl-Ereignis beim Endkunden. */
+  /* Neuer Kontakt: kleines Formular, legt sofort einen Datensatz an */
+  const [neuAuf, setNeuAuf] = React.useState(false);
+  const [neu, setNeu] = React.useState({ name: "", tel: "", typ: "kaeufer", notiz: "" });
+  const neuAnlegen = () => {
+    const name = neu.name.trim(); if (!name) return;
+    const id = "k" + Date.now().toString(36);
+    tueMk((d) => {
+      d.kontakte.unshift({
+        id, name, initials: name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+        typ: neu.typ, phase: "Neu", seit: "Heute", letzter: "Noch kein Kontakt",
+        tel: neu.tel.trim() || "-", notiz: neu.notiz.trim() || null, neuSeit: Date.now(), thread: [],
+      });
+    });
+    setNeu({ name: "", tel: "", typ: "kaeufer", notiz: "" });
+    setNeuAuf(false); setOffenId(id);
+  };
+
+  const [angehakt, setAngehakt] = React.useState([]);
+  const [alleObjekte, setAlleObjekte] = React.useState(false);
+  const [anbNotiz, setAnbNotiz] = React.useState("");
+  const anbListe = alleObjekte ? Object.entries(window.EK_KATALOG) : matchTreffer;
+  const hakUm = (id) => setAngehakt((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
+  const auswahlSenden = () => {
+    if (!k || angehakt.length === 0) return;
+    const titel = angehakt.map((id) => window.ekObj(id).t);
+    tueMk((d) => {
+      const dk = d.kontakte.find((y) => y.id === k.id);
+      dk.thread = [...(dk.thread || []), { ich: true, kanal: "Mail", txt: "Auswahl gesendet (" + titel.length + " Objekte): " + titel.join(", ") + (anbNotiz.trim() ? " · „" + anbNotiz.trim() + "“" : "") + " · Namhaftmachung je Objekt dokumentiert", t: "Jetzt" }];
+      dk.letzter = "Jetzt";
+      angehakt.forEach((id) => {
+        if (!d.deals.statisch.some((s) => s.kontaktId === k.id && s.objId === id)) d.deals.statisch.push({ id: "st" + Date.now() + id, kontaktId: k.id, objId: id, zustand: "gemerkt" });
+      });
+      const evs = window.ekLese(window.EK_K.events, []);
+      evs.unshift({ id: Date.now(), typ: "treffer", objId: angehakt[0], titel: "Auswahl von deinem Makler", sub: titel.length + " Objekte, passend zu deinem Suchprofil", zeit: "Jetzt", gelesen: false });
+      window.ekSchreibe(window.EK_K.events, evs);
+      /* Chat ueber den Draft (d.ekChats), nicht direkt in den Speicher:
+         mkPersist schreibt d.ekChats am Ende zurueck und wuerde einen
+         direkten localStorage-Write sofort ueberschreiben. */
+      if (!d.ekChats.concierge) d.ekChats.concierge = { name: "Lukas Brandtner", rolle: "Makler", img: "/assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+      d.ekChats.concierge.msgs.push({ ich: false, txt: "Ich habe " + titel.length + " Objekte für Sie zusammengestellt: " + titel.join(", ") + "." + (anbNotiz.trim() ? " " + anbNotiz.trim() : ""), t: "Jetzt" });
+    });
+    setAngehakt([]); setAnbNotiz(""); setSheet(null);
+  };
+
   return (
     <div style={{ maxWidth: 1120, margin: "0 auto" }}>
       <style>{window.MK_CSS}</style>
@@ -52,7 +98,7 @@ function MkKontakte({ mk, tueMk, geheZu, offenId, setOffenId }) {
           <span className="mk-mono" style={{ color: "var(--signal-deep)" }}>Kontakte · Käufer und Eigentümer, ein Objekt</span>
           <h1 style={{ margin: "6px 0 0", font: "500 clamp(28px,3vw,40px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Kontakte<span style={{ color: "var(--signal)" }}>.</span></h1>
         </div>
-        <button className="mk-btn" onClick={() => geheZu({ art: "screen", id: "kontakte" })}>+ Neuer Kontakt</button>
+        <button className="mk-btn" onClick={() => setNeuAuf(true)}>+ Neuer Kontakt</button>
       </div>
       <div className="mk-views" style={{ marginTop: 18 }}>
         {VIEWS.map(([id, l]) => <button key={id} className={view === id ? "on" : ""} onClick={() => setView(id)}>{l}</button>)}
@@ -80,6 +126,28 @@ function MkKontakte({ mk, tueMk, geheZu, offenId, setOffenId }) {
       </div>
       <p className="mk-mono" style={{ marginTop: 12 }}>Ersetzt Leads, Kontakte und Abgeber-Leads · Views sind Linsen auf dasselbe Objekt</p>
 
+      {/* Neuer Kontakt */}
+      <MkOver offen={neuAuf} onClose={() => setNeuAuf(false)}>
+        <h3>Neuer Kontakt</h3>
+        <p className="mk-mono" style={{ marginTop: 6 }}>Name genügt, der Rest lässt sich nachtragen</p>
+        <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
+          <input value={neu.name} onChange={(e) => setNeu({ ...neu, name: e.target.value })} placeholder="Name" autoFocus
+            style={{ border: "none", background: "#EFEBE3", borderRadius: 12, padding: "13px 16px", font: "400 14.5px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", outline: "none" }} />
+          <input value={neu.tel} onChange={(e) => setNeu({ ...neu, tel: e.target.value })} placeholder="Telefon oder E-Mail (optional)"
+            style={{ border: "none", background: "#EFEBE3", borderRadius: 12, padding: "13px 16px", font: "400 14.5px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", outline: "none" }} />
+          <div className="mk-subnav" style={{ background: "var(--paper-2)", boxShadow: "none" }}>
+            {[["kaeufer", "Käufer"], ["eigentuemer", "Eigentümer"]].map(([id, l]) => (
+              <button key={id} className={neu.typ === id ? "on" : ""} onClick={() => setNeu({ ...neu, typ: id })}>{l}</button>
+            ))}
+          </div>
+          <input value={neu.notiz} onChange={(e) => setNeu({ ...neu, notiz: e.target.value })} placeholder="Notiz (optional)"
+            onKeyDown={(e) => e.key === "Enter" && neuAnlegen()}
+            style={{ border: "none", background: "#EFEBE3", borderRadius: 12, padding: "13px 16px", font: "400 14.5px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", outline: "none" }} />
+          <button className="mk-btn signal" disabled={!neu.name.trim()} onClick={neuAnlegen}
+            style={{ opacity: neu.name.trim() ? 1 : 0.45, cursor: neu.name.trim() ? "pointer" : "not-allowed" }}>Kontakt anlegen</button>
+        </div>
+      </MkOver>
+
       <MkOver offen={!!k} onClose={() => { setOffenId(null); setSheet(null); }}>
         {k && (
           <React.Fragment>
@@ -106,29 +174,31 @@ function MkKontakte({ mk, tueMk, geheZu, offenId, setOffenId }) {
 
             {sheet === "match" && (
               <div className="mk-card" style={{ marginBottom: 14, background: "#fff" }}>
-                <span className="mk-mono" style={{ color: "var(--signal-deep)" }}>Suchprofil-Treffer aus dem Bestand</span>
-                {matchTreffer.map(([id, o]) => (
-                  <div key={id} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
-                    <img src={o.img} alt="" style={{ width: 44, height: 44, borderRadius: 9, objectFit: "cover" }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <b style={{ font: "500 13.5px var(--font-display)", display: "block" }}>{o.t}</b>
-                      <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>{o.ort} · {window.ekEur(o.preisNum)}</span>
-                    </div>
-                    <button className="mk-btn ghost tiny" onClick={() => {
-                      tueMk((d) => {
-                        const dk = d.kontakte.find((y) => y.id === k.id);
-                        dk.thread = [...(dk.thread || []), { ich: true, kanal: "Mail", txt: "Exposé gesendet: " + o.t + " (inkl. Widerrufsbelehrung, Namhaftmachung dokumentiert)", t: "Jetzt" }];
-                        dk.letzter = "Jetzt";
-                        if (!d.deals.statisch.some((s) => s.kontaktId === k.id && s.objId === id)) d.deals.statisch.push({ id: "st" + Date.now(), kontaktId: k.id, objId: id, zustand: "gemerkt" });
-                        const evs = window.ekLese(window.EK_K.events, []);
-                        evs.unshift({ id: Date.now(), typ: "treffer", objId: id, titel: "Dein Makler empfiehlt", sub: o.t + " · exklusiv für dich ausgewählt", zeit: "Jetzt", gelesen: false });
-                        window.ekSchreibe(window.EK_K.events, evs);
-                      });
-                      setSheet(null);
-                    }}>Exposé senden</button>
-                  </div>
-                ))}
-                <p className="mk-mono" style={{ marginTop: 8 }}>Versand dokumentiert automatisch Namhaftmachung + FAGG-Belehrung</p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+                  <span className="mk-mono" style={{ color: "var(--signal-deep)" }}>{alleObjekte ? "Gesamter Bestand" : "Suchprofil-Treffer"} · mehrere auswählbar</span>
+                  <button className="mk-btn ghost tiny" onClick={() => setAlleObjekte((v) => !v)}>{alleObjekte ? "Nur Treffer" : "Alle Objekte"}</button>
+                </div>
+                {anbListe.map(([id, o]) => {
+                  const an = angehakt.includes(id);
+                  return (
+                    <button key={id} onClick={() => hakUm(id)} aria-pressed={an}
+                      style={{ width: "100%", textAlign: "left", border: "none", cursor: "pointer", background: "none", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 11, padding: "10px 0", borderBottom: "1px solid var(--hairline-dark)" }}>
+                      <span aria-hidden="true" style={{ width: 22, height: 22, borderRadius: 7, flex: "0 0 auto", display: "grid", placeItems: "center", background: an ? "var(--signal)" : "var(--paper-2)", boxShadow: an ? "none" : "inset 0 0 0 1px var(--hairline-dark)", color: "#1A1305", font: "600 13px var(--font-display)" }}>{an ? "✓" : ""}</span>
+                      <img src={o.img} alt="" style={{ width: 44, height: 44, borderRadius: 9, objectFit: "cover" }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <b style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)", display: "block" }}>{o.t}</b>
+                        <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>{o.ort} · {window.ekEur(o.preisNum)}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+                <input value={anbNotiz} onChange={(e) => setAnbNotiz(e.target.value)} placeholder="Persönliche Zeile dazu (optional)"
+                  style={{ width: "100%", marginTop: 12, border: "none", background: "#EFEBE3", borderRadius: 999, padding: "11px 16px", font: "400 13px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", outline: "none", boxSizing: "border-box" }} />
+                <button className="mk-btn signal" disabled={angehakt.length === 0} onClick={auswahlSenden}
+                  style={{ width: "100%", marginTop: 10, opacity: angehakt.length === 0 ? 0.45 : 1, cursor: angehakt.length === 0 ? "not-allowed" : "pointer" }}>
+                  {angehakt.length === 0 ? "Objekte auswählen" : angehakt.length === 1 ? "1 Objekt anbieten" : angehakt.length + " Objekte gemeinsam anbieten"}
+                </button>
+                <p className="mk-mono" style={{ marginTop: 8 }}>Versand dokumentiert automatisch Namhaftmachung + FAGG-Belehrung je Objekt</p>
               </div>
             )}
             {sheet === "sequenz" && (

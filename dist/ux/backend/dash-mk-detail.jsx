@@ -29,8 +29,6 @@ const MK_DETAIL_CSS = `
   /* Helle Flaeche: schwarze Bloecke passen nicht in die Objektansicht */
   .mkd-con{background:#FFFFFF;border-radius:16px;padding:20px 22px;color:var(--ink);position:relative;overflow:hidden;
     box-shadow:inset 0 0 0 1px var(--hairline-dark);}
-  .mkd-con .glow{position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(60% 70% at 88% 10%, rgba(255,170,9,.14), transparent 60%);}
   .mkd-con .inhalt{position:relative;display:flex;gap:14px;align-items:flex-start;}
   .mkd-con .avatar{width:38px;height:38px;border-radius:99px;background:var(--signal);color:#1A1305;
     display:grid;place-items:center;flex:0 0 auto;font-size:17px;}
@@ -105,6 +103,10 @@ function MkLage({ exakt, ort, datenId }) {
     return () => { lebt = false; };
   }, [datenId]);
   const L = daten || MKD_LAGE;
+  /* Ohne berechnete Daten zur konkreten Adresse zeigen wir die Sektion nicht.
+     Ein Demo-Fallback wuerde Wiener Verbindungen an einer Korneuburger Adresse
+     behaupten, und ein falscher Score ist schlimmer als keiner. */
+  if (datenId && !daten) return null;
   return (
     <div className="mkd-lage">
       <style>{MK_DETAIL_CSS}</style>
@@ -137,11 +139,10 @@ function MkLage({ exakt, ort, datenId }) {
 
       {wie && (
         <p style={{ margin: "0 0 18px", fontSize: 12.5, lineHeight: 1.6, color: "var(--text-muted)", background: "#FFFFFF", padding: "12px 14px", borderRadius: 12 }}>
-          Öffi-Anbindung aus Takt, Verkehrsmittelklasse (U-Bahn über Straßenbahn über Bus) und Gehzeit zur Station,
-          Datenbasis Wiener Linien GTFS. Alltag zu Fuß aus Gehzeit und Dichte der Kategorien innerhalb von 15 Minuten,
-          Datenbasis Stadt Wien und OpenStreetMap. Ruhe aus der strategischen Lärmkarte der Stadt Wien, korrigiert um
-          Straßenklasse und Grünanteil. Gehzeiten über ein Routing auf dem Straßennetz, nicht Luftlinie.
-          Hier Demo-Werte, die Pipeline steht in docs/LAGE_SCORES_DATENQUELLEN.md.
+          Öffi-Anbindung aus Verkehrsmittelklasse (U-Bahn über Straßenbahn über Bus) und Gehzeit zur Station.
+          Alltag zu Fuß aus Gehzeit und Dichte der Kategorien innerhalb von 15 Minuten, Datenbasis Stadt Wien
+          und OpenStreetMap. Ruhe aus Straßenklasse und Bahnnähe, künftig aus der strategischen Lärmkarte der
+          Stadt Wien. Je Objektadresse automatisch berechnet, keine Handeingabe.
           <br /><span className="u-label" style={{ fontSize: 8, marginTop: 8, display: "inline-block" }}>Datenquellen: Stadt Wien · Wiener Linien · OpenStreetMap</span>
         </p>
       )}
@@ -165,7 +166,7 @@ function MkLage({ exakt, ort, datenId }) {
       </div>
 
       <div className="mkd-oeffi">
-        <span style={{ fontSize: 15 }}>🚇</span>
+        <span className="mk-mono" style={{ color: "var(--signal-deep)", flex: "0 0 auto" }}>Öffentlich</span>
         <span>{daten ? daten.oeffiSatz : MKD_LAGE.wien}</span>
       </div>
       <p className="mk-mono" style={{ marginTop: 12 }}>
@@ -249,7 +250,6 @@ function MkConcierge({ objekt, inline, onMakler }) {
       <style>{MK_DETAIL_CSS}</style>
       {inline && (
         <div className="mkd-con">
-          <div className="glow" aria-hidden="true"></div>
           <div className="inhalt">
             <span className="avatar" aria-hidden="true">✦</span>
             <div style={{ minWidth: 0 }}>

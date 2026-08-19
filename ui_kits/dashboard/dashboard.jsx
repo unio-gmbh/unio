@@ -60,7 +60,7 @@ function DashApp() {
       <DashShell active="dashboard" onNav={nav}
         nav={[["", [["Dashboard", "dashboard", "dashboard"]]]]}
         user={{ initials: "JK", name: "Jacob Kapsch", mail: "maxingstrasse@unio.at" }}
-        cta={{ label: "Projekt einreichen", glyph: "+", onClick: () => {} }}
+        cta={{ label: "Projekt einreichen", glyph: "+", onClick: () => window.open("/kontakt", "_blank", "noopener") }}
         headerExtra={<window.RoleSwitch role={role} onRole={pickRole} />}>
         <window.BautraegerHome />
       </DashShell>

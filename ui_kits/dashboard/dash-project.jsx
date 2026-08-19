@@ -23,12 +23,41 @@ const PJ_EXPORT = [["IS", "ImmobilienScout24.at", "8. Juni 2026, 18:10", 17, "va
 function ProjektView({ onNav }) {
   const [tab, setTab] = React.useState("daten");
   const [g, setG] = React.useState(0);
+  /* Bearbeiten: Titel und Beschreibung liegen editierbar in localStorage,
+     damit der Knopf einen echten Prozess hat statt ins Leere zu fuehren. */
+  const [projekt, setProjekt] = React.useState(() => {
+    try { return { titel: "Albrechts Townhouses", text: "Neubauprojekt in Korneuburg mit Dachgeschosswohnungen und Reihenhäusern: hochwertige Ausstattung, Gärten, Terrassen und optionale Stellplätze.", ...JSON.parse(localStorage.getItem("unio_mk_projekt") || "{}") }; }
+    catch (e) { return { titel: "Albrechts Townhouses", text: "" }; }
+  });
+  const [bearb, setBearb] = React.useState(false);
+  const [entwurf, setEntwurf] = React.useState(projekt);
+  const speichern = () => {
+    setProjekt(entwurf);
+    try { localStorage.setItem("unio_mk_projekt", JSON.stringify(entwurf)); } catch (e) { /* nur Anzeige */ }
+    setBearb(false);
+  };
+  /* Einheiten: Basisliste plus selbst angelegte aus localStorage */
+  const [extraUnits, setExtraUnits] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("unio_mk_einheiten") || "[]"); } catch (e) { return []; }
+  });
+  const [einheitAuf, setEinheitAuf] = React.useState(false);
+  const [neuE, setNeuE] = React.useState({ top: "", preis: "", flaeche: "", zimmer: "" });
+  const einheitAnlegen = () => {
+    if (!neuE.top.trim()) return;
+    const zeile = ["Neu angelegt", neuE.top.trim(), neuE.preis.trim() ? "€ " + neuE.preis.trim() : "Auf Anfrage", (neuE.flaeche.trim() || "-") + " m²", parseInt(neuE.zimmer, 10) || "-", "Du", "Entwurf"];
+    const neu = [...extraUnits, zeile];
+    setExtraUnits(neu);
+    try { localStorage.setItem("unio_mk_einheiten", JSON.stringify(neu)); } catch (e) { /* nur Anzeige */ }
+    setNeuE({ top: "", preis: "", flaeche: "", zimmer: "" });
+    setEinheitAuf(false);
+  };
+  const feld = { border: "none", background: "#EFEBE3", borderRadius: 12, padding: "13px 16px", font: "400 14.5px var(--font-display)", fontFamily: "inherit", color: "var(--ink)", outline: "none", width: "100%", boxSizing: "border-box" };
   return (
     <div style={{ maxWidth: 1280, margin: "0 auto" }}>
       <PjRev style={{ marginTop: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button onClick={() => onNav && onNav("objekte")} style={{ display: "inline-flex", alignItems: "center", gap: 9, background: "none", border: "none", cursor: "pointer", font: "500 15px var(--font-display)", color: "var(--text-muted)", padding: 0 }}><PjIcon name="back" size={16} /> Projektdetails</button>
-          <PjBtn variant="signal" size="sm" knob="✎">Bearbeiten</PjBtn>
+          <PjBtn variant="signal" size="sm" knob="✎" onClick={() => { setEntwurf(projekt); setBearb(true); }}>Bearbeiten</PjBtn>
         </div>
       </PjRev>
 
@@ -47,9 +76,9 @@ function ProjektView({ onNav }) {
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <PjStatus kind="aktiv">Status: Aktiv</PjStatus><PjStatus kind="reserviert">In Planung</PjStatus><PjStatus kind="neutral">Wohnbau</PjStatus>
               </div>
-              <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Albrechts Townhouses</h1>
+              <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{projekt.titel}</h1>
               <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 7 }}><PjIcon name="pin" size={14} stroke="var(--text-muted)" />Stockerauer Straße 53, 2100 Korneuburg</p>
-              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>Neubauprojekt in Korneuburg mit Dachgeschosswohnungen und Reihenhäusern: hochwertige Ausstattung, Gärten, Terrassen und optionale Stellplätze.</p>
+              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 560 }}>{projekt.text}</p>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginTop: 20, padding: "12px 18px", borderRadius: 12, background: "var(--signal-soft)", width: "max-content", maxWidth: "100%" }}>
                 <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>Projektlead</span>
                 <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)" }}>Johannes Lindner</span>
@@ -99,12 +128,12 @@ function ProjektView({ onNav }) {
           <PjRev style={{ marginTop: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "4px 4px 16px" }}>
               <h2 style={{ margin: 0, font: "500 20px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Einheiten</h2>
-              <PjBtn variant="signal" size="sm" knob="+">Einheit hinzufügen</PjBtn>
+              <PjBtn variant="signal" size="sm" knob="+" onClick={() => setEinheitAuf(true)}>Einheit hinzufügen</PjBtn>
             </div>
             {(() => { const cols = [{ label: "Titel / Top", w: "2fr" }, { label: "Preis", w: "1fr", right: true }, { label: "Fläche", w: "1fr", right: true }, { label: "Zimmer", w: "0.6fr", right: true }, { label: "Makler", w: "1.2fr" }, { label: "Status", w: "1fr" }, { label: "", w: "36px", right: true }];
               return (
                 <PjTable cols={cols}>
-                  {PJ_UNITS.map((u, i) => (
+                  {[...PJ_UNITS, ...extraUnits].map((u, i) => (
                     <PjRow key={i} cols={cols} delay={i * 40} onClick={() => onNav && onNav("objekt")} cells={[
                       <PjCell2 a={u[1]} b={u[0]} />,
                       <span style={{ font: "14px var(--font-mono)", color: "var(--ink)" }}>{u[2]}</span>,
@@ -179,6 +208,36 @@ function ProjektView({ onNav }) {
           ))}
         </div>
       )}
+
+      {/* Bearbeiten-Panel */}
+      <window.MkOver offen={bearb} onClose={() => setBearb(false)}>
+        <h3>Projekt bearbeiten</h3>
+        <p className="mk-mono" style={{ marginTop: 6 }}>Änderungen wirken sofort auf Exposé und Portale</p>
+        <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
+          <label className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>Projekttitel</label>
+          <input value={entwurf.titel} onChange={(e) => setEntwurf({ ...entwurf, titel: e.target.value })} style={feld} />
+          <label className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 6 }}>Beschreibung</label>
+          <textarea value={entwurf.text} onChange={(e) => setEntwurf({ ...entwurf, text: e.target.value })} rows={5}
+            style={{ ...feld, resize: "vertical", borderRadius: 14, lineHeight: 1.55 }} />
+          <button className="mk-btn signal" onClick={speichern}>Speichern</button>
+        </div>
+      </window.MkOver>
+
+      {/* Einheit-hinzufügen-Panel */}
+      <window.MkOver offen={einheitAuf} onClose={() => setEinheitAuf(false)}>
+        <h3>Einheit hinzufügen</h3>
+        <p className="mk-mono" style={{ marginTop: 6 }}>Landet als Entwurf in der Einheiten-Tabelle</p>
+        <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
+          <input value={neuE.top} onChange={(e) => setNeuE({ ...neuE, top: e.target.value })} placeholder="Bezeichnung, z. B. Top 11" autoFocus style={feld} />
+          <input value={neuE.preis} onChange={(e) => setNeuE({ ...neuE, preis: e.target.value })} placeholder="Preis, z. B. 449.000" inputMode="numeric" style={feld} />
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 10 }}>
+            <input value={neuE.flaeche} onChange={(e) => setNeuE({ ...neuE, flaeche: e.target.value })} placeholder="Fläche m²" inputMode="numeric" style={feld} />
+            <input value={neuE.zimmer} onChange={(e) => setNeuE({ ...neuE, zimmer: e.target.value })} placeholder="Zimmer" inputMode="numeric" style={feld} />
+          </div>
+          <button className="mk-btn signal" disabled={!neuE.top.trim()} onClick={einheitAnlegen}
+            style={{ opacity: neuE.top.trim() ? 1 : 0.45, cursor: neuE.top.trim() ? "pointer" : "not-allowed" }}>Einheit anlegen</button>
+        </div>
+      </window.MkOver>
     </div>
   );
 }

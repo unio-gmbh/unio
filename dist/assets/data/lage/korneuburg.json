@@ -1,0 +1,114 @@
+{
+  "id": "korneuburg",
+  "ort": "2100 Korneuburg, Stockerauer Straße",
+  "koordinaten": [
+    48.3452,
+    16.3339
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 46,
+      "label": "Durchschnittlich",
+      "sub": "Bus Korneuburg Hauptplatz in 3 Min zu Fuß · S-Bahn und Zug Korneuburg in 7 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 86,
+      "label": "Sehr gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 88,
+      "label": "Hervorragend",
+      "sub": "Keine Hauptstraße und keine Bahn in 150 m"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Korneuburg Hauptplatz",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Korneuburg Schulzentrum",
+          "4 Min zu Fuß"
+        ],
+        [
+          "Bus",
+          "4 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Spar",
+          "1 Min zu Fuß"
+        ],
+        [
+          "Bintat Supermarkt",
+          "5 Min zu Fuß"
+        ],
+        [
+          "Bäckerei Reiter",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "Musikschule",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Polytechnische Schule Korneuburg",
+          "4 Min zu Fuß"
+        ],
+        [
+          "KIKO Kindergruppe Korneuburg",
+          "2 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Arztpraxis",
+          "7 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Hrabak Park",
+          "5 Min zu Fuß"
+        ],
+        [
+          "Bahnwiese",
+          "6 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Korneuburg Hauptplatz in 3 Min zu Fuß · S-Bahn und Zug Korneuburg in 7 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}

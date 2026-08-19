@@ -139,7 +139,11 @@ function Kalender() {
   }, []);
   const [tag, setTag] = React.useState(16);
   const uhr = (t) => String(Math.floor(t)).padStart(2, "0") + ":" + (t % 1 ? "30" : "00");
-  const week = [13, 14, 15, 16, 17, 18, 19];
+  /* Wochen-Navigation: verschiebt die sichtbare Woche. Termine liegen in der
+     Demo nur in der Juli-Woche 13 bis 19, andere Wochen zeigen leere Tage. */
+  const [versatz, setVersatz] = React.useState(0);
+  const wocheHeim = () => { setVersatz(0); setTag(16); };
+  const week = [13, 14, 15, 16, 17, 18, 19].map((d) => d + versatz * 7);
   const wd = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
   const H0 = 8, H1 = 18, PXH = 52;
   const offset = 2, days = 31;
@@ -161,10 +165,16 @@ function Kalender() {
               <button key={id} onClick={() => setView(id)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "8px 18px", background: view === id ? "var(--ink)" : "transparent", color: view === id ? "var(--paper)" : "var(--text-muted)", font: "500 12.5px var(--font-display)", transition: "background .25s var(--ease-unio)" }}>{l}</button>
             ))}
           </div>
-          <WGhostPill>Heute</WGhostPill>
-          <span style={{ font: "500 16px var(--font-display)", color: "var(--ink)" }}>{view === "woche" ? "13. – 19. Juli 2026" : "Juli 2026"}</span>
+          <button onClick={wocheHeim} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "8px 16px", background: versatz === 0 ? "var(--paper-2)" : "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", font: "500 12.5px var(--font-display)", fontFamily: "inherit", color: "var(--ink)" }}>Heute</button>
+          <span style={{ font: "500 16px var(--font-display)", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>
+            {view === "woche" ? week[0] + ". – " + week[6] + ". Juli 2026" : "Juli 2026"}
+          </span>
           <div style={{ display: "inline-flex", gap: 4 }}>
-            {["back", "arrow"].map((ic, i) => <button key={i} aria-label={i ? "Weiter" : "Zurück"} style={{ width: 32, height: 32, borderRadius: 8, border: "none", cursor: "pointer", background: "var(--paper)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--ink-2)" }}><WIcon name={ic} size={14} /></button>)}
+            {["back", "arrow"].map((ic, i) => (
+              <button key={i} aria-label={i ? "Woche weiter" : "Woche zurück"}
+                onClick={() => { const v = versatz + (i ? 1 : -1); setVersatz(v); setTag(13 + v * 7); }}
+                style={{ width: 32, height: 32, borderRadius: 8, border: "none", cursor: "pointer", background: "var(--paper)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--ink-2)" }}><WIcon name={ic} size={14} /></button>
+            ))}
           </div>
         </div>
       </div>
@@ -192,7 +202,7 @@ function Kalender() {
           </div>
           <div style={{ padding: "16px 16px 18px" }}>
             <div className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>
-              {tag === today ? "Heute" : wd[week.indexOf(tag)] + ", " + tag + ". August"} · {(WEEK_EV[tag] || []).length} {(WEEK_EV[tag] || []).length === 1 ? "Termin" : "Termine"}
+              {tag === today ? "Heute" : wd[week.indexOf(tag)] + ", " + tag + ". Juli"} · {(WEEK_EV[tag] || []).length} {(WEEK_EV[tag] || []).length === 1 ? "Termin" : "Termine"}
             </div>
             {(WEEK_EV[tag] || []).length === 0 ? (
               <p style={{ margin: "14px 0 0", font: "400 14px/1.6 var(--font-display)", color: "var(--text-muted)" }}>

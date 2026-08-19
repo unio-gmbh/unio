@@ -601,8 +601,27 @@
         <p>Das Raumkonzept umfasst ein großzügiges Wohnzimmer mit Kamin, einen Masterbereich
         mit freistehender Badewanne sowie ein Gästezimmer. Bei Bedarf lassen sich zwei
         weitere Schlafzimmer realisieren.</p>
-        <button class="more">Vollständige Beschreibung
+        <div id="descMehr" hidden>
+          <p>Die Ausstattung: Eichenparkett in Fischgrät, Fußbodenheizung mit Raumklima-Steuerung,
+          bodentiefe Verglasung mit Dreifach-Isolierung und außenliegender Beschattung. Küche von
+          eggersmann mit Miele-Geräten, beide Bäder mit freistehender Wanne beziehungsweise
+          Regendusche.</p>
+          <p>Zum Penthouse gehören ein Kellerabteil, ein Fahrradraum mit Ladepunkt und die Option
+          auf zwei Tiefgaragenplätze. Die Übergabe ist ab Mai 2026 möglich, auf Wunsch früher in
+          Absprache mit dem Bauträger.</p>
+        </div>
+        <button class="more" id="descBtn" aria-expanded="false">Vollständige Beschreibung
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5 7 9.5l4-4"/></svg></button>
+        <script>
+          document.getElementById('descBtn').addEventListener('click', function(){
+            var m = document.getElementById('descMehr');
+            var auf = m.hidden;
+            m.hidden = !auf;
+            this.setAttribute('aria-expanded', auf ? 'true' : 'false');
+            this.firstChild.textContent = auf ? 'Weniger anzeigen' : 'Vollständige Beschreibung';
+            this.querySelector('svg').style.transform = auf ? 'rotate(180deg)' : '';
+          });
+        </script>
 
         <!-- Concierge dort, wo beim Lesen die Fragen entstehen -->
         <div class="cc">
@@ -740,7 +759,9 @@
 </div>
 
 <!-- Lage und Infrastruktur: nach der Beschreibung, vor den Dokumenten -->
-<section class="shell lg" id="lage" aria-label="Lage und Infrastruktur">
+<!-- Erscheint erst, wenn berechnete Daten zur Adresse geladen sind. Ein Demo-
+     Fallback wuerde falsche Verbindungen behaupten, deshalb lieber keine Sektion. -->
+<section class="shell lg" id="lage" aria-label="Lage und Infrastruktur" hidden>
   <div class="lgtop">
     <div>
       <span class="mono">Lage und Infrastruktur</span>
@@ -761,7 +782,6 @@
       </div>
       <div class="oeffi">
         <span class="lab">Öffentlich unterwegs</span>
-        Stephansplatz in 21 Min mit U4 und U1 · Hauptbahnhof in 18 Min · Nachtbus N43 vor dem Haus.
       </div>
     </div>
   </div>
@@ -1639,7 +1659,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
      Fehlt die Datei, bleiben die eingebauten Werte stehen. */
   fetch("/assets/data/lage/hernals.json").then(function(a){ return a.ok ? a.json() : null; })
     .then(function(d){
-      if (!d || !d.scores) return;
+      if (!d || !d.scores) return; /* keine Daten: Sektion bleibt versteckt */
+      document.getElementById("lage").hidden = false;
       LAGE.ort = d.ort;
       LAGE.scores = d.scores;
       LAGE.poi = d.poi.map(function(g){ return [g.kat, g.zeilen]; });
@@ -1677,7 +1698,6 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     poi.appendChild(w);
   });
   }
-  zeichne();
   /* Karte laedt erst auf Klick: schnelle Seite, kein Drittanbieter vor der Zustimmung */
   var kbtn = document.getElementById("lgkbtn");
   kbtn.addEventListener("click", function(){

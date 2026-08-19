@@ -1,0 +1,118 @@
+{
+  "id": "huetteldorf",
+  "ort": "1140 Wien, Hütteldorf",
+  "koordinaten": [
+    48.1957,
+    16.2591
+  ],
+  "stand": "2026-08-19",
+  "scores": [
+    {
+      "k": "Öffi-Anbindung",
+      "wert": 100,
+      "label": "Hervorragend",
+      "sub": "Bus Bhf. Hütteldorf in 2 Min zu Fuß · U-Bahn Hadikgasse in 3 Min"
+    },
+    {
+      "k": "Alltag zu Fuß",
+      "wert": 70,
+      "label": "Gut",
+      "sub": "7 von 7 Kategorien im Gehradius"
+    },
+    {
+      "k": "Ruhe",
+      "wert": 83,
+      "label": "Sehr gut",
+      "sub": "Hauptverkehr oder Bahn in der Nähe"
+    }
+  ],
+  "poi": [
+    {
+      "kat": "Öffentlich",
+      "zeilen": [
+        [
+          "Bhf. Hütteldorf",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Hadikgasse",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Hütteldorf",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Nahversorgung",
+      "zeilen": [
+        [
+          "Spar",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Billa Plus",
+          "9 Min zu Fuß"
+        ],
+        [
+          "Bäckerei Schwarz",
+          "3 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Bildung",
+      "zeilen": [
+        [
+          "SPZ für Integrative Betreuung",
+          "3 Min zu Fuß"
+        ],
+        [
+          "Schulen der Dominikanerinnen",
+          "10 Min zu Fuß"
+        ],
+        [
+          "Kindergarten Hütteldorf",
+          "12 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Gesundheit",
+      "zeilen": [
+        [
+          "Dr. Martina Hauser-Schinhan",
+          "10 Min zu Fuß"
+        ],
+        [
+          "Kinder Praxis Wien West",
+          "12 Min zu Fuß"
+        ]
+      ]
+    },
+    {
+      "kat": "Grün und Freizeit",
+      "zeilen": [
+        [
+          "Spielplatz",
+          "2 Min zu Fuß"
+        ],
+        [
+          "Spielplatz",
+          "3 Min zu Fuß"
+        ]
+      ]
+    }
+  ],
+  "oeffiSatz": "Bus Bhf. Hütteldorf in 2 Min zu Fuß · U-Bahn Hadikgasse in 3 Min",
+  "naeherungen": [
+    "Ruhe genähert über Straßenklasse und Bahnnähe, bis die Lärmkarte Wien angebunden ist",
+    "Takte je Haltestelle noch nicht aus dem GTFS, Gewichtung derzeit nach Verkehrsmittelklasse"
+  ],
+  "quellen": [
+    "OpenStreetMap (ODbL)",
+    "Stadt Wien (CC BY)",
+    "Wiener Linien (CC BY)"
+  ]
+}
