@@ -281,13 +281,13 @@ function SystemBento({ makler = false }) {
       <div style={{ maxWidth: 760, marginBottom: mob ? 52 : 88 }}>
         {(() => { const R = window.Reveal; const H = (
         <h2 style={{ margin: 0, font: "500 clamp(38px, 4.2vw, 72px)/1.02 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-          {makler ? <span>Ein System für deinen<br />gesamten Vertrieb.</span> : <span>Ein System für deinen<br />gesamten Verkauf.</span>}
+          {makler ? <span>Ein System für das,<br />was wirklich zählt.</span> : <span>Ein System für das,<br />was wirklich zählt.</span>}
         </h2>
         ); return R ? <R>{H}</R> : H; })()}
         <p style={{ margin: "20px 0 0", font: "400 18px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>
           {makler
             ? "Jede Funktion verfolgt dasselbe Ziel: dass du dich auf das konzentrieren kannst, was nur Menschen können. Vertrauen aufbauen, beraten und Kunden auf ihrem Weg begleiten."
-            : "Jede Funktion hier hat denselben Job: dir Verwaltungszeit abzunehmen, damit du sie Menschen gibst. Mehr Gespräche, mehr Besichtigungen, mehr Abschlüsse."}
+            : "Jede Funktion hat denselben Job: dir Verwaltungsarbeit abzunehmen, damit du mehr Zeit für Menschen hast. Mehr echte Gespräche. Mehr echte Beziehungen. Mehr Mehrwert für alle."}
         </p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 16 }}>
@@ -299,7 +299,7 @@ function SystemBento({ makler = false }) {
                 <span aria-hidden="true" style={{ width: 40, height: 40, borderRadius: "50%", flex: "none", background: "rgba(255,255,255,0.18)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.5)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "16px var(--font-mono)" }}>↓</span>
               </a>
             </BCard>
-            <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf allen relevanten Portalen, dazu Meta und Google — inkl. Update & Rückzug."><AnimPortale /></BCard>
+            <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf alle relevanten Plattformen, inklusive Update und Rückzug."><AnimPortale /></BCard>
             <BCard span={2} title="Provisionssicherung" copy="Jeder Lead wird automatisch abgesichert — bevor du Zeit investierst."><AnimSchutz onPaper /></BCard>
             <BCard span={2} title="Kunden-Interface" copy="Deine Kund:innen sehen Exposés, Termine und Dokumente in einem aufgeräumten Portal — unter deiner Marke.">
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -321,7 +321,7 @@ function SystemBento({ makler = false }) {
         <BCard span={4} title="KI-Suche & Lead-Inbox" copy="Frag in natürlicher Sprache nach Objekten oder Käufern — die Plattform versteht dich und liefert sofort passende Treffer."><AnimSuche text="Penthouse mit Terrasse, Hernals" /></BCard>
         <BCard span={2} orange title="Provisionssicherung" copy="Jeder Lead wird automatisch abgesichert — bevor du Zeit investierst."><AnimSchutz /></BCard>
         <BCard span={2} title="Suggested Actions" copy="Das System sagt dir den nächsten Schritt — priorisiert nach Wirkung."><AnimActions /></BCard>
-        <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf ImmobilienScout24 & willhaben — inkl. Update & Rückzug."><AnimPortale /></BCard>
+        <BCard span={2} title="Portal-Export" copy="Ein Klick veröffentlicht auf alle relevanten Plattformen, inklusive Update und Rückzug."><AnimPortale /></BCard>
         <BCard span={2} title="Besichtigung & Kalender" copy="Termine direkt aus dem Lead heraus buchen — synchron mit deinem Kalender."><AnimKalender /></BCard>
             <BCard span={2} title="Automatisches Matching" copy="Aus jeder Anfrage entsteht ein Suchprofil — die Plattform matcht es laufend gegen deinen Bestand."><AnimMatching /></BCard>
             <BCard span={2} orange title="KI-Objektanlage" copy="Dokumente reinziehen — die KI erstellt Exposé, Daten und Suchprofil automatisch."><AnimAnlage /></BCard>

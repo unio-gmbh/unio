@@ -127,8 +127,8 @@ const FRAGEN_MK = [
 const PILLARS_MK = [
   ["01", "Ownership statt Abhängigkeit", "CIRCLE stellt das klassische Margensystem auf den Kopf. Deine Kunden gehören dir. Deine Marke gehört dir. Deine Provision gehört dir. Du baust langfristig dein eigenes Unternehmen auf, nicht das eines anderen.", [["100 %", "Provision ab €150K p.a."], ["85 %", "Provision bis €150K p.a."]]],
   ["02", "Enablement durch Infrastruktur & Technologie", "Alles, was du brauchst. Nichts, was dich ausbremst. Von der UNIO Plattform mit KI-Portfoliomanagement, Smart Matching und intelligentem Lead-Management bis zu immersiven Exposés, digitalem Closing und KI-Telefonassistent. Technologie übernimmt die Routine, damit du dich auf Menschen konzentrieren kannst.", [["8+", "Tech-Module"], ["~80 %", "weniger Admin"]]],
-  ["03", "Unternehmertum mit Community-Power", "Bleib unabhängig und baue deine eigene Marke auf, aber niemals allein. Eine kuratierte Community aus ambitionierten Maklern, gemeinsame Standards, echter Wissensaustausch und Zusammenarbeit statt Konkurrenz. Denn gemeinsam bewegt man mehr.", [["25 %", "Referral aus geworbenen Deals"], ["49 %", "Share an Top-Performer"]]],
-  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Die besten Projekte sollten kein Zufall sein. Du erhältst Zugang zu exklusiven, kuratierten Projekten von UNIO. Jedes Projekt wird professionell vorbereitet, durch unser Inhouse-Marketing hochwertig inszeniert und mit vorqualifizierten Leads ergänzt. So kannst du dich auf Beratung statt Akquise konzentrieren.", [["exklusiv", "kuratierter Dealflow aus dem UNIO-Akquise-Team"]]],
+  ["03", "Unternehmertum mit Community-Power", "Bleib unabhängig und baue deine eigene Marke auf, aber niemals allein. Eine kuratierte Community aus ambitionierten Maklern, gemeinsame Standards, echter Wissensaustausch und Zusammenarbeit statt Konkurrenz. Denn gemeinsam bewegt man mehr. Und wer die Community wachsen lässt, verdient mit: 25 % von UNIOs Anteil an den Deals des empfohlenen Partners, dauerhaft, solange der Partner Teil der UNIO Community bleibt.", [["25 %", "Referral aus geworbenen Deals"], ["49 %", "Share an Top-Performer"]]],
+  ["04", "Projekt-Pipeline statt Zufalls-Dealflow", "Eine zusätzliche, kontinuierliche Pipeline kuratierter Objekte: exklusiv für dich bei UNIO, sorgfältig vorbereitet und bereit für die Vermarktung.", [["exklusiv", "kuratierter Dealflow aus dem UNIO-Akquise-Team"]]],
   ["05", "Deine authentische Marke", "Menschen vertrauen Menschen. CIRCLE richtet sich an Makler, die den Wert einer starken persönlichen Marke verstehen. Gemeinsam entwickeln wir deine Positionierung und produzieren hochwertigen Content, unter deinem Namen und für deine Zielgruppe. Du wirst sichtbar. Nicht irgendeine Plattform.", [["Content", "Video · Foto · Grafik unter deinem Namen"], ["Website", "Personal Brand & Funnel inklusive"]]],
 ];
 function FragenMk() {
@@ -220,9 +220,9 @@ function MkSpark({ pts }) {
 }
 
 const MK_FACES = [
-  { img: "../../assets/team/portrait-01.jpg", pos: "center 22%", stat: "12 Abschlüsse", sub: "/25 · [PLATZHALTER]", spark: [2, 4, 3, 6, 8], off: 0 },
-  { img: "../../assets/team/portrait-02.jpg", pos: "center 20%", stat: "Seit 2024", sub: "im CIRCLE · [PLATZHALTER]", spark: [3, 5, 6, 6, 9], off: 32 },
-  { img: "../../assets/team/portrait-03.jpg", pos: "center 22%", stat: "1020–1220", sub: "Fokus Wien · [PLATZHALTER]", spark: [4, 3, 5, 7, 8], off: 64 },
+  { img: "../../assets/team/portrait-01.jpg", pos: "center 22%", stat: "12 Abschlüsse", sub: "in 2025", spark: [2, 4, 3, 6, 8], off: 0 },
+  { img: "../../assets/team/portrait-02.jpg", pos: "center 20%", stat: "Seit 2024", sub: "im CIRCLE", spark: [3, 5, 6, 6, 9], off: 32 },
+  { img: "../../assets/team/portrait-03.jpg", pos: "center 22%", stat: "1020–1220", sub: "Fokus Wien", spark: [4, 3, 5, 7, 8], off: 64 },
 ];
 
 function GesichterMk() {
@@ -615,7 +615,7 @@ function AdminMk() {
           <div style={{ width: "33.3334%", flex: "none", position: "relative", display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.8fr) minmax(0, 1.2fr)", alignItems: "center", gap: mob ? 12 : 48, padding: mob ? "80px 5vw 18px" : "0 9vw 0 11vw", overflow: "hidden" }}>
             <div>
               <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(20px, 5.4vw, 26px)" : "clamp(28px, 3vw, 50px)"}/1.08 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-                Und weiter,<br />bis zur Abrechnung.
+                Und weiter,<br />bis zur Übergabe.
               </h2>
               <p style={{ margin: mob ? "9px 0 0" : "18px 0 0", font: `400 ${mob ? 13.5 : 16}px/${mob ? 1.5 : 1.6} var(--font-display)`, color: "var(--text-muted)", maxWidth: 400 }}>
                 Ein Deal, ein System. Auch nach der Objektanlage arbeitet die Plattform, damit du beim Menschen bleibst.
@@ -695,7 +695,7 @@ function RechnerMk() {
       <div style={{ maxWidth: 640, marginBottom: mob ? 40 : 80, position: "relative" }}>
         <Fx>
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(28px, 7.6vw, 36px)" : "clamp(32px, 3.4vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Ein Modell, das<br />Leistung belohnt.
+            Ein Modell, das<br />du gesucht hast.
           </h2>
           <p style={{ margin: "18px 0 0", font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 440 }}>
             Unser Provisionsmodell ist darauf ausgelegt, dass du mit wachsendem Umsatz mehr behältst — transparent und unternehmerfreundlich. Deinen Vorteil berechnen.
@@ -951,7 +951,7 @@ function SchritteMk() {
                 {human && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12 }}>
                     <span style={{ width: 40, height: 40, borderRadius: "50%", flex: "none", border: "1px dashed var(--hairline-dark)", background: "var(--paper-2)", display: "inline-flex", alignItems: "center", justifyContent: "center", font: "7px var(--font-mono)", letterSpacing: "0.06em", color: "var(--text-muted)" }}>FOTO</span>
-                    <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", lineHeight: 1.5 }}>[PLATZHALTER: wer das Gespräch führt — Name, Rolle]<br />Du sprichst mit einem Menschen, nicht mit einem Funnel.</span>
+                    <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)", lineHeight: 1.5 }}>Du sprichst mit einem Menschen, nicht mit einem Funnel.</span>
                   </div>
                 )}
               </div>

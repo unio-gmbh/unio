@@ -41,7 +41,7 @@ function HeroSt() {
           </h1>
           <p className="u-label" style={{ margin: "26px 0 0", color: "var(--text-muted)" }}>Die Geschichte hinter UNIO · Wien</p>
           <p style={{ margin: "18px 0 0", font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
-            Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie ein Unternehmen.
+            Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie Freunde und gründeten gemeinsam ein Unternehmen.
           </p>
         </div>
         <div style={{ position: "relative", overflow: "hidden", background: "var(--paper-3)", minHeight: mob ? 340 : undefined }}>
@@ -234,9 +234,9 @@ function FusionFlow() {
 const HOW_LABELS = ["Raum", "Technologie", "Mensch"];
 const WHAT_CHIPS = ["NOVA", "LEAD ENGINE", "CIRCLE", "LENS"];
 const CIRCLE_COPY = [
-  ["WARUM", "Weil Vertrauen besser skaliert als Druck.", "Die Immobilienbranche kann wieder zutiefst menschlich werden. Das ist die Überzeugung hinter allem."],
-  ["WIE", "Raum · Technologie · Mensch.", "Gemeinsame Infrastruktur, individuelle Marken, geteilte Wertschöpfung: verbunden in einem Betriebssystem."],
-  ["WAS", "Ein Betriebssystem für Immobilienvertrieb.", "NOVA, LEAD ENGINE, CIRCLE und LENS — vier Module, ein System. Live in LENS."],
+  ["WARUM", "Weil Vertrauen besser skaliert als Druck.", "Wir glauben, dass Immobilien für Menschen da sein sollten und dass Technologie die Branche menschlicher machen kann."],
+  ["WIE", "Raum · Technologie · Mensch.", "Indem wir menschliche Beziehungen, Gemeinschaft, Technologie, Automatisierung und Marktintelligenz in einem System vereinen, das Makler, Projektentwickler und Käufer auf ein gemeinsames Ziel ausrichtet."],
+  ["WAS", "Ein Betriebssystem für Immobilienvertrieb.", "Ein menschenzentriertes Immobilien-Ökosystem, das Makler, Projektentwickler und Käufer miteinander verbindet."],
 ];
 function GoldenCircle() {
   const [ref, p] = usePinProgress();

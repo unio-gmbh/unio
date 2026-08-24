@@ -139,10 +139,10 @@ function Markt() {
     <section id="markt" data-screen-label="Markt" className="u-grain" style={{ background: "var(--paper-2)", padding: mob ? "100px 6vw 100px" : "160px 6vw 160px" }}>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.4fr) minmax(0, 1fr)", gap: mob ? 24 : 64, alignItems: mob ? "start" : "end" }}>
         <Reveal><h2 style={{ margin: 0, font: `500 ${mob ? "clamp(34px, 9vw, 44px)" : "clamp(40px, 4.4vw, 76px)"}/1.02 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
-          Echte Deals<br />durch echte Daten.
+          Das UNIO-Versprechen.
         </h2></Reveal>
         <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 18}px/1.6 var(--font-display)`, color: "var(--text-muted)", maxWidth: 420 }}>
-          Hinter jeder Immobilie steht ein Mensch mit einem Plan. Unsere Daten sorgen dafür, dass Plan und Objekt zueinanderfinden: transparent, nachvollziehbar, ohne Umwege.
+          Die Zahlen, die den Unterschied machen. Jede davon steht für einen Menschen, dessen Plan aufgegangen ist: gemessen statt behauptet, offen einsehbar für alle, die mit uns arbeiten.
         </p>
       </div>
       {/* Eine Zahl pro Zielgruppe, jede verlinkt auf ihre Seite */}
@@ -203,7 +203,7 @@ function Zielgruppen() {
             </h3>
             <figure style={{ margin: "20px 0 0", padding: "2px 0 2px 16px", borderLeft: "1.5px solid var(--signal)", maxWidth: 400 }}>
               <blockquote style={{ margin: 0, font: "400 16px/1.55 var(--font-display)", color: "rgba(247,245,241,0.92)", textShadow: "0 1px 14px rgba(0,0,0,0.45)" }}>„Ich wollte nie ein Büro über mir. Ich wollte ein System hinter mir."</blockquote>
-              <figcaption className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.75)", marginTop: 8, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>[PLATZHALTER: Name] · CIRCLE Partnerin · Wien</figcaption>
+              <figcaption className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.75)", marginTop: 8, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>CIRCLE Partnerin · Wien</figcaption>
             </figure>
             <div style={{ marginTop: "auto", paddingTop: 28, display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Bx variant="glass" tone="dark" size="lg" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Bx>
@@ -221,8 +221,8 @@ function Zielgruppen() {
 const PRODUKT_GRUPPEN = [
   ["interessenten", "Für Interessenten", [
     ["NOVA", "Der richtige Preis, datenbasiert: Die kostenlose NOVA Bewertung zeigt, was deine Immobilie am echten Markt wert ist.", "https://bewertung.unio.at", "Immobilie bewerten"],
-    ["SMART EXPOSÉ", "Mehr als ein PDF: Jedes Objekt kommt als digitales Exposé mit allen Daten, Plänen und Unterlagen, immer auf dem aktuellen Stand.", null, null],
-    ["CIRCLE", "Ein persönlicher Makler mit der Kraft eines ganzen Systems: kuratierte Top-Makler, die beraten und begleiten statt verwalten.", null, null],
+    ["SMART EXPOSÉ", "Besichtigung, Kaufanbot, Unterlagen und High-End-Präsentation: alles zu deinem Objekt an einem Ort, immer auf dem aktuellen Stand.", null, null],
+    ["CIRCLE", "Die Besten ihres Fachs: professionell, leidenschaftlich und mit voller Hingabe an deiner Seite.", null, null],
     ["LENS", "Volle Transparenz statt Blackbox: Beim Verkauf siehst du live, was passiert. Jede Anfrage, jeder Schritt, bis zum Notar.", null, null],
   ]],
   ["makler", "Für Makler", [
@@ -311,7 +311,7 @@ function Produkte() {
           <span aria-hidden="true" style={{ width: 13, height: 13, borderRadius: "50%", border: "2px solid var(--signal)", borderRightColor: "transparent", transform: "rotate(-45deg)" }}></span>Produkte
         </span>
         <h2 style={{ margin: "26px 0 0", font: "500 clamp(36px, 4.6vw, 76px)/1.04 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-          High-End-Software und<br />Community vereint.
+          Raum. Technologie. Mensch.
         </h2>
         <p style={{ margin: "26px auto 0", font: "400 17px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 520 }}>
           Ein Prinzip: Technologie übernimmt das Rechnen und Verwalten, Menschen übernehmen Beratung und Entscheidung.

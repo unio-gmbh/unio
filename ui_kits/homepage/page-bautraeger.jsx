@@ -72,12 +72,8 @@ function HeroBt() {
           <DockPoint top="64%" right="7%" label="Top 4 reserviert" show={docked} delay={320} />
         </div>
       </div>
-      {/* Kennzahlen-Reihe (StatBlock-Stil, groß & zentriert) */}
-      <div style={{ position: "relative", zIndex: 5, margin: mob ? "72px auto 80px" : "150px auto 130px", paddingTop: mob ? 44 : 60, borderTop: "1px solid var(--hairline-dark)", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: mob ? 36 : 48, maxWidth: 1200 }}>
-        <SBb value="1 Mrd" label="Projektvolumen in der Pipeline" tone="light" size={statSize} />
-        <SBb value={100} unit="%" label="Transparenz durch UNIO Lens" tone="light" size={statSize} />
-        <SBb value="1 Mrd" label="Reichweite mit unseren Kampagnen" tone="light" size={statSize} />
-      </div>
+      {/* Kennzahlen-Reihe bewusst entfernt (Zahlen erst mit belastbaren Werten wieder rein) */}
+      <div style={{ height: mob ? 72 : 130 }} aria-hidden="true"></div>
     </section>
   );
 }
@@ -325,7 +321,6 @@ function FunnelGraphBt() {
             );
           })}
         </div>
-        <p className="u-label" style={{ marginTop: 32, color: "var(--text-muted)", fontSize: 10 }}>[PLATZHALTER: echte Splits & Uplift-% — an Live-Daten koppeln]</p>
       </div>
     </section>
   );
@@ -352,9 +347,9 @@ const LENS_HEAT = {
 };
 const lensHeat = (t) => { const m = (a, b) => Math.round(a * t + b * (1 - t)); return `rgb(${m(255, 251)}, ${m(170, 248)}, ${m(9, 241)})`; };
 const LENS_BEATS = [
-  ["Jede Anfrage kommt an.", "Meta, Willhaben, ImmoScout24, Web: Jede Quelle landet im selben Dashboard, keine geht verloren."],
-  ["Vom Lead zur Besichtigung.", "Die Pipeline zeigt jeden Schritt mit Konversionsrate. Du siehst, wo es fließt und wo es hakt."],
-  ["Du weißt, welche Quelle liefert.", "Qualitätsrate je Kanal statt Bauchgefühl, und du siehst, wann die Anfragen kommen."],
+  ["Du siehst jede Anfrage, live.", "Wie viele kommen, wie gut sie sind, wer anfragt und was gerade damit passiert. Jede Quelle, ein Dashboard, keine geht verloren."],
+  ["Du siehst jede Einheit.", "Welche Wohnung wie stark nachgefragt ist, wo Besichtigungen laufen und wo es hakt. Schwachstellen erkennst du sofort, nicht im Quartalsbericht."],
+  ["Du siehst, was eine Anfrage kostet.", "Aus welchem Kanal wie viel kommt und was dich das je Anfrage kostet. So steuerst du Budget nach Zahlen statt nach Gefühl."],
 ];
 function LensFrame({ children }) {
   return (
@@ -508,7 +503,7 @@ function LensShowcaseBt() {
         <Kap nr="05" label="LENS" />
         <div style={{ maxWidth: 640, marginBottom: 36 }}>
           <h2 style={{ margin: 0, font: "500 clamp(30px, 8vw, 40px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt.<br />Live<span style={{ color: "var(--signal)" }}>.</span></h2>
-          <p style={{ margin: "16px 0 0", font: "400 15px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 480 }}>Das ist kein Mockup: So sieht LENS für ein laufendes Projekt aus. Reporting entfällt, du schaust einfach rein.</p>
+          <p style={{ margin: "16px 0 0", font: "400 15px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 480 }}>LENS ist deine Steuerung in Echtzeit: hundertprozentige Transparenz über dein Projekt. Reporting entfällt, du schaust einfach rein.</p>
         </div>
         {inhalt}
         <div style={{ marginTop: 24 }}>
@@ -531,6 +526,9 @@ function LensShowcaseBt() {
         <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "72px 5vw 28px" }}>
           <Kap nr="05" label="LENS" />
           <h2 style={{ margin: 0, font: "500 clamp(26px, 7vw, 34px)/1.08 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt. Live<span style={{ color: "var(--signal)" }}>.</span></h2>
+          <p style={{ margin: "10px 0 0", font: "400 13.5px/1.55 var(--font-display)", color: "var(--text-muted)" }}>
+            LENS ist deine Steuerung in Echtzeit: hundertprozentige Transparenz über dein Projekt.
+          </p>
           {/* aktiver Beat-Text wechselt mit dem Scroll */}
           <div style={{ position: "relative", minHeight: 72, marginTop: 12 }}>
             {LENS_BEATS.map(([t, c], i) => (
@@ -555,7 +553,7 @@ function LensShowcaseBt() {
           <div>
             <h2 style={{ margin: 0, font: "500 clamp(30px, 3.2vw, 54px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dein Projekt.<br />Live<span style={{ color: "var(--signal)" }}>.</span></h2>
             <p style={{ margin: "18px 0 0", font: "400 16px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 400 }}>
-              Das ist kein Mockup: So sieht LENS für ein laufendes Projekt aus. Reporting entfällt, du schaust einfach rein.
+              LENS ist deine Steuerung in Echtzeit: hundertprozentige Transparenz über dein Projekt. Reporting entfällt, du schaust einfach rein.
             </p>
             <div style={{ marginTop: 30 }}>
               {LENS_BEATS.map(([t, c], i) => (
@@ -731,7 +729,7 @@ function SimulatorBt() {
             ))}
           </div>
           <p className="u-label" style={{ margin: "16px 0 0", color: "var(--text-muted)", fontSize: 10 }}>
-            [PLATZHALTER: „Benchmarks aus X Wiener Wohnbau-Kampagnen 2024–2026" — Zahl folgt] · Arbeitswerte
+            Benchmarks aus Wiener Wohnbau-Kampagnen 2024 bis 2026 · Arbeitswerte
           </p>
         </div>
         <div className="u-grain" style={{ background: "var(--signal)", borderRadius: "var(--r-card)", padding: "clamp(26px, 3vw, 38px)", color: "#FFFFFF", display: "flex", flexDirection: "column", boxShadow: "var(--shadow-float)" }}>
@@ -808,7 +806,7 @@ function MandateBt() {
   const [ref, run] = useOnceInView(0.25);
   const mob = window.useMobile();
   return (
-    <section data-screen-label="Ausgangslagen" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 100px" : "150px 7vw 150px" }}>
+    <section data-screen-label="Ausgangslagen" className="u-grain" style={{ position: "relative", background: "var(--paper-2)", padding: mob ? "100px 6vw 100px" : "150px 7vw 150px", overflow: "hidden" }}>
       <GridLines />
       <Kap nr="07" label="Ausgangslagen" />
       <div style={{ maxWidth: 720, marginBottom: mob ? 36 : 56, position: "relative" }}>
@@ -1060,13 +1058,12 @@ function App() {
       <HeroBt />
       <StoererBt />
       <ProblemBt />
-      <ProofBt />
-      <FunnelGraphBt />
+      {/* ProofBt (Case-Stoererbild), FunnelGraphBt (Performance Marketing), ModellBt (100 %)
+          und die Referenz-Strecke ("Nicht inseriert. Inszeniert.") sind auf Wunsch
+          ausgeblendet; nach dem Bento folgt direkt das Anfrage-Formular. */}
       <LensShowcaseBt />
       <BentoBt />
       <MandateBt />
-      <ModellBt />
-      <window.ProjektStrecke />
       <FunnelBt />
       <EinwaendeBt />
       <StickyCTA />
