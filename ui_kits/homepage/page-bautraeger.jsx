@@ -80,9 +80,9 @@ function HeroBt() {
 
 /* ===== 02 · PROBLEM → LÖSUNG — gepinnt, jedes Problem bekommt seine Antwort ===== */
 const PL_PAARE = [
-  ["Inserate warten, bis Nachfrage zufällig vorbeikommt.", "LEAD ENGINE", "Nachfrage, die wir schaffen.", "Kampagnen auf Meta und Google bringen planbare Nachfrage, messbar bis zur Anfragequalität. Wir gehen mit dem Marketing in Vorleistung."],
+  ["Inserate warten, bis Nachfrage zufällig vorbeikommt.", "LEAD ENGINE", "Nachfrage, die wir schaffen.", "Kampagnen auf Meta und Google bringen planbare Nachfrage, messbar bis zur Anfragequalität. Iterativ und laufend optimiert."],
   ["Makler arbeiten nebeneinander, jeder für sich.", "CIRCLE", "Die stärksten Makler, verbunden.", "Eine kuratierte Community aus Top-Maklern verkauft dein Projekt gemeinsam: gesteuert statt gehofft, mit vorgemerkten Käufern."],
-  ["Reporting kommt Wochen später, als PDF.", "LENS", "Du siehst alles. Live.", "Pipeline, Anfragen und Unit-Status in Echtzeit im Dashboard. Reporting-Meetings entfallen, du schaust einfach rein."],
+  ["Reporting kommt Wochen später, als PDF.", "LENS", "Du siehst alles. Live.", "Hundertprozentige Transparenz über deine Vertriebs- und Marketingaktivitäten. Fundierte Entscheidungen statt Reporting-Meetings."],
   ["Entscheidungen fallen nach Gefühl.", "NOVA", "Der Markttest vor dem Baustart.", "Preisband und Grundrisse am echten Markt validieren, bevor gebaut wird: die nächste Ausbaustufe des Systems. Heute schon fließen alle Kampagnen-Daten zurück in dein Projekt."],
 ];
 /* Produktband-Toene: Signal in drei Abstufungen, Zukunftsvision neutral */
@@ -129,10 +129,10 @@ function ProblemBt() {
         <Kap nr="02" label="System" />
         <div style={{ maxWidth: 640, marginBottom: 40, position: "relative" }}>
           <h2 style={{ margin: 0, font: "500 clamp(30px, 8vw, 40px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+            Projekte <em style={{ fontStyle: "italic" }}>planbar</em><br />und erfolgreich machen.
           </h2>
           <p style={{ margin: "16px 0 0", font: "400 15px/1.65 var(--font-display)", color: "var(--text-muted)", maxWidth: 500 }}>
-            Kein weiteres Tool, sondern ein System: Jedes Problem im Abverkauf bekommt eine Antwort.
+            Jede Herausforderung im Abverkauf bekommt eine Antwort.
           </p>
         </div>
         {PL_PAARE.map((paar, i) => (
@@ -151,7 +151,7 @@ function ProblemBt() {
         <div className="u-grain" style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "76px 6vw 34px" }}>
           <Kap nr="02" label="System" />
           <h2 style={{ margin: 0, font: "500 clamp(26px, 7vw, 34px)/1.08 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-            Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+            Projekte <em style={{ fontStyle: "italic" }}>planbar</em><br />und erfolgreich machen.
           </h2>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16 }}>
             <svg width="30" height="30" viewBox="0 0 34 34" aria-hidden="true">
@@ -179,10 +179,10 @@ function ProblemBt() {
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: 56, alignItems: "start", position: "relative" }}>
           <div>
             <h2 style={{ margin: 0, font: "500 clamp(30px, 3.2vw, 54px)/1.06 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>
-              Projekte <em style={{ fontStyle: "italic" }}>planbarer</em><br />und erfolgreicher machen.
+              Projekte <em style={{ fontStyle: "italic" }}>planbar</em><br />und erfolgreich machen.
             </h2>
             <p style={{ margin: "20px 0 0", font: "400 16px/1.7 var(--font-display)", color: "var(--text-muted)", maxWidth: 400 }}>
-              Kein weiteres Tool, sondern ein System: Jedes Problem im Abverkauf bekommt eine Antwort. Scroll, und die linke Seite erledigt sich.
+              Jede Herausforderung im Abverkauf bekommt eine Antwort. Scroll, und die linke Seite erledigt sich.
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 40 }}>
               <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
@@ -577,6 +577,34 @@ function LensShowcaseBt() {
   );
 }
 
+
+/* Iteration sichtbar gemacht: drei Testrunden, jede Runde hebt die beste
+   Variante an. Subtil, einmalig beim Einscrollen, ohne Bewegung bei
+   Reduced Motion. */
+function AnimIteration() {
+  const [ref, run] = useOnceInView(0.4);
+  const RUNDEN = [["A", 32, false], ["B", 46, false], ["C", 40, false], ["D", 58, false], ["E", 72, false], ["F", 66, false], ["G", 84, true]];
+  return (
+    <div ref={ref}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 64 }}>
+        {RUNDEN.map(([l, h, beste], i) => (
+          <div key={l} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <span aria-hidden="true" style={{
+              width: "100%", borderRadius: 5,
+              height: BT_RM || run ? h + "%" : "8%",
+              background: beste ? "#FFFFFF" : "rgba(255,255,255,0.38)",
+              boxShadow: beste && (BT_RM || run) ? "0 0 0 1.5px rgba(255,255,255,0.55)" : "none",
+              transition: BT_RM ? "none" : `height 700ms ${BT_EASE} ${180 + i * 110}ms, box-shadow 400ms ${BT_EASE} ${900 + i * 60}ms`,
+            }}></span>
+            <span style={{ font: "9px var(--font-mono)", letterSpacing: "0.08em", color: beste ? "#FFFFFF" : "rgba(255,245,239,0.7)" }}>{l}</span>
+          </div>
+        ))}
+      </div>
+      <p className="u-label" style={{ margin: "12px 0 0", fontSize: 9, color: "rgba(255,245,239,0.92)" }}>Kreativ-Varianten je Testrunde · die beste gewinnt Budget</p>
+    </div>
+  );
+}
+
 /* ===== 06 · NUTZEN-BENTO (der einzige Karten-Moment) ===== */
 function NCard({ span = 2, tone = "light", title, copy, children }) {
   const mob = window.useMobile();
@@ -607,17 +635,14 @@ function BentoBt() {
         </Fx>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(6, 1fr)", gap: 14 }}>
-        <NCard span={4} tone="orange" title="Wir gehen ins Risiko. Mit unserem Marketing." copy="Kreation, Kampagnen und Media gehen in Vorleistung, vergütet wird am Abverkauf. Wenig Risiko für dich, maximales Bemühen von uns.">
-          <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
-            <span style={{ font: "500 52px/1 var(--font-display)", letterSpacing: "-0.03em", color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>€ 0</span>
-            <span className="u-label" style={{ color: "rgba(255,245,239,0.92)", fontSize: 10 }}>Retainer · Setup-Kosten</span>
-          </div>
+        <NCard span={4} tone="orange" title="High-End-Marketing für Immobilien." copy="Kreation, Kampagnen und Media von Spezialisten, die nichts anderes vermarkten als Immobilien. Jede Kampagne wird iterativ getestet und laufend optimiert, gemessen bis zur Anfragequalität.">
+          <AnimIteration />
         </NCard>
         <NCard span={2} title="Die stärksten Makler der Stadt." copy="CIRCLE ist kuratiert: Top-Makler ab € 100.000 Jahresumsatz, gesteuert statt gehofft.">
           <span style={{ font: "500 44px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--signal-deep)", fontVariantNumeric: "tabular-nums" }}>25+</span>
           <span className="u-label" style={{ display: "block", marginTop: 8, fontSize: 10, color: "var(--text-muted)" }}>Top-Performer im Pool</span>
         </NCard>
-        <NCard span={2} title="Du siehst alles. Live." copy="Pipeline, Anfragen und Unit-Status in LENS. Reporting-Meetings entfallen, du schaust einfach rein.">
+        <NCard span={2} title="Du siehst alles. Live." copy="Hundertprozentige Transparenz über Vertrieb und Marketing in LENS. Fundierte Entscheidungen statt Reporting-Meetings.">
           <span style={{ display: "inline-flex", alignItems: "center", gap: 9, font: "11px var(--font-mono)", letterSpacing: "0.08em", color: "var(--ink-2)", padding: "9px 14px", borderRadius: "var(--r-pill)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)", animation: BT_RM ? "none" : "uPulse 2.2s var(--ease-unio) infinite" }}></span>
             app.unio.at · Anfragen live
@@ -672,7 +697,7 @@ function ModellBt() {
           </h2>
         </Fx>
         <div style={{ width: "100%", maxWidth: 720, marginTop: 44, textAlign: "left" }}>
-          {[["Vergütung", "erfolgsbasiert am Abverkauf, kein Retainer"], ["Unser Einsatz", "Marketing, Kreation und Media gehen in Vorleistung"], ["Reporting", "entfällt, du siehst live (LENS)"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"], ["Ausblick", "Markttest vor Baustart als nächste Ausbaustufe"]].map(([k, v], i) => (
+          {[["Vergütung", "erfolgsbasiert am Abverkauf, kein Retainer"], ["Unser Einsatz", "Immobilienmarketing-Spezialisten, Kreation und Media aus einer Hand"], ["Reporting", "entfällt, du siehst live (LENS)"], ["Exit-Logik", "klare Meilensteine statt Bindungsfallen"], ["Ausblick", "Markttest vor Baustart als nächste Ausbaustufe"]].map(([k, v], i) => (
             <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 24, padding: "16px 0", borderTop: i === 0 ? "none" : "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
               <span className="u-label" style={{ color: "var(--text-muted)" }}>{k}</span>
               <span style={{ font: "400 16px var(--font-display)", color: "var(--ink-2)", textAlign: "right" }}>{v}</span>
