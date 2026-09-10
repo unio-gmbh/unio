@@ -4,3 +4,12 @@ node_modules/
 build/node_modules/
 social/node_modules
 social/clips/
+
+# Internes Grafik-/Produktionsmaterial: bleibt lokal, nicht auf GitHub
+social/
+uploads/
+email/
+dist/social-exports/
+dist/social-preview.html
+assets/reference/social-design-trifft-natur.jpg
+dist/assets/reference/social-design-trifft-natur.jpg
