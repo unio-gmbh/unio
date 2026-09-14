@@ -204,7 +204,7 @@ async function main() {
   /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
         Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
   const BUILD_STAMP = Date.now().toString(36);
-  const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"]];
+  const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"], ["print", "pager"]];
   for (const [kit, out] of UX_KITS) {
     const kitDir = join(ROOT, "ui_kits", kit);
     if (!existsSync(kitDir)) continue;

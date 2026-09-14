@@ -11,7 +11,67 @@ const NAV = [
   ["Steuerung", [["Ziele", "ziele", "stats"], ["Einstellungen", "settings", "settings"]]],
 ];
 
-/* Darstellung Klassisch/Leicht — global im Header, gilt auf allen Seiten */
+/* Mobile Tab-Bar: die vier Feld-Ziele sichtbar statt im Drawer, Capture in der
+   Mitte (Eingabe-Ersparnis ist Bindungs-Hebel Nr. 1). Alles Konfigurierende
+   bleibt im Drawer hinter dem Menue-Button. Nur fuer die Makler-Rolle. */
+const FELD_TABS = [["Heute", "dashboard", "dashboard"], ["Kalender", "kalender", "kalender"], null, ["Kontakte", "kontakte", "kontakte"], ["Objekte", "objekte", "objekte"]];
+
+function CaptureSheet({ onZu, onAnlegen }) {
+  const [ok, setOk] = React.useState(null);
+  const AKTIONEN = [
+    ["plus", "Neues Objekt anlegen", "Adresse und Fotos reichen für den Entwurf", "anlegen"],
+    ["mic", "Notiz sprechen", "Die KI extrahiert Kontakt, Objekt und Aufgaben"],
+    ["kamera", "Foto ins Objekt", "Landet in der Akte, mit KI-Textvorschlag"],
+    ["phone", "Anruf notieren", "Ein Tap fürs Ergebnis, landet im Kontakt-Thread"],
+  ];
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 90 }} onClick={onZu}>
+      <div style={{ position: "absolute", inset: 0, background: "rgba(11,10,9,.35)" }}></div>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "#FBFAF7", borderRadius: "20px 20px 0 0", padding: "10px 18px calc(18px + env(safe-area-inset-bottom, 0px))", boxShadow: "0 -18px 50px -20px rgba(11,10,9,.4)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 99, background: "var(--hairline-dark)", margin: "0 auto 14px" }}></div>
+        {ok ? (
+          <p style={{ margin: "8px 0 14px", font: "400 14px/1.5 var(--font-display)", color: "var(--ink-2)", textAlign: "center" }}>{ok} <span style={{ color: "var(--text-muted)" }}>(Demo)</span></p>
+        ) : AKTIONEN.map(([ic, t, sub, art]) => (
+          <button key={t} onClick={() => { if (art === "anlegen") { onZu(); onAnlegen && onAnlegen(); } else setOk(t + ": gespeichert, du findest es im Kontakt-Thread."); }}
+            style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "13px 10px", border: "none", cursor: "pointer", background: "transparent", borderRadius: 12, textAlign: "left", fontFamily: "inherit" }}>
+            <span style={{ width: 40, height: 40, borderRadius: 99, background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--signal-deep)", flex: "none" }}><DIcon name={ic} size={17} /></span>
+            <span style={{ minWidth: 0 }}>
+              <span style={{ display: "block", font: "500 14.5px var(--font-display)", color: "var(--ink)" }}>{t}</span>
+              <span style={{ display: "block", font: "400 12px var(--font-display)", color: "var(--text-muted)", marginTop: 2 }}>{sub}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MobileTabBar({ active, onNav, onCapture }) {
+  return (
+    <nav aria-label="Schnellzugriff" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 60, display: "flex", alignItems: "stretch", justifyContent: "space-around", background: "rgba(251,250,247,.97)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", boxShadow: "0 -1px 0 var(--hairline-dark)", padding: "6px 4px calc(6px + env(safe-area-inset-bottom, 0px))" }}>
+      {FELD_TABS.map((t, i) => {
+        if (!t) return (
+          <button key="capture" onClick={onCapture} aria-label="Capture: Notiz, Foto, Anruf"
+            style={{ alignSelf: "center", width: 46, height: 46, borderRadius: 99, border: "none", cursor: "pointer", background: "var(--signal)", color: "var(--on-signal)", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px -6px rgba(20,18,16,.35)", margin: "0 4px", flex: "none" }}>
+            <DIcon name="mic" size={20} />
+          </button>
+        );
+        const [label, id, gl] = t;
+        const on = active === id;
+        return (
+          <button key={id} onClick={() => onNav && onNav(id)}
+            style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "7px 2px", border: "none", cursor: "pointer", background: "transparent", color: on ? "var(--ink)" : "var(--text-muted)", fontFamily: "inherit" }}>
+            <span style={{ color: on ? "var(--signal-deep)" : "inherit", display: "inline-flex" }}><DIcon name={gl} size={18} /></span>
+            <span style={{ font: `${on ? 600 : 500} 10px var(--font-display)` }}>{label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* Darstellung Klassisch/Leicht — Demo-Werkzeug fuer Pitches (zwei Looks zeigen),
+   kein Produkt-Feature: im Produkt wird Dichte ueber die Abstands-Skala geregelt. */
 function StylePillSwitch() {
   const [classic, setClassic] = React.useState(() => { try { return localStorage.getItem("unio-dash-style") === "classic"; } catch (e) { return false; } });
   React.useEffect(() => { document.body.classList.toggle("dash-classic", classic); }, []);
@@ -39,8 +99,19 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
   }, []);
   const navUndZu = (id) => { if (onNav) onNav(id); if (mobil) setOpen(false); };
   const navItems = nav || NAV;
+  const feldBar = mobil && !nav; /* Tab-Bar nur fuer die Makler-Rolle */
+  const [capture, setCapture] = React.useState(false);
   const u = user || { initials: "DH", name: "Daniel Hayden", mail: "daniel@unio.at" };
-  const c = cta || { label: "Immobilie anlegen", glyph: "+", onClick: () => onNav && onNav("objekte") };
+  /* "Immobilie anlegen" fuehrt DIREKT in den Anlage-Wizard, nicht nur zur Liste:
+     Flag fuer den Mount, Event falls die Objekte-Seite schon offen ist. */
+  const zumWizard = () => {
+    try { sessionStorage.setItem("unio_mk_ziel_tab", "anlage"); } catch (e) {}
+    if (onNav) onNav("objekte");
+    window.dispatchEvent(new CustomEvent("unio-objekte-tab", { detail: "anlage" }));
+  };
+  /* Eine Primaeraktion pro Screen: cta={false} blendet den globalen CTA aus
+     (Detailseiten tragen ihre Kontextaktion selbst). */
+  const c = cta === false ? null : (cta || { label: "Immobilie anlegen", glyph: "+", onClick: zumWizard });
   return (
     <div className="dash-shell" style={{ display: "flex", minHeight: "100vh", background: "#F4F2EE", fontFamily: "var(--font-display)" }}>
       <aside className="dash-side" style={mobil
@@ -94,14 +165,16 @@ function DashShell({ active, onNav, cta, children, nav, user, headerExtra }) {
           <div className="dash-headright" style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0, overflow: "hidden" }}>
             {headerExtra}
             <span className="dash-stylepill"><StylePillSwitch /></span>
-            <span className="dash-cta"><DBtn variant="signal" size="sm" knob={c.glyph || "+"} onClick={c.onClick}>{c.label}</DBtn></span>
+            {c && <span className="dash-cta"><DBtn variant="signal" size="sm" knob={c.glyph || "+"} onClick={c.onClick}>{c.label}</DBtn></span>}
           </div>
         </header>
-        <main className="dash-main" style={{ flex: 1, minWidth: 0, padding: "8px clamp(16px, 3vw, 40px) 80px" }}>
+        <main className="dash-main" style={{ flex: 1, minWidth: 0, padding: feldBar ? "8px clamp(16px, 3vw, 40px) 130px" : "8px clamp(16px, 3vw, 40px) 80px" }}>
           <style>{window.MK_CSS}{window.MK_HEUTE_CSS || ""}</style>
           {children}
         </main>
       </div>
+      {feldBar && <MobileTabBar active={active} onNav={navUndZu} onCapture={() => setCapture(true)} />}
+      {capture && <CaptureSheet onZu={() => setCapture(false)} onAnlegen={zumWizard} />}
     </div>
   );
 }

@@ -344,7 +344,7 @@ const ARTEN = [
   ["Projekt", "layers", "Mehrere Einheiten als Bauträger"],
 ];
 const DOCS = [["BAB", true], ["Grundrisse", true], ["Energieausweis", true], ["Grundbuchauszug", false]];
-function AnlageWizard({ onNav }) {
+function AnlageWizardAlt({ onNav }) {
   const [step, setStep] = React.useState(1);
   const [art, setArt] = React.useState(-1);
   return (
@@ -418,6 +418,191 @@ function AnlageWizard({ onNav }) {
           </div>
         </WReveal>
       )}
+    </div>
+  );
+}
+
+/* ===== Anlegen neu: Adresse als Anker, Capture statt Formular, Pruefen statt
+   Tippen, Entwurf als Normalfall, Abschluss = Vermarktungsreife.
+   Benchmarks: Airbnb (wenige visuelle Fragen), Zillow (Adresse zuerst,
+   Auto-Save), Wizard-Research (Fortschritt benannt, Entwurf-Wiedereinstieg). */
+const WIZ_SCHRITTE = ["Adresse", "Capture", "Prüfen", "Vermarktung"];
+
+function WizKarte({ children, pad }) {
+  return <div style={{ background: "#FFFFFF", borderRadius: 14, padding: pad || 26, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>{children}</div>;
+}
+
+function AnlageWizard({ onNav }) {
+  const [step, setStep] = React.useState(0);
+  const [adr, setAdr] = React.useState("");
+  const [anker, setAnker] = React.useState(false);
+  const [art, setArt] = React.useState(-1);
+  const [notiz, setNotiz] = React.useState(false);
+  const [fotos, setFotos] = React.useState(0);
+  const weiterOk = step === 0 ? (anker && art >= 0) : true;
+  const btn = { border: "none", cursor: "pointer", borderRadius: 999, font: "500 13px var(--font-display)", fontFamily: "inherit", padding: "12px 22px" };
+  const quelleLab = (q) => <span className="u-label" style={{ fontSize: 7.5, color: "var(--signal-deep)", background: "var(--signal-soft)", borderRadius: 99, padding: "3px 9px", whiteSpace: "nowrap" }}>{q.toUpperCase()}</span>;
+  /* Pruefen-Liste: jede Angabe traegt ihre Quelle und einen Aendern-Link */
+  const ANGABEN = [
+    ["Adresse", adr || "Hühnersteigstraße 19, 1140 Wien", "bestätigt"],
+    ["Wohnfläche", "142 m²", "aus Energieausweis"],
+    ["Zimmer", "4 + separate Küche", notiz ? "aus Sprachnotiz" : "aus Grundriss"],
+    ["Zustand", "saniert 2021, Fußbodenheizung", notiz ? "aus Sprachnotiz" : "aus Unterlagen"],
+    ["Energie (HWB)", "42 kWh/m²a · Klasse B", "aus Energieausweis"],
+    ["Lagequalität", "82 von 100 · ruhig, grün", "aus Lage-Analyse"],
+  ];
+  const REIFE = [
+    ["Objektdaten & Exposé-Text (KI-Entwurf)", true, null],
+    ["Unterlagen im Datenraum", true, null],
+    ["Professionelle Fotos", fotos > 0, "Fotoshooting buchen"],
+    ["Portal-Freigabe", false, "Nach Fotos möglich"],
+  ];
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      <div style={{ paddingTop: 20, marginBottom: 34 }}>
+        <button onClick={() => onNav && onNav("objekte")} style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "none", background: "none", cursor: "pointer", font: "500 13px var(--font-display)", color: "var(--text-muted)", marginBottom: 22 }}><WIcon name="back" size={15} stroke="var(--text-muted)" />Zurück zu den Objekten</button>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>Schritt {step + 1} von {WIZ_SCHRITTE.length} · {WIZ_SCHRITTE[step]}</div>
+          {(anker || step > 0) && <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>✓ Automatisch als Entwurf gespeichert</span>}
+        </div>
+        <div style={{ height: 4, borderRadius: 2, marginTop: 14, background: "var(--paper-2)", overflow: "hidden", maxWidth: 320 }}>
+          <div style={{ height: "100%", width: ((step + 1) / WIZ_SCHRITTE.length * 100) + "%", background: "var(--signal)", transition: "width .5s var(--ease-unio)" }}></div>
+        </div>
+      </div>
+
+      {step === 0 && (
+        <WReveal>
+          <h1 style={{ margin: 0, font: "500 clamp(28px, 3vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Wo steht die Immobilie?</h1>
+          <p style={{ margin: "14px 0 24px", font: "400 15px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>Die Adresse bringt Lage-Analyse, Marktdaten und das Grätzl gleich mit. Alles Weitere baut darauf auf.</p>
+          <WizKarte>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <input value={adr} onChange={(e) => { setAdr(e.target.value); setAnker(false); }} onKeyDown={(e) => e.key === "Enter" && adr.trim() && setAnker(true)}
+                placeholder="Straße, Hausnummer, PLZ Ort" autoComplete="street-address"
+                style={{ flex: "1 1 280px", minWidth: 0, border: "none", outline: "none", background: "var(--paper-2)", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "14px 16px", font: "400 15px var(--font-display)", fontFamily: "inherit", color: "var(--ink)" }} />
+              <button onClick={() => adr.trim() && setAnker(true)} style={{ ...btn, background: "var(--ink)", color: "var(--paper)" }}>Prüfen</button>
+            </div>
+            {anker && (
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
+                {[["Lage-Score", "82 / 100"], ["Grätzl-Preis", "⌀ € 6.400/m²"], ["Vergleichbar verkauft", "9 · 24 Monate"]].map(([k, v]) => (
+                  <div key={k} style={{ flex: "1 1 140px", background: "var(--paper-2)", borderRadius: 12, padding: "13px 15px" }}>
+                    <div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{k.toUpperCase()}</div>
+                    <div style={{ font: "500 16px var(--font-display)", color: "var(--ink)", marginTop: 6 }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </WizKarte>
+          <div style={{ margin: "26px 0 4px" }} className="u-label"><span style={{ color: "var(--signal-deep)", fontSize: 9 }}>ART DER IMMOBILIE</span></div>
+          <p style={{ margin: "0 0 14px", font: "400 13.5px var(--font-display)", color: "var(--text-muted)" }}>Die Objektart bestimmt Felder, KI-Analyse und Exposé-Vorlage.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+            {ARTEN.map(([label, ic, desc], i) => {
+              const on = art === i;
+              return (
+                <button key={label} onClick={() => setArt(i)} style={{ position: "relative", textAlign: "left", border: "none", cursor: "pointer", background: "#FFFFFF", borderRadius: 14, padding: "20px 18px", boxShadow: `inset 0 0 0 ${on ? 1.5 : 1}px ${on ? "var(--signal)" : "var(--hairline-dark)"}`, fontFamily: "inherit", transition: "box-shadow .2s var(--ease-unio)" }}>
+                  <WIcon name={ic} size={20} stroke="var(--signal-deep)" />
+                  {on && <span style={{ position: "absolute", top: 14, right: 14, width: 20, height: 20, borderRadius: "50%", background: "var(--signal)", color: "var(--on-signal)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><WIcon name="check" size={12} stroke="var(--on-signal)" /></span>}
+                  <div style={{ font: "500 15.5px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)", marginTop: 12 }}>{label}</div>
+                  <div style={{ font: "400 12.5px/1.5 var(--font-display)", color: "var(--text-muted)", marginTop: 5 }}>{desc}</div>
+                </button>
+              );
+            })}
+          </div>
+        </WReveal>
+      )}
+
+      {step === 1 && (
+        <WReveal>
+          <h1 style={{ margin: 0, font: "500 clamp(28px, 3vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Zeig her statt eintippen.</h1>
+          <p style={{ margin: "14px 0 24px", font: "400 15px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>Fotos, Unterlagen und eine kurze Sprachnotiz reichen. Die KI liest alles aus und füllt das Formular vor, du prüfst im nächsten Schritt nur noch.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+            <WizKarte pad={22}>
+              <div className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>FOTOS</div>
+              <button onClick={() => setFotos(5)} style={{ marginTop: 12, width: "100%", border: "1.5px dashed var(--hairline-dark)", borderRadius: 12, padding: "26px 14px", background: "transparent", cursor: "pointer", textAlign: "center", fontFamily: "inherit" }}>
+                <WIcon name="kamera" size={22} stroke="var(--signal-deep)" />
+                <div style={{ font: "500 14px var(--font-display)", color: "var(--ink)", marginTop: 8 }}>{fotos ? fotos + " Fotos hinzugefügt" : "Aufnehmen oder hochladen"}</div>
+                <div className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 5 }}>REICHT FÜRS ANLEGEN · SHOOTING SPÄTER</div>
+              </button>
+            </WizKarte>
+            <WizKarte pad={22}>
+              <div className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>UNTERLAGEN FÜR DIE KI</div>
+              <p style={{ margin: "10px 0 4px", font: "400 12.5px/1.55 var(--font-display)", color: "var(--text-muted)" }}>Die UNIO KI liest Unterlagen aus, strukturiert die Objektdaten und schlägt Exposétexte vor. Du prüfst und gibst frei.</p>
+              <div style={{ marginTop: 4 }}>
+                {DOCS.map(([n, on]) => (
+                  <div key={n} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0" }}>
+                    <span style={{ flex: 1, font: "500 13.5px var(--font-display)", color: "var(--ink)" }}>{n}</span>
+                    <WPillSwitch label={on ? "aktiv" : "aus"} on={on} onToggle={() => {}} />
+                  </div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginTop: 8 }}>
+                  <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>PDF · BILDER · DOC · TXT</span>
+                  <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>ANALYSE-MODELL: UNIO-1</span>
+                </div>
+              </div>
+            </WizKarte>
+            <WizKarte pad={22}>
+              <div className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>SPRACHNOTIZ</div>
+              {notiz ? (
+                <p style={{ margin: "12px 0 0", font: "400 13px/1.6 var(--font-display)", color: "var(--ink-2)" }}>„Vier Zimmer, separate Küche, 2021 saniert, Fußbodenheizung…"<br /><span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>0:32 · TRANSKRIBIERT · FLIESST IN DEN ENTWURF</span></p>
+              ) : (
+                <button onClick={() => setNotiz(true)} style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 9, ...btn, background: "var(--signal)", color: "#1A1305" }}><WIcon name="mic" size={15} stroke="#1A1305" />Notiz sprechen</button>
+              )}
+              <p style={{ margin: "12px 0 0", font: "400 12px/1.5 var(--font-display)", color: "var(--text-muted)" }}>Nur dein Selbstdiktat, keine Gesprächsaufnahme.</p>
+            </WizKarte>
+          </div>
+        </WReveal>
+      )}
+
+      {step === 2 && (
+        <WReveal>
+          <h1 style={{ margin: 0, font: "500 clamp(28px, 3vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Prüfen statt tippen.</h1>
+          <p style={{ margin: "14px 0 24px", font: "400 15px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 560 }}>Jede Angabe trägt ihre Quelle. Nichts wird ohne deine Bestätigung veröffentlicht.</p>
+          <WizKarte>
+            {ANGABEN.map(([k, v, q], i) => (
+              <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderTop: i > 0 ? "1px solid var(--hairline-dark)" : "none", flexWrap: "wrap" }}>
+                <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", flex: "0 0 120px" }}>{k.toUpperCase()}</span>
+                <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)", flex: "1 1 160px", minWidth: 0 }}>{v}</span>
+                {quelleLab(q)}
+                <button style={{ border: "none", background: "none", cursor: "pointer", font: "500 12.5px var(--font-display)", color: "var(--text-muted)", fontFamily: "inherit" }}>Ändern</button>
+              </div>
+            ))}
+          </WizKarte>
+          <div style={{ marginTop: 14 }}>
+            <WReco tone="hi" label="Preisband-Vorschlag" value="€ 880.000 bis 930.000" meta="Aus 9 vergleichbaren Verkäufen im Grätzl · du entscheidest den Startpreis." arrow />
+          </div>
+        </WReveal>
+      )}
+
+      {step === 3 && (
+        <WReveal>
+          <h1 style={{ margin: 0, font: "500 clamp(28px, 3vw, 42px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Angelegt. Jetzt vermarktungsreif machen.</h1>
+          <p style={{ margin: "14px 0 24px", font: "400 15px/1.6 var(--font-display)", color: "var(--text-muted)", maxWidth: 580 }}>Anlegen und Vermarkten sind ein Prozess. Das hier ist der Stand deiner Vermarktungsreife, mit genau einem nächsten Schritt.</p>
+          <WizKarte>
+            {REIFE.map(([k, ok, aktion], i) => (
+              <div key={k} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 0", borderTop: i > 0 ? "1px solid var(--hairline-dark)" : "none", flexWrap: "wrap" }}>
+                <span style={{ color: ok ? "#2E7D46" : "var(--text-muted)", flex: "none" }}>{ok ? "✓" : "○"}</span>
+                <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)", flex: "1 1 200px" }}>{k}</span>
+                {!ok && aktion === "Fotoshooting buchen" && (
+                  <button onClick={() => onNav && onNav("marketing")} style={{ ...btn, padding: "9px 16px", background: "var(--signal)", color: "#1A1305" }}>{aktion}</button>
+                )}
+                {!ok && aktion && aktion !== "Fotoshooting buchen" && <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>{aktion.toUpperCase()}</span>}
+              </div>
+            ))}
+          </WizKarte>
+          <div style={{ display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }}>
+            <button onClick={() => onNav && onNav("objekte")} style={{ ...btn, background: "var(--ink)", color: "var(--paper)" }}>Zur Objekt-Akte</button>
+            <button onClick={() => onNav && onNav("dashboard")} style={{ ...btn, background: "transparent", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)" }}>Später weitermachen</button>
+          </div>
+        </WReveal>
+      )}
+
+      {step < 3 && (
+        /* Sticky auf Mobil: Weiter bleibt in Daumenreichweite (Wizard-Research) */
+        <div style={{ position: "sticky", bottom: 10, zIndex: 5, display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 30, gap: 12, background: "rgba(244,242,238,.92)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", borderRadius: 16, padding: "10px 12px" }}>
+          {step > 0 ? <WBtn variant="ghost" size="md" onClick={() => setStep(step - 1)}>Zurück</WBtn> : <span></span>}
+          <WBtn variant="signal" size="md" knob disabled={!weiterOk} onClick={() => weiterOk && setStep(step + 1)}>{step === 2 ? "Bestätigen und anlegen" : "Weiter"}</WBtn>
+        </div>
+      )}
+      <p className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", margin: "26px 0 40px" }}>DEMO-ANSICHT · KI-ANGABEN UND MARKTDATEN ARBEITSSTAND</p>
     </div>
   );
 }

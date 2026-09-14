@@ -88,7 +88,8 @@ function DashApp() {
   else view = <window.MkHeuteSeite mk={mk} tueMk={tueMk} geheZu={geheZu} onNav={nav} />;
   return (
     <React.Fragment>
-      <DashShell active={active} onNav={nav} headerExtra={<window.RoleSwitch role={role} onRole={pickRole} />}>{view}</DashShell>
+      <DashShell active={active} onNav={nav} cta={["objekt", "projekt", "anlage"].includes(screen) ? false : undefined}
+        headerExtra={<window.RoleSwitch role={role} onRole={pickRole} />}>{view}</DashShell>
       <window.MkCommandK offen={cmdk} onClose={() => setCmdk(false)} mk={mk} geheZu={(z) => { geheZu(z); setCmdk(false); }} />
       <window.MkCheatsheet offen={cheat} onClose={() => setCheat(false)} />
     </React.Fragment>

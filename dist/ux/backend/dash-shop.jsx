@@ -78,14 +78,16 @@ const LEADS = [
   { id: "alt", name: "Abgeber-Lead mit Termin", preis: 690, sub: "Qualifiziert · Termin fixiert" },
 ];
 
-/* Aufträge mit Prozess: die Agentur liefert direkt in die Software, Korrekturen laufen als Schleifen */
-const AUFTRAG_STEPS = ["Briefing", "Termin", "Produktion", "Ergebnis", "Korrektur", "Freigabe"];
+/* Aufträge mit Prozess: die Agentur liefert direkt in die Software.
+   Fuenf Stufen wie beim Paket-Tracker; Korrekturen sind KEINE Stufe,
+   sondern eine sichtbar gezaehlte Schleife am Ergebnis (max. 2 inklusive). */
+const AUFTRAG_STEPS = ["Briefing", "Termin", "Produktion", "Ergebnis", "Fertig"];
 const AUFTRAEGE = [
-  { id: "A-2435", datum: "14.08.2026", name: "Fotoshooting", objekt: "Das Albrecht · Top 12", preis: 249, step: 1, status: "Termin offen", tone: "hot",
+  { id: "A-2435", datum: "14.08.2026", name: "Fotoshooting", objekt: "Das Albrecht · Top 12", preis: 249, step: 1, status: "Termin offen", tone: "hot", wer: "Lena · ad.boutique",
     agentur: ["Bis zu 15 bearbeitete Fotos, Out- und Indoor", "Farb-Look nach UNIO-Guide", "Lieferung 48 h nach dem Shooting"],
     dein: ["Zugang zum Objekt sicherstellen", "Objekt besenrein oder gestagt übergeben", "Ansprechperson vor Ort nennen"],
     termine: ["Di 19.08. · 09:00", "Mi 20.08. · 14:00", "Fr 22.08. · 10:30"], terminFix: null, ergebnisse: [], feedback: [] },
-  { id: "A-2431", datum: "05.08.2026", name: "Immoreel", objekt: "Villa Ecoluxe", preis: 599, step: 3, status: "Ergebnis liegt vor", tone: "hot",
+  { id: "A-2431", datum: "05.08.2026", name: "Immoreel", objekt: "Villa Ecoluxe", preis: 599, step: 3, status: "Ergebnis liegt vor", tone: "hot", wer: "Lena · ad.boutique",
     agentur: ["Reel bis 60 Sekunden, 9:16", "Schnitt, Color Grading, Musik, Untertitel", "2 Korrekturschleifen inklusive"],
     dein: ["Wunsch-Musikrichtung nennen (erledigt)", "Logo-Animation freigeben (erledigt)"],
     termine: null, terminFix: "Dreh war am Mo 11.08. · 10:00",
@@ -94,11 +96,11 @@ const AUFTRAEGE = [
       { v: 2, name: "Cover-Varianten", typ: "img", src: "/assets/img/ecoluxe.jpg" },
     ],
     feedback: [{ von: "Du", datum: "12.08.", txt: "Intro 2 Sekunden kürzer, Preis-Einblendung erst am Ende.", status: "Umgesetzt in v2" }] },
-  { id: "A-2427", datum: "28.07.2026", name: "Listing Performance", objekt: "Penthouse Beheim", preis: 1390, step: 2, status: "In Produktion", tone: "",
+  { id: "A-2427", datum: "28.07.2026", name: "Listing Performance", objekt: "Penthouse Beheim", preis: 1390, step: 2, status: "In Produktion", tone: "", wer: "Flo · ad.boutique",
     agentur: ["Kampagnen-Setup Meta und Google", "Landingpage automatisch aus NOVA", "30 Tage Laufzeit, wöchentliches Reporting"],
     dein: ["Objektfotos freigeben (erledigt)", "Ad-Budget € 600 bestätigen (erledigt)"],
     termine: null, terminFix: "Go-live geplant: Mo 18.08.", ergebnisse: [], feedback: [] },
-  { id: "A-2402", datum: "12.08.2026", name: "Faltschild · A1 · Mit Bild", objekt: "Persönlich", preis: 189, step: 5, status: "Freigegeben · im Druck", tone: "ok",
+  { id: "A-2402", datum: "12.08.2026", name: "Faltschild · A1 · Mit Bild", objekt: "Persönlich", preis: 189, step: 4, status: "Freigegeben · im Druck", tone: "ok", wer: "Druckpartner Wien",
     agentur: ["Druck A1 auf Hohlkammerplatte", "Versand an deinen Bürostandort"],
     dein: [], termine: null, terminFix: null, ergebnisse: [], feedback: [] },
 ];
@@ -404,7 +406,8 @@ function CartDrawer({ offen, onClose, items, onRemove, onOrder, ordered }) {
 }
 
 /* ---------- Auftrags-Prozess: Stepper + Detail ---------- */
-function AuftragStepper({ step }) {
+function AuftragStepper({ step, runden }) {
+  /* Korrektur haengt als gezaehlte Schleife an der Ergebnis-Stufe, nie als eigene Etappe */
   return (
     <div style={{ display: "flex", alignItems: "flex-start", margin: "24px 0 4px", overflowX: "auto", paddingBottom: 6 }}>
       {AUFTRAG_STEPS.map((st, i) => (
@@ -416,6 +419,9 @@ function AuftragStepper({ step }) {
               color: i < step ? "#1A1305" : i === step ? "var(--paper)" : "var(--text-muted)",
               boxShadow: i > step ? "inset 0 0 0 1px var(--hairline-dark)" : "none" }}>{i < step ? "✓" : i + 1}</span>
             <span className="u-label" style={{ fontSize: 7.5, color: i === step ? "var(--ink)" : "var(--text-muted)", whiteSpace: "nowrap" }}>{st.toUpperCase()}</span>
+            {st === "Ergebnis" && runden > 0 && (
+              <span className="u-label" style={{ fontSize: 7, color: "var(--signal-deep)", background: "var(--signal-soft)", borderRadius: 99, padding: "3px 8px", whiteSpace: "nowrap" }}>KORREKTUR {Math.min(runden, 2)} VON 2</span>
+            )}
           </span>
         </React.Fragment>
       ))}
@@ -430,12 +436,14 @@ function AuftragDetail({ auftrag, onBack }) {
   const [termin, setTermin] = React.useState(a.terminFix);
   const [fb, setFb] = React.useState(a.feedback);
   const [fbText, setFbText] = React.useState("");
-  const [frei, setFrei] = React.useState(a.step >= 5);
+  const [frei, setFrei] = React.useState(a.step >= 4);
+  const runden = fb.filter((f) => f.von === "Du").length;
   const waehleTermin = (t) => { setTermin(t + " · bestätigt"); setStep((x) => Math.max(x, 2)); };
   const sendeFeedback = () => {
     const t = fbText.trim(); if (!t) return;
+    /* Korrektur ist keine Stufe: der Auftrag bleibt bei Ergebnis, die Schleife wird gezaehlt */
     setFb((f) => [...f, { von: "Du", datum: "Heute", txt: t, status: "Bei der Agentur" }]);
-    setFbText(""); setStep(4);
+    setFbText("");
   };
   const karte = { background: "var(--card-bg, #FFFFFF)", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--card-line, var(--hairline-dark))", padding: "20px 22px" };
   const h3 = { margin: "0 0 13px", font: "500 15.5px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" };
@@ -451,11 +459,11 @@ function AuftragDetail({ auftrag, onBack }) {
           <div>
             <span className="u-label" style={{ fontSize: 9, color: "var(--signal-deep)" }}>{a.id} · BESTELLT {a.datum}</span>
             <h1 style={{ margin: "6px 0 0", font: "500 clamp(28px, 3vw, 40px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>{a.name}</h1>
-            <p style={{ margin: "8px 0 0", font: "400 14.5px var(--font-display)", color: "var(--text-muted)" }}>{a.objekt} · {eurS(a.preis)}</p>
+            <p style={{ margin: "8px 0 0", font: "400 14.5px var(--font-display)", color: "var(--text-muted)" }}>{a.objekt} · {eurS(a.preis)}{a.wer ? <span> · zuständig: <b style={{ color: "var(--ink)", fontWeight: 500 }}>{a.wer}</b></span> : null}</p>
           </div>
           <span className="u-label" style={pillStil(frei ? "ok" : a.tone)}>{(frei ? "Freigegeben" : a.status).toUpperCase()}</span>
         </div>
-        <AuftragStepper step={frei ? 5 : step} />
+        <AuftragStepper step={frei ? 4 : step} runden={frei ? 0 : runden} />
       </RvL>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16, marginTop: 26, alignItems: "start" }}>
@@ -509,12 +517,17 @@ function AuftragDetail({ auftrag, onBack }) {
                 <div style={{ display: "flex", gap: 9, marginTop: 4 }}>
                   <button onClick={() => setFrei(true)} style={{ flex: 1, border: "none", cursor: "pointer", borderRadius: 999, padding: "13px 0", background: "var(--signal)", color: "#1A1305", font: "500 13.5px var(--font-display)", fontFamily: "inherit" }}>Freigeben</button>
                 </div>
-                <div style={{ marginTop: 14 }}>
-                  <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>ODER KORREKTUR ANFORDERN</span>
-                  <textarea value={fbText} onChange={(e) => setFbText(e.target.value)} rows={3} placeholder="Was soll die Agentur ändern?"
-                    style={{ width: "100%", marginTop: 8, border: "none", outline: "none", resize: "vertical", background: "var(--paper-2)", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px", font: "400 13.5px/1.55 var(--font-display)", fontFamily: "inherit", color: "var(--ink)", boxSizing: "border-box" }}></textarea>
-                  <button onClick={sendeFeedback} style={{ marginTop: 9, border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 20px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Korrektur senden</button>
-                </div>
+                <p style={{ margin: "10px 0 0", font: "400 12.5px var(--font-display)", color: "var(--text-muted)" }}>Ohne Reaktion wird das Ergebnis automatisch am <b style={{ color: "var(--ink)", fontWeight: 500 }}>22.08.</b> freigegeben. Eine Korrektur stoppt den Timer.</p>
+                {runden < 2 ? (
+                  <div style={{ marginTop: 14 }}>
+                    <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>ODER KORREKTUR ANFORDERN · {2 - runden} VON 2 INKLUSIVE ÜBRIG</span>
+                    <textarea value={fbText} onChange={(e) => setFbText(e.target.value)} rows={3} placeholder="Was soll die Agentur ändern?"
+                      style={{ width: "100%", marginTop: 8, border: "none", outline: "none", resize: "vertical", background: "var(--paper-2)", borderRadius: 12, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px", font: "400 13.5px/1.55 var(--font-display)", fontFamily: "inherit", color: "var(--ink)", boxSizing: "border-box" }}></textarea>
+                    <button onClick={sendeFeedback} style={{ marginTop: 9, border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 20px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Korrektur senden</button>
+                  </div>
+                ) : (
+                  <p style={{ margin: "14px 0 0", font: "400 13px/1.55 var(--font-display)", color: "var(--text-muted)" }}>Beide inklusiven Korrekturschleifen sind genutzt. Eine weitere Runde ist buchbar, der Fixpreis wird vor Beauftragung angezeigt.</p>
+                )}
               </React.Fragment>
             )}
             {frei && a.ergebnisse.length > 0 && (
@@ -633,6 +646,9 @@ function ShopSeite({ onNav }) {
   const [toast, setToast] = React.useState(null);
   const [auftrag, setAuftrag] = React.useState(null);
   const [kat, setKat] = React.useState("start");
+  /* Muss VOR den early-returns stehen (Hooks-Reihenfolge), sonst crasht der
+     Wechsel in Konfigurator oder Auftrags-Detail. */
+  const [shopObj, setShopObj] = React.useState("schoenbrunn");
   const add = (item) => {
     setCart((c) => [...c, item]);
     setKonfig(null);
@@ -690,7 +706,6 @@ function ShopSeite({ onNav }) {
       { t: "Faltmappe 25 Stk.", p: 249, lief: "Do 21.08.", warum: "Für Akquise-Termine", print: "faltmappe", con: null },
     ],
   };
-  const [shopObj, setShopObj] = React.useState("schoenbrunn");
   const empf = EMPFEHLUNG[shopObj] || EMPFEHLUNG.ohne;
   const objName = (SHOP_OBJEKTE.find(([id]) => id === shopObj) || [])[1];
 
@@ -1103,4 +1118,92 @@ function ShopSeite({ onNav }) {
   );
 }
 
-Object.assign(window, { ShopSeite });
+/* ===== Vermarktungs-Panel: die Bruecke zwischen Objektverwaltung und Shop.
+   Research-Prinzipien: Auftragsstand in null Taps (Domino's), das Objekt ist
+   der Einstieg (v2), Empfehlungen aus dem Objektzustand mit Fixpreis und
+   Lieferdatum (Baymard). Zwei Varianten: Uebersicht (alle Objekte) und
+   Akte (ein Objekt, mit Empfehlungen). */
+const PANEL_EMPFEHLUNG = {
+  albrecht: [
+    { t: "Drohnenaufnahmen", p: 455, lief: "Termin in 4 Tagen", warum: "Garten und Lage wirken aus der Luft" },
+    { t: "Objekt-Kampagne 14 Tage", p: 390, lief: "Start morgen", warum: "Nachfrage 94, aber erst 1 Anbot" },
+  ],
+  standard: [
+    { t: "Fotoshooting", p: 249, lief: "Termin in 3 Tagen", warum: "Professionelle Fotos fehlen" },
+    { t: "Exposé-Paket", p: 189, lief: "Do 21.08.", warum: "Für Portale und Print" },
+  ],
+};
+
+function MkVermarktungsPanel({ uebersicht, objekt, onNav, onAnlegen }) {
+  const zumShop = () => onNav && onNav("marketing");
+  const laufend = uebersicht
+    ? AUFTRAEGE.filter((a) => a.step < 4)
+    : AUFTRAEGE.filter((a) => a.step < 4 && objekt && a.objekt.toLowerCase().includes(String(objekt).toLowerCase()));
+  /* Uebersicht: der eine wirksamste Vorschlag je Objekt (aus dem Objektzustand),
+     Akte: zwei Empfehlungen fuer genau dieses Objekt. */
+  const empf = uebersicht
+    ? [
+        { t: "Fotoshooting · Schönbrunn-Blick", p: 249, lief: "Termin in 3 Tagen", warum: "Nur 8 Fotos, Nachfrage fällt" },
+        { t: "Objekt-Kampagne · Das Albrecht", p: 390, lief: "Start morgen", warum: "Nachfrage 94, aber erst 1 Anbot" },
+      ]
+    : PANEL_EMPFEHLUNG[(objekt || "").toLowerCase().includes("albrecht") ? "albrecht" : "standard"];
+  const pill = (a) => {
+    const hot = a.status.includes("Ergebnis") || a.status.includes("Termin offen");
+    return <span className="mk-pill" style={hot ? { color: "var(--signal-deep)", borderColor: "rgba(255,170,9,.4)", background: "rgba(255,170,9,.13)" } : {}}>{AUFTRAG_STEPS[a.step].toUpperCase()} · {a.status.toUpperCase()}</span>;
+  };
+  if (uebersicht && laufend.length === 0) return null;
+  return (
+    <div style={{ background: "#FFFFFF", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "20px 22px", margin: uebersicht ? "18px 0 20px" : "14px 0 0" }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div>
+          <h3 style={{ margin: 0, font: "500 15.5px var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{uebersicht ? "Vermarktung läuft" : "Vermarktung für dieses Objekt"}</h3>
+          <p style={{ margin: "5px 0 0", font: "400 12.5px var(--font-display)", color: "var(--text-muted)" }}>{uebersicht ? laufend.length + " Aufträge aktiv · Ergebnisse landen automatisch in der Mediathek" : "Laufende Aufträge und was als Nächstes wirkt"}</p>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {uebersicht && onAnlegen && <button onClick={onAnlegen} className="mk-btn" style={{ padding: "9px 16px", fontSize: 12.5 }}>+ Immobilie anlegen</button>}
+          <button onClick={zumShop} className="mk-btn ghost" style={{ padding: "9px 16px", fontSize: 12.5 }}>Zum Shop</button>
+        </div>
+      </div>
+      {laufend.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          {laufend.slice(0, 3).map((a, i) => (
+            <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderTop: i > 0 ? "1px solid var(--hairline-dark)" : "none", flexWrap: "wrap" }}>
+              <div style={{ flex: "1 1 220px", minWidth: 0 }}>
+                <span style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)" }}>{a.name}</span>
+                <span style={{ font: "400 12.5px var(--font-display)", color: "var(--text-muted)", marginLeft: 8 }}>{a.objekt}</span>
+              </div>
+              {pill(a)}
+              {a.status.includes("Ergebnis") && <button onClick={zumShop} className="mk-btn" style={{ padding: "8px 14px", fontSize: 12 }}>Ergebnis prüfen</button>}
+              {a.status.includes("Termin offen") && <button onClick={zumShop} className="mk-btn ghost" style={{ padding: "8px 14px", fontSize: 12 }}>Termin wählen</button>}
+            </div>
+          ))}
+        </div>
+      )}
+      {!uebersicht && laufend.length === 0 && (
+        <p style={{ margin: "12px 0 0", font: "400 13px var(--font-display)", color: "var(--text-muted)" }}>Kein laufender Auftrag für dieses Objekt.</p>
+      )}
+      {empf.length > 0 && (
+        <React.Fragment>
+          <div className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)", margin: "16px 0 10px" }}>{uebersicht ? "NÄCHSTER HEBEL · AUS DEM OBJEKTZUSTAND" : "FÜR DIESES OBJEKT EMPFOHLEN"}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 10 }}>
+            {empf.map((e) => (
+              <div key={e.t} style={{ background: "var(--paper-2)", borderRadius: 12, padding: "13px 15px", display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "baseline" }}>
+                  <span style={{ font: "500 14px var(--font-display)", color: "var(--ink)" }}>{e.t}</span>
+                  <span style={{ font: "500 13px var(--font-display)", color: "var(--ink)", whiteSpace: "nowrap" }}>{eurS(e.p)}</span>
+                </div>
+                <span style={{ font: "400 12px var(--font-display)", color: "var(--text-muted)" }}>{e.warum}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginTop: 6 }}>
+                  <span className="u-label" style={{ fontSize: 8, color: "var(--text-muted)" }}>{e.lief.toUpperCase()} · INKL. LIEFERUNG</span>
+                  <button onClick={zumShop} className="mk-btn" style={{ padding: "7px 14px", fontSize: 12 }}>Buchen</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+Object.assign(window, { ShopSeite, MkVermarktungsPanel });

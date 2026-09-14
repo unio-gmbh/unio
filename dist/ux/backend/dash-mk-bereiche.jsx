@@ -141,7 +141,20 @@ function MkMedien({ geheZu, onNav }) {
 
 /* ---------- Objekte-Bereich mit Sub-Navigation ---------- */
 function MkObjekte({ geheZu, onNav }) {
-  const [tab, setTab] = React.useState("immobilien");
+  /* "Immobilie anlegen" springt direkt in den Wizard: Flag beim Mount,
+     Event wenn die Seite schon offen ist. */
+  const [tab, setTab] = React.useState(() => {
+    try {
+      const z = sessionStorage.getItem("unio_mk_ziel_tab");
+      if (z) { sessionStorage.removeItem("unio_mk_ziel_tab"); return z; }
+    } catch (e) {}
+    return "immobilien";
+  });
+  React.useEffect(() => {
+    const f = (e) => { if (e.detail) { setTab(e.detail); try { sessionStorage.removeItem("unio_mk_ziel_tab"); } catch (err) {} window.scrollTo(0, 0); } };
+    window.addEventListener("unio-objekte-tab", f);
+    return () => window.removeEventListener("unio-objekte-tab", f);
+  }, []);
   const [portale, setPortale] = React.useState(MK_PORTAL_OBJ);
   const fehler = portale.filter((o) => o.status.includes("fehler")).length;
   return (
@@ -152,6 +165,8 @@ function MkObjekte({ geheZu, onNav }) {
         ["portale", "Portale", fehler > 0 ? fehler + " ⚠" : null],
         ["medien", "Medien", null],
       ]} />
+      {/* Vermarktung lebt auf Objekt-/Projektebene und im Anlege-Abschluss,
+          nicht in der Uebersicht (eine Ebene, ein Job). */}
       {tab === "immobilien" && <window.ImmoUebersicht onNav={onNav} />}
       {tab === "anlage" && <window.AnlageWizard onNav={onNav} />}
       {tab === "portale" && <MkPortale geheZu={geheZu} daten={portale} setDaten={setPortale} />}

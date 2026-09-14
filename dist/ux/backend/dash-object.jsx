@@ -9,7 +9,9 @@ const GAL = [
   { typ: "tour", embed: "about:blank", poster: "/assets/img/int-kitchen.jpg" },
   "/assets/img/albrecht-dusk.jpg", "/assets/img/beheim.jpg", "/assets/img/int-bath.jpg", "/assets/img/int-kitchen.jpg",
 ];
-const FACTS = [["Bauträger", "neopartement VI"], ["Architekt", "Dipl.-Ing. Paul Prinz"], ["Preis von", "€ 279.000"], ["Preis bis", "€ 1.599.000"], ["Fläche gesamt", "857 m²"]];
+/* Fakten eines EINZELOBJEKTS: das Projekt-Pendant (Bauträger, Preisspanne,
+   Einheiten) lebt in der Projektseite, nie hier. */
+const FACTS = [["Zimmer", "4"], ["Terrassen", "51 m²"], ["Baujahr / saniert", "1902 / 2021"], ["HWB", "42 kWh/m²a · B"], ["Verfügbar ab", "11.05.2026"]];
 const UNITS = [
   ["Top 1", "€ 279.000", "50 m²", 2, 100, "Aktiv"], ["Top 2", "€ 399.000", "74 m²", 4, 100, "Aktiv"],
   ["Top 3", "€ 539.000", "100 m²", 4, 100, "Reserviert"], ["Top 4", "€ 399.000", "75 m²", 3, 66, "Aktiv"],
@@ -134,6 +136,45 @@ function MkAkteBloecke() {
   );
 }
 
+/* Vorzeige-Modus: der definierte Zustand zwischen Arbeiten und Zeigen.
+   Das Geraet wird zum Kunden gedreht, deshalb rendert der Modus die ECHTE
+   Endkundenseite als Vollbild (Whitelist by design: kein Backend-DOM, keine
+   Provision, keine Scores, keine Notizen). Ausstieg nur bewusst: zwei Taps. */
+function VorzeigeModus({ onEnde }) {
+  const [frage, setFrage] = React.useState(false);
+  React.useEffect(() => {
+    if (!frage) return;
+    const t = setTimeout(() => setFrage(false), 5000);
+    return () => clearTimeout(t);
+  }, [frage]);
+  /* Escape beendet direkt (Desktop); der Chip ist der Hauptweg und traegt
+     seinen Ausgang sichtbar im Namen, die Bestaetigung ist der zweite Tap. */
+  React.useEffect(() => {
+    const f = (e) => { if (e.key === "Escape") onEnde(); };
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  }, []);
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "var(--paper)" }}>
+      <iframe src="/ux/objekt?embed=1&von=makler&obj=beheim" title="Vorzeige-Modus: Kundenansicht"
+        style={{ display: "block", width: "100%", height: "100%", border: "none" }} />
+      {frage ? (
+        <div style={{ position: "fixed", left: 14, bottom: 14, zIndex: 2, display: "flex", gap: 8 }}>
+          <button onClick={onEnde} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 18px", background: "var(--ink)", color: "#F7F5F1", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Ja, beenden</button>
+          <button onClick={() => setFrage(false)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 18px", background: "rgba(20,18,16,.55)", color: "#F7F5F1", font: "500 13px var(--font-display)", fontFamily: "inherit", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>Weiter zeigen</button>
+        </div>
+      ) : (
+        <button onClick={() => setFrage(true)}
+          style={{ position: "fixed", left: 14, bottom: 14, zIndex: 2, border: "none", cursor: "pointer", borderRadius: 999,
+            padding: "11px 16px", background: "rgba(20,18,16,.55)", color: "#F7F5F1",
+            font: "500 12.5px var(--font-display)", fontFamily: "inherit", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}>
+          ✕ Vorzeige-Modus beenden
+        </button>
+      )}
+    </div>
+  );
+}
+
 function DashObject({ onNav }) {
   const [tab, setTab] = React.useState("daten");
   const [g, setG] = React.useState(0);
@@ -170,41 +211,45 @@ function DashObject({ onNav }) {
             <div style={{ flex: "1 1 320px", minWidth: 0 }}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <OChip tone="pos"><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Status: Aktiv</OChip>
-                <OChip tone="warn">In Planung</OChip><OChip>Wohnbau</OChip>
+                <OChip>Einzelobjekt</OChip><OChip>Penthouse</OChip>
               </div>
-              <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Albrechts Townhouses</h1>
-              <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)" }}>◎ Stockerauer Straße 53, 2100 Korneuburg</p>
-              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 520 }}>Neubauprojekt mit Dachgeschoßwohnungen und Reihenhäusern: hochwertige Ausstattung, Gärten, Terrassen und optionalen Stellplätzen.</p>
+              <h1 style={{ margin: "20px 0 0", font: "500 clamp(30px, 3vw, 46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Penthouse Beheim</h1>
+              <p style={{ margin: "14px 0 0", font: "400 15px var(--font-display)", color: "var(--text-muted)" }}>◎ Beheimgasse, 1170 Wien</p>
+              <p style={{ margin: "18px 0 0", font: "400 15px/1.6 var(--font-display)", color: "var(--text-body)", maxWidth: 520 }}>Dachgeschoß-Penthouse mit Kamin, zwei Terrassen und unverbaubarem Blick auf Kahlenberg und Stephansdom, inklusive direktem Liftzugang.</p>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, flex: "1 1 312px", minWidth: 0 }}>
               <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minWidth: 0, flex: "1 1 104px" }}>
-                <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>Einheiten</div>
-                <div style={{ font: "500 36px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>10</div>
+                <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>Wohnfläche</div>
+                <div style={{ font: "500 36px/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>138 m²</div>
               </div>
               <div style={{ borderRadius: 12, padding: "20px clamp(14px, 3.5vw, 24px)", background: "var(--signal-soft)", boxShadow: "inset 0 0 0 1px rgba(255,170,9,0.3)", minWidth: 0, flex: "1 1 160px" }}>
-                <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>Preisspanne</div>
-                <div style={{ font: "500 clamp(17px, 4.6vw, 22px)/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 279k bis 1,6 Mio.</div>
+                <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>Kaufpreis</div>
+                <div style={{ font: "500 clamp(17px, 4.6vw, 22px)/1.2 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 12 }}>€ 1.700.000</div>
               </div>
             </div>
           </div>
         </OCard>
       </ORv>
 
+      {/* Bruecke zum Shop: laufende Auftraege und Empfehlungen direkt am Objekt
+          (Auftragsstand in null Taps, Empfehlungen aus dem Objektzustand). */}
+      {window.MkVermarktungsPanel && <ORv delay={80}><window.MkVermarktungsPanel objekt="Albrecht" onNav={onNav} /></ORv>}
+
       <MkAkteBloecke />
       {/* Lage-Bewertung sieht der Makler auch (Verkaufsargument). Der Concierge
-          gehoert dagegen in die Endkunden-Ansicht, nicht ins Backend. */}
+          gehoert dagegen in die Endkunden-Ansicht, nicht ins Backend.
+          Ohne datenId zeigt MkLage die 1170-Hernals-Daten, passend zur Beheimgasse. */}
       <div style={{ maxWidth: 1360, margin: "0 auto", display: "grid", gap: 14, padding: "14px 0 0" }} className="mk-detailzone">
-        <window.MkLage exakt datenId="korneuburg" />
+        <window.MkLage exakt />
       </div>
-      <window.ProjektBanner onNav={onNav} />
-      <div style={{ margin: "28px 0 24px" }}><OTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 5], ["export", "Plattform Export"], ["abschluss", "Abschluss"], ["aktivitaet", "Aktivität"], ["ki", "KI-Analyse"]]} active={tab} onPick={setTab} /></div>
+      {/* Kein Eintrag ohne vollwertigen Screen: die leeren Tabs Abschluss und
+          KI-Analyse sind gestrichen, bis es sie wirklich gibt. */}
+      <div style={{ margin: "28px 0 24px" }}><OTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 5], ["export", "Plattform Export"], ["aktivitaet", "Aktivität"]]} active={tab} onPick={setTab} /></div>
 
-      {tab === "daten" && <DatenTab />}
+      {tab === "daten" && <DatenTab onNav={onNav} />}
       {tab === "interessenten" && <window.InteressentenFunnelTab />}
       {tab === "export" && <window.PlattformExportTab />}
-      {tab === "abschluss" && <window.BlankTab label="Abschluss" />}
       {tab === "aktivitaet" && <window.AktivitaetTab />}
-      {tab === "ki" && <window.BlankTab label="KI-Analyse" />}
       </React.Fragment>
       )}
     </div>
@@ -218,13 +263,21 @@ function EndkundenVorschau() {
   /* Feste Rahmenhöhe mit eigenem Scrollen. Wichtig: ein mitwachsender Rahmen
      scrollt nie in sich, dadurch greifen im Inneren weder position:fixed
      (Galerie-Lightbox) noch position:sticky (Preis-Spalte). Der Rahmen ist also
-     absichtlich ein eigenes Fenster und keine endlose Fläche. */
+     absichtlich ein eigenes Fenster und keine endlose Fläche.
+     Vorzeigen lebt HIER statt als eigener Kopf-Button: erst die Ansicht
+     wechseln, dann entscheiden, ob man sie dem Kunden uebergibt. */
+  const [vorzeigen, setVorzeigen] = React.useState(false);
   return (
     <div style={{ marginTop: 18 }}>
+      {vorzeigen && <VorzeigeModus onEnde={() => setVorzeigen(false)} />}
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
         <span className="mk-pill ok">Live-Vorschau</span>
         <span className="mk-mono">Genau diese Seite sehen Interessenten · unio.at/objekt</span>
-        <a className="mk-btn ghost tiny" href="/ux/objekt" target="_blank" rel="noreferrer" style={{ marginLeft: "auto", textDecoration: "none" }}>In neuem Tab öffnen</a>
+        <button onClick={() => setVorzeigen(true)} title="Vollbild ohne Backend: zum Herzeigen beim Kunden, keine internen Daten sichtbar"
+          className="mk-btn tiny" style={{ marginLeft: "auto", background: "var(--signal)", color: "#1A1305" }}>Im Vollbild vorzeigen</button>
+        {/* Selten-Aktion als Icon statt zweitem Textbutton (eine Primaeraktion pro Zeile) */}
+        <a href="/ux/objekt" target="_blank" rel="noreferrer" title="In neuem Tab öffnen" aria-label="In neuem Tab öffnen"
+          style={{ width: 34, height: 34, borderRadius: 99, background: "#FFFFFF", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", display: "inline-flex", alignItems: "center", justifyContent: "center", color: "var(--ink-2)", textDecoration: "none", flex: "none" }}><window.Icon name="ext" size={14} /></a>
       </div>
       <div style={{ borderRadius: 18, overflow: "hidden", background: "var(--paper)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
         <iframe src="/ux/objekt?embed=1&von=makler&obj=beheim" title="Endkunden-Ansicht des Objekts"
@@ -460,7 +513,8 @@ function ExposePublicOLD() {
   );
 }
 
-function DatenTab() {
+function DatenTab({ onNav }) {
+  const [wandeln, setWandeln] = React.useState(false);
   return (
     <React.Fragment>
       {/* Faktenreihe: bricht selbst um, statt fuenf Spalten auf 60 px zu quetschen */}
@@ -473,60 +527,30 @@ function DatenTab() {
         ))}
       </div>
 
-      {/* Einheiten-Profil (v2.2 §3) */}
+      {/* Einzelobjekt zu Projekt: die Bearbeiten-Option, wenn aus einer Villa
+          oder Wohnung ein Vorhaben mit mehreren Einheiten wird. */}
       <ORv style={{ marginTop: 20 }}>
-        <OCard>
-          <OHead label="Einheiten-Profil" title="Wo die Einheiten im Projekt liegen" right={<OChip>10 Einheiten</OChip>} />
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "0 48px" }}>
-            <window.Ruler label="Preisspanne" value="€ 539k" poleL="€ 279k" poleR="€ 1,6 Mio" pos={34} note="Median bei € 539.000, 4 Einheiten unter € 400.000." />
-            <window.Ruler label="Fläche je Zimmer" value="24 m²" poleL="Kompakt" poleR="Großzügig" pos={58} note="Durchschnittlich 24 m² je Zimmer — leicht über Neubauschnitt." />
-          </div>
-          <div style={{ marginTop: 18, paddingTop: 20, borderTop: "1px solid var(--hairline-dark)" }}>
-            <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5, marginBottom: 12 }}>Vermarktungsstand</div>
-            <div style={{ display: "flex", gap: 3 }}>
-              {UNITS.map((u, i) => {
-                const c = u[5] === "Reserviert" ? "#F0873F" : "color-mix(in oklch, var(--signal) 55%, #E2DCCF)";
-                return <span key={i} style={{ flex: 1, height: 12, borderRadius: 3, background: c }}></span>;
-              })}
+        <OCard pad={22}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+              <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 8.5 }}>EINZELOBJEKT</div>
+              <div style={{ font: "500 15.5px var(--font-display)", color: "var(--ink)", marginTop: 8 }}>Aus diesem Objekt ein Projekt machen</div>
+              <p style={{ margin: "6px 0 0", font: "400 13px/1.55 var(--font-display)", color: "var(--text-muted)" }}>
+                {wandeln
+                  ? "Umwandlung vorbereitet: Einheiten kommen per Preisliste oder CSV dazu, Galerie, Unterlagen und Lage werden übernommen."
+                  : "Fürs Aufteilen in mehrere Einheiten (Dachausbau, Parifizierung, Abverkauf): Einheitenverwaltung, Preisliste und Projektmarke kommen dazu."}
+              </p>
             </div>
-            <div style={{ display: "flex", gap: 20, marginTop: 12 }}>
-              {[["Verkauft", "var(--signal)"], ["Reserviert", "#F0873F"], ["Aktiv", "color-mix(in oklch, var(--signal) 55%, #E2DCCF)"]].map(([n, c]) => (
-                <span key={n} className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: c }}></span>{n}</span>
-              ))}
-            </div>
+            {wandeln
+              ? <button onClick={() => onNav && onNav("projekt")} className="mk-btn" style={{ flex: "none" }}>Zur Projektansicht</button>
+              : <button onClick={() => setWandeln(true)} className="mk-btn ghost" style={{ flex: "none" }}>In Projekt umwandeln</button>}
           </div>
         </OCard>
       </ORv>
 
-      {/* Einheiten-Tabelle */}
-      <ORv style={{ marginTop: 20 }}>
-        <OCard pad={0}>
-          <div style={{ padding: "24px 26px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <OHead title="Einheiten" right={null} />
-            <OChip>10 Einheiten</OChip>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 0.7fr 1.2fr 0.9fr", padding: "0 26px 12px", borderBottom: "1px solid var(--hairline-dark)" }}>
-            {["Top / Titel", "Preis", "Fläche", "Zimmer", "Fortschritt", "Status"].map((h) => <span key={h} className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{h}</span>)}
-          </div>
-          {UNITS.map((u, i) => <UnitRow key={u[0]} u={u} i={i} last={i === UNITS.length - 1} />)}
-        </OCard>
-      </ORv>
-
-      {/* Umgebung */}
-      <ORv style={{ marginTop: 20 }}>
-        <OCard>
-          <OHead label="Umgebung" title="Projektumgebung im Überblick" right={<OChip>20 POIs</OChip>} />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 0 }}>
-            {POI.map(([k, v, s], i) => (
-              <div key={k} style={{ padding: "8px 24px", borderLeft: i ? "1px solid var(--hairline-dark)" : "none" }}>
-                <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{k}</div>
-                <div style={{ font: "500 clamp(30px,3vw,44px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>{v}</div>
-                <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8, marginTop: 10 }}>{s}</div>
-              </div>
-            ))}
-          </div>
-        </OCard>
-      </ORv>
+      {/* Einheiten-Profil, Einheiten-Tabelle und Umgebungs-Kacheln sind
+          Projekt-Inhalte: sie leben in der Projektseite. Die Lage steht hier
+          bereits vollstaendig ueber den Tabs (MkLage). */}
     </React.Fragment>
   );
 }

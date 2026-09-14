@@ -41,13 +41,16 @@ const MK_GAL_CSS = `
     .mkg-nav{display:none;}
     .mkg-hero{border-radius:14px;}
   }
-  /* Video- und Tour-Slides: Poster mit Play-Flaeche, iframe erst auf Klick */
+  /* Video- und Tour-Slides: Video laeuft als stiller Ambient-Loop an Position 1,
+     Ton und Controls erst auf Tipp; Tour-iframe erst auf Klick */
   .mkg-play{position:absolute;inset:0;width:100%;height:100%;border:none;padding:0;cursor:pointer;background:#0B0B0C;}
   .mkg-play img{width:100%;height:100%;object-fit:cover;opacity:.82;}
+  .mkg-play video{width:100%;height:100%;object-fit:cover;display:block;}
   .mkg-play .knopf{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;
     border-radius:99px;background:rgba(247,245,241,.94);color:var(--ink);display:grid;place-items:center;font-size:20px;
     box-shadow:0 10px 30px -10px rgba(11,10,9,.6);}
-  .mkg-play .label{position:absolute;left:12px;bottom:12px;background:rgba(11,10,9,.68);color:#F7F5F1;
+  /* Label oben links: unten links liegt der Alle-Fotos-Button (keine Ueberlagerung) */
+  .mkg-play .label{position:absolute;left:12px;top:12px;background:rgba(11,10,9,.68);color:#F7F5F1;
     border-radius:99px;padding:6px 12px;font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.1em;
     text-transform:uppercase;backdrop-filter:blur(8px);}
   .mkg-play.tour .knopf{background:var(--signal);color:#1A1305;}
@@ -97,7 +100,8 @@ const MK_GAL_CSS = `
 
 /* Medien-Slides koennen Bilder, Video oder 360-Tour sein:
    { typ:"video", src, poster, dauer } oder { typ:"tour", embed, poster }.
-   Regeln: Video nie Slide 1 (LCP), kein Autoplay mit Ton, Tour-iframe erst auf Klick. */
+   Regeln: ein hinterlegtes Video steht an Position 1 und laeuft als Loop ohne
+   Ton (Ambient); Ton und Controls erst auf Tipp. Tour-iframe erst auf Klick. */
 function MkMedienSlide({ m, aktiv }) {
   const [laeuft, setLaeuft] = React.useState(false);
   React.useEffect(() => { if (!aktiv) setLaeuft(false); }, [aktiv]);
@@ -105,10 +109,9 @@ function MkMedienSlide({ m, aktiv }) {
     return laeuft
       ? <video src={m.src} poster={m.poster} controls autoPlay playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", background: "#0B0B0C" }} />
       : (
-        <button className="mkg-play" onClick={() => setLaeuft(true)} aria-label="Video abspielen">
-          <img src={m.poster} alt="" />
-          <span className="knopf">▶</span>
-          <span className="label">Video · {m.dauer}</span>
+        <button className="mkg-play" onClick={() => setLaeuft(true)} aria-label="Video mit Ton abspielen">
+          <video src={m.src} poster={m.poster} muted loop autoPlay playsInline />
+          <span className="label">Video · {m.dauer} · Tippen für Ton</span>
         </button>
       );
   }
@@ -127,7 +130,18 @@ function MkMedienSlide({ m, aktiv }) {
   return null;
 }
 
+/* Ambient-Regel: falls ein Video hinterlegt ist, wandert es an Position 1 */
+function mkAmbientSortiert(bilder) {
+  const vi = bilder.findIndex((b) => typeof b === "object" && b && b.typ === "video");
+  if (vi <= 0) return bilder;
+  const kopie = [...bilder];
+  const [v] = kopie.splice(vi, 1);
+  kopie.unshift(v);
+  return kopie;
+}
+
 function MkGalerie({ bilder, alle, hoehe, cover }) {
+  bilder = mkAmbientSortiert(bilder);
   const [i, setI] = React.useState(0);
   const [lb, setLb] = React.useState(false);
   const [gridAuf, setGridAuf] = React.useState(false);

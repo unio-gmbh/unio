@@ -78,7 +78,7 @@ function BtProjektCard({ p, on, onPick }) {
 /* ===== Übersicht ===== */
 function BtKpiRow() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))", gap: 18 }}>
       {BT_KPI.map((k, i) => (
         <BRv key={k.sub} delay={i * 50}><BCard pad={22}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -241,7 +241,9 @@ function BtQuellen() {
   return (
     <BCard pad={28}>
       <BHead title="Quellenqualität" sub="Wie gut konvertieren Leads je Quelle." />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 60px 110px 90px", gap: "0 16px", alignItems: "center", marginTop: 20, font: "400 12px var(--font-display)" }}>
+      {/* Vergleichstabelle: mobil im eigenen Scroll-Container (v2-Regel) */}
+      <div style={{ overflowX: "auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 60px 110px 90px", gap: "0 16px", alignItems: "center", marginTop: 20, font: "400 12px var(--font-display)", minWidth: 420 }}>
         {["Quelle", "Leads", "Ergebnis", "Qual.-Rate"].map((h, i) => <span key={h} className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", paddingBottom: 12, textAlign: i > 0 ? "right" : "left" }}>{h}</span>)}
         {BT_SOURCES.map(([l, n, , c, q], i) => (
           <React.Fragment key={l}>
@@ -251,6 +253,7 @@ function BtQuellen() {
             <span style={{ padding: "12px 0", borderTop: "1px solid var(--hairline-dark)", textAlign: "right", font: "500 12.5px var(--font-mono)", color: q >= 30 ? "var(--signal-deep)" : "var(--ink-2)" }}>{q} %</span>
           </React.Fragment>
         ))}
+      </div>
       </div>
     </BCard>
   );
@@ -303,15 +306,76 @@ function BtEinheiten() {
   );
 }
 
+/* Entscheider-Karte: maximal eine offene Entscheidung, genau zwei Wege.
+   Ersetzt zusammen mit dem Wochen-Digest den frueheren Berichte-Tab. */
+function BtEntscheidung() {
+  const [zu, setZu] = React.useState(null);
+  if (zu) return (
+    <BCard pad={22}>
+      <span className="u-label" style={{ fontSize: 8.5, color: "#2E7D46" }}>ENTSCHIEDEN</span>
+      <p style={{ margin: "10px 0 0", font: "400 14px/1.55 var(--font-display)", color: "var(--ink-2)" }}>{zu === "frei" ? "Preisband für Top 7 und Top 8 ist freigegeben. Die Exposés und Portale aktualisieren sich automatisch." : "Dein Makler meldet sich heute zur Preisband-Abstimmung."}</p>
+    </BCard>
+  );
+  return (
+    <BCard pad={22}>
+      <span className="u-label" style={{ fontSize: 8.5, color: "var(--signal-deep)" }}>EINE ENTSCHEIDUNG OFFEN</span>
+      <h3 style={{ margin: "10px 0 0", font: "500 18px/1.3 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>Preisband Top 7 und Top 8 anpassen?</h3>
+      <p style={{ margin: "8px 0 14px", font: "400 13.5px/1.55 var(--font-display)", color: "var(--text-muted)" }}>Beide Einheiten liegen 9 Wochen über der mittleren Vermarktungsdauer, die Anfragen je Woche fallen. Vorschlag aus den Marktdaten: minus 3,5 Prozent.</p>
+      <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
+        <button onClick={() => setZu("frei")} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 18px", background: "var(--ink)", color: "var(--paper)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Vorschlag freigeben</button>
+        <button onClick={() => setZu("makler")} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "11px 18px", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", color: "var(--ink)", font: "500 13px var(--font-display)", fontFamily: "inherit" }}>Mit Makler besprechen</button>
+      </div>
+    </BCard>
+  );
+}
+
+/* Wochen-Digest: das ehrliche Erbe des Berichte-Tabs. Automatisch erstellt,
+   gebaut zum Weiterleiten (Bank, Gesellschafter), eine Seite, nicht konfigurierbar. */
+function BtDigest() {
+  const [geteilt, setGeteilt] = React.useState(null);
+  const digests = [
+    { id: "kw37", label: "KW 37 · 08.09. bis 14.09.", kern: "18 Anfragen · 5 Besichtigungen · 1 Anbot" },
+    { id: "kw36", label: "KW 36 · 01.09. bis 07.09.", kern: "12 Anfragen · 3 Besichtigungen" },
+  ];
+  return (
+    <BCard pad={22}>
+      <BHead title="Wochen-Digest" sub="Automatisch jeden Montag · eine Seite · zum Weiterleiten an Bank und Gesellschafter." />
+      <div style={{ marginTop: 6 }}>
+        {digests.map((d, i) => (
+          <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 0", borderTop: i > 0 ? "1px solid var(--hairline-dark)" : "none", flexWrap: "wrap" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)" }}>{d.label}</div>
+              <div style={{ font: "400 12.5px var(--font-display)", color: "var(--text-muted)", marginTop: 3 }}>{d.kern}</div>
+            </div>
+            <button onClick={() => setGeteilt(d.id)} style={{ border: "none", cursor: "pointer", borderRadius: 999, padding: "8px 15px", background: geteilt === d.id ? "rgba(46,125,70,.1)" : "var(--paper-2)", boxShadow: geteilt === d.id ? "none" : "inset 0 0 0 1px var(--hairline-dark)", color: geteilt === d.id ? "#2E7D46" : "var(--ink)", font: "500 12px var(--font-display)", fontFamily: "inherit", flex: "none" }}>{geteilt === d.id ? "Link kopiert" : "Teilen"}</button>
+          </div>
+        ))}
+      </div>
+    </BCard>
+  );
+}
+
 function BtUebersicht() {
+  /* Mobil-Regeln: unter 860px fallen alle Reihen auf eine Spalte,
+     die 340px-Seitenspalte gibt es nur am Schreibtisch. */
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+      <style>{`
+        .bt-reihe{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;}
+        .bt-reihe.stretch{align-items:stretch;}
+        .bt-haupt{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start;}
+        @media (max-width:860px){ .bt-reihe,.bt-haupt{grid-template-columns:minmax(0,1fr);} }
+      `}</style>
+      <div className="bt-reihe stretch">
+        <BRv><BtEntscheidung /></BRv>
+        <BRv delay={60}><BtDigest /></BRv>
+      </div>
       <BRv><BtKpiRow /></BRv>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 22, alignItems: "start" }}>
+      <div className="bt-haupt">
         <BRv delay={60}><BtPipeline /></BRv>
         <BRv delay={120}><BtHandlungsbedarf /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
+      <div className="bt-reihe">
         <BRv><BCard pad={28}>
           <BHead title="Leads pro Woche" sub="Eingegangene Interessen der letzten 12 Wochen · laufende Woche gedämpft." right={<span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>331 gesamt</span>} />
           <div style={{ marginTop: 24 }}><BBars data={BT_WEEKS.data} height={150} /></div>
@@ -319,11 +383,11 @@ function BtUebersicht() {
         </BCard></BRv>
         <BRv delay={60}><BtHeatmap /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
+      <div className="bt-reihe">
         <BRv><BtDonut /></BRv>
         <BRv delay={60}><BtQuellen /></BRv>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 22, alignItems: "start" }}>
+      <div className="bt-reihe">
         <BRv><BtKampagnenBars /></BRv>
         <BRv delay={60}><BtEinheiten /></BRv>
       </div>
@@ -337,7 +401,9 @@ function BtLeads() {
   return (
     <BRv><BCard pad={28}>
       <BHead title="Leads" sub="331 Interessen · 297 Kontakte im Projekt." />
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 100px", gap: "0 16px", alignItems: "center", marginTop: 18 }}>
+      {/* Vergleichstabelle: mobil im eigenen Scroll-Container (v2-Regel) */}
+      <div style={{ overflowX: "auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 100px", gap: "0 16px", alignItems: "center", marginTop: 18, minWidth: 560 }}>
         {["Name", "Quelle", "Status", "Eingang"].map((h, i) => <span key={h} className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)", paddingBottom: 12, textAlign: i === 3 ? "right" : "left" }}>{h}</span>)}
         {BT_LEADS.map(([name, quelle, status, tage, hot]) => (
           <React.Fragment key={name}>
@@ -350,6 +416,7 @@ function BtLeads() {
             <span style={{ padding: "13px 0", borderTop: "1px solid var(--hairline-dark)", textAlign: "right", font: "500 12px var(--font-mono)", color: hot ? "var(--signal-deep)" : "var(--text-muted)" }}>{tage}</span>
           </React.Fragment>
         ))}
+      </div>
       </div>
     </BCard></BRv>
   );
@@ -420,14 +487,18 @@ function BtMarketing() {
         </div>
         <div style={{ font: "400 11.5px var(--font-display)", color: "var(--text-muted)", marginTop: 16 }}>Ausgaben (Balken) und Leads laut Meta (Linie) — getrennte Skalen, gemeinsamer Zeitverlauf.</div>
       </BCard></BRv>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 22, alignItems: "start" }}>
+      <div className="bt-haupt" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 340px", gap: 22, alignItems: "start" }}>
+        <style>{`@media (max-width:860px){ .bt-haupt{grid-template-columns:minmax(0,1fr) !important;} }`}</style>
         <BRv><BCard pad={28}>
           <BHead title="Kampagnen" sub="1 Kampagne im Zeitraum." />
-          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1.3fr repeat(6, .7fr)", gap: "0 14px", alignItems: "center", marginTop: 18, font: "400 12px var(--font-display)" }}>
+          {/* Vergleichstabelle: mobil im eigenen Scroll-Container (v2-Regel) */}
+          <div style={{ overflowX: "auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1.3fr repeat(6, .7fr)", gap: "0 14px", alignItems: "center", marginTop: 18, font: "400 12px var(--font-display)", minWidth: 720 }}>
             {["Kampagne", "Projekt", "Ausgaben", "Impressionen", "Klicks", "Leads", "Qualifiziert", "CPL"].map((h, i) => <span key={h} className="u-label" style={{ fontSize: 8, color: "var(--text-muted)", paddingBottom: 12, textAlign: i > 1 ? "right" : "left" }}>{h}</span>)}
             {[["2026_ADB_Maxing", "Bieterverfahren – Stilaltbau zu…", "€ 803,82", "84 434", "2 072", "91", "19", "€ 8,83"]].map((row) => row.map((cell, i) => (
               <span key={i} style={{ padding: "13px 0", borderTop: "1px solid var(--hairline-dark)", textAlign: i > 1 ? "right" : "left", font: i === 0 ? "500 12.5px var(--font-mono)" : i > 1 ? "500 13px var(--font-display)" : "400 12.5px var(--font-display)", color: i === 1 ? "var(--text-muted)" : "var(--ink)", fontVariantNumeric: "tabular-nums", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cell}</span>
             )))}
+          </div>
           </div>
           <div style={{ height: 4, width: 96, borderRadius: 999, background: "var(--signal)", marginTop: 4 }}></div>
         </BCard></BRv>
@@ -619,11 +690,27 @@ function BtBerichte() {
   );
 }
 
+/* Rollen-Spiegel: LENS liest dieselbe Quelle wie Endkunde und Makler
+   (unio_ek_beziehungen), aber strikt aggregiert und ohne Personendaten.
+   Ein Anbot des Endkunden erhoeht hier live den Zaehler. */
+function btAnboteLive() {
+  try {
+    const bez = JSON.parse(localStorage.getItem("unio_ek_beziehungen") || "{}");
+    return Object.values(bez).filter((b) => b && (b.zustand === "anbot_aktiv" || b.zustand === "gegenangebot")).length;
+  } catch (e) { return 0; }
+}
+
 function BautraegerHome() {
   const [proj, setProj] = React.useState("all");
   const [tab, setTab] = React.useState("uebersicht");
+  const [anbote, setAnbote] = React.useState(btAnboteLive);
+  React.useEffect(() => {
+    const f = () => setAnbote(btAnboteLive());
+    window.addEventListener("storage", f);
+    document.addEventListener("visibilitychange", f);
+    return () => { window.removeEventListener("storage", f); document.removeEventListener("visibilitychange", f); };
+  }, []);
   const { Tabs: BTabs } = window;
-  const neueBerichte = btBerichteLesen().filter((r) => !r.gelesen).length;
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto" }}>
       <BRv>
@@ -632,9 +719,10 @@ function BautraegerHome() {
             <h1 style={{ margin: 0, font: "500 clamp(34px,3.4vw,46px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)" }}>Dashboard</h1>
             <p style={{ margin: "14px 0 0", font: "400 14.5px/1.5 var(--font-display)", color: "var(--text-muted)", maxWidth: 480 }}>Wähle ein Projekt aus und sieh die dazugehörigen Kontakte und Interessen.</p>
           </div>
-          <div style={{ display: "flex", gap: 14 }}>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
             <BtMiniStat icon="stats" v="€ 1.448" sub="Ausgaben · 90 Tage" />
             <BtMiniStat icon="kalender" v="30" sub="Besichtigungen · 90 Tage" />
+            <BtMiniStat icon="angebote" v={String(2 + anbote)} sub="Anbote aktiv · live" />
           </div>
         </div>
       </BRv>
@@ -645,14 +733,14 @@ function BautraegerHome() {
       </BRv>
       <BRv delay={100}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 18, margin: "30px 0 26px", flexWrap: "wrap" }}>
-          <BTabs items={[["uebersicht", "Übersicht"], ["leads", "Leads"], ["marketing", "Marketing"], ["berichte", "Berichte", neueBerichte || undefined]]} active={tab} onPick={setTab} />
+          {/* Berichte-Tab entfaellt: Antworten liefert die Uebersicht live, das Weiterleiten der Wochen-Digest */}
+          <BTabs items={[["uebersicht", "Übersicht"], ["leads", "Leads"], ["marketing", "Marketing"]]} active={tab} onPick={setTab} />
           <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)" }}>297 Kontakte / 331 Interessen</span>
         </div>
       </BRv>
       {tab === "uebersicht" && <BtUebersicht />}
       {tab === "leads" && <BtLeads />}
       {tab === "marketing" && <BtMarketing />}
-      {tab === "berichte" && <BtBerichte />}
     </div>
   );
 }

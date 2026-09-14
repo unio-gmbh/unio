@@ -99,6 +99,9 @@ function ProjektView({ onNav }) {
         </div>
       </PjRev>
 
+      {/* Bruecke zum Shop: laufende Auftraege und Empfehlungen direkt am Projekt */}
+      {window.MkVermarktungsPanel && <PjRev delay={60}><window.MkVermarktungsPanel objekt="Albrecht" onNav={onNav} /></PjRev>}
+
       <div style={{ margin: "28px 0 24px" }}><PjTabs items={[["daten", "Daten"], ["interessenten", "Interessenten", 127], ["export", "Plattform Export"]]} active={tab} onPick={setTab} /></div>
 
       {tab === "daten" && (
@@ -148,22 +151,8 @@ function ProjektView({ onNav }) {
               );
             })()}
           </PjRev>
-          {/* Umgebung */}
-          <PjRev style={{ marginTop: 20 }}>
-            <div style={{ background: "#FFFFFF", borderRadius: 14, padding: 30, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-              <div className="u-label" style={{ color: "var(--signal-deep)", fontSize: 9 }}>Umgebung</div>
-              <div style={{ font: "500 19px var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", margin: "10px 0 24px" }}>Projektumgebung im Überblick</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
-                {PJ_POI.map(([k, v, s], i) => (
-                  <div key={k} style={{ padding: "8px 24px", borderLeft: i ? "1px solid var(--hairline-dark)" : "none" }}>
-                    <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8.5 }}>{k}</div>
-                    <div style={{ font: "500 clamp(30px,3vw,44px)/1 var(--font-display)", letterSpacing: "-0.03em", color: "var(--ink)", marginTop: 12 }}>{v}</div>
-                    <div className="u-label" style={{ color: "var(--text-muted)", fontSize: 8, marginTop: 10 }}>{s}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </PjRev>
+          {/* Der fruehere Umgebungs-Kachelblock (Walk Score usw.) ist gestrichen:
+              die vollstaendige Lage-Sektion (MkLage) direkt darunter deckt das ab. */}
         </React.Fragment>
       )}
 

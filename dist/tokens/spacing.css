@@ -13,4 +13,20 @@
 
   --container: 1320px;
   --gutter: 24px;
+
+  /* Konzentrische Radien: innerer Radius = aeusserer Radius minus Abstand.
+     Verschachtelte Container (Bild in Karte, Chip in Fenster) nutzen die Formel
+     statt frei gewaehlter Werte. */
+  --r-l: 20px;
+  --r-m: 14px;
+  --pad-card: 24px;
+  --r-innen-l: calc(var(--r-l) - 12px);
+  --r-innen-m: calc(var(--r-m) - 8px);
+
+  /* Dichte: skaliert Listen und Karten ueber EINE Variable (kompakt: 0.85),
+     nie ueber Layout-Varianten. Listenzeile mit Bild min. 64px, Gruppenabstand
+     doppelt so gross wie Zeilenabstand. */
+  --dichte: 1;
+  --zeile-min: calc(64px * var(--dichte));
+  --pad-liste: calc(14px * var(--dichte));
 }
