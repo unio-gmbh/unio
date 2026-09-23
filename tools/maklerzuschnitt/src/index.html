@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNIO Makler-Zuschnitt</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+@font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_400%%) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_500%%) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url(data:font/woff2;base64,%%JB%%) format("woff2"); font-weight: 300 700; font-display: swap; }
+
+:root {
+  --paper: #F7F5F1; --paper-2: #F0EDE6; --paper-3: #E7E2D8;
+  --ink: #0B0A09; --ink-2: #1B1A16; --ink-3: #383429;
+  --signal: #FFAA09; --signal-deep: #B87400; --signal-press: #E69600; --signal-soft: rgba(255,170,9,.16); --on-signal: #1A1305;
+  --steel: #D1D3D5;
+  --text-muted: rgba(27,26,22,.6);
+  --surface-raised: #FDFCFA;
+  --hairline-dark: rgba(11,10,9,.14);
+  --shadow-soft: 0 30px 80px -20px rgba(12,11,9,.35);
+  --shadow-float: 0 12px 44px -14px rgba(12,11,9,.28);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  --ease-unio: cubic-bezier(0.32, 0.72, 0, 1);
+  --display: "Power Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--paper); color: var(--ink-2);
+  font-family: var(--display); font-size: 15px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100;
+  background-image: var(--grain); opacity: .035; mix-blend-mode: multiply;
+}
+.mono { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+button { font: inherit; color: inherit; }
+
+/* Shell */
+.app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+header {
+  display: flex; align-items: center; gap: 28px;
+  padding: 18px 28px; border-bottom: 1px solid var(--hairline-dark);
+}
+header .logo { height: 22px; width: auto; display: block; }
+header h1 { margin: 0; font-weight: 400; font-size: 22px; letter-spacing: -.02em; color: var(--ink); }
+header .spec { margin-left: auto; color: var(--text-muted); display: flex; gap: 22px; }
+header .spec b { color: var(--ink); font-weight: 500; }
+
+main { display: grid; grid-template-columns: 200px 1fr 340px; min-height: 0; }
+
+/* Queue */
+.queue { border-right: 1px solid var(--hairline-dark); overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; }
+.queue .head { display: flex; justify-content: space-between; color: var(--text-muted); padding: 0 4px; }
+.qitem {
+  position: relative; border: 0; padding: 0; background: none; cursor: pointer; text-align: left;
+  border-radius: 12px; transition: transform .6s var(--ease-unio);
+}
+.qitem:active { transform: scale(.985); }
+.qitem canvas { display: block; width: 100%; aspect-ratio: 3/4; border-radius: 12px; background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--hairline-dark); }
+.qitem.active canvas { box-shadow: 0 0 0 2px var(--ink); }
+.qitem .meta { display: flex; justify-content: space-between; gap: 6px; margin-top: 7px; padding: 0 2px; }
+.qitem .name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.qitem .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; background: var(--steel); }
+.qitem .dot.ok { background: var(--signal); }
+.qitem .dot.manual { background: var(--ink); }
+.qitem .dot.err { background: transparent; box-shadow: inset 0 0 0 1.5px var(--signal-deep); }
+.qitem .x {
+  position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 999px; border: 0;
+  background: rgba(247,245,241,.8); backdrop-filter: blur(12px); cursor: pointer; font-family: var(--mono); font-size: 13px;
+  opacity: 0; transition: opacity .4s var(--ease-unio);
+}
+.qitem:hover .x { opacity: 1; }
+.addmore {
+  border: 1px dashed rgba(11,10,9,.28); background: transparent; border-radius: 12px; aspect-ratio: 3/4;
+  cursor: pointer; color: var(--text-muted); display: grid; place-items: center; text-align: center; padding: 12px;
+}
+.addmore span { font-size: 26px; font-family: var(--mono); display: block; color: var(--ink); }
+
+/* Stage */
+.stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--paper-2); }
+.stage canvas#view { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.stage canvas#view.dragging { cursor: grabbing; }
+.stage canvas#view.picking { cursor: crosshair; }
+.stage svg#guides { position: absolute; pointer-events: none; overflow: visible; }
+.stage .hud {
+  position: absolute; left: 20px; bottom: 18px; display: flex; gap: 18px; color: var(--text-muted);
+  pointer-events: none;
+}
+.stage .hud b { color: var(--ink); font-weight: 500; }
+.pickhint {
+  position: absolute; left: 50%; top: 20px; transform: translateX(-50%);
+  background: var(--ink); color: var(--paper); border-radius: 999px; padding: 10px 12px 10px 20px;
+  display: none; align-items: center; gap: 16px; box-shadow: var(--shadow-float); white-space: nowrap;
+}
+.pickhint.on { display: flex; }
+.pickhint .num { color: var(--signal); }
+.pickhint button { border: 0; background: rgba(247,245,241,.12); color: var(--paper); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+
+/* Drop zone */
+.drop {
+  position: absolute; inset: 28px; border-radius: 24px; display: grid; place-items: center; text-align: center;
+  background: var(--paper); box-shadow: inset 0 0 0 1px var(--hairline-dark);
+  transition: box-shadow .6s var(--ease-unio), background .6s var(--ease-unio);
+}
+.drop.hidden { display: none; }
+.drop .inner { max-width: 520px; padding: 24px; }
+.drop h2 { font-weight: 400; font-size: clamp(40px, 5vw, 72px); letter-spacing: -.03em; line-height: .98; margin: 0 0 22px; color: var(--ink); }
+.drop p { margin: 0 0 30px; color: var(--text-muted); }
+.drop .frame-ico { width: 60px; margin: 0 auto 30px; display: block; }
+.dragover .drop, .dragover .dropveil { background: #fff; box-shadow: inset 0 0 0 2px var(--ink); }
+.dropveil { position: absolute; inset: 12px; border-radius: 24px; display: none; place-items: center; z-index: 5; background: rgba(247,245,241,.9); }
+.dragover .dropveil.armed { display: grid; }
+
+/* Panel */
+.panel { border-left: 1px solid var(--hairline-dark); overflow-y: auto; padding: 22px 24px 28px; display: flex; flex-direction: column; gap: 26px; }
+.sec { display: flex; flex-direction: column; gap: 12px; }
+.sec > .lbl { display: flex; justify-content: space-between; align-items: baseline; color: var(--text-muted); }
+.sec > .lbl .n { color: var(--ink); }
+.status {
+  border-radius: 20px; padding: 16px 18px; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.status .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; background: var(--steel); }
+.status.ok .dot { background: var(--signal); box-shadow: 0 0 0 4px var(--signal-soft); }
+.status.manual .dot { background: var(--ink); }
+.status.err .dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--signal-deep); }
+.status.busy .dot { animation: pulse 1.2s var(--ease-unio) infinite; background: var(--ink-3); }
+@keyframes pulse { 50% { opacity: .25; } }
+.status .t { color: var(--ink); font-size: 15px; }
+.status .s { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 14px;
+  border: 0; border-radius: 999px; padding: 6px 6px 6px 22px; min-height: 46px;
+  cursor: pointer; font-size: 15px; transition: background .5s var(--ease-unio), transform .5s var(--ease-unio), box-shadow .5s var(--ease-unio);
+}
+.btn:active { transform: scale(.985); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn .knob { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 14px; }
+.btn.solid { background: var(--ink); color: var(--paper); }
+.btn.solid:hover:not(:disabled) { background: var(--ink-2); }
+.btn.solid .knob { background: var(--signal); color: var(--on-signal); }
+.btn.paper { background: var(--surface-raised); color: var(--ink); box-shadow: var(--shadow-float); }
+.btn.paper:hover:not(:disabled) { background: #fff; }
+.btn.paper .knob { background: var(--ink); color: var(--paper); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hairline-dark); padding: 6px 22px; }
+.btn.ghost:hover:not(:disabled) { background: rgba(12,11,9,.05); }
+.btn.wide { width: 100%; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 auto; justify-content: center; }
+
+.slider { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center; }
+.slider .name { font-size: 14px; color: var(--ink); }
+.slider .val { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.slider input { grid-column: 1 / -1; }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; margin: 0; }
+input[type=range]::-webkit-slider-runnable-track { height: 2px; background: var(--hairline-dark); border-radius: 2px; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); margin-top: -7px; box-shadow: 0 0 0 4px var(--paper); }
+input[type=range]::-moz-range-track { height: 2px; background: var(--hairline-dark); }
+input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--ink); }
+
+.seg { display: flex; padding: 4px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hairline-dark); gap: 2px; }
+.seg button { flex: 1; border: 0; background: transparent; border-radius: 999px; padding: 8px 10px; cursor: pointer; font-size: 13px; color: var(--ink-3); transition: background .5s var(--ease-unio), color .5s var(--ease-unio); }
+.seg button.on { background: var(--ink); color: var(--paper); }
+.seg button:disabled { opacity: .35; cursor: default; }
+
+.switch { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+.switch .name { font-size: 14px; color: var(--ink); }
+.switch i { width: 38px; height: 22px; border-radius: 999px; background: var(--steel); position: relative; transition: background .5s var(--ease-unio); }
+.switch i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .5s var(--ease-unio); }
+.switch.on i { background: var(--ink); }
+.switch.on i::after { transform: translateX(16px); }
+
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; }
+.facts dt { color: var(--text-muted); text-transform: uppercase; letter-spacing: .16em; }
+.facts dd { margin: 0; color: var(--ink); text-align: right; }
+.facts dd.warn { color: var(--signal-deep); }
+.keys { color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+.keys kbd { font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--hairline-dark); color: var(--ink); }
+.panel.off .sec.needs { opacity: .35; pointer-events: none; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0;
+  background: var(--ink); color: var(--paper); padding: 12px 20px; border-radius: 999px; z-index: 50;
+  transition: transform .7s var(--ease-unio), opacity .7s var(--ease-unio); pointer-events: none;
+}
+.toast.on { transform: translate(-50%, 0); opacity: 1; }
+
+@media (max-width: 1100px) {
+  main { grid-template-columns: 1fr; grid-template-rows: auto minmax(420px, 70vh) auto; overflow-y: auto; }
+  .app { height: auto; min-height: 100vh; }
+  .queue { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--hairline-dark); overflow-x: auto; padding: 14px 16px; }
+  .queue .head { display: none; }
+  .qitem, .addmore { flex: 0 0 90px; }
+  .panel { border-left: 0; border-top: 1px solid var(--hairline-dark); }
+  header .spec { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    %%LOGO%%
+    <h1>Foto-Zuschnitt</h1>
+    <div class="spec mono">
+      <span>Format <b>3 : 4</b></span>
+      <span>Nasenspitze <b>40 % · 73 %</b></span>
+      <span>Guideline <b>V1</b></span>
+    </div>
+  </header>
+
+  <main>
+    <aside class="queue" id="queue">
+      <div class="head mono"><span>Bilder</span><span id="qcount">0</span></div>
+      <button class="addmore" id="addmore" type="button"><div><span>+</span><div class="mono">Hinzufügen</div></div></button>
+    </aside>
+
+    <section class="stage" id="stage">
+      <canvas id="view"></canvas>
+      <svg id="guides" viewBox="0 0 15 20" preserveAspectRatio="none"></svg>
+      <div class="hud mono" id="hud"></div>
+      <div class="pickhint mono" id="pickhint"><span class="num" id="picknum">1 / 4</span><span id="picktext">Linkes Auge anklicken</span><button type="button" id="pickcancel">Abbrechen</button></div>
+
+      <div class="drop" id="drop">
+        <div class="inner">
+          <svg class="frame-ico" viewBox="0 0 60 80" fill="none" stroke="#0B0A09" stroke-width="1.2">
+            <rect x=".6" y=".6" width="58.8" height="78.8" rx="3"/>
+            <line x1="24" y1="0" x2="24" y2="80" stroke-dasharray="3 3"/>
+            <line x1="0" y1="21.6" x2="60" y2="21.6" stroke-dasharray="3 3"/>
+            <circle cx="24" cy="21.6" r="3" fill="#FFAA09" stroke="none"/>
+          </svg>
+          <h2>Portraits hier ablegen.</h2>
+          <p>Das Gesicht wird erkannt und nach der Guideline platziert: Nasenspitze auf dem Fadenkreuz, Augen und Kinn auf den Hilfslinien. Export ohne Hilfslinien.</p>
+          <button class="btn solid" id="pick" type="button">Dateien wählen <span class="knob">→</span></button>
+          <div class="mono" style="margin-top:22px;color:var(--text-muted)">JPG · PNG · WEBP · mehrere möglich</div>
+        </div>
+      </div>
+      <div class="dropveil armed mono" id="dropveil">Loslassen zum Hinzufügen</div>
+    </section>
+
+    <aside class="panel off" id="panel">
+      <div class="sec">
+        <div class="lbl mono"><span>01 · Erkennung</span></div>
+        <div class="status" id="status"><span class="dot"></span><div><div class="t" id="stT">Noch kein Bild</div><div class="s" id="stS">Bilder links ablegen oder auswählen.</div></div></div>
+        <div class="row needs-row">
+          <button class="btn ghost" id="auto" type="button" disabled>Automatisch</button>
+          <button class="btn ghost" id="manual" type="button" disabled>Punkte setzen</button>
+        </div>
+      </div>
+
+      <div class="sec needs">
+        <div class="lbl mono"><span>02 · Feinjustierung</span><span class="n" id="reset" style="cursor:pointer">Zurücksetzen</span></div>
+        <div class="slider"><span class="name">Größe</span><span class="val" id="zoomV">100 %</span><input type="range" id="zoom" min="-100" max="100" step="1" value="0"></div>
+        <div class="slider"><span class="name">Drehung</span><span class="val" id="rotV">0.0°</span><input type="range" id="rot" min="-15" max="15" step="0.1" value="0"></div>
+        <div class="switch on" id="swGuides"><span class="name">Hilfslinien anzeigen</span><i></i></div>
+        <div class="switch" id="swPoints"><span class="name">Erkannte Punkte anzeigen</span><i></i></div>
+        <div class="keys">Bild im Rahmen ziehen. <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> verschieben, mit <kbd>⇧</kbd> in größeren Schritten. <kbd>+</kbd><kbd>−</kbd> Größe. <kbd>H</kbd> Hilfslinien.</div>
+      </div>
+
+      <div class="sec needs">
+        <div class="lbl mono"><span>03 · Export</span></div>
+        <div class="seg" id="segFmt"><button data-v="jpg" class="on">JPG</button><button data-v="png">PNG</button><button data-v="webp">WEBP</button></div>
+        <div class="seg" id="segSize"><button data-v="750">750</button><button data-v="1500" class="on">1500</button><button data-v="3000">3000</button><button data-v="native">Original</button></div>
+        <div class="seg" id="segBg"><button data-v="#ffffff" class="on">Weiß</button><button data-v="#F7F5F1">Paper</button><button data-v="transparent">Transparent</button></div>
+        <dl class="facts" id="facts"></dl>
+        <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob">↓</span></button>
+        <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob">↓</span></button>
+      </div>
+    </aside>
+  </main>
+</div>
+<input type="file" id="file" accept="image/*" multiple hidden>
+<div class="toast mono" id="toast"></div>
+
+<script>
+/* Guideline aus "photo guideline.pdf": Rahmen 15 x 20 Einheiten (3:4).
+   Nasenspitze C bei x = 6 (40 %) und 73 % von unten.
+   Augen-, Kinn- und Scheitellinie wurden am Musterfoto gemessen und dienen zur Skalierung. */
+const G = {
+  ratio: 3 / 4,
+  nose: { x: 0.40, y: 0.27 },   // Anteil von links / von oben
+  eyes: 0.2142,
+  chin: 0.4016,
+  crown: 0.0268,
+};
+const FACE_API = "https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.esm.js";
+const MODELS = "https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model/";
+const JSZIP = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+
+const $ = (id) => document.getElementById(id);
+const view = $("view"), ctx = view.getContext("2d");
+const guides = $("guides");
+const items = [];
+let cur = null;
+const opts = { fmt: "jpg", size: "1500", bg: "#ffffff", guides: true, points: false };
+let frame = { x: 0, y: 0, w: 0, h: 0 };
+let pick = null;
+
+/* Geometrie: Rahmenkoordinaten in Rahmenhöhen (Breite 0.75).
+   Quelle -> Rahmen: f = C + s * R(rot) * (p - A) */
+const C = { x: G.nose.x * G.ratio, y: G.nose.y };
+const rotv = (v, a) => ({ x: v.x * Math.cos(a) - v.y * Math.sin(a), y: v.x * Math.sin(a) + v.y * Math.cos(a) });
+const toFrame = (it, p) => { const r = rotv({ x: p.x - it.A.x, y: p.y - it.A.y }, it.rot); return { x: C.x + it.s * r.x, y: C.y + it.s * r.y }; };
+const toSrc = (it, f) => { const r = rotv({ x: (f.x - C.x) / it.s, y: (f.y - C.y) / it.s }, -it.rot); return { x: it.A.x + r.x, y: it.A.y + r.y }; };
+
+function fitFromLandmarks(it, lm) {
+  const rot = -Math.atan2(lm.eyeR.y - lm.eyeL.y, lm.eyeR.x - lm.eyeL.x);
+  const mid = { x: (lm.eyeL.x + lm.eyeR.x) / 2, y: (lm.eyeL.y + lm.eyeR.y) / 2 };
+  const d = rotv({ x: lm.chin.x - mid.x, y: lm.chin.y - mid.y }, rot).y;
+  if (!(d > 4)) return false;
+  it.rot = rot;
+  it.s = (G.chin - G.eyes) / d;
+  it.A = { x: lm.nose.x, y: lm.nose.y };
+  it.base = { A: { ...it.A }, s: it.s, rot: it.rot };
+  return true;
+}
+function fitFallback(it) {
+  it.rot = 0;
+  it.s = 1.15 / it.h;
+  it.A = { x: it.w / 2, y: it.h * 0.3 };
+  it.base = { A: { ...it.A }, s: it.s, rot: 0 };
+}
+
+/* Gesichtserkennung (face-api, 68 Landmarken), lazy geladen */
+let faceapiP = null;
+function loadFaceApi() {
+  if (!faceapiP) faceapiP = (async () => {
+    const fa = await import(FACE_API);
+    await fa.tf.setBackend("webgl").catch(() => {});
+    await fa.tf.ready();
+    await Promise.all([fa.nets.ssdMobilenetv1.loadFromUri(MODELS), fa.nets.faceLandmark68Net.loadFromUri(MODELS)]);
+    return fa;
+  })();
+  return faceapiP;
+}
+const mean = (pts) => ({ x: pts.reduce((a, p) => a + p.x, 0) / pts.length, y: pts.reduce((a, p) => a + p.y, 0) / pts.length });
+
+async function detect(it) {
+  it.status = "busy"; refreshStatus(); renderQueue();
+  try {
+    const fa = await loadFaceApi();
+    // Durchgang 1: grob im ganzen Bild. Bei Querformaten ist das Gesicht klein, daher niedrige Schwelle.
+    const k = Math.min(1, 1600 / Math.max(it.w, it.h));
+    const c = document.createElement("canvas");
+    c.width = Math.round(it.w * k); c.height = Math.round(it.h * k);
+    c.getContext("2d").drawImage(it.img, 0, 0, c.width, c.height);
+    const rough = await fa.detectAllFaces(c, new fa.SsdMobilenetv1Options({ minConfidence: 0.12 }));
+    if (!rough.length) throw new Error("none");
+    rough.sort((a, b) => b.score * b.box.area - a.score * a.box.area);
+    const bx = rough[0].box;
+    // Durchgang 2: quadratischer Ausschnitt um das Gesicht, dort Landmarken präzise bestimmen
+    const S = Math.max(bx.width, bx.height) / k * 2.2, cx = (bx.x + bx.width / 2) / k, cy = (bx.y + bx.height / 2) / k;
+    const Z = 640, cc = document.createElement("canvas");
+    cc.width = cc.height = Z;
+    const g = cc.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, Z, Z);
+    g.drawImage(it.img, cx - S / 2, cy - S / 2, S, S, 0, 0, Z, Z);
+    const res = await fa.detectAllFaces(cc, new fa.SsdMobilenetv1Options({ minConfidence: 0.3 })).withFaceLandmarks();
+    if (!res.length) throw new Error("none");
+    res.sort((a, b) => b.detection.box.area - a.detection.box.area);
+    const q = S / Z, r = res[0], P = r.landmarks.positions.map((p) => ({ x: p.x * q + cx - S / 2, y: p.y * q + cy - S / 2 }));
+    it.lm = it.autoLm = { eyeL: mean(P.slice(36, 42)), eyeR: mean(P.slice(42, 48)), nose: P[30], chin: P[8] };
+    it.conf = r.detection.score;
+    it.faces = rough.filter((d) => d.score > 0.3).length || 1;
+    if (!fitFromLandmarks(it, it.lm)) throw new Error("geom");
+    it.status = "ok";
+  } catch (e) {
+    console.warn("Erkennung:", e);
+    it.status = "err";
+    it.errMsg = String(e && e.message) === "none" ? "Kein Gesicht gefunden." : "Erkennung nicht verfügbar.";
+    if (!it.lm) fitFallback(it);
+  }
+  if (it === cur) { syncControls(); draw(); }
+  refreshStatus(); renderQueue();
+}
+
+/* Dateien */
+async function addFiles(files) {
+  const list = [...files].filter((f) => f.type.startsWith("image/"));
+  if (!list.length) return;
+  for (const f of list) {
+    const url = URL.createObjectURL(f);
+    const img = new Image();
+    const ok = await new Promise((res) => { img.onload = () => res(true); img.onerror = () => res(false); img.src = url; });
+    if (!ok) { toast("Datei nicht lesbar: " + f.name); continue; }
+    const it = { id: Math.random().toString(36).slice(2), name: f.name, img, w: img.naturalWidth, h: img.naturalHeight, status: "busy", lm: null };
+    fitFallback(it);
+    items.push(it);
+    if (!cur) select(it);
+    renderQueue();
+  }
+  // Nacheinander erkennen, damit das Modell nur einmal lädt
+  for (const it of items.filter((i) => i.status === "busy" && !i.detecting)) { it.detecting = true; await detect(it); it.detecting = false; }
+}
+
+function select(it) {
+  cur = it; pick = null; $("pickhint").classList.remove("on"); view.classList.remove("picking");
+  $("drop").classList.toggle("hidden", !!it);
+  $("panel").classList.toggle("off", !it);
+  syncControls(); layout(); refreshStatus(); renderQueue();
+}
+function removeItem(it) {
+  const i = items.indexOf(it); if (i < 0) return;
+  URL.revokeObjectURL(it.img.src);
+  items.splice(i, 1);
+  if (cur === it) select(items[i] || items[i - 1] || null);
+  renderQueue();
+}
+
+/* Rendering */
+function drawItem(c2, it, W, H, bg, showOutside) {
+  c2.save();
+  if (bg && bg !== "transparent") { c2.fillStyle = bg; c2.fillRect(0, 0, W, H); }
+  c2.imageSmoothingEnabled = true; c2.imageSmoothingQuality = "high";
+  c2.translate(C.x * H, C.y * H);
+  c2.rotate(it.rot);
+  c2.scale(it.s * H, it.s * H);
+  c2.translate(-it.A.x, -it.A.y);
+  c2.drawImage(it.img, 0, 0);
+  c2.restore();
+}
+
+function layout() {
+  const r = $("stage").getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  view.width = Math.round(r.width * dpr); view.height = Math.round(r.height * dpr);
+  const pad = Math.max(24, Math.min(64, r.height * 0.07));
+  let h = r.height - pad * 2, w = h * G.ratio;
+  if (w > r.width - pad * 2) { w = r.width - pad * 2; h = w / G.ratio; }
+  frame = { x: (r.width - w) / 2, y: (r.height - h) / 2, w, h };
+  Object.assign(guides.style, { left: frame.x + "px", top: frame.y + "px", width: w + "px", height: h + "px" });
+  draw();
+}
+
+function draw() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, view.width, view.height);
+  if (!cur) { guides.innerHTML = ""; $("hud").innerHTML = ""; return; }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // Ganzes Bild (auch außerhalb des Rahmens) zeigen, Außenbereich abdunkeln
+  ctx.save();
+  ctx.translate(frame.x, frame.y);
+  const bgFill = opts.bg === "transparent" ? null : opts.bg;
+  if (bgFill) { ctx.fillStyle = bgFill; ctx.fillRect(0, 0, frame.w, frame.h); }
+  else { drawChecker(ctx, frame.w, frame.h); }
+  drawItem(ctx, cur, frame.w, frame.h, null);
+  ctx.restore();
+  const W = view.width / dpr, H = view.height / dpr;
+  ctx.fillStyle = "rgba(240,237,230,.86)";
+  ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.rect(frame.x, frame.y + frame.h, frame.w, -frame.h); ctx.fill("evenodd");
+  ctx.strokeStyle = "rgba(11,10,9,.35)"; ctx.lineWidth = 1;
+  ctx.strokeRect(frame.x - .5, frame.y - .5, frame.w + 1, frame.h + 1);
+  drawGuides(); refreshFacts();
+}
+let checker = null;
+function drawChecker(c2, w, h) {
+  if (!checker) { const p = document.createElement("canvas"); p.width = p.height = 16; const g = p.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, 16, 16); g.fillStyle = "#e9e6df"; g.fillRect(0, 0, 8, 8); g.fillRect(8, 8, 8, 8); checker = c2.createPattern(p, "repeat"); }
+  c2.fillStyle = checker; c2.fillRect(0, 0, w, h);
+}
+
+function drawGuides() {
+  if (!opts.guides && !opts.points) { guides.innerHTML = ""; return; }
+  const u = 20; // SVG-Einheiten pro Rahmenhöhe (wie im PDF: 15 x 20)
+  const px = 20 / frame.h; // 1 Bildschirmpixel in SVG-Einheiten
+  let s = "";
+  if (opts.guides) {
+    for (let x = 0.5; x < 15; x += 0.5) s += `<line x1="${x}" y1="0" x2="${x}" y2="20" stroke="#0B0A09" stroke-opacity="${x % 2 === 0 ? .22 : x % 1 === 0 ? .1 : .05}" stroke-width="${px}"/>`;
+    for (let y = 0.5; y < 20; y += 0.5) { const yy = 20 - y; s += `<line x1="0" y1="${yy}" x2="15" y2="${yy}" stroke="#0B0A09" stroke-opacity="${y % 2 === 0 ? .22 : y % 1 === 0 ? .1 : .05}" stroke-width="${px}"/>`; }
+    const helper = (y, label) => `<line x1="0" y1="${y * u}" x2="15" y2="${y * u}" stroke="#0B0A09" stroke-opacity=".5" stroke-width="${px}" stroke-dasharray="${px * 2} ${px * 4}"/>` +
+      `<text x="${15 - px * 8}" y="${y * u - px * 6}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="${px * 10}" letter-spacing="${px * 1.6}" fill="#0B0A09" fill-opacity=".7">${label}</text>`;
+    s += helper(G.crown, "SCHEITEL") + helper(G.eyes, "AUGEN") + helper(G.chin, "KINN");
+    const fx = G.nose.x * 15, gy = G.nose.y * u;
+    s += `<line x1="${fx}" y1="${-px * 14}" x2="${fx}" y2="${20 + px * 14}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`;
+    s += `<line x1="${-px * 14}" y1="${gy}" x2="${15 + px * 14}" y2="${gy}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`;
+    s += `<circle cx="${fx}" cy="${gy}" r="${px * 6}" fill="#FFAA09" stroke="#0B0A09" stroke-width="${px * 1.5}"/>`;
+    s += `<text x="${px * 8}" y="${gy - px * 9}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">73 %</text>`;
+    s += `<text x="${fx + px * 8}" y="${20 + px * 22}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">40 %</text>`;
+  }
+  if (opts.points && cur.lm) {
+    const pts = [cur.lm.eyeL, cur.lm.eyeR, cur.lm.nose, cur.lm.chin];
+    for (const p of pts) { const f = toFrame(cur, p); s += `<circle cx="${f.x * u}" cy="${f.y * u}" r="${px * 5}" fill="none" stroke="#fff" stroke-width="${px * 3}"/><circle cx="${f.x * u}" cy="${f.y * u}" r="${px * 5}" fill="none" stroke="#0B0A09" stroke-width="${px * 1.5}"/>`; }
+  }
+  guides.innerHTML = s;
+}
+
+function outSize(it) {
+  if (opts.size === "native") { const H = Math.round(1 / it.s / 4) * 4; return { W: Math.round(H * G.ratio), H }; }
+  const W = +opts.size; return { W, H: Math.round(W / G.ratio) };
+}
+function coverage(it) {
+  const pts = [[0, 0], [G.ratio, 0], [0, 1], [G.ratio, 1]].map(([x, y]) => toSrc(it, { x, y }));
+  return pts.every((p) => p.x >= -0.5 && p.y >= -0.5 && p.x <= it.w + 0.5 && p.y <= it.h + 0.5);
+}
+function refreshFacts() {
+  if (!cur) return;
+  const { W, H } = outSize(cur);
+  const up = cur.s * H;
+  const cov = coverage(cur);
+  $("facts").innerHTML =
+    `<dt>Ausgabe</dt><dd>${W} × ${H} px</dd>` +
+    `<dt>Quelle</dt><dd>${cur.w} × ${cur.h} px</dd>` +
+    `<dt>Skalierung</dt><dd class="${up > 1.05 ? "warn" : ""}">${up > 1.05 ? "Hochskaliert ×" + up.toFixed(2) : "×" + up.toFixed(2)}</dd>` +
+    `<dt>Rand</dt><dd class="${cov ? "" : "warn"}">${cov ? "Voll abgedeckt" : opts.bg === "transparent" ? "Transparent gefüllt" : "Mit Hintergrund gefüllt"}</dd>`;
+  $("hud").innerHTML = `<span>${esc(cur.name)}</span><span><b>${W} × ${H}</b></span>`;
+}
+const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function refreshStatus() {
+  const st = $("status");
+  st.className = "status";
+  $("auto").disabled = !cur || cur.status === "busy";
+  $("manual").disabled = !cur;
+  if (!cur) { $("stT").textContent = "Noch kein Bild"; $("stS").textContent = "Bilder links ablegen oder auswählen."; return; }
+  st.classList.add(cur.status === "error" ? "err" : cur.status);
+  if (cur.status === "busy") { $("stT").textContent = "Gesicht wird gesucht"; $("stS").textContent = faceapiP ? "Einen Moment." : "Beim ersten Bild wird das Erkennungsmodell geladen."; }
+  else if (cur.status === "ok") { $("stT").textContent = "Gesicht erkannt · " + Math.round(cur.conf * 100) + " %"; $("stS").textContent = cur.faces > 1 ? cur.faces + " Gesichter gefunden, das größte wurde verwendet." : "Nasenspitze, Augen und Kinn sind eingepasst."; }
+  else if (cur.status === "manual") { $("stT").textContent = "Manuell eingepasst"; $("stS").textContent = "Aus den vier gesetzten Punkten berechnet."; }
+  else { $("stT").textContent = cur.errMsg || "Nicht erkannt"; $("stS").textContent = "Bitte die Punkte manuell setzen oder das Bild von Hand ausrichten."; }
+}
+
+/* Queue */
+function renderQueue() {
+  const q = $("queue");
+  q.querySelectorAll(".qitem").forEach((n) => n.remove());
+  const add = $("addmore");
+  for (const it of items) {
+    const b = document.createElement("div");
+    b.className = "qitem" + (it === cur ? " active" : "");
+    b.tabIndex = 0;
+    const c = document.createElement("canvas");
+    c.width = 150; c.height = 200;
+    const g = c.getContext("2d");
+    if (it.status !== "busy") drawItem(g, it, 150, 200, opts.bg === "transparent" ? "#fff" : opts.bg);
+    const dotCls = { ok: "ok", manual: "manual", err: "err" }[it.status] || "";
+    b.innerHTML = `<button class="x" type="button" title="Entfernen">×</button>`;
+    b.prepend(c);
+    b.insertAdjacentHTML("beforeend", `<div class="meta"><span class="name">${esc(it.name)}</span><span class="dot ${dotCls}"></span></div>`);
+    b.addEventListener("click", (e) => { if (e.target.closest(".x")) { removeItem(it); return; } select(it); });
+    q.insertBefore(b, add);
+  }
+  $("qcount").textContent = items.length;
+}
+let qTimer;
+const queueSoon = () => { clearTimeout(qTimer); qTimer = setTimeout(renderQueue, 250); };
+
+/* Regler */
+function syncControls() {
+  if (!cur) return;
+  const z = Math.log2(cur.s / cur.base.s) * 100;
+  $("zoom").value = Math.max(-100, Math.min(100, z));
+  $("zoomV").textContent = Math.round(cur.s / cur.base.s * 100) + " %";
+  const deg = cur.rot * 180 / Math.PI;
+  $("rot").value = deg;
+  $("rotV").textContent = deg.toFixed(1) + "°";
+}
+$("zoom").addEventListener("input", (e) => { if (!cur) return; cur.s = cur.base.s * Math.pow(2, e.target.value / 100); syncControls(); draw(); queueSoon(); });
+$("rot").addEventListener("input", (e) => { if (!cur) return; cur.rot = e.target.value * Math.PI / 180; syncControls(); draw(); queueSoon(); });
+$("reset").addEventListener("click", () => { if (!cur) return; cur.A = { ...cur.base.A }; cur.s = cur.base.s; cur.rot = cur.base.rot; syncControls(); draw(); queueSoon(); });
+function toggleSwitch(id, key) { const el = $(id); el.addEventListener("click", () => { opts[key] = !opts[key]; el.classList.toggle("on", opts[key]); draw(); }); }
+toggleSwitch("swGuides", "guides"); toggleSwitch("swPoints", "points");
+function seg(id, key, after) {
+  $(id).addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
+    opts[key] = b.dataset.v;
+    $(id).querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+    after && after(); draw(); queueSoon();
+  });
+}
+function fmtRules() {
+  const tBtn = $("segBg").querySelector('[data-v="transparent"]');
+  tBtn.disabled = opts.fmt === "jpg";
+  if (opts.fmt === "jpg" && opts.bg === "transparent") $("segBg").querySelector('[data-v="#ffffff"]').click();
+}
+seg("segFmt", "fmt", fmtRules); seg("segSize", "size"); seg("segBg", "bg");
+fmtRules();
+
+$("auto").addEventListener("click", () => {
+  if (!cur) return;
+  if (cur.autoLm) { cur.lm = cur.autoLm; fitFromLandmarks(cur, cur.lm); cur.status = "ok"; syncControls(); draw(); refreshStatus(); renderQueue(); return; }
+  detect(cur);
+});
+
+/* Manuelles Setzen: vier Klicks im Bild */
+const PICKS = ["Linkes Auge anklicken", "Rechtes Auge anklicken", "Nasenspitze anklicken", "Kinnspitze anklicken"];
+function startPick() { if (!cur) return; pick = { i: 0, pts: [] }; view.classList.add("picking"); $("pickhint").classList.add("on"); updPick(); }
+function updPick() { $("picknum").textContent = (pick.i + 1) + " / 4"; $("picktext").textContent = PICKS[pick.i]; }
+function endPick() { pick = null; view.classList.remove("picking"); $("pickhint").classList.remove("on"); }
+$("manual").addEventListener("click", startPick);
+$("pickcancel").addEventListener("click", endPick);
+
+/* Ziehen, Rad, Tastatur */
+const toFrameUnits = (e) => { const r = view.getBoundingClientRect(); return { x: (e.clientX - r.left - frame.x) / frame.h, y: (e.clientY - r.top - frame.y) / frame.h }; };
+let drag = null;
+view.addEventListener("pointerdown", (e) => {
+  if (!cur) return;
+  if (pick) {
+    pick.pts.push(toSrc(cur, toFrameUnits(e)));
+    pick.i++;
+    if (pick.i === 4) {
+      const [a, b, n, c] = pick.pts;
+      const [eyeL, eyeR] = a.x <= b.x ? [a, b] : [b, a];
+      const lm = { eyeL, eyeR, nose: n, chin: c };
+      if (fitFromLandmarks(cur, lm)) { cur.lm = lm; cur.status = "manual"; } else toast("Punkte ergeben keine gültige Geometrie.");
+      endPick(); syncControls(); draw(); refreshStatus(); renderQueue();
+    } else updPick();
+    return;
+  }
+  drag = { x: e.clientX, y: e.clientY, A: { ...cur.A } };
+  view.setPointerCapture(e.pointerId); view.classList.add("dragging");
+});
+view.addEventListener("pointermove", (e) => {
+  if (!drag) return;
+  const d = rotv({ x: (e.clientX - drag.x) / frame.h / cur.s, y: (e.clientY - drag.y) / frame.h / cur.s }, -cur.rot);
+  cur.A = { x: drag.A.x - d.x, y: drag.A.y - d.y };
+  draw();
+});
+const endDrag = () => { if (drag) { drag = null; view.classList.remove("dragging"); queueSoon(); } };
+view.addEventListener("pointerup", endDrag); view.addEventListener("pointercancel", endDrag);
+view.addEventListener("wheel", (e) => {
+  if (!cur) return; e.preventDefault();
+  cur.s *= Math.exp(-e.deltaY * 0.0015);
+  syncControls(); draw(); queueSoon();
+}, { passive: false });
+function nudge(dx, dy) { const d = rotv({ x: dx / frame.h / cur.s, y: dy / frame.h / cur.s }, -cur.rot); cur.A = { x: cur.A.x - d.x, y: cur.A.y - d.y }; draw(); queueSoon(); }
+window.addEventListener("keydown", (e) => {
+  if (!cur || e.target.tagName === "INPUT" && e.target.type !== "range") return;
+  const st = e.shiftKey ? 10 : 1;
+  const k = e.key;
+  if (k === "Escape" && pick) return endPick();
+  if (k === "ArrowLeft") nudge(-st, 0); else if (k === "ArrowRight") nudge(st, 0);
+  else if (k === "ArrowUp") nudge(0, -st); else if (k === "ArrowDown") nudge(0, st);
+  else if (k === "+" || k === "=") { cur.s *= e.shiftKey ? 1.05 : 1.01; syncControls(); draw(); queueSoon(); }
+  else if (k === "-" || k === "_") { cur.s /= e.shiftKey ? 1.05 : 1.01; syncControls(); draw(); queueSoon(); }
+  else if (k === "h" || k === "H") $("swGuides").click();
+  else return;
+  e.preventDefault();
+});
+
+/* Export */
+const MIME = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
+function renderExport(it) {
+  const { W, H } = outSize(it);
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  const bg = opts.bg === "transparent" && opts.fmt !== "jpg" ? null : (opts.bg === "transparent" ? "#ffffff" : opts.bg);
+  drawItem(g, it, W, H, bg);
+  return new Promise((res) => c.toBlob(res, MIME[opts.fmt], 0.93));
+}
+const outName = (it) => it.name.replace(/\.[^.]+$/, "") + "_portrait_3x4." + opts.fmt;
+function download(blob, name) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+$("export").addEventListener("click", async () => { if (!cur) return; const b = await renderExport(cur); download(b, outName(cur)); toast("Exportiert · " + outName(cur)); });
+let zipP = null;
+const loadZip = () => zipP || (zipP = new Promise((res, rej) => { const s = document.createElement("script"); s.src = JSZIP; s.onload = () => res(window.JSZip); s.onerror = rej; document.head.appendChild(s); }));
+$("exportAll").addEventListener("click", async () => {
+  if (!items.length) return;
+  if (items.length === 1) return $("export").click();
+  try {
+    const JSZip = await loadZip();
+    const zip = new JSZip();
+    for (const it of items) zip.file(outName(it), await renderExport(it));
+    download(await zip.generateAsync({ type: "blob" }), "portraits_3x4.zip");
+    toast(items.length + " Bilder als ZIP exportiert");
+  } catch { for (const it of items) download(await renderExport(it), outName(it)); }
+});
+
+/* Drag & Drop, Dateiauswahl */
+const app = $("app");
+let dragDepth = 0;
+window.addEventListener("dragenter", (e) => { if ([...e.dataTransfer.types].includes("Files")) { dragDepth++; app.classList.add("dragover"); } });
+window.addEventListener("dragleave", () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) app.classList.remove("dragover"); });
+window.addEventListener("dragover", (e) => e.preventDefault());
+window.addEventListener("drop", (e) => { e.preventDefault(); dragDepth = 0; app.classList.remove("dragover"); addFiles(e.dataTransfer.files); });
+$("pick").addEventListener("click", () => $("file").click());
+$("addmore").addEventListener("click", () => $("file").click());
+$("file").addEventListener("change", (e) => { addFiles(e.target.files); e.target.value = ""; });
+window.addEventListener("paste", (e) => { const f = [...e.clipboardData.files]; if (f.length) addFiles(f); });
+
+let tTimer;
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(tTimer); tTimer = setTimeout(() => el.classList.remove("on"), 2400); }
+
+new ResizeObserver(layout).observe($("stage"));
+layout();
+</script>
+</body>
+</html>

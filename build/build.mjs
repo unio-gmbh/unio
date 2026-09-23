@@ -229,6 +229,13 @@ async function main() {
   }
   console.log("\u2713 UX-Vorschauen nach /ux (Passwortschutz via middleware.js)");
 
+  /* 3g) Makler-Zuschnitt (Portrait-Crop nach Foto-Guideline), eigenstaendige Seite, noindex, nicht in Sitemap.
+        Quelle tools/maklerzuschnitt/src, gebaut mit tools/maklerzuschnitt/build.py. */
+  if (existsSync(join(ROOT, "tools", "maklerzuschnitt", "index.html"))) {
+    cpSync(join(ROOT, "tools", "maklerzuschnitt", "index.html"), join(DIST, "maklerzuschnitt.html"));
+    console.log("\u2713 Makler-Zuschnitt nach /maklerzuschnitt");
+  }
+
   /* 4) robots.txt + sitemap.xml + llms.txt
         KI-Crawler explizit erlauben: rein deklarativ (Allow: / gilt ohnehin),
         signalisiert aber Offenheit gegenueber AI-Answer-Engines (GEO). */
