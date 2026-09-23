@@ -138,20 +138,20 @@ function Fragebogen({ m, fb, go }) {
   const [reveal, setReveal] = useState(false);
   const antworten = (fb && fb.antworten) || {};
   const fertig = (fb && fb.kapitelFertig) || [];
-  const save = (id, v) => hmStore.patch("fragebogen", (all) => ({ ...(all || {}), [m.id]: { ...(fb || {}), antworten: { ...antworten, [id]: v }, kapitelFertig: fertig } }));
+  const save = (id, v) => hmStore.patch("fragebogen", (all) => ({ ...(all || {}), [m.id]: { ...(fb || {}), antworten: { ...(((all || {})[m.id] || {}).antworten || antworten), [id]: v }, kapitelFertig: fertig } }));
 
   if (kap == null) {
-    const done = fertig.length === HM_KAPITEL.length;
+    const done = HM_KAPITEL_PFLICHT.every((k) => fertig.includes(k.id));
     const beantwortet = Object.keys(antworten).length;
     return (
       <div>
         <div className="hm-mono">Etappe 01 · Entdecken</div>
-        <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel. Zwölf Minuten."}</h2>
-        <p className="hm-sub">{done ? "Du kannst jede Antwort ändern. Deine Strategie rechnet dann neu." : "Es gibt keine falschen Antworten. Am Ende jedes Kapitels siehst du, was wir daraus lesen. Du kannst jederzeit unterbrechen."}</p>
+        <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel. Achtzehn Minuten."}</h2>
+        <p className="hm-sub">{done ? "Du kannst jede Antwort ändern. Deine Strategie rechnet dann neu. Kapitel 6 schreibt deine Geschichte, wann du willst." : "Es gibt keine falschen Antworten. Wir fragen nach dem, was du getan hast, nicht nach dem, was du über dich denkst. Am Ende jedes Kapitels siehst du, was wir daraus lesen. Unterbrechen geht jederzeit."}</p>
         <div className="hm-kap">
           {HM_KAPITEL.map((k, i) => { const f = fertig.includes(k.id); const n = k.fragen.filter((q) => antworten[q.id] != null).length; return (
             <button key={k.id} className={"hm-kapc" + (f ? " fertig" : "")} onClick={() => { setKap(i); setIdx(0); setReveal(false); }}>
-              <div className="hm-mono">Kapitel {i + 1}</div><div className="t">{k.name}</div><div className="s">{k.intro}</div>
+              <div className="hm-mono">Kapitel {i + 1}{k.optional ? " · Vertiefung, optional" : ""}</div><div className="t">{k.name}</div><div className="s">{k.intro}</div>
               <div className="hm-mono">{f ? "Fertig" : n ? `${n} von ${k.fragen.length}` : `${k.fragen.length} Fragen`}</div>
             </button>); })}
         </div>
@@ -166,22 +166,23 @@ function Fragebogen({ m, fb, go }) {
   const K = HM_KAPITEL[kap];
   const q = K.fragen[idx];
   const val = antworten[q && q.id];
-  const kannWeiter = q && (q.typ === "text" || q.typ === "sortieren" || (Array.isArray(val) ? val.length > 0 : val != null));
+  const kannWeiter = q && (q.typ === "text" || q.typ === "sortieren" || (q.typ === "paare" ? Object.keys(val || {}).length >= 4 : Array.isArray(val) ? val.length > 0 : val != null) || !!antworten[q.id + "_frei"]);
 
   const finishKapitel = () => {
     const neu = fertig.includes(K.id) ? fertig : [...fertig, K.id];
-    const alle = neu.length === HM_KAPITEL.length;
+    const alle = HM_KAPITEL_PFLICHT.every((k) => neu.includes(k.id));
+    const schonFertig = fb && fb.fertig;
     hmStore.patch("fragebogen", (all) => ({ ...(all || {}), [m.id]: { antworten, kapitelFertig: neu, fertig: alle } }));
     if (alle) {
       const wege = hmZweiWege(antworten);
-      hmStore.patch("strategien", (all) => ({ ...(all || {}), [m.id]: { wege, gewaehlt: null, version: 1, status: "entwurf" } }));
+      hmStore.patch("strategien", (all) => { const alt = (all || {})[m.id]; return { ...(all || {}), [m.id]: alt && schonFertig ? { ...alt, wege, version: alt.version + 1 } : { wege, gewaehlt: null, version: 1, status: "entwurf" } }; });
       hmStore.patch("schritte", (l) => l.map((s) => s.id === `${m.id}-fragebogen` ? { ...s, zustand: "fertig" } : s.id === `${m.id}-wege` ? { ...s, zustand: "wartet_makler" } : s));
       hmEvent(m.id, "fragebogen", "Fragebogen abgeschlossen, zwei Wege berechnet", m.name);
     } else hmEvent(m.id, "fragebogen", `Kapitel ${kap + 1} abgeschlossen`, m.name);
     setReveal(true);
   };
 
-  if (reveal) return <KapitelReveal kap={kap} antworten={antworten} onWeiter={() => { setReveal(false); if (kap + 1 < HM_KAPITEL.length) { setKap(kap + 1); setIdx(0); } else { setKap(null); go("strategie"); } }} onUebersicht={() => { setReveal(false); setKap(null); }} />;
+  if (reveal) return <KapitelReveal kap={kap} antworten={antworten} onWeiter={() => { setReveal(false); if (HM_KAPITEL[kap].id !== "rhythmus" && kap + 1 < HM_KAPITEL.length) { setKap(kap + 1); setIdx(0); } else { setKap(null); go("strategie"); } }} onUebersicht={() => { setReveal(false); setKap(null); }} />;
 
   return (
     <div className="hm-q">
@@ -191,7 +192,7 @@ function Fragebogen({ m, fb, go }) {
       </div>
       <h2 className="hm-h hm-h2">{q.frage}</h2>
       {q.hilfe && <div className="hilfe">{q.hilfe}</div>}
-      <div className="body"><Frage q={q} val={val} set={(v) => save(q.id, v)} /></div>
+      <div className="body"><Frage q={q} val={val} set={(v) => save(q.id, v)} freiVal={antworten[q.id + "_frei"]} setFrei={(v) => save(q.id + "_frei", v)} /></div>
       <div className="nav">
         <button className="hm-chip" onClick={() => { if (idx === 0) setKap(null); else setIdx(idx - 1); }}>{idx === 0 ? "Übersicht" : "Zurück"}</button>
         <span className="hm-mono">{idx + 1} von {K.fragen.length}</span>
@@ -201,15 +202,21 @@ function Fragebogen({ m, fb, go }) {
   );
 }
 
-function Frage({ q, val, set }) {
+function Frei({ q, freiVal, setFrei }) {
+  if (!q.frei) return null;
+  return <input className="hm-text" style={{ fontSize: 17, marginTop: 22 }} placeholder={q.frei} value={freiVal || ""} onChange={(e) => setFrei(e.target.value)} />;
+}
+function Frage({ q, val, set, freiVal, setFrei }) {
   const toggleMulti = (x, max) => { const l = Array.isArray(val) ? val : []; if (l.includes(x)) set(l.filter((y) => y !== x)); else if (l.length < (max || 99)) set([...l, x]); else if (max === 1) set([x]); };
-  if (q.typ === "auswahl") return <div className="hm-opts">{q.optionen.map((o) => <button key={o} className={"hm-opt" + (val === o ? " on" : "")} onClick={() => set(o)}>{o}<span className="g">{val === o ? "●" : "○"}</span></button>)}</div>;
-  if (q.typ === "mehrfach") return <div className="hm-opts">{q.optionen.map((o) => { const on = (val || []).includes(o); return <button key={o} className={"hm-opt" + (on ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}<span className="g">{on ? "●" : "+"}</span></button>; })}</div>;
+  if (q.typ === "gruppen") { const G = q.gruppen === "regionen" ? HM_REGIONEN.map((g) => ({ n: g.gruppe, o: g.orte })) : HM_IMMOTYPEN.map((g) => ({ n: g.gruppe, o: g.typen })); const l = val || []; return <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{G.map((g) => <div key={g.n}><div className="hm-mono" style={{ marginBottom: 8 }}>{g.n}</div><div className="hm-chips">{g.o.map((o) => <button key={o} className={"hm-chip" + (l.includes(o) ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}</button>)}</div></div>)}<div className="hm-mono">{l.length} von {q.max} gewählt</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>; }
+  if (q.typ === "auswahl") return <div><div className="hm-opts">{q.optionen.map((o) => <button key={o} className={"hm-opt" + (val === o ? " on" : "")} onClick={() => set(o)}>{o}<span className="g">{val === o ? "●" : "○"}</span></button>)}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
+  if (q.typ === "mehrfach") return <div><div className="hm-opts">{q.optionen.map((o) => { const on = (val || []).includes(o); return <button key={o} className={"hm-opt" + (on ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}<span className="g">{on ? "●" : "+"}</span></button>; })}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
   if (q.typ === "bezirke") return <div className="hm-chips">{HM_BEZIRKE.map((b) => <button key={b} className={"hm-chip" + ((val || []).includes(b) ? " on" : "")} onClick={() => toggleMulti(b, 6)}>{b}</button>)}</div>;
   if (q.typ === "slider") { const v = val == null ? 50 : val; return <div className="hm-slider"><div className="lab"><span style={{ opacity: v > 60 ? .45 : 1 }}>{q.links}</span><span style={{ opacity: v < 40 ? .45 : 1 }}>{q.rechts}</span></div><input type="range" min="0" max="100" value={v} onChange={(e) => set(+e.target.value)} /><div className="hm-mono" style={{ textAlign: "center", marginTop: 8 }}>{val == null ? "Regler bewegen" : v < 40 ? q.links : v > 60 ? q.rechts : "Dazwischen"}</div></div>; }
   if (q.typ === "skala") return <div><div className="hm-skala">{[1, 2, 3, 4, 5].map((n) => <button key={n} className={val === n ? "on" : ""} onClick={() => set(n)}>{n}</button>)}</div><div className="hm-row" style={{ justifyContent: "space-between", marginTop: 10, maxWidth: 392 }}><span className="hm-mono">{q.von}</span><span className="hm-mono">{q.bis}</span></div></div>;
-  if (q.typ === "text") return <input className="hm-text" placeholder={q.platzhalter} value={val || ""} onChange={(e) => set(e.target.value)} autoFocus />;
+  if (q.typ === "text") return q.lang ? <textarea className="hm-text" rows={4} style={{ fontSize: 19, lineHeight: 1.4, resize: "vertical" }} placeholder={q.platzhalter} value={val || ""} onChange={(e) => set(e.target.value)} autoFocus /> : <input className="hm-text" placeholder={q.platzhalter} value={val || ""} onChange={(e) => set(e.target.value)} autoFocus />;
   if (q.typ === "sortieren") { const l = (val && val.length) ? val : q.optionen; const mv = (i, d) => { const n = [...l]; const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; set(n); }; return <div className="hm-sort">{l.map((k, i) => <div key={k} className="it"><span className="n">{String(i + 1).padStart(2, "0")}</span><span className="t">{HM_KANAELE[k].name}</span><button onClick={() => mv(i, -1)}>↑</button><button onClick={() => mv(i, 1)}>↓</button></div>)}</div>; }
+  if (q.typ === "paare") { const v = val || {}; return <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{HM_BILDPAARE.map((p) => <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>{["a", "b"].map((k) => <button key={k} className={"hm-karte" + (v[p.id] === k ? " on" : "")} onClick={() => set({ ...v, [p.id]: k })}><div className="img" style={{ background: p[k].f, height: 56 }}></div><div className="tx" style={{ padding: "10px 14px 12px" }}><div className="t" style={{ fontSize: 15 }}>{p[k].t}</div></div></button>)}</div>)}<div className="hm-mono">{Object.keys(v).length} von {HM_BILDPAARE.length}</div></div>; }
   if (q.typ === "karten") {
     const items = q.karten === "milieus" ? HM_MILIEUS.map((x) => ({ id: x.id, t: x.titel, s: x.bild, bg: x.farbe })) : q.karten === "archetypen" ? HM_ARCHETYPEN.map((x) => ({ id: x.id, t: x.name, s: x.satz, bg: x.palette[0], bg2: x.palette[2] })) : Object.entries(HM_FORMATE).map(([id, x]) => ({ id, t: x.name, s: `${x.was}. ${x.dauer}.`, bg: "#E7E2D8" }));
     return <div className="hm-karten">{items.map((it) => { const on = (val || []).includes(it.id); return <button key={it.id} className={"hm-karte" + (on ? " on" : "")} onClick={() => toggleMulti(it.id, q.max)}><div className="img" style={{ background: it.bg2 ? `linear-gradient(135deg, ${it.bg} 60%, ${it.bg2})` : it.bg }}></div><div className="tx"><div className="t">{it.t}</div><div className="s">{it.s}</div></div></button>; })}</div>;
@@ -224,14 +231,15 @@ function KapitelReveal({ kap, antworten: a, onWeiter, onUebersicht }) {
   if (K.id === "menschen") { const ms = (a.milieus || []).map((id) => HM_MILIEUS.find((x) => x.id === id)).filter(Boolean); kopf = ms.length ? `${ms.map((x) => x.titel).join(" und ")}.` : "Deine Menschen."; body = <div className="hm-karten">{ms.map((x) => <div key={x.id} className="hm-karte"><div className="img" style={{ background: x.farbe }}></div><div className="tx"><div className="t">{x.titel}</div><div className="s">{x.bild}</div><div className="hm-mono" style={{ marginTop: 6 }}>Spricht auf: {x.code}</div></div></div>)}</div>; }
   if (K.id === "art") { const s = hmArchetypScores(a)[0].t; kopf = `${s.name}.`; body = <><p className="hm-sub">{s.satz} Das ist eine erste Lesung aus deinen Reglern{a.archetyp ? " und deiner Bildwahl" : ""}. Im nächsten Schritt bekommst du zwei Wege, einen der das verstärkt und einen der dich dehnt.</p><div className="hm-sw">{s.palette.map((c, i) => <i key={i} style={{ background: c }}></i>)}</div></>; }
   if (K.id === "marke") { kopf = a.behalten === "Neu aufsetzen" ? "Wir setzen neu auf." : a.behalten === "Behalten und schärfen" ? "Wir schärfen, was da ist." : "Wir bauen von Grund auf."; body = <><p className="hm-sub">Vorhanden: {(a.bestand || []).join(", ") || "noch nichts"}. {(a.assets || []).length ? `Dein Zeichen: ${a.assets.join(" und ").toLowerCase()}. Das taucht in jedem Video und jeder Grafik auf.` : ""}</p></>; }
-  if (K.id === "rhythmus") { kopf = "Zwei Wege liegen bereit."; body = <p className="hm-sub">Aus deinen 30 Antworten haben wir zwei vollständige Strategien gerechnet. Beide passen zu dir, sie setzen unterschiedliche Schwerpunkte. Du wählst, Daniel prüft, dann geht es ins Gespräch.</p>; }
+  if (K.id === "rhythmus") { kopf = "Zwei Wege liegen bereit."; body = <p className="hm-sub">Aus deinen {HM_FRAGEN_GESAMT} Antworten haben wir zwei vollständige Strategien gerechnet. Beide passen zu dir, sie setzen unterschiedliche Schwerpunkte. Du wählst, Daniel prüft, dann geht es ins Gespräch. Kapitel 6 schreibt deine Geschichte in die Strategie, wann du magst.</p>; }
+  if (K.id === "geschichte") { kopf = "Deine Geschichte steht."; body = <p className="hm-sub">Herkunft, Wende, Wohlwollen, Belege, Fehler, Fremdbild: daraus wird deine Brand Story in acht Beats. Die Strategie hat sich gerade neu gerechnet, Version plus eins.</p>; }
   return (
     <div className="hm-reveal">
       <div className="hm-mono">Kapitel {kap + 1} abgeschlossen</div>
       <h2 className="hm-h hm-h1">{kopf}</h2>
       {body}
       <div className="hm-row" style={{ marginTop: 10 }}>
-        <Btn onClick={onWeiter}>{kap + 1 < HM_KAPITEL.length ? `Kapitel ${kap + 2}: ${HM_KAPITEL[kap + 1].name}` : "Zu deinen zwei Wegen"}</Btn>
+        <Btn onClick={onWeiter}>{HM_KAPITEL[kap].id === "rhythmus" || kap + 1 >= HM_KAPITEL.length ? "Zur Strategie" : `Kapitel ${kap + 2}: ${HM_KAPITEL[kap + 1].name}`}</Btn>
         <button className="hm-chip" onClick={onUebersicht}>Später weitermachen</button>
       </div>
     </div>
@@ -297,13 +305,14 @@ function StrategieReveal({ w, m }) {
     ["Brand Story", <div className="hm-beats">{w.story.map((b) => <div key={b.beat} className="hm-beat"><b>{b.beat}</b>{b.text}</div>)}</div>],
     ["Archetyp", <><p className="hm-sub" style={{ marginTop: 0 }}>{w.archetyp.satz} Leitidee: {w.leitidee}</p><div className="hm-tags">{w.ton.map((t) => <span key={t} className="hm-tag">{t}</span>)}</div></>],
     ["Deine Menschen", <div className="hm-karten">{w.milieus.map((x) => <div key={x.id} className="hm-karte"><div className="img" style={{ background: x.farbe }}></div><div className="tx"><div className="t">{x.titel}</div><div className="s">{x.bild}</div><div className="hm-mono" style={{ marginTop: 6 }}>{x.code}</div></div></div>)}<div className="hm-karte"><div className="tx"><div className="t">Fokus: {w.fokus}</div><div className="s">{w.bezirke.length ? w.bezirke.join(", ") : "Deine Bezirke"}</div><div className="hm-mono" style={{ marginTop: 6 }}>Anrede: {w.anrede}</div></div></div></div>],
-    ["Distinctive Assets", <><p className="hm-sub" style={{ marginTop: 0 }}>Was in jedem Post wiederkehrt, damit man dich in einer Sekunde erkennt.</p><div className="hm-tags">{(w.assets.length ? w.assets : ["Eine Farbe", "Ein Satz"]).map((a) => <span key={a} className="hm-tag">{a}</span>)}<span className="hm-tag" style={{ background: "var(--signal-soft)" }}>Intro-Muster: gleicher erster Satz</span></div>{w.tabus.length ? <div style={{ fontSize: 13, color: "var(--text-muted)" }}>Nie: {w.tabus.join(", ").toLowerCase()}.</div> : null}</>],
+    ["Distinctive Assets", <><p className="hm-sub" style={{ marginTop: 0 }}>Was in jedem Post wiederkehrt, damit man dich in einer Sekunde erkennt. Reihenfolge nach Wirkung: dein Gesicht zuerst, dann dein Name, dann Schrift, zuletzt Farbe (Romaniuk, Ehrenberg-Bass).</p><div className="hm-tags"><span className="hm-tag" style={{ background: "var(--signal-soft)" }}>Dein Gesicht, gleicher Bildausschnitt</span>{(w.assets.length ? w.assets : ["Eine Farbe", "Ein Satz"]).map((a) => <span key={a} className="hm-tag">{a}</span>)}<span className="hm-tag">Intro-Muster: gleicher erster Satz</span>{w.graetzl ? <span className="hm-tag">Dein Ort: {w.graetzl}</span> : null}</div></>],
+    ["Nähe und Grenzen", <><p className="hm-sub" style={{ marginTop: 0 }}>Nicht wie viel Privates, sondern welches. Sichtbar: {w.privat.length ? w.privat.join(", ").toLowerCase() : "Alltag im Beruf und dein Grätzl"}. {w.tabus.length ? `Nie: ${w.tabus.join(", ").toLowerCase()}.` : ""} Kundenfrust und Politik bleiben immer draußen (Weijs 2019).</p><div className="hm-quote">Anrede: {w.anredeRegel}. Bei Widerspruch zwischen Zielgruppe und deiner Art gewinnt deine Art (Gretry 2017).</div><div style={{ fontSize: 13, color: "var(--text-muted)" }}>Fehlergeschichten kommen erst, wenn drei Kompetenzbelege online sind (Pratfall-Bedingung, Aronson 1966). {w.belege ? "Belege liegen vor." : "Belege fehlen noch, Kapitel 6."}</div></>],
     ["Säulen", <><Saeulen s={w.saeulen} /><div className="hm-beats" style={{ marginTop: 8 }}>{Object.entries(w.saeulen).map(([k]) => <div key={k} className="hm-beat"><b>{HM_SAEULEN[k].name}</b>{HM_SAEULEN[k].was}</div>)}</div></>],
     ["Formate, Kanäle, Rhythmus", <><div className="hm-beats">{w.formate.map((f) => <div key={f} className="hm-beat"><b>{HM_FORMATE[f].name} · {HM_FORMATE[f].dauer}</b>{HM_FORMATE[f].was}</div>)}</div><div className="hm-list" style={{ marginTop: 8 }}>{w.kanaele.map((k) => <div key={k} className="hm-li"><span className="t">{HM_KANAELE[k].name}</span><span className="m">{HM_KANAELE[k].rhythmus}</span><span></span></div>)}</div><div className="hm-quote">{w.frequenz}. Buffer-Daten: 3 bis 5 Posts pro Woche verdoppeln das Follower-Wachstum, Wochen ohne Post liegen unter der Basis.</div></>],
     ["30 Hooks", <><div className="hm-hooks">{w.hooks.map((h, i) => <div key={i}>{h}</div>)}</div><div style={{ fontSize: 13, color: "var(--text-muted)" }}>Fünf von dreißig. Die übrigen entstehen aus deinen Objekten und dem Kalender, geprüft im Workshop.</div></>],
     ["Bio", <div className="hm-quote" style={{ fontSize: 18 }}>{w.bio}</div>],
     ["Farbwelt und Schrift", <div className="hm-bp">{w.palette.map((c, i) => <div key={i} className="hm-swatch" style={{ background: c, color: i === 1 ? w.palette[0] : w.palette[1] }}><span className="hm-mono">{["Grund", "Fläche", "Akzent"][i]}</span><span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 13 }}>{c}</span></div>)}<div className="hm-swatch" style={{ background: "var(--paper-2)" }}><span className="hm-mono">Schrift</span><span className="hm-type">Aa</span><span style={{ fontSize: 13 }}>{w.schrift[0]} für Titel, {w.schrift[1]} für Daten</span></div></div>],
-    ["90 Tage", <div className="hm-beats">{[["Monat 1", "Aufbau, erster Drehtag, 8 Posts, Konten verbunden, Website live"], ["Monat 2", "Zweiter Drehtag, Rhythmus " + w.frequenz.split(",")[0].toLowerCase() + ", erste Carousels aus Marktdaten"], ["Monat 3", "Dritter Drehtag, Zweitverwertung auf allen Kanälen, Quartals-Review mit Version 2"]].map(([t, x]) => <div key={t} className="hm-beat"><b>{t}</b>{x}</div>)}</div>],
+    ["90 Tage", <><div className="hm-beats">{[["Monat 1", "Aufbau, erster Drehtag, 8 Posts, Konten verbunden, Website live. Zuerst Kompetenz: drei Belege, dann Ablauf, dann Persönliches."], ["Monat 2", "Zweiter Drehtag, Rhythmus " + w.frequenz.split(",")[0].toLowerCase() + ", erste Carousels aus Marktdaten, erste Fehler-und-Learning-Geschichte"], ["Monat 3", "Dritter Drehtag, Zweitverwertung auf allen Kanälen, Quartals-Review mit Version 2"]].map(([t, x]) => <div key={t} className="hm-beat"><b>{t}</b>{x}</div>)}</div><div className="hm-quote">Dein Anker: {w.cue || "ein fester Termin pro Woche, den wir im Workshop festlegen"}. Eine Gewohnheit braucht im Median 66 Tage (Lally 2010), ein fester Auslöser verdoppelt fast die Chance (Gollwitzer, d = 0,65).</div></>],
     ["Ziele", <><p className="hm-sub" style={{ marginTop: 0 }}>Ziel: {w.ziel}. Gemessen an Reichweite, Saves, Sends, Profilbesuchen und Anfragen. Ehrliche Erwartung: nach 90 Tagen sitzt die Routine und die ersten Signale sind da, Anfragen brauchen 6 bis 12 Monate.</p></>],
   ];
   useEffect(() => {

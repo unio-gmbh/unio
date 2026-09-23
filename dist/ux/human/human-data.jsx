@@ -68,7 +68,7 @@ const HM_ARCHETYPEN = [
 
 const HM_SAEULEN = {
   markt: { name: "Markt und Grätzl", was: "Preise, Nachfrage, Entwicklungen in deinen Bezirken" },
-  wissen: { name: "Prozess und Wissen", was: "Wie Verkauf, Kauf, Finanzierung und Übergabe wirklich laufen" },
+  wissen: { name: "Wie ich arbeite", was: "Ablauf, Provision, Regeln, was ich nicht mache. Pflichtsäule für Vertrauen (Integrität)" },
   meinung: { name: "Meinung", was: "Deine Haltung zu Markt, Politik, Mythen der Branche" },
   persoenlich: { name: "Persönlich", was: "Dein Alltag, deine Herkunft, dein Grätzl, dein Team" },
   beweise: { name: "Beweise", was: "Abschlüsse, Kundenstimmen, Vorher und Nachher, Objekte" },
@@ -99,9 +99,35 @@ const HM_GEFUEHLE = ["Sicher", "Verstanden", "Entlastet", "Gut beraten", "Stolz"
 const HM_TABUS = ["Politik", "Luxus zeigen", "Familie zeigen", "Preise nennen", "Kunden erkennbar zeigen", "Konkurrenz kommentieren"];
 const HM_ZIELE = ["Mehr Abgeber-Anfragen", "Käufer-Community aufbauen", "Bekannt im Bezirk werden", "Team aufbauen", "Investoren erreichen"];
 const HM_ZEIT = ["Bis 2 Stunden", "2 bis 4 Stunden", "4 bis 8 Stunden", "Mehr als 8 Stunden"];
+const HM_WERTE = ["Sicherheit", "Tradition", "Selbstbestimmung", "Leistung", "Genuss", "Abenteuer", "Hilfsbereitschaft", "Gerechtigkeit", "Einfluss", "Verlässlichkeit"];
+const HM_PRIVAT = ["Sport und Hobby", "Familie", "Wohnort und Grätzl", "Meinung zum Markt", "Fehler und Learnings", "Politik und Gesellschaft", "Team und Büro", "Humor"];
+const HM_BILDPAARE = [
+  { id: "bp1", a: { t: "Altbau-Stiege", f: "#8A6B4A" }, b: { t: "Glasfassade", f: "#2C4250" } },
+  { id: "bp2", a: { t: "Handschlag am Küchentisch", f: "#B4633C" }, b: { t: "Zahlen am Bildschirm", f: "#1B1A16" } },
+  { id: "bp3", a: { t: "Markt am Samstag", f: "#5E6B4F" }, b: { t: "Lobby mit Portier", f: "#3B3A36" } },
+  { id: "bp4", a: { t: "Handschrift", f: "#7E3E22" }, b: { t: "Klare Typografie", f: "#0B0A09" } },
+  { id: "bp5", a: { t: "Goldenes Abendlicht", f: "#E69600" }, b: { t: "Kühles Tageslicht", f: "#5E7A8E" } },
+  { id: "bp6", a: { t: "Menschen im Bild", f: "#6B5E52" }, b: { t: "Räume ohne Menschen", f: "#D1D3D5" } },
+];
 const HM_BESTAND = ["Logo", "Farben", "Website", "Instagram", "LinkedIn", "Facebook", "TikTok", "YouTube", "Professionelle Fotos"];
 const HM_ASSETS = ["Eine Farbe", "Ein Ort", "Ein Satz", "Ein Gegenstand", "Eine Geste", "Ein Kleidungsstück"];
-const HM_BEZIRKE = ["1010 Innere Stadt", "1020 Leopoldstadt", "1030 Landstraße", "1040 Wieden", "1050 Margareten", "1060 Mariahilf", "1070 Neubau", "1080 Josefstadt", "1090 Alsergrund", "1100 Favoriten", "1120 Meidling", "1130 Hietzing", "1140 Penzing", "1150 Rudolfsheim", "1160 Ottakring", "1170 Hernals", "1180 Währing", "1190 Döbling", "1200 Brigittenau", "1210 Floridsdorf", "1220 Donaustadt", "1230 Liesing", "Umland Süd", "Umland Nord"];
+const HM_REGIONEN = [
+  { gruppe: "Wien innen", orte: ["1010 Innere Stadt", "1020 Leopoldstadt", "1030 Landstraße", "1040 Wieden", "1050 Margareten", "1060 Mariahilf", "1070 Neubau", "1080 Josefstadt", "1090 Alsergrund"] },
+  { gruppe: "Wien außen", orte: ["1100 Favoriten", "1110 Simmering", "1120 Meidling", "1130 Hietzing", "1140 Penzing", "1150 Rudolfsheim-Fünfhaus", "1160 Ottakring", "1170 Hernals", "1180 Währing", "1190 Döbling", "1200 Brigittenau", "1210 Floridsdorf", "1220 Donaustadt", "1230 Liesing"] },
+  { gruppe: "Wien Umland", orte: ["Klosterneuburg", "Korneuburg", "Stockerau", "Tulln", "Purkersdorf", "Wienerwald", "Perchtoldsdorf", "Mödling", "Brunn am Gebirge", "Baden", "Bad Vöslau", "Schwechat", "Gerasdorf", "Gänserndorf", "Bruck an der Leitha"] },
+  { gruppe: "Niederösterreich", orte: ["St. Pölten", "Krems", "Wiener Neustadt", "Amstetten", "Wachau", "Waldviertel", "Weinviertel", "Mostviertel"] },
+  { gruppe: "Burgenland", orte: ["Eisenstadt", "Neusiedler See", "Mattersburg", "Südburgenland"] },
+  { gruppe: "Städte und Länder", orte: ["Graz", "Linz", "Salzburg Stadt", "Innsbruck", "Klagenfurt", "Villach", "Wels", "Bregenz und Rheintal", "Steiermark Land", "Oberösterreich Land", "Salzburger Land", "Tirol", "Kärnten Seen", "Vorarlberg"] },
+  { gruppe: "Lagen", orte: ["Seelage", "Berglage und Ski", "Thermenregion", "Weinregion", "International (Zweitwohnsitz)"] },
+];
+const HM_BEZIRKE = HM_REGIONEN.flatMap((g) => g.orte);
+const HM_IMMOTYPEN = [
+  { gruppe: "Wohnen", typen: ["Eigentumswohnung Altbau", "Eigentumswohnung Neubau", "Erstbezug vom Bauträger", "Dachgeschoss und Penthouse", "Loft", "Einfamilienhaus", "Doppelhaus und Reihenhaus", "Villa", "Landhaus und Bauernhof", "Ferienimmobilie und Zweitwohnsitz", "Baugrundstück"] },
+  { gruppe: "Vermietung", typen: ["Mietwohnung", "Möbliert und Temporär", "Studentenwohnen", "Mikroapartments"] },
+  { gruppe: "Investment", typen: ["Zinshaus", "Anlegerwohnung", "Vorsorgewohnung", "Bauträgerprojekt und Abverkauf", "Paketverkauf und Portfolio", "Denkmalschutz und Sanierung"] },
+  { gruppe: "Gewerbe", typen: ["Büro", "Geschäftslokal und Retail", "Gastronomie und Hotel", "Lager und Logistik", "Praxis und Ordination", "Betriebsobjekt"] },
+  { gruppe: "Besonderes", typen: ["Luxus und Off-Market", "Erbschaft und Nachlass", "Scheidung und Trennung", "Zwangsversteigerung", "Landwirtschaft und Forst", "Neues Wohnen (Co-Living, Baugruppe)"] },
+];
 
 /* Fragebogen: fünf Kapitel, ein Screen pro Frage.
    typ: auswahl | mehrfach | slider | karten | text | bezirke | sortieren | zahl | skala */
@@ -109,17 +135,22 @@ const HM_KAPITEL = [
   { id: "weg", name: "Dein Weg", intro: "Wo du herkommst und warum Kunden dich wählen.", fragen: [
     { id: "seit", typ: "auswahl", frage: "Seit wann bist du Makler?", optionen: ["Unter 2 Jahren", "2 bis 5 Jahre", "5 bis 10 Jahre", "Über 10 Jahre"] },
     { id: "herkunft", typ: "auswahl", frage: "Wie bist du dazu gekommen?", optionen: ["Aus der Familie", "Quereinstieg aus dem Verkauf", "Aus Bau oder Architektur", "Aus Finanz oder Recht", "Über ein eigenes Investment", "Anders"] },
-    { id: "abschluesse", typ: "auswahl", frage: "Deine letzten Abschlüsse: was war das meistens?", optionen: ["Eigentumswohnungen Altbau", "Eigentumswohnungen Neubau", "Häuser", "Zinshäuser und Investment", "Vermietung", "Gemischt"] },
-    { id: "gruende", typ: "mehrfach", frage: "Warum haben diese Kunden dich gewählt?", hilfe: "Bis zu drei.", max: 3, optionen: HM_GRUENDE },
+    { id: "immotypen", typ: "gruppen", frage: "Welche Immobilien verkaufst oder vermittelst du wirklich?", hilfe: "Bis zu fünf. Was du am häufigsten machst, nicht was du gern machen würdest.", max: 5, gruppen: "immotypen", frei: "Etwas, das hier fehlt?" },
+    { id: "abschluesse", typ: "text", frage: "Deine letzten drei Abschlüsse in je einem Satz", hilfe: "Objekt, Ort, ungefährer Preis, was den Ausschlag gab. Ohne Namen.", platzhalter: "z. B. Altbauwohnung Neubau, 90 m², 690.000, Verkäuferin kam über eine Empfehlung", lang: true },
+    { id: "gruende", typ: "mehrfach", frage: "Warum haben diese Kunden dich gewählt?", hilfe: "Bis zu drei.", max: 3, optionen: HM_GRUENDE, frei: "In deinen Worten" },
     { id: "hindernis", typ: "mehrfach", frage: "Was hätte sie fast abgehalten?", max: 2, optionen: HM_HINDERNISSE },
-    { id: "ausloeser", typ: "mehrfach", frage: "Womit kommen Kunden zu dir, bevor sie an Verkauf denken?", max: 3, optionen: HM_AUSLOESER },
+    { id: "ausloeser", typ: "mehrfach", frage: "Womit kommen Kunden zu dir, bevor sie an Verkauf denken?", max: 3, optionen: HM_AUSLOESER, frei: "Anderer Auslöser" },
+    { id: "sichtbar", typ: "auswahl", frage: "Wann hast du zuletzt freiwillig vor mehr als fünf Menschen gesprochen oder ein Video von dir aufgenommen?", hilfe: "Verhalten sagt mehr als Selbsteinschätzung.", optionen: ["Diese Woche", "Diesen Monat", "Dieses Jahr", "Lange nicht"], frei: "Wie hat es sich angefühlt?" },
   ]},
   { id: "menschen", name: "Deine Menschen", intro: "Für wen du arbeitest, als Bild statt als Zielgruppe.", fragen: [
     { id: "milieus", typ: "karten", frage: "Welche zwei Wohnwelten sind deine Kunden?", hilfe: "Tippe zwei Karten.", max: 2, karten: "milieus" },
-    { id: "phasen", typ: "mehrfach", frage: "In welcher Lebensphase sind sie meistens?", max: 3, optionen: HM_LEBENSPHASEN },
-    { id: "bezirke", typ: "bezirke", frage: "Deine Bezirke und Grätzl", hilfe: "Wo du wirklich unterwegs bist, nicht wo du gern wärst." },
+    { id: "phasen", typ: "mehrfach", frage: "In welcher Lebensphase sind sie meistens?", max: 3, optionen: HM_LEBENSPHASEN, frei: "Beschreib einen typischen Kunden in einem Satz" },
+    { id: "bezirke", typ: "gruppen", frage: "Deine Gegenden", hilfe: "Wo du wirklich unterwegs bist, nicht wo du gern wärst. Bis zu acht.", max: 8, gruppen: "regionen", frei: "Dein Grätzl, deine Straße, dein Ort in eigenen Worten" },
+    { id: "graetzl", typ: "text", frage: "Das Grätzl, in dem du die meisten Straßen mit Namen kennst", hilfe: "Ein Ort, keine Liste. Der wird dein Kern.", platzhalter: "z. B. Karmeliterviertel, zwischen Taborstraße und Donaukanal" },
+    { id: "graetzl_anteil", typ: "auswahl", frage: "Wie viele deiner letzten zehn Abschlüsse lagen dort?", optionen: ["0 bis 2", "3 bis 5", "6 bis 8", "9 bis 10"] },
     { id: "seite", typ: "slider", frage: "Eigentümer oder Käufer?", links: "Eigentümer", rechts: "Käufer" },
     { id: "gefuehl", typ: "mehrfach", frage: "Wie soll sich ein Kunde fühlen, nachdem er mit dir gearbeitet hat?", max: 2, optionen: HM_GEFUEHLE },
+    { id: "unity", typ: "text", frage: "Bei welchen Menschen bist du einer von ihnen?", hilfe: "Viertel, Verein, Herkunft, Lebensphase. Geteilte Zugehörigkeit ist das stärkste Vertrauenssignal (Cialdini, Unity).", platzhalter: "z. B. Eltern in Ottakring, Läufer am Donaukanal, Kinder von Zuwanderern" },
   ]},
   { id: "art", name: "Deine Art", intro: "Fünf Regler und ein Bild. Es gibt kein richtig.", fragen: [
     { id: "s1", typ: "slider", frage: "Aufrichtig oder aufregend?", links: "Aufrichtig", rechts: "Aufregend" },
@@ -127,10 +158,16 @@ const HM_KAPITEL = [
     { id: "s3", typ: "slider", frage: "Ruhig oder energisch?", links: "Ruhig", rechts: "Energisch" },
     { id: "s4", typ: "slider", frage: "Klassisch oder modern?", links: "Klassisch", rechts: "Modern" },
     { id: "s5", typ: "slider", frage: "Zurückhaltend oder meinungsstark?", links: "Zurückhaltend", rechts: "Meinungsstark" },
-    { id: "archetyp", typ: "karten", frage: "Welche Figur bist du am ehesten?", hilfe: "Eine Karte.", max: 1, karten: "archetypen" },
-    { id: "worte", typ: "text", frage: "Drei Wörter, die Freunde über dich sagen würden", platzhalter: "zum Beispiel: direkt, geduldig, neugierig" },
-    { id: "tabus", typ: "mehrfach", frage: "Was würdest du nie zeigen oder sagen?", max: 3, optionen: HM_TABUS },
-    { id: "anrede", typ: "auswahl", frage: "Mit Kunden: Du oder Sie?", optionen: ["Du", "Sie", "Kommt drauf an"] },
+    { id: "archetyp", typ: "karten", frage: "Welche Figur bist du am ehesten?", hilfe: "Eine Karte. Ein Sprachbild, keine Diagnose.", max: 1, karten: "archetypen" },
+    { id: "bildpaare", typ: "paare", frage: "Was passt eher zu deiner Arbeit?", hilfe: "Sechs Paare, Bauchgefühl. Das ist eine Geschmacksfrage für deine Bildwelt, kein Test." },
+    { id: "werte", typ: "mehrfach", frage: "Was treibt dich an?", hilfe: "Zwei Werte. Sie werden zur Sprache deiner Marke.", max: 2, optionen: HM_WERTE },
+    { id: "worte", typ: "text", frage: "Drei Wörter, mit denen Kunden dich heute beschreiben würden", platzhalter: "zum Beispiel: direkt, geduldig, neugierig" },
+    { id: "ideal", typ: "text", frage: "Und drei Wörter, die sie in einem Jahr sagen sollen", hilfe: "Der Abstand zwischen beiden Antworten ist dein Weg.", platzhalter: "zum Beispiel: die Kennerin für Altbau in Neubau" },
+    { id: "erfolge", typ: "skala", frage: "Wie wohl fühlst du dich, öffentlich über eigene Erfolge zu sprechen?", von: "Gar nicht", bis: "Sehr" },
+    { id: "fokus", typ: "slider", frage: "Was motiviert dich mehr?", links: "Neue Kunden und Reichweite gewinnen", rechts: "Bestand und Ruf absichern" },
+    { id: "privat", typ: "mehrfach", frage: "Was darf öffentlich sichtbar sein?", hilfe: "Nicht wie viel Privates, sondern welches.", max: 8, optionen: HM_PRIVAT },
+    { id: "tabus", typ: "mehrfach", frage: "Und was würdest du nie zeigen oder sagen?", max: 3, optionen: HM_TABUS, frei: "Weitere Grenzen" },
+    { id: "anrede", typ: "auswahl", frage: "Wie sprechen dich Kunden im Erstkontakt an, und was fühlt sich für dich natürlich an?", hilfe: "Auf Instagram wollen rund 80 Prozent geduzt werden, auf LinkedIn die Mehrheit gesiezt. Deine Art gewinnt bei Widerspruch.", optionen: ["Du, überall", "Sie, überall", "Sie mit Vornamen", "Du auf Instagram, Sie sonst"] },
   ]},
   { id: "marke", name: "Deine Marke heute", intro: "Was schon da ist und was dich wiedererkennbar macht.", fragen: [
     { id: "bestand", typ: "mehrfach", frage: "Was existiert schon?", max: 9, optionen: HM_BESTAND },
@@ -144,12 +181,23 @@ const HM_KAPITEL = [
     { id: "zeit", typ: "auswahl", frage: "Wie viel Zeit pro Monat kannst du für Content geben?", optionen: HM_ZEIT },
     { id: "formate", typ: "karten", frage: "Welche Formate kannst du dir vorstellen?", hilfe: "So viele du willst.", max: 6, karten: "formate" },
     { id: "kanaele", typ: "sortieren", frage: "Deine Kanäle nach Wichtigkeit", hilfe: "Oben ist wichtig.", optionen: ["instagram", "linkedin", "tiktok", "facebook", "youtube"] },
-    { id: "ziel", typ: "auswahl", frage: "Dein Ziel in zwölf Monaten", optionen: HM_ZIELE },
+    { id: "ziel", typ: "auswahl", frage: "Dein Ziel in zwölf Monaten", optionen: HM_ZIELE, frei: "Woran merkst du, dass es geklappt hat?" },
     { id: "verfuegbar", typ: "mehrfach", frage: "Wann passen dir Drehtage?", max: 4, optionen: ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Vormittag", "Nachmittag"] },
+    { id: "cue", typ: "text", frage: "An welchen festen Termin in deiner Woche können 30 Minuten Content direkt anschließen?", hilfe: "Ein fester Anker macht aus Vorsatz Gewohnheit (Gollwitzer, d = 0,65).", platzhalter: "z. B. nach dem Montag-Jour-fixe um 10 Uhr" },
+    { id: "fremdbild", typ: "text", frage: "Drei Menschen, denen wir drei kurze Fragen schicken dürfen", hilfe: "Zwei Kunden, ein Kollege. Fremdbilder sagen Erfolg besser vorher als Selbstbilder (Connelly und Ones 2010). Optional.", platzhalter: "Name, E-Mail oder Telefon, je Zeile", lang: true },
+  ]},
+  { id: "geschichte", name: "Deine Geschichte", optional: true, intro: "Sechs Fragen, die deine Story schreiben. Vor dem Workshop, wann du willst.", fragen: [
+    { id: "aufgewachsen", typ: "text", lang: true, frage: "Wo bist du aufgewachsen, und was hat dich zum ersten Mal mit Immobilien in Berührung gebracht?", hilfe: "Herkunft ist ein messbarer Treiber von Authentizität (Napoli 2014, Morhart 2015).", platzhalter: "z. B. Simmering, Gemeindebau, mein Vater hat Wohnungen saniert" },
+    { id: "wendepunkt", typ: "text", lang: true, frage: "Gab es einen Moment, an dem du kurz davor warst aufzuhören? Was hat dich umgedreht?", hilfe: "Tief und Wende machen eine Geschichte glaubwürdig (McAdams, Paharia).", platzhalter: "..." },
+    { id: "abgeraten", typ: "text", lang: true, frage: "Das letzte Mal, als du einem Kunden abgeraten hast, obwohl es dich Provision gekostet hat", hilfe: "Handeln gegen den eigenen Vorteil ist das stärkste Wohlwollens-Signal (Mayer, Davis, Schoorman).", platzhalter: "Was ist passiert, wie ging es aus?" },
+    { id: "belege", typ: "text", lang: true, frage: "Drei Ergebnisse aus den letzten 24 Monaten, die du einem skeptischen Verkäufer zeigen würdest", hilfe: "Zahl, Ort, Zeitraum. Kompetenz vor Verletzlichkeit.", platzhalter: "z. B. 14 Tage bis zum Kaufanbot, 1190, Frühjahr 2026" },
+    { id: "fehler", typ: "text", lang: true, frage: "Ein beruflicher Fehler, den du heute anders machen würdest, und was du geändert hast", hilfe: "Gelöste Fehler machen sympathischer, wenn Kompetenz schon sichtbar ist (Aronson). Kundenfrust und Privates bleiben draußen.", platzhalter: "..." },
+    { id: "kundensatz", typ: "text", frage: "Wie hat dich dein letzter Kunde in einer Bewertung oder Nachricht beschrieben?", hilfe: "Möglichst wörtlich. Fremdbilder korrigieren den blinden Fleck.", platzhalter: "..." },
   ]},
 ];
 
-const HM_FRAGEN_GESAMT = HM_KAPITEL.reduce((n, k) => n + k.fragen.length, 0);
+const HM_FRAGEN_GESAMT = HM_KAPITEL.filter((k) => !k.optional).reduce((n, k) => n + k.fragen.length, 0);
+const HM_KAPITEL_PFLICHT = HM_KAPITEL.filter((k) => !k.optional);
 
 /* Strategie-Generator: zwei Wege aus den Antworten. Rein regelbasiert (Prototyp). */
 function hmArchetypScores(a) {
@@ -163,8 +211,17 @@ function hmArchetypScores(a) {
     if (t.achse === "Nähe" && (m.includes("mitte") || m.includes("nost") || m.includes("post"))) score += 6;
     if (t.achse === "Moderne" && (m.includes("exp") || m.includes("neo") || m.includes("perf"))) score += 6;
     if (a.ziel === "Investoren erreichen" && t.achse === "Autorität") score += 5;
+    const it = a.immotypen || [];
+    if (t.achse === "Autorität" && it.some((x) => /Zinshaus|Anleger|Vorsorge|Portfolio|Bauträger|Büro|Luxus/.test(x))) score += 5;
+    if (t.achse === "Nähe" && it.some((x) => /Einfamilien|Reihenhaus|Mietwohnung|Erbschaft|Scheidung|Erstbezug/.test(x))) score += 5;
+    if (t.achse === "Moderne" && it.some((x) => /Loft|Dachgeschoss|Neues Wohnen|Denkmal|Sanierung|Neubau/.test(x))) score += 5;
     if (a.ziel === "Bekannt im Bezirk werden" && (t.id === "entdecker" || t.id === "gastgeber")) score += 5;
     if ((a.kamera || 3) <= 2 && t.formate[0] === "talking") score -= 6;
+    const w = a.werte || [];
+    if (t.achse === "Autorität" && w.some((x) => ["Sicherheit", "Leistung", "Verlässlichkeit", "Einfluss"].includes(x))) score += 4;
+    if (t.achse === "Nähe" && w.some((x) => ["Hilfsbereitschaft", "Gerechtigkeit", "Tradition", "Genuss"].includes(x))) score += 4;
+    if (t.achse === "Moderne" && w.some((x) => ["Selbstbestimmung", "Abenteuer"].includes(x))) score += 4;
+    if (a.sichtbar === "Lange nicht" && t.formate[0] === "talking") score -= 3;
     return { t, score: Math.round(score) };
   }).sort((x, y) => y.score - x.score);
 }
@@ -172,7 +229,7 @@ function hmArchetypScores(a) {
 function hmWeg(t, a, rolle, gegen) {
   const milieus = (a.milieus || []).map((id) => HM_MILIEUS.find((m) => m.id === id)).filter(Boolean);
   const bez = (a.bezirke || []).slice(0, 3);
-  const bezText = bez.length ? bez.map((b) => b.replace(/^\d{4}\s/, "")).join(", ") : "deinen Bezirken";
+  const bezText = bez.length ? bez.map((b) => b.replace(/^\d{4}\s/, "")).join(", ") : (a.bezirke_frei || "deinen Gegenden");
   const seite = a.seite == null ? 50 : a.seite;
   const fokus = seite < 40 ? "Eigentümer" : seite > 60 ? "Käufer" : "Eigentümer und Käufer";
   const ziel = a.ziel || "Mehr Abgeber-Anfragen";
@@ -203,13 +260,13 @@ function hmWeg(t, a, rolle, gegen) {
     gastgeber: `Für ${fokus} in ${bezText}, die einen Makler zum Anfassen wollen, bin ich der, bei dem man sich vom ersten Gespräch an willkommen fühlt.`,
   }[t.id];
   const story = [
-    { beat: "Herkunft", text: a.herkunft ? `${a.herkunft}. Seit ${(a.seit || "einigen Jahren").toLowerCase()} im Geschäft.` : "Dein Weg in die Branche, in einem Satz." },
-    { beat: "Reibung", text: `Kunden zögern wegen ${((a.hindernis || [])[0] || "schlechter Erfahrungen").toLowerCase()}. Die Branche hat das verdient.` },
-    { beat: "Wendepunkt", text: `Der Moment, in dem du gemerkt hast: ${grund} entscheidet, nicht das Inserat.` },
+    { beat: "Herkunft", text: a.aufgewachsen || (a.herkunft ? `${a.herkunft}. Seit ${(a.seit || "einigen Jahren").toLowerCase()} im Geschäft.` : "Dein Weg in die Branche, in einem Satz.") },
+    { beat: "Reibung", text: a.abgeraten ? `Du hast schon abgeraten, als es dich Provision gekostet hat: ${a.abgeraten}` : `Kunden zögern wegen ${(a.hindernis || [])[0] || "schlechter Erfahrungen"}. Die Branche hat das verdient.` },
+    { beat: "Wendepunkt", text: a.wendepunkt || `Der Moment, in dem du gemerkt hast: ${grund} entscheidet, nicht das Inserat.` },
     { beat: "Haltung", text: t.leitidee },
-    { beat: "Beweis", text: `${a.abschluesse || "Deine Abschlüsse"} in ${bezText}. Zahlen folgen aus deinem Bestand.` },
-    { beat: "Menschen", text: milieus.length ? milieus.map((m) => m.titel).join(" und ") + "." : "Deine zwei Wohnwelten." },
-    { beat: "Versprechen", text: `${(a.gefuehl || ["Sicher"]).join(" und ")}: so fühlen sich deine Kunden nach dem Abschluss.` },
+    { beat: "Beweis", text: a.belege || `${(a.immotypen || []).slice(0, 3).join(", ") || "Deine Abschlüsse"} in ${bezText}. ${a.abschluesse ? "Deine letzten Abschlüsse: " + a.abschluesse : "Zahlen folgen aus deinem Bestand."}` },
+    { beat: "Menschen", text: (milieus.length ? milieus.map((m) => m.titel).join(" und ") + "." : "Deine zwei Wohnwelten.") + (a.unity ? ` Einer von ihnen: ${a.unity}.` : "") },
+    { beat: "Versprechen", text: `${(a.gefuehl || ["Sicher"]).join(" und ")}: so fühlen sich deine Kunden nach dem Abschluss.${a.ideal ? ` In einem Jahr sagen sie: ${a.ideal}.` : ""}${a.kundensatz ? ` Heute sagen sie: "${a.kundensatz}"` : ""}` },
     { beat: "Signatur", text: (a.assets || []).length ? `Dein Zeichen: ${a.assets.map((x) => x.toLowerCase()).join(", ")}.` : "Ein wiederkehrendes Zeichen, das wir gemeinsam festlegen." },
   ];
   const passt = [];
@@ -223,13 +280,24 @@ function hmWeg(t, a, rolle, gegen) {
   if ((a.kamera || 3) <= 2 && formate.includes("talking")) fordert.push("Talking Heads brauchen Übung, die ersten zwei Drehtage sind Training.");
   if (milieus.some((m) => (t.achse === "Autorität" && ["kons", "perf"].includes(m.id)) || (t.achse === "Nähe" && ["mitte", "nost", "post"].includes(m.id)) || (t.achse === "Moderne" && ["exp", "neo", "perf"].includes(m.id)))) passt.push("Passt zu den Wohnwelten deiner Kunden.");
   if (tabus.includes("Familie zeigen") && t.saeulen.persoenlich >= 30) fordert.push("Die Säule Persönlich ist groß, Familie bleibt trotzdem außen vor: Alltag und Grätzl statt Privates.");
-  if (gegen) fordert.push(`Setzt sich bewusst gegen ${gegen.name} ab: ${t.achse} statt ${gegen.achse}.`);
+  if (gegen) fordert.push(promotion ? `Setzt sich gegen ${gegen.name} ab: ${t.achse} statt ${gegen.achse}. Mehr Reichweite, neue Zielgruppen.` : `Setzt sich gegen ${gegen.name} ab: ${t.achse} statt ${gegen.achse}. Bestand und Ruf bleiben geschützt, weil die Säule "Wie ich arbeite" gleich groß bleibt.`);
+  if (!gegen && promotion) passt.push("Du willst Reichweite: dieser Weg ist der schnellste zur Routine, Weg B holt später mehr Neue.");
+  if (!gegen && !promotion) passt.push("Du willst Bestand und Ruf sichern: dieser Weg bleibt nah an dem, wofür man dich schon kennt.");
   if (!passt.length) passt.push("Passt zu deinem Ziel: " + ziel.toLowerCase() + ".");
   const frequenz = zeit === HM_ZEIT[0] ? "3 Posts pro Woche, ein Drehtag pro Monat" : zeit === HM_ZEIT[3] ? "5 Posts pro Woche, zwei Drehtage pro Monat" : "3 bis 4 Posts pro Woche, ein Drehtag pro Monat";
+  const bp = a.bildpaare || {}; const warm = Object.values(bp).filter((v) => v === "a").length; const kuehl = Object.values(bp).filter((v) => v === "b").length;
+  const palette = warm > kuehl + 1 ? ["#F0EDE6", "#383429", "#B4633C"] : kuehl > warm + 1 ? ["#1B1A16", "#F7F5F1", "#FFAA09"] : t.palette;
+  const anredeRegel = a.anrede === "Sie, überall" ? "Sie auf allen Kanälen" : a.anrede === "Du, überall" ? "Du auf allen Kanälen, auf LinkedIn und Website neutraler Plural" : a.anrede === "Sie mit Vornamen" ? "Sie mit Vornamen, warm und respektvoll" : "Du auf Instagram und TikTok, Sie auf LinkedIn, Website und im Erstkontakt";
+  const erfolge = a.erfolge || 3;
+  const tonExtra = erfolge <= 2 ? ["Kompetenz indirekt zeigen: Kundenstimmen und Ablauf statt Eigenlob"] : erfolge >= 4 ? ["Eigene Ergebnisse dürfen vorkommen, höchstens jeder vierte Post"] : [];
+  const privat = a.privat || [];
+  const fokusReg = a.fokus == null ? 50 : a.fokus;
+  const promotion = fokusReg < 50;
   const bio = `${t.name.replace("Der ", "")} für ${fokus.toLowerCase()} in ${bezText}. ${t.leitidee} ${anrede === "Du" ? "Schreib mir." : "Schreiben Sie mir."}`;
   return {
-    rolle, archetyp: t, satz, story, milieus, saeulen: t.saeulen, formate, kanaele, frequenz, ton: t.ton, palette: t.palette, schrift: t.schrift,
-    leitidee: t.leitidee, hooks, bio, passt, fordert, ziel, fokus, bezirke: bez, anrede,
+    rolle, archetyp: t, satz, story, milieus, saeulen: t.saeulen, formate, kanaele, frequenz, ton: [...t.ton, ...tonExtra], palette, schrift: t.schrift,
+    leitidee: t.leitidee, hooks, bio, passt, fordert, ziel, fokus, bezirke: bez, anrede, anredeRegel, privat, cue: a.cue || "", graetzl: a.graetzl || "",
+    belege: !!a.belege, fehler: !!a.fehler, werte: a.werte || [], erfolge,
     assets: a.assets || [], tabus,
   };
 }
@@ -246,4 +314,4 @@ function hmZweiWege(a) {
   };
 }
 
-Object.assign(window, { HM_ETAPPEN, HM_MILIEUS, HM_ARCHETYPEN, HM_SAEULEN, HM_FORMATE, HM_KANAELE, HM_KAPITEL, HM_FRAGEN_GESAMT, HM_BEZIRKE, HM_ZEIT, hmZweiWege, hmArchetypScores });
+Object.assign(window, { HM_BILDPAARE, HM_KAPITEL_PFLICHT, HM_WERTE, HM_PRIVAT, HM_REGIONEN, HM_IMMOTYPEN, HM_ETAPPEN, HM_MILIEUS, HM_ARCHETYPEN, HM_SAEULEN, HM_FORMATE, HM_KANAELE, HM_KAPITEL, HM_FRAGEN_GESAMT, HM_BEZIRKE, HM_ZEIT, hmZweiWege, hmArchetypScores });

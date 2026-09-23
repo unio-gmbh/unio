@@ -1,7 +1,7 @@
 # UNIO HUMAN. Plan für Software und Features
 
 Arbeitsname: **UNIO HUMAN** (aus dem Diagramm "unio human - personal brands"; öffentlicher Produktname ist weiterhin PERSONAL BRAND, der Name ist zu entscheiden, siehe Kap. 14).
-Stand: 23.09.2026, v1. Autor: Claude mit Daniel Hayden. Zahlen sind Arbeitsstand.
+Stand: 23.09.2026, v1.2 (Fragebogen und Generator nach Research-Anhang `docs/UNIO_HUMAN_RESEARCH_2026-09.md` überarbeitet). Autor: Claude mit Daniel Hayden. Zahlen sind Arbeitsstand.
 
 ---
 
@@ -196,50 +196,75 @@ Regeln, die aus den Daten laufen. Jede Empfehlung zeigt: Regel, Betroffene, Ersp
 
 ## 6. Der Fragebogen (Etappe 1)
 
-Ziel: 12 bis 15 Minuten, 28 bis 34 Screens in fünf Kapiteln, maximal 4 Freitextfragen, Bildauswahl wo möglich, Reveal am Kapitelende. Wissenschaftliche Basis in Kap. 8.
+Ziel: fünf Pflichtkapitel mit 44 Screens in rund 18 Minuten, dazu ein sechstes, optionales Kapitel "Deine Geschichte" (6 Freitexte), das vor dem Workshop nachgeholt werden kann. Bildauswahl, Regler und Chips wo möglich; Freitext dort, wo Verhalten und Erzählung gebraucht werden. Reveal am Kapitelende, Kapitel-Übersicht statt Prozentbalken. Grundprinzip aus der Forschung: **Verhalten statt Selbstbild** (Schwarz 1999, Levashina 2014), **Fremdbild korrigiert den blinden Fleck** (Vazire 2010, Connelly und Ones 2010), **Bilder sind Geschmacksfragen, keine Diagnosen** (Kritik projektiver Verfahren). Vollständige Evidenz in `docs/UNIO_HUMAN_RESEARCH_2026-09.md`.
 
-**Kapitel 1: Dein Weg** (Herkunft und Beweise, JTBD-Timeline)
-1. Seit wann bist du Makler, wie bist du dazu gekommen (Auswahl plus ein Satz)
-2. Deine letzten drei Abschlüsse: Objektart, Bezirk, Preisklasse (strukturiert)
-3. Warum haben diese Kunden dich gewählt (Mehrfachauswahl aus 10 Gründen plus Freitext 1)
-4. Was hätte sie fast abgehalten (Auswahl)
-5. Womit kommen Kunden zu dir, bevor sie an Verkauf denken (Auslöser: Erbe, Trennung, Familie, Investment, Umzug)
-Reveal: "Deine Kunden kommen wegen ... zu dir." (ein Satz)
+Jede Frage hat ein Konstrukt und eine Quelle. Freitextfelder ("Sonstiges", "in deinen Worten") hängen an fast allen Auswahlfragen.
 
-**Kapitel 2: Deine Menschen** (Zielgruppe als Bild)
-6. Sinus-Milieu-Karte: wähle zwei Bilder von sieben (Konservativ-gehoben, Postmateriell, Performer, Expeditiv, Neo-ökologisch, Adaptiv-pragmatisch, Nostalgisch-bürgerlich), ohne Fachbegriffe, mit Wohnszenen
-7. Lebensphasen deiner Kunden (Mehrfachauswahl)
-8. Deine Bezirke und Grätzl (Karte, tippen)
-9. Eigentümer, Käufer oder beide (Slider)
-10. Wie soll sich ein Kunde fühlen, nachdem er mit dir gearbeitet hat (Auswahl aus 8 Gefühlen, Kapferer Self-Image)
-Reveal: Zwei Milieu-Karten mit Kommunikationscode
+**Kapitel 1: Dein Weg** (Herkunft, Beweise, Verhalten)
+1. Seit wann Makler (Auswahl). Kontinuität als Authentizitätstreiber (Morhart 2015, Napoli 2014).
+2. Wie dazu gekommen (Auswahl). Herkunft.
+3. Welche Immobilien wirklich (Gruppen-Chips, bis fünf, plus Freitext): 31 Typen in fünf Gruppen Wohnen, Vermietung, Investment, Gewerbe, Besonderes. Objektfokus steuert Beweisformate und Achse (Expertise-Vertrauen, Baylor).
+4. Die letzten drei Abschlüsse in je einem Satz (Freitext). JTBD-Timeline, Verhaltensanker.
+5. Warum diese Kunden dich gewählt haben (Mehrfach plus Freitext). Ability, Benevolenz, Integrität (Mayer, Davis, Schoorman 1995).
+6. Was sie fast abgehalten hätte (Mehrfach).
+7. Womit Kunden kommen, bevor sie an Verkauf denken (Mehrfach plus Freitext). Category Entry Points (Romaniuk).
+8. Wann zuletzt freiwillig vor mehr als fünf Menschen gesprochen oder ein Video aufgenommen (Auswahl plus "wie hat es sich angefühlt"). Verhaltensanker für Extraversion und Kamera-Komfort (Bowden-Green 2020).
+Reveal: "Deine Kunden kommen wegen ... zu dir."
 
-**Kapitel 3: Deine Art** (Persönlichkeit, Aaker-Dimensionen)
-11. bis 15. Fünf Slider: aufrichtig bis aufregend, kompetent bis nahbar, ruhig bis energisch, klassisch bis modern, zurückhaltend bis meinungsstark
-16. Archetyp-Bildwahl: sechs Bilder, wähle eins (Kenner, Begleiter, Gestalter, Entdecker, Fels, Gastgeber; intern gemappt auf Sage, Caregiver, Creator, Explorer, Ruler, Everyman)
-17. Drei Wörter, die Freunde über dich sagen würden (Freitext 2, kurz)
-18. Was du nie sagen oder zeigen würdest (Tabus, Auswahl plus Freitext)
-19. Duzen oder Siezen mit Kunden
-Reveal: Dein Archetyp mit Bild und einem Satz
+**Kapitel 2: Deine Menschen** (Zielgruppe als Bild, Ort, Zugehörigkeit)
+9. Zwei Wohnwelten aus sieben Karten (Sinus-Milieus ohne Fachbegriffe).
+10. Lebensphasen (Mehrfach plus "beschreib einen typischen Kunden").
+11. Deine Gegenden (Gruppen-Chips, bis acht, plus Freitext): 23 Wiener Bezirke, 15 Umland-Orte, Niederösterreich, Burgenland, Städte und Länder, Lagen (See, Berg, Therme, Wein, international).
+12. Das Grätzl, in dem du die meisten Straßen mit Namen kennst (Freitext). Hyperlokal-Anker.
+13. Wie viele der letzten zehn Abschlüsse lagen dort (Auswahl). Verhaltensanker zur Grätzl-Tiefe.
+14. Eigentümer oder Käufer (Regler).
+15. Wie sich ein Kunde nach der Arbeit mit dir fühlen soll (Mehrfach). Kapferer Self-Image.
+16. Bei welchen Menschen bist du einer von ihnen (Freitext). Unity (Cialdini), Selbstkongruenz mit Zielgruppe (Sirgy).
+Reveal: Zwei Wohnwelten mit Kommunikationscode.
 
-**Kapitel 4: Deine Marke heute** (Bestand und Distinctive Assets)
-20. Was existiert: Logo, Farben, Website, Instagram, LinkedIn, Facebook, TikTok, YouTube, Fotos (Checkliste, Upload oder Link pro Punkt)
-21. Follower und Aktivität je Kanal (Zahlen, optional automatisch gelesen)
-22. Behalten oder neu (pro Element)
-23. Wiedererkennbare Dinge: eine Farbe, ein Ort, ein Satz, ein Gegenstand, eine Geste (Auswahl plus Freitext 3)
-24. Drei Accounts, die dir gefallen, und warum (Links)
-Reveal: Bestand als eine Karte, Vorschlag neu oder Rebranding
+**Kapitel 3: Deine Art** (Persönlichkeit, Werte, Grenzen)
+17. bis 21. Fünf Regler: aufrichtig bis aufregend, kompetent bis nahbar, ruhig bis energisch, klassisch bis modern, zurückhaltend bis meinungsstark. Aaker-Dimensionen als Slider (VAS ist Likert gleichwertig, Kuhlmann 2017).
+22. Figur-Bildwahl aus sechs (Kenner, Begleiter, Gestalter, Entdecker, Fels, Gastgeber). Als Sprachbild gelabelt, nicht als Test (Archetypen-Kritik).
+23. Sechs Bildpaare "Was passt eher zu deiner Arbeit" (Altbau-Stiege oder Glasfassade, Handschlag oder Zahlen, Markt oder Lobby, Handschrift oder Typografie, Abendlicht oder Tageslicht, Menschen oder leere Räume). Forced Choice als Ästhetik-Präferenz für die Bildwelt (Hilliard 2022 vorläufig), ausdrücklich Geschmacksfrage.
+24. Was dich antreibt: zwei aus zehn Werten (Schwartz-Wertetypen in Alltagssprache).
+25. Drei Wörter, mit denen Kunden dich heute beschreiben (Freitext). Actual Self.
+26. Drei Wörter, die sie in einem Jahr sagen sollen (Freitext). Ideal Self; der Abstand ist der Weg (Sirgy, Malär 2011: Actual Self bindet stärker, Ideal ist Entwicklungsziel).
+27. Wie wohl beim öffentlichen Sprechen über eigene Erfolge (Skala). Honesty-Humility-Anker (HEXACO), steuert Beweisformate.
+28. Was motiviert mehr: neue Kunden und Reichweite oder Bestand und Ruf sichern (Regler). Regulationsfokus (Higgins), steuert das Framing der zwei Wege.
+29. Was darf öffentlich sichtbar sein (Mehrfach aus acht Kategorien: Sport, Familie, Grätzl, Meinung, Fehler und Learnings, Politik, Team, Humor). "Faces" statt Prozent (Maggio 2024).
+30. Was du nie zeigen oder sagen würdest (Mehrfach plus Freitext). Oversharing-Grenze (Weijs 2019, Leite 2022).
+31. Anrede im Erstkontakt: Du überall, Sie überall, Sie mit Vornamen, Du auf Instagram und Sie sonst. Kanalabhängig (Appinio 2019, Gretry 2017).
+Reveal: Deine Figur mit Bild und Satz.
 
-**Kapitel 5: Dein Rhythmus** (Machbarkeit und Ziele)
-25. Wie wohl fühlst du dich vor der Kamera (1 bis 5)
-26. Zeit pro Monat für Content (Auswahl)
-27. Formate, die du dir vorstellen kannst: Talking Head, Grätzl-Spaziergang, Objekt-Walkthrough, Markt-Carousel, Q&A, Behind the scenes (Bildkarten, Ja/Nein)
-28. Kanäle nach Priorität (Sortieren)
-29. Dein Ziel in 12 Monaten (Auswahl: mehr Abgeber, Käufer-Community, Bekanntheit im Bezirk, Recruiting, Investoren) plus Freitext 4
-30. Verfügbarkeit für Drehtage (Wochentage, Tageszeiten)
-Reveal: Zwei Wege für deine Marke (Kap. 7), danach Reise-Karte mit Terminvorschlägen
+**Kapitel 4: Deine Marke heute** (Bestand, Distinctive Assets)
+32. Was existiert (Checkliste: Logo, Farben, Website, Instagram, LinkedIn, Facebook, TikTok, YouTube, Fotos).
+33. Follower auf dem stärksten Kanal (Auswahl).
+34. Behalten und schärfen, neu aufsetzen, oder nichts vorhanden.
+35. Dein wiedererkennbares Zeichen (bis zwei aus sechs). Distinctive Assets (Romaniuk); im Generator gilt Gesicht zuerst, Farbe zuletzt.
+36. Ein Account, der dir gefällt, und warum (Freitext).
+Reveal: Bestand als Karte, Vorschlag neu oder schärfen.
 
-Regeln: Kapitel einzeln speicherbar, Wiedereinstieg jederzeit, Kapitel-Übersicht statt Prozentbalken, ehrliche Zeitangabe am Start, Antworten später im Brand-Profil einsehbar und änderbar.
+**Kapitel 5: Dein Rhythmus** (Machbarkeit, Gewohnheit, Fremdbild)
+37. Kamera-Komfort 1 bis 5.
+38. Zeit pro Monat (Auswahl).
+39. Formate, die du dir vorstellen kannst (Bildkarten).
+40. Kanäle sortieren.
+41. Ziel in zwölf Monaten (Auswahl plus "woran merkst du, dass es geklappt hat").
+42. Verfügbarkeit für Drehtage.
+43. Fester Wochentermin, an den 30 Minuten Content anschließen (Freitext). Implementation Intention (Gollwitzer und Sheeran 2006, d = 0,65).
+44. Drei Menschen, denen wir drei kurze Fragen schicken dürfen (Freitext, optional). 360 light (Connelly und Ones 2010).
+Reveal: Zwei Wege für deine Marke (Kap. 7).
+
+**Kapitel 6: Deine Geschichte** (optional, Vertiefung, schreibt die Brand Story)
+45. Wo aufgewachsen, erste Berührung mit Immobilien. Heritage.
+46. Der Moment, kurz vor dem Aufhören, und was dich umgedreht hat. Redemption Sequence (McAdams 2001), Underdog-Effekt (Paharia 2011).
+47. Das letzte Mal abgeraten, obwohl es Provision gekostet hat. Benevolenz, Moralitätsprimat (Brambilla 2021).
+48. Drei Ergebnisse aus 24 Monaten für einen skeptischen Verkäufer. Ability, Kompetenzbelege vor Verletzlichkeit.
+49. Ein beruflicher Fehler und was du geändert hast. Pratfall (Aronson 1966) mit Gate: erst nach Belegen.
+50. Wie dich dein letzter Kunde beschrieben hat, wörtlich. Fremdbild.
+Reveal: "Deine Geschichte steht." Strategie rechnet neu, Version plus eins.
+
+Regeln: Kapitel einzeln speicherbar, Wiedereinstieg jederzeit, ehrliche Zeitangabe am Start, Antworten im Brand-Profil einsehbar und änderbar; jede Änderung rechnet die Wege neu.
 
 ---
 
@@ -251,6 +276,19 @@ Das Strategie-Dokument ist strukturiert, versioniert und wird im Tool als Reveal
 
 - **Weg A, Verstärken**: baut auf dem Archetyp, der am besten zu Persönlichkeitsreglern, Bildwahl und bisherigen Kunden passt. Geringstes Risiko, schnellste Routine.
 - **Weg B, Dehnen**: nimmt den zweitbesten Archetyp und setzt ihn gegen A auf der Achse Autorität gegen Nähe oder Klassik gegen Moderne ab. Mehr Kontrast, mehr Aufmerksamkeit, verlangt etwas mehr vom Makler.
+
+**Regeln des Generators aus der Forschung** (Details im Research-Anhang):
+- **Pflichtsäule "Wie ich arbeite"** (Ablauf, Provision, Regeln, was ich nicht mache) in jedem Weg mit mindestens 15 Prozent. Integrität schlägt Sympathie (Moralitätsprimat, Brambilla 2021; transparente Authentizität, Audrezet 2020). In Österreich zusätzlich begründet: 72 Prozent halten die Maklerarbeit für unsichtbar (IS24).
+- **Actual-Self-Regel**: Die Tonalität widerspricht nie dem Fremdbild; das Ideal (Frage 26) ist Entwicklungsziel, nicht Brand Voice (Malär 2011).
+- **Verletzlichkeits-Gate**: Fehlergeschichten erst, wenn drei Kompetenzbelege online sind (Pratfall-Bedingung). Kundenfrust und Politik sind Standard-Sperrthemen.
+- **Säulen aus Anlässen**: Jede Säule hängt an mindestens einem Category Entry Point aus Frage 7 (Erbe, Trennung, Familie, Investment).
+- **Origin Story mit Redemption-Struktur** aus Kapitel 6: Kontext, Tief, Wende, gelebte Konsequenz. Individuelle Details vor Formel (gegen StoryBrand-Gleichklang).
+- **Distinctive Assets in Wirkungsreihenfolge**: Gesicht und gleicher Bildausschnitt, Name, Schrift, zuletzt Farbe (Romaniuk 2018; Farbe ist das schwächste Asset). Farbwelt kommt aus den Bildpaaren (warm oder kühl), nicht aus Farbpsychologie-Tabellen.
+- **Anrede-Regel**: Sie oder neutraler Plural bei Erstkontakt, Website, LinkedIn; Du nur, wenn der Makler es natürlich nutzt, auf Instagram und TikTok, bei Zielgruppe unter 40. Bei Widerspruch gewinnt die Persönlichkeit (Gretry 2017: vorgetäuschte Nähe senkt Vertrauen).
+- **Honesty-Humility**: Wer ungern über Erfolge spricht, bekommt indirekte Kompetenzsignale (Kundenstimmen, Ablauf) statt Eigenlob.
+- **Regulationsfokus**: Weg A und B werden dem Fokus entsprechend formuliert, Gewinn-Framing für Promotion, Sicherheits-Framing für Prevention, nie als "mutig gegen feige" (Regulatory Fit, d ≈ 0,30).
+- **Rhythmus als Gewohnheit**: fester Wochenanker (Frage 43), kleinste Einheit, 10 bis 12 Wochen Habit-Phase (Lally 2010), Autonomie und schnelle Kompetenzerlebnisse (Self-Determination Theory).
+- **Konfidenz sichtbar**: Trait-Regeln sind Defaults mit Override. Archetyp, Säulen-Prozente, Anrede und Hyperlokal-Wirkung werden als Wahl der Person formuliert, nicht als Diagnose.
 
 Beide Wege haben dieselbe Struktur (Positionierung, Story, Säulen, Formate, Kanäle, Rhythmus, Tonalität, Farbwelt, Schriftpaar, Hooks, Bio) und werden nebeneinander gezeigt, mit "Passt, weil" und "Fordert dich, weil" aus den konkreten Antworten. Der Makler wählt einen Weg oder markiert, was ihm an beiden gefällt; der Workshop startet dann mit dieser Entscheidung statt bei null. Daniel kann im Review den Weg wechseln oder Abschnitte aus dem anderen Weg übernehmen. Die Wahl wird als Ereignis gespeichert und fließt später in die Empfehlungs-Engine ein (welcher Weg bei welchen Antworten gewählt wird).
 
@@ -291,6 +329,23 @@ Beide Wege haben dieselbe Struktur (Positionierung, Story, Säulen, Formate, Kan
 | Parasoziale Beziehung | erhöht Vertrauen und Kaufabsicht | robust, nicht maklerspezifisch | Säule "Persönlich" verpflichtend |
 | Makler-Markt | NAR 2025: 75 Prozent nutzen Social Media, 39 Prozent nennen es als beste Lead-Quelle, nur 38 Prozent nutzen Video regelmäßig | robust (USA) | Video als Kernformat, Argument im Onboarding |
 | Time-to-Results | 90 Tage Routine, 6 bis 12 Monate Lead-Effekte | schwach | ehrliche Erwartung im Strategie-Screen |
+
+| Vertrauen | Fähigkeit, Wohlwollen, Integrität (Mayer et al. 1995); Wärme und Kompetenz erklären 82 Prozent der Personenurteile, Moralität dominiert (Fiske, Brambilla 2021) | robust | Fragen 5, 47, 48; Pflichtsäule "Wie ich arbeite" |
+| Erster Eindruck | Vertrauensurteil nach 100 ms (Willis und Todorov 2006), Thin Slices unter 30 s sagen Bewertungen voraus (Ambady 1992) | robust | Video vor Foto, variierte Gesichter, erste 3 Sekunden |
+| Authentizität | Kontinuität, Glaubwürdigkeit, Integrität, Symbolik (Morhart 2015); Herkunft als Treiber (Napoli 2014) | robust | Kapitel 1 und 6 |
+| Verletzlichkeit | Pratfall nur bei etablierter Kompetenz (Aronson 1966); intime Offenbarung schadet Glaubwürdigkeit (Leite 2022, Weijs 2019) | mittel | Gate für Fehlergeschichten, Sperrliste |
+| Selbstkongruenz | Actual Self bindet stärker als Ideal Self (Malär 2011) | robust | Fragen 25, 26; Actual-Self-Regel |
+| Narrativ | Redemption Sequences (McAdams 2001), Underdog-Biografien steigern Kaufabsicht (Paharia 2011), Narrative wirken r = .17 bis .23 (Braddock und Dillard 2016) | robust bis mittel | Kapitel 6, Origin Story |
+| Distinctive Assets | Form und Gesicht am stärksten, Farbe am schwächsten (Romaniuk, Int. J. Advertising 2026) | robust | Reihenfolge in Kap. 7 |
+| Fremdbild | Fremdratings sagen Leistung oft besser vorher (Connelly und Ones 2010, N = 44.178); evaluative Traits liegen im blinden Fleck des Selbst (Vazire 2010) | robust | Fragen 44, 50 |
+| Verhaltensanker | Past-Behavior-Fragen valider als Trait-Selbstbericht (Levashina 2014, Schwarz 1999) | robust | Fragen 4, 8, 13, 47 |
+| Persönlichkeit und Format | Extraversion sagt Content-Erstellung und Gesichtssichtbarkeit voraus (Bowden-Green 2020), Sprache trägt Trait-Marker (Yarkoni 2010) | mittel | Formatmix, Tonregeln |
+| Honesty-Humility | stärkster Prädiktor für Selbstpromotion (HEXACO) | mittel | Frage 27, Beweisformate |
+| Regulationsfokus | Regulatory Fit d ≈ 0,30 (Meta-Analyse) | mittel | Framing der zwei Wege |
+| Gewohnheit | Implementation Intentions d = 0,65 (Gollwitzer und Sheeran 2006), Median 66 Tage (Lally 2010) | robust bis mittel | Frage 43, 90-Tage-Plan |
+| Du und Sie | Instagram rund 80 Prozent Du, LinkedIn Mehrheit Sie (Appinio 2019, Deutschland); informeller Stil senkt Vertrauen bei unvertrauten Marken (Gretry 2017) | mittel bis schwach | Frage 31, Anrede-Regel |
+| Bildwahl | Forced-Choice-Bildtests vorläufig validiert (Hilliard 2022), projektive Verfahren nicht (Wood et al.) | mittel bis schwach | Frage 23 als Geschmacksfrage |
+| Parasozial bei Maklern | keine peer-reviewte Studie zu Beratungsabsicht | Lücke | als Hypothese gekennzeichnet |
 
 Nicht übernehmen: "403 Prozent mehr Anfragen mit Video" und ähnliche unbelegte Branchenzahlen. Quellenliste in Kap. 15.
 
@@ -447,4 +502,5 @@ Antworten ändern Details, nicht die Architektur. Bitte vor Schritt 3 beantworte
 - Meta Instagram Content Publishing API (100 Posts/24 h), LinkedIn API Limits
 - Preis- und Funktionsstände 2026: HeyGen, Synthesia, Captions, Opus Clip, Descript, CapCut, Aragon, ElevenLabs, ManyChat, Planable, Metricool, Later, Frame.io, Dropbox Replay, Air
 - UX-Referenzen: Duolingo, Headspace, Notion, Linear, Typeform, Stripe, Mercury (UserGuiding, Growth.Design, Appcues, Chameleon)
+- Research-Anhang mit allen Links: `docs/UNIO_HUMAN_RESEARCH_2026-09.md` (Mayer et al. 1995, Fiske und Cuddy, Brambilla 2021, Willis und Todorov 2006, Ambady 1992, Morhart 2015, Napoli 2014, Audrezet 2020, Aronson 1966, Bruk 2018, Leite 2022, Weijs 2019, Sirgy, Malär 2011, Ashton und Lee HEXACO, McAdams 2001, Paharia 2011, Braddock und Dillard 2016, Cialdini, Bornstein 1989, Alter und Oppenheimer 2009, Romaniuk 2018, Labrecque und Milne 2012, Rammstedt BFI-10, Kuhlmann 2017, Martínez und Salgado 2021, Vazire 2010, Connelly und Ones 2010, Azucar 2018, Bowden-Green 2020, Yarkoni 2010, Matz 2017, Gorbatov 2018 und 2021, Lally 2010, Gollwitzer und Sheeran 2006, Regulatory-Fit-Meta-Analyse, Appinio 2019, Gretry 2017, Maggio 2024, IS24 Maklerimage, WKO Wien 2025)
 - Intern: `docs/MAKLER_DASHBOARD_PROZESSLOGIK.md` und `_V2.md`, `docs/MAKLER_RESEARCH_2026-08.md`, `docs/UNIO_MASTER_STORYLINE.md`, `ui_kits/dashboard/dash-shop.jsx`, Diagramm "unio human - personal brands" (14.09.2026)
