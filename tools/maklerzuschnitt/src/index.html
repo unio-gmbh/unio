@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UNIO Makler-Zuschnitt</title>
 <meta name="robots" content="noindex, nofollow">
+<script type="importmap">{"imports":{"onnxruntime-web":"https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.mjs","onnxruntime-web/webgpu":"https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.webgpu.min.mjs"}}</script>
 <style>
 @font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_400%%) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_500%%) format("woff2"); font-weight: 500; font-display: swap; }
@@ -272,6 +273,8 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
         <div class="lbl mono"><span>04 · Export</span></div>
         <div class="seg" id="segFmt"><button data-v="jpg" class="on">JPG</button><button data-v="png">PNG</button><button data-v="webp">WEBP</button></div>
         <div class="seg" id="segSize"><button data-v="750">750</button><button data-v="1500" class="on">1500</button><button data-v="3000">3000</button><button data-v="native">Original</button></div>
+        <div class="switch" id="swCut"><span class="name">Hintergrund freistellen</span><i></i></div>
+        <div class="keys" id="cutHint">Läuft im Browser, das Foto verlässt den Rechner nicht. Erstes Bild ca. 20 Sekunden (Modell wird geladen), danach 5 bis 10 Sekunden.</div>
         <div class="seg" id="segBg"><button data-v="#ffffff" class="on">Weiß</button><button data-v="#F7F5F1">Paper</button><button data-v="transparent">Transparent</button></div>
         <dl class="facts" id="facts"></dl>
         <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob">↓</span></button>
@@ -303,7 +306,8 @@ const view = $("view"), ctx = view.getContext("2d");
 const guides = $("guides");
 const items = [];
 let cur = null;
-const opts = { fmt: "jpg", size: "1500", bg: "#ffffff", guides: true, points: false, ratio: "1", pos: "mitte" };
+const opts = { fmt: "jpg", size: "1500", bg: "#ffffff", guides: true, points: false, ratio: "1", pos: "mitte", cut: false };
+const BG_REMOVAL = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/index.mjs";
 const R = () => +opts.ratio;                       // Rahmenbreite in Rahmenhöhen
 const CX = () => (opts.pos === "mitte" ? 0.5 : G.nose.x) * R(); // Nasenspitze horizontal
 let frame = { x: 0, y: 0, w: 0, h: 0 };
@@ -429,7 +433,8 @@ function drawItem(c2, it, W, H, bg, showOutside) {
   c2.rotate(it.rot);
   c2.scale(it.s * H, it.s * H);
   c2.translate(-it.A.x, -it.A.y);
-  c2.drawImage(it.img, 0, 0);
+  const src = opts.cut && it.cut ? it.cut : it.img;
+  c2.drawImage(src, 0, 0, it.w, it.h);
   c2.restore();
 }
 
@@ -516,7 +521,8 @@ function refreshFacts() {
     `<dt>Ausgabe</dt><dd>${W} × ${H} px</dd>` +
     `<dt>Quelle</dt><dd>${cur.w} × ${cur.h} px</dd>` +
     `<dt>Skalierung</dt><dd class="${up > 1.05 ? "warn" : ""}">${up > 1.05 ? "Hochskaliert ×" + up.toFixed(2) : "×" + up.toFixed(2)}</dd>` +
-    `<dt>Rand</dt><dd class="${cov ? "" : "warn"}">${cov ? "Voll abgedeckt" : opts.bg === "transparent" ? "Transparent gefüllt" : "Mit Hintergrund gefüllt"}</dd>`;
+    `<dt>Rand</dt><dd class="${cov ? "" : "warn"}">${cov ? "Voll abgedeckt" : opts.bg === "transparent" ? "Transparent gefüllt" : "Mit Hintergrund gefüllt"}</dd>` +
+    (opts.cut ? `<dt>Hintergrund</dt><dd class="${cur.cut ? "" : "warn"}">${cur.cut ? "Freigestellt" : cur.cutting ? "Wird freigestellt" : cur.cutErr ? "Freistellen fehlgeschlagen" : "Wartet"}</dd>` : "");
   $("hud").innerHTML = `<span>${esc(cur.name)}</span><span><b>${W} × ${H}</b></span>`;
 }
 const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -548,6 +554,7 @@ function renderQueue() {
     c.style.aspectRatio = String(R());
     const g = c.getContext("2d");
     if (it.status !== "busy") drawItem(g, it, c.width, 200, opts.bg === "transparent" ? "#fff" : opts.bg);
+    if (opts.cut && it.cutting) { g.fillStyle = "rgba(247,245,241,.75)"; g.fillRect(0, 0, c.width, 200); }
     const dotCls = { ok: "ok", manual: "manual", err: "err" }[it.status] || "";
     b.innerHTML = `<button class="x" type="button" title="Entfernen">×</button>`;
     b.prepend(c);
@@ -575,6 +582,32 @@ $("rot").addEventListener("input", (e) => { if (!cur) return; cur.rot = e.target
 $("reset").addEventListener("click", () => { if (!cur) return; cur.A = { ...cur.base.A }; cur.s = cur.base.s; cur.rot = cur.base.rot; syncControls(); draw(); queueSoon(); });
 function toggleSwitch(id, key) { const el = $(id); el.addEventListener("click", () => { opts[key] = !opts[key]; el.classList.toggle("on", opts[key]); draw(); }); }
 toggleSwitch("swGuides", "guides"); toggleSwitch("swPoints", "points");
+
+/* Freistellen: @imgly/background-removal (ISNet) im Browser, Ergebnis wird je Bild gecacht */
+let bgModP = null;
+const loadBgRemoval = () => bgModP || (bgModP = import(BG_REMOVAL));
+async function cutout(it) {
+  if (it.cut || it.cutting) return it.cut;
+  it.cutting = true; it.cutErr = false; refreshFacts(); renderQueue();
+  try {
+    const mod = await loadBgRemoval();
+    const src = await fetch(it.img.src).then((r) => r.blob());
+    const blob = await mod.removeBackground(src, { model: "isnet_fp16", output: { format: "image/png" }, progress: (k, c, t) => { if (it === cur && k.startsWith("fetch")) $("cutHint").textContent = `Modell wird geladen · ${Math.round(c / t * 100)} %`; } });
+    const img = new Image();
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = URL.createObjectURL(blob); });
+    it.cut = img;
+    $("cutHint").textContent = "Läuft im Browser, das Foto verlässt den Rechner nicht.";
+  } catch (e) { console.warn("Freistellen:", e); it.cutErr = true; toast("Freistellen fehlgeschlagen, Original wird verwendet"); }
+  it.cutting = false;
+  if (it === cur) draw();
+  refreshFacts(); renderQueue();
+  return it.cut;
+}
+$("swCut").addEventListener("click", async () => {
+  opts.cut = !opts.cut; $("swCut").classList.toggle("on", opts.cut);
+  draw(); queueSoon();
+  if (opts.cut && cur) { toast("Wird freigestellt"); await cutout(cur); if (cur && cur.cut) toast("Freigestellt"); }
+});
 function seg(id, key, after) {
   $(id).addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b || b.disabled) return;
@@ -667,14 +700,14 @@ function renderExport(it) {
   drawItem(g, it, W, H, bg);
   return new Promise((res) => c.toBlob(res, MIME[opts.fmt], 0.93));
 }
-const outName = (it) => it.name.replace(/\.[^.]+$/, "") + "_portrait_" + RATIO_NAME[opts.ratio].replace(/\s/g, "").replace(":", "x") + "." + opts.fmt;
+const outName = (it) => it.name.replace(/\.[^.]+$/, "") + "_portrait_" + RATIO_NAME[opts.ratio].replace(/\s/g, "").replace(":", "x") + (opts.cut ? "_freigestellt" : "") + "." + opts.fmt;
 function download(blob, name) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-$("export").addEventListener("click", async () => { if (!cur) return; const b = await renderExport(cur); download(b, outName(cur)); toast("Exportiert · " + outName(cur)); });
+$("export").addEventListener("click", async () => { if (!cur) return; if (opts.cut && !cur.cut) { toast("Wird freigestellt"); await cutout(cur); } const b = await renderExport(cur); download(b, outName(cur)); toast("Exportiert · " + outName(cur)); });
 let zipP = null;
 const loadZip = () => zipP || (zipP = new Promise((res, rej) => { const s = document.createElement("script"); s.src = JSZIP; s.onload = () => res(window.JSZip); s.onerror = rej; document.head.appendChild(s); }));
 $("exportAll").addEventListener("click", async () => {
@@ -683,8 +716,8 @@ $("exportAll").addEventListener("click", async () => {
   try {
     const JSZip = await loadZip();
     const zip = new JSZip();
-    for (const it of items) zip.file(outName(it), await renderExport(it));
-    download(await zip.generateAsync({ type: "blob" }), "portraits_3x4.zip");
+    for (const it of items) { if (opts.cut && !it.cut) { select(it); toast(`Wird freigestellt · ${it.name}`); await cutout(it); } zip.file(outName(it), await renderExport(it)); }
+    download(await zip.generateAsync({ type: "blob" }), "portraits.zip");
     toast(items.length + " Bilder als ZIP exportiert");
   } catch { for (const it of items) download(await renderExport(it), outName(it)); }
 });
