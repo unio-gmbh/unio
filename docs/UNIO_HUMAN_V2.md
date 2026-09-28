@@ -1,4 +1,4 @@
-# UNIO HUMAN v2. Einrichtung, Marke, Content-Produktion
+# UNIO HUMAN v2 und v3. Einrichtung, Marke, Content-Produktion
 
 Stand: 28.09.2026. Ergänzt `docs/UNIO_HUMAN_PLAN.md` (v1.2) um den Stand des Prototyps unter `/ux/human` nach dem vollständigen Diagramm "unio human - personal brands" (Blöcke Agent Akquise, On-Boarding, Kick-off, Setups, Zyklus, Shop, Sonderwünsche) und dem Funktionsumfang von Lucida OS. Alles Demo-Material stammt aus dem UNIO-Repo.
 
@@ -97,3 +97,32 @@ Board mit fünf Stufen (Recherche und Erstkontakt, Kennenlernen, Nachfassen, Dee
 5. **Templates parametrisieren:** Showcase-Looks an die Feldliste anschließen, Terminbuchung und Formular ergänzen.
 6. **Higgsfield:** API-Zugang, Kosten je Bild, Freigabeprozess für generierte Bilder.
 7. **Posting:** Meta Graph API direkt oder Planable/Metricool als Brücke.
+
+
+---
+
+## 8. Design-Überarbeitung v3 (28.09.2026)
+
+Ziel: nativer, weniger nach Lucida, keine doppelten Daten.
+
+**Was sich geändert hat**
+
+| Vorher (v2) | Jetzt (v3) | Warum |
+|---|---|---|
+| Makler: sieben Menüpunkte inklusive Einrichtung und Freigaben | Fünf: Heute, Marke, Inhalte, Wirkung, Shop | Freigaben und Einrichtung leben dort, wo man ohnehin hinschaut: auf Heute |
+| Team: sieben Menüpunkte | Fünf: Heute, Akquise, Makler, Produktion, Einstellungen | Empfehlungen stehen auf Heute als Sparpotenzial, Freigaben als Filter in Produktion, Vorlagen in Einstellungen |
+| Kanban mit neun Spalten | Gruppierte Liste mit Filter (Wartet, Änderung, In Arbeit, Geplant, Ideen, Online) | Liest sich wie Mail oder Erinnerungen, funktioniert auch am Handy, keine Lucida-Optik |
+| Beitrag mit Stepper links und Vorschau nur im letzten Schritt | Ein Dokument: vier aufklappbare Abschnitte mit Zusammenfassung, Fortschrittsleiste oben, Handy-Vorschau immer rechts | Kontext bleibt sichtbar, die Checkliste entfällt, weil die Abschnitte selbst den Stand zeigen |
+| Freigabe dreifach (Heute, Menü, Inhalte-Spalte) | Einmal: Karten auf Heute mit Freigeben und Ansehen; in Inhalte als Filter | Eine Stelle zum Handeln |
+| Marke in sechs Schritten, Brand-Kit getrennt | Vier Schritte: Fragebogen, Konzept, Design, Website. Material und Downloads im Design | Brand-Kit wiederholte Logo, Farben und Schriften; das Konzept zeigte Farbwelt und Schrift ein zweites Mal |
+| Wirkung mit zwei Tabs, beste Beiträge doppelt | Eine Seite: Kennzahlen, Verlauf, Beiträge nach Reichweite, Folgerungen, Quartal | Keine Wiederholung |
+| Makler-Arbeitsbereich mit neun Tabs | Sechs: Überblick (inklusive Personen), Inhalte, Wirkung, Marke, Einrichtung, Gespräche | Kontakte sind drei Zeilen und gehören in den Überblick |
+| Versal-Labels in Mono, schwarze Auswahlpillen, viele Karten mit Rahmen | Satzschreibung, ruhige Seitenleiste mit weicher Auswahl, gruppierte Listen mit eingerückten Trennlinien, Mono nur für Zahlen | Näher an macOS und iOS, weniger Dashboard |
+| Demo-Schalter in der Kopfleiste | Ein Menü "Demo" | Die Oberfläche zeigt nur, was ein echter Nutzer sieht |
+
+**Regeln für weitere Screens**
+1. Eine Information hat einen Ort. Zusammenfassungen verlinken, statt zu wiederholen.
+2. Listen vor Karten, Karten nur, wo ein Bild die Entscheidung trägt (Freigabe).
+3. Eine Primäraktion je Ansicht (schwarze Pille), alles andere als Text-Link oder kleiner Knopf.
+4. Unterabläufe als Fenster über dem Kontext, nicht als neue Seite.
+5. Mono nur für Daten (Zahlen, Zeiten), Beschriftungen in Satzschreibung.

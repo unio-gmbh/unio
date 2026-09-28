@@ -3,36 +3,36 @@
 function MaklerHeute({ m, go, oeffne }) {
   const content = (useHm("content") || []).filter((c) => c.maklerId === m.id);
   const { st } = useEinrichtung(m.id);
-  const drehtage = (useHm("drehtage") || []).filter((d) => d.slots.some((s) => s.maklerId === m.id) && d.status !== "fertig" && d.datum >= "2026-09-28").sort((a, b) => a.datum.localeCompare(b.datum));
+  const drehtage = (useHm("drehtage") || []).filter((d) => d.slots.some((s) => s.maklerId === m.id) && d.status !== "fertig" && d.datum >= "2026-09-28" && d.datum <= "2026-10-05");
   const fb = (useHm("fragebogen") || {})[m.id];
   const strat = (useHm("strategien") || {})[m.id];
   useHm("branding");
   const b = hmBrand(m.id);
-  const events = (useHm("events") || []).filter((e) => e.maklerId === m.id).slice(0, 5);
-  const einFertig = HM_EINRICHTUNG.filter((e) => st[e.id] === "fertig").length;
+  const [ein, setEin] = React.useState(null);
   const freigaben = content.filter((c) => c.zustand === "freigabe");
   const ideen = content.filter((c) => c.zustand === "idee");
-  const woche = content.filter((c) => c.termin && c.termin.slice(0, 10) >= "2026-09-28" && c.termin.slice(0, 10) <= "2026-10-05").sort((a, b2) => a.termin.localeCompare(b2.termin));
-  /* genau eine nächste Sache */
+  const offenE = HM_EINRICHTUNG.filter((e) => st[e.id] !== "fertig");
+  const woche = content.filter((c) => c.zustand !== "freigabe" && c.termin && c.termin.slice(0, 10) >= "2026-09-28" && c.termin.slice(0, 10) <= "2026-10-05");
+  const agenda = [...drehtage.map((d) => ({ k: d.datum, t: "Drehtag", u: `${hmDatum(d.datum)} · ${d.location}`, z: null })), ...woche.map((c) => ({ k: c.termin, t: c.titel, u: `${hmDatum(c.termin)} ${hmZeit(c.termin)}`, z: c.zustand, id: c.id }))].sort((a, b2) => a.k.localeCompare(b2.k));
+  /* Eine Sache, die nur hier steht: Meilensteine der Marke. Freigaben und Einrichtung haben eigene Abschnitte. */
   let next = null;
-  if (st.vertrag !== "fertig") next = ["Vertrag unterschreiben", "Drei Minuten, danach geht es los.", () => go("einrichtung")];
-  else if (!fb || !fb.fertig) next = ["Fragebogen beantworten", "18 Minuten. Daraus entstehen zwei Wege für deine Marke.", () => go("marke", { sub: "fragebogen" })];
+  if (st.vertrag !== "fertig") next = ["Vertrag unterschreiben", "Drei Minuten, danach geht es los.", () => setEin("vertrag")];
+  else if (!fb || !fb.fertig) next = ["Fragebogen beantworten", "Rund 18 Minuten. Daraus entstehen zwei Wege für deine Marke.", () => go("marke", { sub: "fragebogen" })];
   else if (strat && !strat.gewaehlt) next = ["Deinen Weg wählen", "Zwei Strategien liegen bereit.", () => go("marke", { sub: "konzept" })];
-  else if (freigaben.length) next = [`${freigaben.length} ${freigaben.length === 1 ? "Beitrag wartet" : "Beiträge warten"} auf dich`, `Zuerst: ${freigaben[0].titel}`, () => oeffne(freigaben[0].id)];
-  else if (strat && strat.gewaehlt && !b.fertig) next = ["Branding ansehen und freigeben", "Logo, Schrift und Farbe sind vorbereitet.", () => go("marke", { sub: "design" })];
-  else if (einFertig < HM_EINRICHTUNG.length) { const e = HM_EINRICHTUNG.find((x) => st[x.id] !== "fertig" && st[x.id] !== "wartet_team"); if (e) next = [e.titel, e.satz, () => go("einrichtung")]; }
-  if (!next && ideen.length) next = [`${ideen.length} Ideen für Oktober`, "Wähle, was wir drehen.", () => go("inhalte")];
-  const tagText = m.tag > 30 ? `Monat ${Math.floor(m.tag / 30)}` : `Tag ${m.tag} von 30`;
+  else if (strat && strat.gewaehlt && !b.fertig) next = ["Branding freigeben", "Logo, Schrift und Farbe sind vorbereitet.", () => go("marke", { sub: "design" })];
+  else if (!freigaben.length && ideen.length) next = [`${ideen.length} Ideen für Oktober`, "Wähle, was wir drehen.", () => go("inhalte")];
+  const datum = new Date(2026, 8, 28).toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
   return <div>
-    <div className="hm-mono">{tagText} · {m.abo}</div>
-    <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Guten Morgen, {m.name.split(" ")[0]}.</h2>
-    {next ? <button className="hm-weiter gross" onClick={next[2]}><div><div className="hm-mono" style={{ color: "var(--text-inverse-muted)" }}>Als Nächstes</div><div style={{ fontSize: 28, letterSpacing: "-.02em", marginTop: 6 }}>{next[0]}</div><div style={{ color: "var(--text-inverse-muted)", marginTop: 4 }}>{next[1]}</div></div><span className="k">→</span></button> : <div className="hm-weiter gross" style={{ cursor: "default" }}><div><div className="hm-mono" style={{ color: "var(--text-inverse-muted)" }}>Als Nächstes</div><div style={{ fontSize: 28, letterSpacing: "-.02em", marginTop: 6 }}>Nichts. Wir arbeiten.</div></div></div>}
-    <div className="hm-heute-grid">
-      {einFertig < HM_EINRICHTUNG.length && <button className="hm-card klick" onClick={() => go("einrichtung")}><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Einrichtung</div><Ring wert={einFertig / HM_EINRICHTUNG.length} groesse={40} dicke={4} /></div><div style={{ fontSize: 22, color: "var(--ink)", marginTop: 8 }}>{einFertig} von {HM_EINRICHTUNG.length} erledigt</div><div className="hm-sub" style={{ fontSize: 14, marginTop: 4 }}>{HM_EINRICHTUNG.filter((e) => st[e.id] === "wartet_team").length} liegen beim Team</div></button>}
-      <div className="hm-card"><div className="hm-mono">Diese Woche</div><div className="hm-list" style={{ marginTop: 6 }}>{drehtage.slice(0, 1).map((d) => <Zeile key={d.id} titel={`Drehtag, ${hmDatum(d.datum)}`} unter={d.location} rechts={<span className="hm-dotz" style={{ background: "var(--signal)" }}></span>} />)}{woche.map((c) => <Zeile key={c.id} titel={c.titel} unter={`${hmDatum(c.termin)} ${hmZeit(c.termin)}`} rechts={<ZPunkt z={c.zustand} />} onClick={() => oeffne(c.id)} />)}{!woche.length && !drehtage.length && <div style={{ fontSize: 14, color: "var(--text-muted)", padding: "10px 0" }}>Ruhige Woche.</div>}</div></div>
-      {b.w && <button className="hm-card klick" onClick={() => go("marke")}><div className="hm-mono">Deine Marke</div><div style={{ margin: "14px 0 10px" }}><BrandLogo b={b} h={28} /></div><div style={{ fontSize: 14, color: "var(--text-muted)" }}>{b.fertig ? "Freigegeben" : "Entwurf"} · {b.w.archetyp.name} · {b.schrift.name}</div></button>}
-    </div>
-    <div style={{ marginTop: 30 }}><div className="hm-mono">Zuletzt</div><div style={{ marginTop: 8 }}>{events.map((e) => <div key={e.id} className="hm-ev"><div className="d">{hmRel(e.t)}</div><div>{e.text} <span style={{ color: "var(--text-muted)" }}>· {e.akteur}</span></div></div>)}</div></div>
+    <Kopf ueber={datum} titel={`Guten Morgen, ${m.name.split(" ")[0]}.`} />
+    {next && <button className="hm-weiter gross" onClick={next[2]}><div><div className="hm-mono" style={{ color: "var(--text-inverse-muted)" }}>Als Nächstes</div><div style={{ fontSize: 26, letterSpacing: "-.02em", marginTop: 6 }}>{next[0]}</div><div style={{ color: "var(--text-inverse-muted)", marginTop: 4, fontSize: 15 }}>{next[1]}</div></div><span className="k">→</span></button>}
+    {freigaben.length > 0 && <><div className="hm-sek">{freigaben.length === 1 ? "Ein Beitrag wartet auf dich" : `${freigaben.length} Beiträge warten auf dich`}</div>
+      <div className="hm-review">{freigaben.map((c) => <div key={c.id}>{c.thumb ? <img src={c.thumb} alt="" onClick={() => oeffne(c.id)} /> : <div className="platz" onClick={() => oeffne(c.id)}></div>}<div className="txt"><div className="t">{c.titel}</div><div className="u">{HM_TYPEN[c.typ]} · geplant {hmDatum(c.termin)}</div><div className="a"><button className="hm-klein-btn" onClick={() => setBeitrag(c.id, { zustand: "freigegeben" }, "freigegeben", m.name)}>Freigeben</button><button className="hm-klein-btn hell" onClick={() => oeffne(c.id)}>Ansehen</button></div></div></div>)}</div></>}
+    {offenE.length > 0 && <><div className="hm-sek">Einrichtung · {HM_EINRICHTUNG.length - offenE.length} von {HM_EINRICHTUNG.length}<button onClick={() => go("einrichtung")}>Alle ansehen</button></div>
+      <div className="hm-gruppe">{offenE.slice(0, 4).map((e) => { const z = st[e.id] || "offen"; const gesperrt = e.braucht && !b.fertig; return <div key={e.id} className="hm-reihe klick" onClick={() => setEin(e.id)}><div className="m"><div className="t">{e.titel}</div><div className="u">{gesperrt ? "Kommt nach deinem Branding" : e.satz}</div></div><div className="r">{z !== "offen" && <span className="hm-status"><i style={{ background: z === "wartet_team" ? "var(--ink)" : "var(--signal)" }}></i>{HM_EZ[z]}</span>}<span className="hm-chev">›</span></div></div>; })}</div></>}
+    {agenda.length > 0 && <><div className="hm-sek">Diese Woche</div>
+      <div className="hm-gruppe">{agenda.map((a, i) => <div key={i} className={"hm-reihe" + (a.id ? " klick" : "")} onClick={() => a.id && oeffne(a.id)}><div className="m"><div className="t">{a.t}</div><div className="u">{a.u}</div></div><div className="r">{a.z ? <span className="hm-status"><i style={{ background: hmSpalte(a.z).farbe }}></i>{hmSpalte(a.z).name}</span> : <span className="hm-status"><i style={{ background: "var(--signal)" }}></i>Termin</span>}{a.id && <span className="hm-chev">›</span>}</div></div>)}</div></>}
+    {!next && !freigaben.length && !offenE.length && !agenda.length && <Leer titel="Alles erledigt." text="Wir arbeiten an deinen nächsten Beiträgen." />}
+    <EinrichtungSheet id={ein} m={m} zu={() => setEin(null)} go={go} />
   </div>;
 }
 
@@ -40,27 +40,23 @@ function TeamHeute({ go, oeffne, oeffneMakler }) {
   const makler = useHm("makler") || [];
   const content = useHm("content") || [];
   const ein = useHm("einrichtung") || {};
-  const leads = useHm("leads") || [];
   const branding = useHm("branding") || {};
   const web = useHm("website") || {};
   const name = (id) => (makler.find((x) => x.id === id) || {}).name || id;
-  const aufgaben = [];
-  makler.forEach((m) => { HM_EINRICHTUNG.forEach((e) => { if ((ein[m.id] || {})[e.id] === "wartet_team") aufgaben.push({ k: "Einrichtung", t: `${e.titel} bestätigen`, m: m.id, go: () => oeffneMakler(m.id, "einrichtung") }); }); });
-  content.filter((c) => c.zustand === "schnitt" && !c.schnittFertig).forEach((c) => aufgaben.push({ k: "Schnitt", t: c.titel, m: c.maklerId, go: () => oeffne(c.id) }));
-  content.filter((c) => c.zustand === "aenderung").forEach((c) => aufgaben.push({ k: "Änderung", t: c.titel, m: c.maklerId, go: () => oeffne(c.id) }));
-  content.filter((c) => c.zustand === "dreh").forEach((c) => aufgaben.push({ k: "Dreh", t: c.titel, m: c.maklerId, go: () => oeffne(c.id) }));
-  Object.entries(web).forEach(([mid, w]) => { if (w.status === "pruefung") aufgaben.push({ k: "Website", t: "Website prüfen und live schalten", m: mid, go: () => oeffneMakler(mid, "marke", "website") }); });
-  Object.entries(branding).forEach(([mid, b2]) => { if (b2.status === "entwurf" || b2.status === "geaendert") aufgaben.push({ k: "Branding", t: "Branding-Entwurf prüfen", m: mid, go: () => oeffneMakler(mid, "marke", "design") }); });
+  const auf = [];
+  makler.forEach((m) => HM_EINRICHTUNG.forEach((e) => { if ((ein[m.id] || {})[e.id] === "wartet_team") auf.push({ k: "Einrichtung", t: e.titel, m: m.id, go: () => oeffneMakler(m.id, "einrichtung") }); }));
+  Object.entries(branding).forEach(([mid, b2]) => { if (b2.status === "entwurf" || b2.status === "geaendert") auf.push({ k: "Marke", t: "Branding prüfen", m: mid, go: () => oeffneMakler(mid, "marke", "design") }); });
+  Object.entries(web).forEach(([mid, w]) => { if (w.status === "pruefung") auf.push({ k: "Website", t: "Prüfen und live schalten", m: mid, go: () => oeffneMakler(mid, "marke", "website") }); });
+  content.filter((c) => ["aenderung", "schnitt", "dreh"].includes(c.zustand)).forEach((c) => auf.push({ k: hmSpalte(c.zustand).name, t: c.titel, m: c.maklerId, go: () => oeffne(c.id) }));
   const warten = content.filter((c) => c.zustand === "freigabe");
+  const datum = new Date(2026, 8, 28).toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
   return <div>
-    <Kopf ueber={`Team · ${new Date(2026, 8, 28).toLocaleDateString("de-AT", { weekday: "long", day: "2-digit", month: "long" })}`} titel={aufgaben.length ? `${aufgaben.length} Dinge brauchen uns.` : "Nichts brauchen uns gerade."} text={`${warten.length} Beiträge warten auf Makler. ${leads.filter((l) => l.stufe !== "onboarding").length} Kontakte in der Akquise.`} />
-    <div className="hm-heute-grid" style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}>
-      <div className="hm-card"><div className="hm-mono">Wartet auf uns</div><div className="hm-list" style={{ marginTop: 6 }}>{aufgaben.map((a, i) => <Zeile key={i} links={<span className="hm-typ">{a.k}</span>} titel={a.t} unter={name(a.m)} onClick={a.go} rechts="→" />)}{!aufgaben.length && <div style={{ padding: "12px 0", color: "var(--text-muted)" }}>Frei.</div>}</div></div>
-      <div className="hm-stack">
-        <div className="hm-card"><div className="hm-mono">Wartet auf Makler</div><div className="hm-list" style={{ marginTop: 6 }}>{warten.map((c) => <Zeile key={c.id} titel={c.titel} unter={`${name(c.maklerId)} · ${hmDatum(c.termin)}`} onClick={() => oeffne(c.id)} rechts={<button className="hm-chip" onClick={(e) => { e.stopPropagation(); hmEvent(c.maklerId, "erinnerung", `Erinnerung: ${c.titel} freigeben`, "Team"); toast("Erinnert"); }}>Erinnern</button>} />)}</div></div>
-        <div className="hm-card"><div className="hm-mono">Empfehlungen</div><Empfehlungen makler={makler} kurz /></div>
-      </div>
-    </div>
+    <Kopf ueber={datum} titel="Heute" />
+    <div className="hm-sek">Braucht uns · {auf.length}</div>
+    <div className="hm-gruppe">{auf.map((a, i) => <div key={i} className="hm-reihe klick" onClick={a.go}><div className="m"><div className="t">{a.t}</div><div className="u">{a.k} · {name(a.m)}</div></div><div className="r"><span className="hm-chev">›</span></div></div>)}{!auf.length && <div className="hm-reihe"><div className="m"><div className="u">Nichts offen.</div></div></div>}</div>
+    {warten.length > 0 && <><div className="hm-sek">Wartet auf Makler · {warten.length}</div><div className="hm-gruppe">{warten.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}><div className="m"><div className="t">{c.titel}</div><div className="u">{name(c.maklerId)} · geplant {hmDatum(c.termin)}</div></div><div className="r"><button className="hm-klein-btn hell" onClick={(e) => { e.stopPropagation(); hmEvent(c.maklerId, "erinnerung", `Erinnerung: ${c.titel}`, "Team"); toast("Erinnert"); }}>Erinnern</button><span className="hm-chev">›</span></div></div>)}</div></>}
+    <div className="hm-sek">Sparpotenzial</div>
+    <Empfehlungen makler={makler} kurz />
   </div>;
 }
 
@@ -145,9 +141,8 @@ function Ressourcen({ m }) {
   const [name, setName] = React.useState(""); const [text, setText] = React.useState("");
   const b = m ? hmBrand(m.id) : null;
   return <div>
-    <Kopf ueber="Ressourcen" titel="Vorlagen und Marke." text="Skript-Vorlagen gelten für alle oder nur für einen Makler. Sie sind im Skript eines Beitrags mit einem Klick eingesetzt." rechts={<Btn knob="+" onClick={() => setNeu(true)}>Vorlage</Btn>} />
-    {b && b.w && <><div className="hm-mono" style={{ marginTop: 22, marginBottom: 10 }}>Marke von {m.name}</div><div className="hm-card hm-row" style={{ gap: 20 }}><BrandLogo b={b} h={26} /><span className="hm-mono">{b.schrift.name} · {(HM_WEB_AKZENTE.find((x) => x.id === b.akzentId) || {}).name}</span><i style={{ width: 22, height: 22, borderRadius: 6, background: b.akzent }}></i></div></>}
-    {[["Nur für " + (m ? m.name : "diesen Makler"), vorlagen.filter((v) => m && v.maklerId === m.id)], ["Für alle", vorlagen.filter((v) => v.global)]].map(([t, l]) => <div key={t}><div className="hm-mono" style={{ marginTop: 22, marginBottom: 10 }}>{t} · {l.length}</div><div className="hm-card">{l.map((v) => <Zeile key={v.id} titel={v.name} unter={`${v.woerter} Wörter · ${v.text.split("\n")[0]}`} />)}{!l.length && <div style={{ fontSize: 14, color: "var(--text-muted)" }}>Noch keine.</div>}</div></div>)}
+    <div className="hm-row" style={{ justifyContent: "space-between", marginTop: 20 }}><p className="hm-sub" style={{ margin: 0 }}>Skript-Vorlagen für alle oder für einzelne Makler. Im Beitrag mit einem Klick eingesetzt.</p><Btn knob="+" onClick={() => setNeu(true)}>Vorlage</Btn></div>
+    {(m ? [["Nur für " + m.name, vorlagen.filter((v) => v.maklerId === m.id)], ["Für alle", vorlagen.filter((v) => v.global)]] : [["Für alle", vorlagen.filter((v) => v.global)], ["Für einzelne Makler", vorlagen.filter((v) => !v.global)]]).map(([t, l]) => <div key={t}><div className="hm-sek">{t} · {l.length}</div><div className="hm-gruppe">{l.map((v) => <div key={v.id} className="hm-reihe"><div className="m"><div className="t">{v.name}</div><div className="u">{v.woerter} Wörter · {v.text.split("\n")[0]}</div></div></div>)}{!l.length && <div className="hm-reihe"><div className="m"><div className="u">Noch keine.</div></div></div>}</div></div>)}
     <Sheet offen={neu} zu={() => setNeu(false)} titel="Neue Vorlage" fuss={<Btn disabled={!name.trim() || !text.trim()} onClick={() => { hmStore.patch("vorlagen", (a) => [...(a || []), { id: "v" + Date.now(), name, text, woerter: hmWoerter(text), global: !m, maklerId: m ? m.id : null }]); setNeu(false); setName(""); setText(""); toast("Vorlage gespeichert"); }}>Speichern</Btn>}>
       <div className="hm-stack"><label className="hm-feld"><span>Name</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="Reel · Drei Zahlen" /></label><label className="hm-feld"><span>Text</span><textarea rows={8} value={text} onChange={(e) => setText(e.target.value)} placeholder={'"Hook"\n"Aussage"\n"Frage"'} /></label></div>
     </Sheet>
@@ -156,36 +151,40 @@ function Ressourcen({ m }) {
 
 /* Arbeitsbereich eines Maklers für das Team (entspricht einem Projekt in Lucida) */
 function Arbeitsbereich({ m, sub, setSub, oeffne, zurueck, bereich, setBereich }) {
-  const content = (useHm("content") || []).filter((c) => c.maklerId === m.id);
   const b = hmBrand(m.id);
-  const tabs = [["ueberblick", "Überblick"], ["inhalte", "Inhalte"], ["freigaben", "Freigaben", content.filter((c) => c.zustand === "freigabe").length], ["wirkung", "Wirkung"], ["marke", "Marke"], ["einrichtung", "Einrichtung"], ["meetings", "Meetings"], ["kontakte", "Kontakte"], ["ressourcen", "Ressourcen"]];
+  const tabs = [["ueberblick", "Überblick"], ["inhalte", "Inhalte"], ["wirkung", "Wirkung"], ["marke", "Marke"], ["einrichtung", "Einrichtung"], ["gespraeche", "Gespräche"]];
   const t = bereich || "ueberblick";
   return <div>
-    <button className="hm-zurueck" onClick={zurueck}>← Makler</button>
-    <div className="hm-row" style={{ gap: 14, margin: "12px 0 18px" }}><Avatar name={m.name} gross bild={b.portrait} /><div><div className="hm-h hm-h2">{m.name}</div><div className="hm-mono">{m.region} · {m.abo} · {m.tag > 30 ? `Monat ${Math.floor(m.tag / 30)}` : `Tag ${m.tag}`}</div></div></div>
+    <button className="hm-zurueck" onClick={zurueck}>‹ Makler</button>
+    <div className="hm-row" style={{ gap: 14, margin: "10px 0 18px" }}><Avatar name={m.name} gross bild={b.portrait} /><div><div className="hm-h hm-h2">{m.name}</div><div className="hm-mono">{m.region} · {m.abo} · {m.tag > 30 ? `Monat ${Math.floor(m.tag / 30)}` : `Tag ${m.tag}`}</div></div></div>
     <Tabs tabs={tabs} akt={t} set={(x) => { setBereich(x); setSub(null); }} />
-    <div style={{ marginTop: 22 }}>
+    <div style={{ marginTop: 8 }}>
       {t === "ueberblick" && <Ueberblick m={m} setBereich={setBereich} oeffne={oeffne} />}
       {t === "inhalte" && <Inhalte2 m={m} teamSicht sub={sub} setSub={setSub} oeffne={oeffne} />}
-      {t === "freigaben" && <FreigabenQ m={m} teamSicht oeffne={oeffne} />}
-      {t === "wirkung" && <Wirkung m={m} teamSicht oeffne={oeffne} />}
+      {t === "wirkung" && <Wirkung m={m} oeffne={oeffne} />}
       {t === "marke" && <Marke m={m} sub={sub} setSub={setSub} go={() => {}} teamSicht />}
       {t === "einrichtung" && <Einrichtung m={m} go={() => {}} teamSicht />}
-      {t === "meetings" && <Meetings m={m} />}
-      {t === "kontakte" && <Kontakte m={m} />}
-      {t === "ressourcen" && <Ressourcen m={m} />}
+      {t === "gespraeche" && <Meetings m={m} />}
     </div>
   </div>;
 }
 
 function Ueberblick({ m, setBereich, oeffne }) {
   const content = (useHm("content") || []).filter((c) => c.maklerId === m.id);
-  const zaehl = (zs) => content.filter((c) => zs.includes(c.zustand)).length;
-  const next = content.filter((c) => c.termin && c.termin >= "2026-09-28").sort((a, b) => a.termin.localeCompare(b.termin)).slice(0, 5);
-  const reach = content.filter((c) => c.kz).reduce((n, c) => n + c.kz.reach, 0);
+  const ein = (useHm("einrichtung") || {})[m.id] || {};
+  const k = useHm("kontakte") || {};
+  const personen = k[m.id] || [];
+  const setK = (i, patch) => hmStore.patch("kontakte", (a) => ({ ...a, [m.id]: (a[m.id] || []).map((x, j) => j === i ? { ...x, ...patch } : x) }));
+  const next = content.filter((c) => c.termin && c.termin >= "2026-09-28" && c.zustand !== "pausiert").sort((a, b) => a.termin.localeCompare(b.termin)).slice(0, 5);
+  const f = HM_EINRICHTUNG.filter((e) => ein[e.id] === "fertig").length;
+  const wt = HM_EINRICHTUNG.filter((e) => ein[e.id] === "wartet_team");
   return <div>
-    <div className="hm-kz gross">{[["In der Pipeline", zaehl(["idee", "planung", "dreh", "schnitt", "aenderung"]), "inhalte"], ["Wartet auf Freigabe", zaehl(["freigabe"]), "freigaben"], ["Geplant", zaehl(["freigegeben"]), "inhalte"], ["Reichweite gesamt", reach.toLocaleString("de-AT"), "wirkung"]].map(([t, v, z]) => <button key={t} onClick={() => setBereich(z)}><b>{v}</b><span>{t}</span></button>)}</div>
-    <div className="hm-card" style={{ marginTop: 16 }}><div className="hm-mono">Als Nächstes online</div><div className="hm-list" style={{ marginTop: 6 }}>{next.map((c) => <Zeile key={c.id} links={c.thumb ? <img src={c.thumb} alt="" className="hm-mini" /> : <span className="hm-mini leer"></span>} titel={c.titel} unter={`${hmDatum(c.termin)} ${hmZeit(c.termin)} · ${HM_TYPEN[c.typ]}`} rechts={<ZPunkt z={c.zustand} />} onClick={() => oeffne(c.id)} />)}</div></div>
+    <div className="hm-sek">Als Nächstes online</div>
+    <div className="hm-gruppe">{next.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}>{c.thumb ? <img className="bild" src={c.thumb} alt="" /> : <span className="bild"></span>}<div className="m"><div className="t">{c.titel}</div><div className="u">{hmDatum(c.termin)} {hmZeit(c.termin)} · {HM_TYPEN[c.typ]}</div></div><div className="r"><span className="hm-status"><i style={{ background: hmSpalte(c.zustand).farbe }}></i>{hmSpalte(c.zustand).name}</span><span className="hm-chev">›</span></div></div>)}{!next.length && <div className="hm-reihe"><div className="m"><div className="u">Nichts geplant.</div></div></div>}</div>
+    <div className="hm-sek">Einrichtung</div>
+    <div className="hm-gruppe"><div className="hm-reihe klick" onClick={() => setBereich("einrichtung")}><Ring wert={f / HM_EINRICHTUNG.length} groesse={34} dicke={4} /><div className="m"><div className="t">{f} von {HM_EINRICHTUNG.length} erledigt</div><div className="u">{wt.length ? `Beim Team: ${wt.map((e) => e.titel).join(", ")}` : "Nichts beim Team"}</div></div><div className="r"><span className="hm-chev">›</span></div></div></div>
+    <div className="hm-sek">Personen<button onClick={() => hmStore.patch("kontakte", (a) => ({ ...a, [m.id]: [...(a[m.id] || []), { name: "Neue Person", rolle: "Assistenz", mail: "", freigabe: false }] }))}>Hinzufügen</button></div>
+    <div className="hm-gruppe">{personen.map((x, i) => <div key={i} className="hm-reihe"><Avatar name={x.name} /><div className="m"><div className="t">{x.name}</div><div className="u">{x.rolle}{x.mail ? " · " + x.mail : ""}</div></div><div className="r"><button className={"hm-schalter" + (x.freigabe ? " an" : "")} onClick={() => setK(i, { freigabe: !x.freigabe })}><i></i>Gibt frei</button></div></div>)}</div>
   </div>;
 }
 

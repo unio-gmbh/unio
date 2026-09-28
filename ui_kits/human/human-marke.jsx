@@ -8,29 +8,33 @@ function Marke({ m, sub, setSub, go, teamSicht }) {
   useHm("branding"); useHm("website");
   const b = hmBrand(m.id);
   const web = (hmStore.get("website") || {})[m.id] || {};
-  const tabs = [
-    ["fragebogen", "Fragebogen", fb && fb.fertig ? "" : "!"],
-    ["material", "Material"],
-    ["konzept", "Konzept", st && !st.gewaehlt ? "!" : ""],
-    ["design", "Design", st && st.gewaehlt && !b.fertig ? "!" : ""],
-    ["website", "Website", b.fertig && web.status !== "live" ? "!" : ""],
-    ["kit", "Brand-Kit"],
-  ];
-  const s = sub || (fb && fb.fertig ? (b.fertig ? "website" : st && st.gewaehlt ? "design" : "konzept") : "fragebogen");
+  const schritte = [["fragebogen", "Fragebogen", fb && fb.fertig], ["konzept", "Konzept", st && st.gewaehlt], ["design", "Design", b.fertig], ["website", "Website", web.status === "live"]];
+  const roh = sub === "material" || sub === "kit" ? "design" : sub;
+  const s = roh || (fb && fb.fertig ? (b.fertig ? "website" : st && st.gewaehlt ? "design" : "konzept") : "fragebogen");
   const legacyGo = (x) => { if (x === "strategie") setSub("konzept"); else if (x === "fragebogen") setSub("fragebogen"); else go(x); };
   return (
     <div>
-      <div className="hm-kette">{["Fragebogen", "Material", "Konzept", "Design", "Website"].map((t, i) => { const id = tabs[i][0]; const ok = [fb && fb.fertig, (b.br.material || []).length > 0, st && st.gewaehlt, b.fertig, web.status === "live"][i]; return <button key={t} className={(s === id ? "on " : "") + (ok ? "ok" : "")} onClick={() => setSub(id)}><i>{ok ? "✓" : i + 1}</i>{t}</button>; })}<button className={s === "kit" ? "on" : ""} onClick={() => setSub("kit")}><i>{b.fertig ? "✓" : "6"}</i>Brand-Kit</button></div>
-      <div style={{ marginTop: 26 }}>
+      <div className="hm-kette" style={{ marginTop: teamSicht ? 18 : 0 }}>{schritte.map(([id, t, ok], i) => <button key={id} className={(s === id ? "on " : "") + (ok ? "ok" : "")} onClick={() => setSub(id)}><i>{ok ? "✓" : i + 1}</i>{t}</button>)}</div>
+      <div style={{ marginTop: 22 }}>
         {s === "fragebogen" && <Fragebogen m={m} fb={fb} go={legacyGo} />}
-        {s === "material" && <Material m={m} />}
         {s === "konzept" && <Strategie m={m} fb={fb} st={st} go={legacyGo} />}
         {s === "design" && <Studio m={m} setSub={setSub} teamSicht={teamSicht} />}
         {s === "website" && <Website m={m} setSub={setSub} teamSicht={teamSicht} />}
-        {s === "kit" && <BrandKit m={m} setSub={setSub} />}
       </div>
     </div>
   );
+}
+
+/* Material kompakt im Design: was der Makler mitbringt */
+function MaterialKompakt({ m }) {
+  const br = (useHm("branding") || {})[m.id] || {};
+  const liste = br.material || [];
+  const [offen, setOffen] = React.useState(false);
+  return <section>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Was du mitbringst · {liste.length}</div><button className="hm-link" onClick={() => setOffen(true)}>{liste.length ? "Verwalten" : "Hochladen"}</button></div>
+    {liste.length ? <div className="hm-thumbs">{liste.slice(0, 8).map((x) => x.vorschau ? <img key={x.id} src={x.vorschau} alt={x.name} title={`${x.art}: ${x.name}`} /> : null)}</div> : <div className="hm-mono">Altes Logo, Fotos, Objekte, Inspiration. Fließt in Farben, Bildwelt und die Frage ein, ob ein Logo geschärft oder ersetzt wird.</div>}
+    <Sheet offen={offen} zu={() => setOffen(false)} titel="Was du mitbringst" breit><Material m={m} /></Sheet>
+  </section>;
 }
 
 /* Material: alles, was der Makler an Vorhandenem mitbringt. Bilder werden verkleinert gespeichert. */
@@ -51,8 +55,7 @@ function Material({ m }) {
   };
   const beispiel = () => { const demo = [["Fotos von dir", "../../assets/team/portrait-06.jpg"], ["Objektfotos", "../../assets/img/albrechts-wohnen.jpg"], ["Objektfotos", "../../assets/img/beheim.jpg"], ["Inspiration", "../../assets/photos/interieur-wurzelholz.jpg"], ["Inspiration", "../../assets/img/vienna-facades.jpg"]]; hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), material: [...(((a || {})[m.id] || {}).material || []), ...demo.map(([ar, u], i) => ({ id: "demo" + i + Date.now(), name: u.split("/").pop(), art: ar, vorschau: u, datum: "2026-09-28" }))] } })); };
   return <div>
-    <Kopf ueber="Marke · 2" titel="Was du schon hast." text="Altes Logo, Fotos, Objekte, Accounts, die dir gefallen. Alles fließt ins Branding-Konzept ein, nichts davon ist Pflicht." />
-    <div className="hm-chips" style={{ marginTop: 22 }}>{HM_MATERIAL_ARTEN.map((x) => <button key={x} className={"hm-chip" + (art === x ? " on" : "")} onClick={() => setArt(x)}>{x}</button>)}</div>
+    <div className="hm-chips">{HM_MATERIAL_ARTEN.map((x) => <button key={x} className={"hm-chip" + (art === x ? " on" : "")} onClick={() => setArt(x)}>{x}</button>)}</div>
     <label className="hm-drop" style={{ marginTop: 12 }} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); add(e.dataTransfer.files); }}><input type="file" multiple hidden onChange={(e) => add(e.target.files)} /><span>Dateien für <b>{art}</b> hierher ziehen oder wählen</span></label>
     {!liste.length && <div style={{ marginTop: 12 }}><button className="hm-chip" onClick={beispiel}>Demo: UNIO-Beispielmaterial einfügen</button></div>}
     {HM_MATERIAL_ARTEN.filter((a) => liste.some((x) => x.art === a)).map((a) => <div key={a} style={{ marginTop: 24 }}><div className="hm-mono" style={{ marginBottom: 10 }}>{a} · {liste.filter((x) => x.art === a).length}</div><div className="hm-thumbs gross">{liste.filter((x) => x.art === a).map((x) => <figure key={x.id}>{x.vorschau ? <img src={x.vorschau} alt="" /> : <div className="hm-datei">{x.name.split(".").pop().toUpperCase()}</div>}<figcaption>{x.name}</figcaption></figure>)}</div></div>)}
@@ -67,7 +70,7 @@ function Studio({ m, setSub, teamSicht }) {
   const fb = ((useHm("fragebogen") || {})[m.id] || {}).antworten || {};
   const b = hmBrand(m.id);
   const [bilder, setBilder] = React.useState(null);
-  if (!st || !st.gewaehlt) return <Leer titel="Erst den Weg wählen." text="Das Design entsteht aus deinem Konzept. Wähle einen der zwei Wege, dann steht hier dein Branding." aktion={<Btn onClick={() => setSub("konzept")}>Zum Konzept</Btn>} />;
+  if (!st || !st.gewaehlt) return <div className="hm-stack"><Leer titel="Erst den Weg wählen." text="Das Design entsteht aus deinem Konzept. Bis dahin kannst du schon hochladen, was du mitbringst." aktion={<Btn onClick={() => setSub("konzept")}>Zum Konzept</Btn>} /><div className="hm-studio-l"><MaterialKompakt m={m} /></div></div>;
   const w = st.wege[st.gewaehlt];
   const set = (patch) => hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), ...patch, status: patch.status || (((a || {})[m.id] || {}).status === "freigegeben" ? "geaendert" : "entwurf") } }));
   const prompt = hmBildweltPrompt(w, fb, b.br);
@@ -75,11 +78,12 @@ function Studio({ m, setSub, teamSicht }) {
   const pool = warm ? ["terrasse-golden.png", "interieur-wurzelholz.jpg", "lifestyle-paar.jpg", "essen-gruen.jpg"] : ["penthouse-glas.png", "skyline-terrasse.png", "kueche-schwarz.jpg", "villen-luftbild.jpg"];
   const empfS = HM_SCHRIFTPAARE[b.aid], empfA = HM_AKZENT_EMPF[b.aid];
   return <div>
-    <Kopf ueber={`Marke · 4 · ${w.archetyp.name}`} titel="Dein Branding." text="Aus Fragebogen, Material und Konzept vorbereitet. Du wählst zwischen wenigen, passenden Optionen. Alles übernimmt sich automatisch in Website, Visitenkarte, Shop und Vorlagen."
+    <Kopf titel="Dein Branding" text={`Vorbereitet aus Fragebogen, Material und dem Weg ${w.archetyp.name}. Was du hier wählst, übernehmen Website, Visitenkarte, Shop und Vorlagen.`}
       rechts={b.fertig ? <span className="hm-ez z-fertig">Freigegeben</span> : <Btn onClick={() => { set({ status: "freigegeben" }); hmEvent(m.id, "branding", "Branding freigegeben", teamSicht ? "Team" : m.name); toast("Branding freigegeben. Website und Visitenkarten sind vorbereitet."); }}>Branding freigeben</Btn>} />
     <div className="hm-studio">
       <div className="hm-studio-l">
-        <section><div className="hm-mono">Logo</div><div className="hm-optionen">{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild"><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div></section>
+        <MaterialKompakt m={m} />
+        <section><div className="hm-mono">Logo</div><div className="hm-optionen">{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div></section>
         <section><div className="hm-mono">Schrift · empfohlen für {w.archetyp.name}</div><div className="hm-optionen">{Object.entries(HM_WEB_SCHRIFTEN).sort((x, y) => (empfS.includes(y[0]) ? 1 : 0) - (empfS.includes(x[0]) ? 1 : 0)).map(([id, f]) => <button key={id} className={"hm-option" + (b.schriftId === id ? " on" : "")} onClick={() => set({ schrift: id })}><div className="bild" style={{ fontFamily: hmFont(f.d), fontSize: 30, color: "var(--ink)" }}>Aa</div><div className="t">{f.name}{empfS.includes(id) ? " · empfohlen" : ""}</div><div className="s">{f.d} und {f.t}</div></button>)}</div></section>
         <section><div className="hm-mono">Akzentfarbe</div><div className="hm-farben">{HM_WEB_AKZENTE.map((x) => <button key={x.id} className={b.akzentId === x.id ? "on" : ""} onClick={() => set({ akzent: x.id })} title={x.name}><i style={{ background: x.hex }}></i><span>{x.name}{empfA.includes(x.id) ? " ·" : ""}</span></button>)}</div><div className="hm-note" style={{ marginTop: 10 }}>Empfohlen (mit Punkt markiert) nach deiner Figur und deinen Bildpaaren. Farbe ist das schwächste Wiedererkennungsmerkmal, dein Gesicht das stärkste.</div></section>
         <section><div className="hm-mono">Leitidee</div><input className="hm-text" style={{ fontFamily: hmFont(b.schrift.d) }} value={b.claim} onChange={(e) => set({ claim: e.target.value })} /></section>
@@ -97,6 +101,7 @@ function Studio({ m, setSub, teamSicht }) {
           <div className="hm-mock-post" style={{ background: "#F7F5F1" }}><div style={{ fontFamily: hmFont(b.schrift.d), fontSize: 17, lineHeight: 1.05, color: "#0B0A09" }}>{w.hooks[0]}</div><div className="hm-row" style={{ justifyContent: "space-between", marginTop: "auto" }}><BrandLogo b={b} h={12} /><i style={{ width: 10, height: 10, borderRadius: "50%", background: b.akzent }}></i></div></div>
           <div className="hm-mock-post" style={{ background: b.akzent, color: "#fff" }}><div className="hm-mono" style={{ color: "rgba(255,255,255,.8)" }}>Wie ich arbeite</div><div style={{ fontFamily: hmFont(b.schrift.d), fontSize: 17, lineHeight: 1.05, marginTop: 8 }}>{w.hooks[1]}</div><div style={{ marginTop: "auto" }}><BrandLogo b={b} h={12} invert /></div></div>
         </div>
+        <StudioDownloads b={b} />
         <div className="hm-mock-sig"><BrandLogo b={b} h={16} /><div style={{ fontSize: 11, color: "#383429", marginTop: 6, fontFamily: hmFont(b.schrift.t) }}>{b.makler.name} · UNIO Partner<br />{b.claim}</div></div>
       </div>
     </div>
@@ -155,20 +160,21 @@ function Website({ m, setSub, teamSicht }) {
   const gefuellt = felder.filter((f) => f.wert).length;
   const status = web.status || "entwurf";
   return <div>
-    <Kopf ueber="Marke · 5 · Website" titel="Deine Website füllt sich selbst." text={`${gefuellt} von ${felder.length} Feldern sind schon da. Was fehlt, ist markiert. Die Seite läuft auf einem der sechs UNIO-Looks.`}
+    <Kopf titel="Deine Website" text={`${gefuellt} von ${felder.length} Angaben sind schon da, der Rest ist markiert. Automatisches füllt sich aus UNIO und deiner Marke, Daniel prüft vor dem Livegang.`}
       rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {felder.find((f) => f.id === "domain").wert}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
-    <div className="hm-ablauf">{[["1", "Automatisch", "Name, Kontakt, Portrait, Objekte, Region kommen aus UNIO."], ["2", "Aus der Marke", "Farbe, Schrift, Logo, Headline und Story aus deinem Branding."], ["3", "Von dir", "Referenzen, Termin-Link und Impressum, einmal eingetragen."], ["4", "Prüfung und live", "Daniel prüft, dann läuft die Seite auf deiner Domain."]].map(([n, t, s]) => <div key={n}><i>{n}</i><div className="t">{t}</div><div className="s">{s}</div></div>)}</div>
-    <div className="hm-mono" style={{ marginTop: 28, marginBottom: 10 }}>Look</div>
+    <div className="hm-sek">Look</div>
     <div className="hm-looks">{HM_LOOKS.map((l) => <button key={l.n} className={look === l.n ? "on" : ""} onClick={() => set({ look: l.n })}><img src={l.bild} alt="" /><div className="t">{String(l.n).padStart(2, "0")} {l.name}</div><div className="s">{l.satz}</div></button>)}</div>
     <div className="hm-row" style={{ marginTop: 8 }}><a className="hm-chip" href={`/showcase${look}`} target="_blank" rel="noopener">Look {look} als Beispiel öffnen ↗</a></div>
     <div className="hm-web-split">
       <div className="hm-web-felder">
-        {Object.entries(HM_WEB_GRUPPEN).map(([g, [titel, text]]) => <div key={g} className="hm-card" style={{ marginBottom: 12 }}>
-          <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-h hm-h3">{titel}</div><span className="hm-mono">{felder.filter((f) => f.gruppe === g && f.wert).length} / {felder.filter((f) => f.gruppe === g).length}</span></div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)", margin: "4px 0 8px" }}>{text}</div>
+        {Object.entries(HM_WEB_GRUPPEN).map(([g, [titel, text]]) => <div key={g}>
+          <div className="hm-sek" style={{ marginTop: g === "UNIO" ? 0 : 24 }}>{titel}<span className="hm-daten">{felder.filter((f) => f.gruppe === g && f.wert).length} / {felder.filter((f) => f.gruppe === g).length}</span></div>
+          <div className="hm-gruppe" style={{ padding: "0 16px" }}>
           {felder.filter((f) => f.gruppe === g).map((f) => <div key={f.id} className={"hm-wfeld" + (!f.wert && f.pflicht ? " fehlt" : "")}>
             {edit === f.id ? <input autoFocus defaultValue={f.wert} onBlur={(e) => { setF(f.id, e.target.value); setEdit(null); }} onKeyDown={(e) => e.key === "Enter" && e.target.blur()} /> : <button onClick={() => setEdit(f.id)}><span className="l">{f.label}{f.pflicht ? " *" : ""}</span><span className="v">{f.wert || "Fehlt"}</span><span className="q">{f.eigen ? "Von dir geändert" : f.quelle}</span></button>}
           </div>)}
+          </div>
+          <div className="hm-mono" style={{ margin: "6px 4px 0" }}>{text}</div>
         </div>)}
       </div>
       <div className="hm-web-vorschau"><WebVorschau m={m} b={b} felder={felder} look={look} /></div>
@@ -222,4 +228,14 @@ function BrandKit({ m, setSub }) {
   </div>;
 }
 
-Object.assign(window, { Marke, Material, Studio, Website, WebVorschau, BrandKit, hmWebFelder });
+/* Downloads direkt im Design (ersetzt das separate Brand-Kit) */
+function StudioDownloads({ b }) {
+  const laden = (typ) => { const el = document.querySelector(`[data-logo="${typ}"] svg`); if (!el) return; const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(el)], { type: "image/svg+xml" })); a.download = `${(b.vor + "-" + b.nach).toLowerCase()}-${typ}.svg`; a.click(); };
+  return <div className="hm-gruppe">
+    {HM_LOGO_TYPEN.map((t) => <div key={t.id} className="hm-reihe"><div className="m"><div className="t">{t.name}{b.logo === t.id ? " · Hauptlogo" : ""}</div><div className="u">SVG, frei skalierbar</div></div><div className="r"><button className="hm-klein-btn hell" onClick={() => laden(t.id)}>Laden</button></div></div>)}
+    <div className="hm-reihe"><div className="m"><div className="t">Farben</div><div className="u">Akzent {b.akzent} · Grund #F7F5F1 · Text #0B0A09</div></div><div className="r"><Kopieren text={b.akzent} /></div></div>
+    <div className="hm-reihe"><div className="m"><div className="t">Schriften</div><div className="u">{b.schrift.d} und {b.schrift.t}, über Google Fonts</div></div></div>
+  </div>;
+}
+
+Object.assign(window, { StudioDownloads, MaterialKompakt, Marke, Material, Studio, Website, WebVorschau, BrandKit, hmWebFelder });

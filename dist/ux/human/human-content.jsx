@@ -7,13 +7,15 @@ const HM_MAKLER_GRUPPEN = [["idee", "Ideen", ["idee"]], ["arbeit", "In Arbeit", 
 
 function Inhalte2({ m, teamSicht, sub, setSub, oeffne }) {
   const alle = useHm("content") || [];
-  const liste = alle.filter((c) => !m || c.maklerId === m.id);
-  const s = sub || "board";
+  const makler = useHm("makler") || [];
+  const [mf, setMf] = React.useState("alle");
+  const liste = alle.filter((c) => (m ? c.maklerId === m.id : mf === "alle" || c.maklerId === mf));
+  const s = sub || "liste";
+  const neu = () => { const id = "n" + Date.now(); hmContent((l) => [{ id, maklerId: m ? m.id : (mf !== "alle" ? mf : "elif"), titel: "Neue Idee", typ: "reel", saeule: "markt", zustand: "idee", kanaele: ["instagram", "facebook"], skript: "", caption: "", manager: "Daniel Hayden", cutter: "Ahmet", clips: [], kommentare: [], notizen: [], korrekturen: 0, erstellt: "2026-09-28" }, ...l]); oeffne(id); };
   return <div>
-    <Kopf ueber={m ? (teamSicht ? `Inhalte · ${m.name}` : "Inhalte") : "Produktion · alle Makler"} titel={s === "kalender" ? "Was wann erscheint." : s === "material" ? "Material." : teamSicht || !m ? "Vom Einfall bis online." : "Dein Content."}
-      text={s === "board" ? (teamSicht || !m ? "Ziehen, um den Stand zu ändern. Jede Karte öffnet den Beitrag mit allen vier Schritten." : "Oben links deine Ideen. Was dich braucht, steht unter Wartet auf dich.") : null}
-      rechts={<div className="hm-row"><Tabs klein tabs={[["board", "Board"], ["kalender", "Kalender"], ["material", "Material"]]} akt={s} set={setSub} /><Btn onClick={() => { const id = "n" + Date.now(); hmContent((l) => [{ id, maklerId: m ? m.id : "elif", titel: "Neue Idee", typ: "reel", saeule: "markt", zustand: "idee", kanaele: ["instagram", "facebook"], skript: "", caption: "", manager: "Daniel Hayden", cutter: "Ahmet", clips: [], kommentare: [], notizen: [], korrekturen: 0, erstellt: "2026-09-28" }, ...l]); oeffne(id); }} knob="+">Idee</Btn></div>} />
-    {s === "board" && <Board liste={liste} teamSicht={teamSicht || !m} oeffne={oeffne} alleMakler={!m} />}
+    <Kopf titel={m ? "Inhalte" : "Produktion"} rechts={<><Tabs klein tabs={[["liste", "Liste"], ["kalender", "Kalender"], ["material", m ? "Material" : "Mediathek"]]} akt={s} set={setSub} /><Btn knob="+" onClick={neu}>Idee</Btn></>} />
+    {!m && s !== "material" && <div className="hm-row" style={{ marginTop: 14 }}><select className="hm-sel" value={mf} onChange={(e) => setMf(e.target.value)} aria-label="Makler"><option value="alle">Alle Makler</option>{makler.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>}
+    {s === "liste" && <InhaltListe liste={liste} teamSicht={teamSicht || !m} oeffne={oeffne} alleMakler={!m} />}
     {s === "kalender" && <InhalteKalender liste={liste} m={m} oeffne={oeffne} />}
     {s === "material" && <Mediathek m={m} teamSicht={teamSicht} />}
   </div>;
@@ -45,26 +47,47 @@ function Beitrag({ id, zurueck, teamSicht }) {
   const alle = useHm("content") || [];
   const c = alle.find((x) => x.id === id);
   const clips = useClips(c ? c.maklerId : null);
-  const [p, setP] = React.useState(() => c ? ({ idee: 1, planung: 1, dreh: 2, schnitt: 2, aenderung: 2, freigabe: 4, freigegeben: 4, online: 4, pausiert: 1 }[c.zustand] || 1) : 1);
+  const [kanal, setKanal] = React.useState("instagram");
+  const fertig = c ? { 1: !!c.skript, 2: !!(c.schnitt && c.schnitt.length) || (c.typ !== "reel" && (c.clips || []).length > 0), 3: !!(c.caption && c.termin && (c.kanaele || []).length), 4: ["freigegeben", "online"].includes(c.zustand) } : {};
+  const aktuell = [1, 2, 3, 4].find((n) => !fertig[n]) || 4;
+  const [offen, setOffen] = React.useState(c && c.zustand === "freigabe" ? 4 : aktuell);
   if (!c) return <Leer titel="Beitrag nicht gefunden." aktion={<Btn onClick={zurueck}>Zurück</Btn>} />;
   const b = hmBrand(c.maklerId);
   const set = (patch, text) => setBeitrag(c.id, patch, text, teamSicht ? "Team" : b.makler.name);
-  const fertig = { 1: !!c.skript, 2: !!(c.schnitt && c.schnitt.length) || (c.typ !== "reel" && (c.clips || []).length > 0), 3: !!(c.caption && c.termin && (c.kanaele || []).length), 4: ["freigegeben", "online"].includes(c.zustand) };
+  const sz = hmSprechzeit(c.skript);
+  const dauer = (c.schnitt || []).reduce((n, x) => n + x.dauer, 0);
+  const zus = {
+    1: c.skript ? `${(c.skript.split("\n")[0] || "").replace(/["„“]/g, "")}${sz.sekunden ? ` · ${sz.sekunden} s` : ""}` : "Noch kein Skript",
+    2: c.typ === "reel" ? (c.schnitt ? `${c.schnitt.length} Szenen · ${dauer.toFixed(0)} s` : `${(c.clips || []).length} Clips gewählt`) : `${(c.clips || []).length} Bilder`,
+    3: c.termin ? `${hmDatum(c.termin)} um ${hmZeit(c.termin)} · ${(c.kanaele || []).map((k) => HM_KANAELE[k] ? HM_KANAELE[k].name : k).join(", ")}` : "Noch kein Termin",
+    4: c.zustand === "freigabe" ? (teamSicht ? "Wartet auf den Makler" : "Wartet auf dich") : fertig[4] ? hmSpalte(c.zustand).name : "Noch nicht gesendet",
+  };
+  const bilder = (c.clips || []).map((i) => clips.find((k) => k.id === i)).filter((k) => k && k.typ === "foto");
+  const P = { 1: Phase1, 2: Phase2, 3: Phase3, 4: Phase4 };
   return <div>
-    <button className="hm-zurueck" onClick={zurueck}>← Inhalte</button>
-    <div className="hm-kopf" style={{ marginTop: 10 }}>
-      <div style={{ minWidth: 0, flex: 1 }}><div className="hm-row" style={{ gap: 10 }}><ZPunkt z={c.zustand} /><span className="hm-typ">{HM_TYPEN[c.typ]}</span><span className="hm-mono">{b.makler.name}</span></div>
-        <input className="hm-titel-edit" value={c.titel} onChange={(e) => set({ titel: e.target.value })} /></div>
-      {teamSicht && <select className="hm-sel" value={c.zustand} onChange={(e) => set({ zustand: e.target.value }, `Stand: ${hmSpalte(e.target.value).name}`)}>{HM_SPALTEN.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select>}
-    </div>
-    <div className="hm-phasen">
-      <nav>{HM_PHASEN.map((x) => <button key={x.id} className={(p === x.id ? "on " : "") + (fertig[x.id] ? "ok" : "")} onClick={() => setP(x.id)}><i>{fertig[x.id] ? "✓" : x.id}</i><span><b>{x.name}</b><small>{x.satz}</small></span></button>)}</nav>
-      <div className="hm-phase">
-        {p === 1 && <Phase1 c={c} set={set} b={b} clips={clips} teamSicht={teamSicht} weiter={() => { if (["idee", "planung"].includes(c.zustand)) set({ zustand: "dreh" }, "Skript fertig, bereit zum Dreh"); setP(2); }} />}
-        {p === 2 && <Phase2 c={c} set={set} b={b} clips={clips} teamSicht={teamSicht} weiter={() => setP(3)} />}
-        {p === 3 && <Phase3 c={c} set={set} b={b} weiter={() => setP(4)} />}
-        {p === 4 && <Phase4 c={c} set={set} b={b} clips={clips} teamSicht={teamSicht} />}
+    <button className="hm-zurueck" onClick={zurueck}>‹ Inhalte</button>
+    <div className="hm-doc">
+      <div>
+        <div className="hm-row" style={{ gap: 10, marginTop: 6 }}><ZPunkt z={c.zustand} /><span className="hm-mono">{HM_TYPEN[c.typ]} · {b.makler.name}</span></div>
+        <input className="hm-titel-edit" value={c.titel} onChange={(e) => set({ titel: e.target.value })} aria-label="Titel" />
+        <div className="hm-schrittleiste">{[1, 2, 3, 4].map((n) => <i key={n} className={fertig[n] ? "ok" : n === aktuell ? "akt" : ""}></i>)}</div>
+        <div style={{ marginTop: 10 }}>{HM_PHASEN.map((x) => { const K = P[x.id]; return <section key={x.id} className={"hm-abschnitt" + (fertig[x.id] ? " ok" : "")}>
+          <button className="kopf" onClick={() => setOffen(offen === x.id ? 0 : x.id)}><i>{fertig[x.id] ? "✓" : x.id}</i><span className="n"><b>{x.name}</b><small>{zus[x.id]}</small></span><span className="hm-chev">{offen === x.id ? "–" : "+"}</span></button>
+          {offen === x.id && <div className="body"><K c={c} set={set} b={b} clips={clips} teamSicht={teamSicht} weiter={() => { if (x.id === 1 && ["idee", "planung"].includes(c.zustand)) set({ zustand: "dreh" }, "Skript fertig, bereit zum Dreh"); setOffen(x.id + 1); }} /></div>}
+        </section>; })}</div>
       </div>
+      <aside className="hm-doc-r">
+        <div className="hm-row" style={{ justifyContent: "center" }}><Tabs klein tabs={[["instagram", "Instagram"], ["facebook", "Facebook"]]} akt={kanal} set={setKanal} /></div>
+        {offen === 2 && c.schnitt && c.schnitt.length ? <div className="hm-note">Die Vorschau läuft gerade im Schnitt links.</div> : <Handy kanal={kanal} b={b} caption={c.caption}>
+          {c.schnitt && c.schnitt.length ? <SchnittPlayer segs={c.schnitt} clips={clips} b={b} kompakt /> : bilder.length ? <div className="hm-karussell">{bilder.map((k) => <img key={k.id} src={k.src} alt="" />)}</div> : c.thumb ? <img src={c.thumb} alt="" style={{ width: "100%", aspectRatio: "4/5", objectFit: "cover", display: "block" }} /> : <div className="hm-leerbild">Vorschau erscheint mit dem Material</div>}
+        </Handy>}
+        <div className="hm-gruppe" style={{ padding: "4px 16px" }}><div className="hm-fakten">
+          <div><span>Verantwortlich</span><span>{c.manager}</span></div>
+          <div><span>Schnitt</span><span>{c.cutter}</span></div>
+          <div><span>Korrekturen</span><span>{c.korrekturen || 0} von 2</span></div>
+          {teamSicht && <div><span>Stand</span><span><select className="hm-sel" value={c.zustand} onChange={(e) => set({ zustand: e.target.value }, `Stand: ${hmSpalte(e.target.value).name}`)}>{HM_SPALTEN.map((s2) => <option key={s2.id} value={s2.id}>{s2.name}</option>)}</select></span></div>}
+        </div></div>
+      </aside>
     </div>
   </div>;
 }
@@ -80,7 +103,7 @@ function Phase1({ c, set, b, clips, teamSicht, weiter }) {
       <label className="hm-feld"><span>Format</span><select value={c.typ} onChange={(e) => set({ typ: e.target.value })}>{Object.entries(HM_TYPEN).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
       <label className="hm-feld"><span>Säule</span><select value={c.saeule} onChange={(e) => set({ saeule: e.target.value })}>{Object.entries(HM_SAEULEN).map(([k, v]) => <option key={k} value={k}>{v.name}</option>)}</select></label>
       <label className="hm-feld"><span>Verantwortlich</span><select value={c.manager} onChange={(e) => set({ manager: e.target.value })}>{HM_TEAM.map((t) => <option key={t.id}>{t.name}</option>)}</select></label>
-      <label className="hm-feld"><span>Schnitt</span><select value={c.cutter} onChange={(e) => set({ cutter: e.target.value })}>{["Ahmet", "Automatisch", ...HM_TEAM.map((t) => t.name)].map((t) => <option key={t}>{t}</option>)}</select></label>
+      <label className="hm-feld"><span>Schnitt</span><select value={c.cutter} onChange={(e) => set({ cutter: e.target.value })}>{[...new Set(["Automatisch", ...HM_TEAM.map((t) => t.name), c.cutter].filter(Boolean))].map((t) => <option key={t}>{t}</option>)}</select></label>
     </div>
     <div>
       <div className="hm-row" style={{ justifyContent: "space-between", marginBottom: 8 }}>
@@ -146,30 +169,19 @@ function Phase3({ c, set, b, weiter }) {
   </div>;
 }
 
-function Phase4({ c, set, b, clips, teamSicht }) {
-  const [kanal, setKanal] = React.useState((c.kanaele || ["instagram"])[0] === "facebook" ? "facebook" : "instagram");
+function Phase4({ c, set, b, teamSicht }) {
   const [notiz, setNotiz] = React.useState("");
   const [mail, setMail] = React.useState(false);
-  const checks = [["Schnitt oder Bilder", !!(c.schnitt && c.schnitt.length) || (c.typ !== "reel" && (c.clips || []).length > 0) || !!c.thumb], ["Caption", !!c.caption], ["Datum und Uhrzeit", !!c.termin], ["Mindestens ein Kanal", (c.kanaele || []).length > 0]];
-  const bereit = checks.every((x) => x[1]);
+  const fehlt = [["Schnitt oder Bilder", !!(c.schnitt && c.schnitt.length) || (c.typ !== "reel" && (c.clips || []).length > 0) || !!c.thumb], ["Caption", !!c.caption], ["Termin", !!c.termin], ["Kanal", (c.kanaele || []).length > 0]].filter((x) => !x[1]).map((x) => x[0]);
   const kontakte = ((hmStore.get("kontakte") || {})[c.maklerId] || []).filter((k) => k.freigabe);
   const frist = c.termin ? (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10); })() : "";
-  const bilder = (c.clips || []).map((id) => clips.find((k) => k.id === id)).filter((k) => k && k.typ === "foto");
-  return <div className="hm-freigabe">
-    <div className="hm-stack">
-      <div className="hm-check">{checks.map(([t, ok]) => <div key={t} className={ok ? "ok" : "no"}><i>{ok ? "✓" : ""}</i>{t}</div>)}</div>
-      {c.zustand === "freigabe" && !teamSicht && <div className="hm-card hm-dark"><div className="hm-mono">Wartet auf dich</div><div style={{ fontSize: 20, margin: "6px 0 14px", letterSpacing: "-.01em" }}>Passt das so?</div><div className="hm-row"><Btn paper onClick={() => set({ zustand: "freigegeben" }, "freigegeben")}>Freigeben</Btn><button className="hm-chip" style={{ color: "var(--paper)", boxShadow: "inset 0 0 0 1px rgba(247,245,241,.3)" }} disabled={c.korrekturen >= 2 && !notiz} onClick={() => { set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, notizen: notiz ? [...(c.notizen || []), { von: b.makler.name, t: Date.now(), text: notiz }] : c.notizen }, "Änderung gewünscht"); setNotiz(""); }}>Änderung wünschen</button></div><div style={{ fontSize: 12, color: "var(--text-inverse-muted)", marginTop: 10 }}>Korrekturrunde {c.korrekturen || 0} von 2. Ohne Rückmeldung automatisch freigegeben am {hmDatum(frist)}.</div></div>}
-      {teamSicht && c.zustand !== "freigabe" && !["freigegeben", "online"].includes(c.zustand) && <div className="hm-card"><div className="hm-h hm-h3">An den Makler senden</div><div style={{ fontSize: 13, color: "var(--text-muted)", margin: "4px 0 12px" }}>Geht an {kontakte.map((k) => k.name).join(", ") || "die Freigabe-Verantwortlichen"}. Freigabe per Mail oder im Dashboard.</div><div className="hm-row"><Btn disabled={!bereit} onClick={() => set({ zustand: "freigabe" }, "zur Freigabe gesendet")}>Zur Freigabe senden</Btn><button className="hm-chip" onClick={() => setMail(!mail)}>Mail-Vorschau</button></div>{mail && <div className="hm-mailvorschau"><b>Betreff:</b> Zur Freigabe: {c.titel}<br /><br />Hallo {b.vor},<br />dein Beitrag ist fertig und geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} online.<br />Ein Klick: Freigeben oder Änderung wünschen.<br /><br />Dein UNIO Team</div>}</div>}
-      {c.zustand === "freigegeben" && <div className="hm-card"><div className="hm-h hm-h3">Freigegeben</div><div style={{ fontSize: 13, color: "var(--text-muted)", margin: "4px 0 12px" }}>Geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} auf {(c.kanaele || []).join(", ")} online.</div>{teamSicht && <button className="hm-chip" onClick={() => set({ zustand: "online", kz: { reach: 3200 + Math.round(Math.random() * 6000), saves: 30, sends: 40, likes: 220, kommentare: 12 } }, "veröffentlicht")}>Demo: jetzt veröffentlichen</button>}</div>}
-      {c.zustand === "online" && c.kz && <div className="hm-card"><div className="hm-h hm-h3">Online seit {hmDatum(c.termin)}</div><div className="hm-kz">{[["Reichweite", c.kz.reach], ["Saves", c.kz.saves], ["Sends", c.kz.sends], ["Likes", c.kz.likes]].map(([t, v]) => <div key={t}><b>{v.toLocaleString("de-AT")}</b><span>{t}</span></div>)}</div></div>}
-      <div><div className="hm-mono" style={{ marginBottom: 8 }}>Notizen zur Freigabe · {(c.notizen || []).length}</div>{(c.notizen || []).map((k, i) => <div key={i} className="hm-msg"><Avatar name={k.von} /><div><div className="w">{k.von} · {hmRel(k.t)}</div>{k.text}</div></div>)}<div className="hm-inp"><input value={notiz} onChange={(e) => setNotiz(e.target.value)} placeholder="Passt so, oder was soll anders sein?" onKeyDown={(e) => { if (e.key === "Enter" && notiz.trim()) { set({ notizen: [...(c.notizen || []), { von: teamSicht ? "Daniel Hayden" : b.makler.name, t: Date.now(), text: notiz }] }); setNotiz(""); } }} /></div></div>
-    </div>
-    <div>
-      <div className="hm-row" style={{ justifyContent: "center", marginBottom: 10 }}><Tabs klein tabs={[["instagram", "Instagram"], ["facebook", "Facebook"]]} akt={kanal} set={setKanal} /></div>
-      <Handy kanal={kanal} b={b} caption={c.caption}>
-        {c.schnitt && c.schnitt.length ? <SchnittPlayer segs={c.schnitt} clips={clips} b={b} kompakt /> : bilder.length ? <div className="hm-karussell">{bilder.map((k) => <img key={k.id} src={k.src} alt="" />)}</div> : c.thumb ? <img src={c.thumb} alt="" style={{ width: "100%", aspectRatio: "4/5", objectFit: "cover", display: "block" }} /> : <div className="hm-leerbild">Noch kein Material</div>}
-      </Handy>
-    </div>
+  return <div className="hm-stack">
+    {c.zustand === "freigabe" && !teamSicht && <div className="hm-stack" style={{ gap: 10 }}><div style={{ fontSize: 20, color: "var(--ink)", letterSpacing: "-.01em" }}>Passt das so?</div><div className="hm-row"><Btn onClick={() => set({ zustand: "freigegeben" }, "freigegeben")}>Freigeben</Btn><button className="hm-link" disabled={c.korrekturen >= 2 && !notiz} onClick={() => { set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, notizen: notiz ? [...(c.notizen || []), { von: b.makler.name, t: Date.now(), text: notiz }] : c.notizen }, "Änderung gewünscht"); setNotiz(""); }}>Änderung wünschen</button></div><div className="hm-mono">Ohne Rückmeldung automatisch freigegeben am {hmDatum(frist)}.</div></div>}
+    {teamSicht && !["freigabe", "freigegeben", "online"].includes(c.zustand) && <div className="hm-stack" style={{ gap: 10 }}>{fehlt.length ? <div className="hm-note">Es fehlt noch: {fehlt.join(", ")}.</div> : <div className="hm-mono">Geht an {kontakte.map((k) => k.name).join(", ") || "die Freigabe-Verantwortlichen"}.</div>}<div className="hm-row"><Btn disabled={fehlt.length > 0} onClick={() => set({ zustand: "freigabe" }, "zur Freigabe gesendet")}>Zur Freigabe senden</Btn><button className="hm-link" onClick={() => setMail(!mail)}>{mail ? "Mail ausblenden" : "So sieht die Mail aus"}</button></div>{mail && <div className="hm-mailvorschau"><b>Zur Freigabe: {c.titel}</b><br /><br />Hallo {b.vor},<br />dein Beitrag ist fertig und geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} online. Ein Klick: freigeben oder Änderung wünschen.<br /><br />Dein UNIO Team</div>}</div>}
+    {c.zustand === "freigabe" && teamSicht && <div className="hm-mono">Wartet auf {b.makler.name}. Automatische Freigabe am {hmDatum(frist)}.</div>}
+    {c.zustand === "freigegeben" && <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} online.</div>{teamSicht && <button className="hm-link" onClick={() => set({ zustand: "online", kz: { reach: 3200 + Math.round(Math.random() * 6000), saves: 30, sends: 40, likes: 220, kommentare: 12 } }, "veröffentlicht")}>Demo: jetzt veröffentlichen</button>}</div>}
+    {c.zustand === "online" && c.kz && <div className="hm-wz" style={{ marginTop: 0 }}>{[["Erreicht", c.kz.reach], ["Gespeichert", c.kz.saves], ["Geteilt", c.kz.sends], ["Likes", c.kz.likes]].map(([t, v]) => <div key={t}><b style={{ fontSize: 22 }}>{v.toLocaleString("de-AT")}</b><span>{t}</span></div>)}</div>}
+    <div>{(c.notizen || []).map((k, i) => <div key={i} className="hm-msg"><Avatar name={k.von} /><div><div className="w">{k.von} · {hmRel(k.t)}</div>{k.text}</div></div>)}<div className="hm-inp"><input value={notiz} onChange={(e) => setNotiz(e.target.value)} placeholder="Notiz zur Freigabe" onKeyDown={(e) => { if (e.key === "Enter" && notiz.trim()) { set({ notizen: [...(c.notizen || []), { von: teamSicht ? "Daniel Hayden" : b.makler.name, t: Date.now(), text: notiz }] }); setNotiz(""); } }} /></div></div>
   </div>;
 }
 
@@ -208,22 +220,26 @@ function FreigabenQ({ m, teamSicht, oeffne }) {
   </div>;
 }
 
-function Wirkung({ m, teamSicht, oeffne }) {
+function Wirkung({ m, oeffne }) {
+  const reports = ((useHm("reports") || {})[m.id]) || [];
   const alle = useHm("content") || [];
-  const st = (useHm("strategien") || {})[m.id];
-  const [tab, setTab] = React.useState("ueberblick");
+  const [i, setI] = React.useState(reports.length - 1);
   const online = alle.filter((c) => c.maklerId === m.id && c.zustand === "online" && c.kz).sort((a, b) => b.kz.reach - a.kz.reach);
+  const r = reports[i], prev = reports[i - 1];
+  if (!r) return <div><Kopf titel="Wirkung" /><Leer titel="Die ersten Zahlen kommen nach dem ersten Monat online." text="Reichweite, Follower, gespeicherte und geteilte Beiträge. Automatisch am Monatsersten." /></div>;
+  const d = (k) => prev ? Math.round((r[k] - prev[k]) / prev[k] * 100) : null;
   return <div>
-    <div className="hm-row" style={{ justifyContent: "flex-end" }}><Tabs klein tabs={[["ueberblick", "Überblick"], ["beitraege", "Beiträge"]]} akt={tab} set={setTab} /></div>
-    {tab === "ueberblick" ? <Report m={m} st={st} /> : <div>
-      <Kopf ueber="Wirkung · Beiträge" titel="Was funktioniert." text="Sortiert nach Reichweite. Sends zeigen, was geteilt wird, Saves, was bleibt." />
-      <div className="hm-tabelle"><div className="kopf"><span>Beitrag</span><span>Reichweite</span><span>Saves</span><span>Sends</span><span>Likes</span></div>{online.map((c) => <div key={c.id} className="zeile" onClick={() => oeffne(c.id)}><span className="t">{c.thumb && <img src={c.thumb} alt="" />}{c.titel}<small>{HM_TYPEN[c.typ]} · {hmDatum(c.termin)}</small></span><span>{c.kz.reach.toLocaleString("de-AT")}</span><span>{c.kz.saves}</span><span>{c.kz.sends}</span><span>{c.kz.likes}</span></div>)}{!online.length && <div style={{ padding: 20, color: "var(--text-muted)" }}>Noch nichts online.</div>}</div>
-      <div className="hm-note" style={{ marginTop: 12 }}>Im Betrieb kommen die Zahlen täglich aus Meta und LinkedIn. Im Prototyp Demo-Werte.</div>
-    </div>}
+    <Kopf titel="Wirkung" rechts={<Tabs klein tabs={reports.map((x, j) => [String(j), new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "long" })])} akt={String(i)} set={(x) => setI(+x)} />} />
+    <div className="hm-wz">{[["reach", "Erreicht"], ["follower", "Follower"], ["saves", "Gespeichert"], ["sends", "Geteilt"]].map(([k, t]) => { const v = d(k); return <div key={k}><b>{r[k].toLocaleString("de-AT")}</b><span>{t}{v != null && <em style={{ color: v >= 0 ? "var(--positive)" : "var(--signal-deep)" }}>{v >= 0 ? "+" : ""}{v} %</em>}</span></div>; })}</div>
+    {reports.length > 1 && <><div className="hm-sek">Verlauf</div><div className="hm-gruppe" style={{ padding: "8px 16px 12px" }}><div style={{ maxWidth: 520 }}><Sparkline data={reports.map((x) => x.reach)} aktiv={i} /></div><div className="hm-row" style={{ gap: 0, justifyContent: "space-between", maxWidth: 520 }}>{reports.map((x) => <span key={x.monat} className="hm-daten">{new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "short" })}</span>)}</div></div></>}
+    <div className="hm-sek">Beiträge nach Reichweite</div>
+    <div className="hm-gruppe">{online.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}>{c.thumb ? <img className="bild" src={c.thumb} alt="" /> : <span className="bild"></span>}<div className="m"><div className="t">{c.titel}</div><div className="u">{HM_TYPEN[c.typ]} · {hmDatum(c.termin)}</div></div><div className="r"><span className="hm-daten">{c.kz.reach.toLocaleString("de-AT")} · {c.kz.saves} gesp. · {c.kz.sends} geteilt</span><span className="hm-chev">›</span></div></div>)}</div>
+    <div className="hm-sek">Was wir daraus machen</div>
+    <div className="hm-gruppe">{r.empf.map((e) => <div key={e} className="hm-reihe"><div className="m"><div className="t" style={{ whiteSpace: "normal" }}>{e}</div></div></div>)}</div>
+    {reports.length >= 3 && <><div className="hm-sek">Quartal</div><div className="hm-gruppe">{[["Reichweite", `plus ${Math.round((reports[2].reach - reports[0].reach) / reports[0].reach * 100)} Prozent in drei Monaten`], ["Stärkstes Format", "Grätzl-Spaziergang"], ["Nächster Schritt", "Säule Markt anheben, Review mit Daniel steht an"]].map(([t, v]) => <div key={t} className="hm-reihe"><div className="m"><div className="t">{t}</div><div className="u" style={{ whiteSpace: "normal" }}>{v}</div></div></div>)}</div></>}
   </div>;
 }
 
-/* Assistent: kontextbezogene Kurzhilfen, regelbasiert */
 function Assistent({ m }) {
   const [offen, setOffen] = React.useState(false);
   const [antwort, setAntwort] = React.useState(null);
@@ -244,4 +260,28 @@ function Assistent({ m }) {
   </>;
 }
 
-Object.assign(window, { Inhalte2, Board, Karte, Beitrag, InhalteKalender, FreigabenQ, Wirkung, Assistent, setBeitrag });
+function HM_LISTEN_GRUPPEN(team) { return [["wartet", team ? "Wartet auf Freigabe" : "Wartet auf dich", ["freigabe"]], ["aenderung", "Änderung gewünscht", ["aenderung"]], ["arbeit", "In Arbeit", ["planung", "dreh", "schnitt"]], ["geplant", "Geplant", ["freigegeben"]], ["idee", "Ideen", ["idee"]], ["online", "Online", ["online"]], ["pausiert", "Pausiert", ["pausiert"]]]; }
+
+function InhaltListe({ liste, teamSicht, oeffne, alleMakler }) {
+  const makler = useHm("makler") || [];
+  const [f, setF] = React.useState("alle");
+  const G = HM_LISTEN_GRUPPEN(teamSicht).map(([id, t, zs]) => [id, t, liste.filter((c) => zs.includes(c.zustand)).sort((a, b) => (a.termin || "9").localeCompare(b.termin || "9"))]).filter((g) => g[2].length);
+  const name = (id) => (makler.find((x) => x.id === id) || {}).name || "";
+  return <div>
+    <div className="hm-filter"><button className={f === "alle" ? "on" : ""} onClick={() => setF("alle")}>Alle<span className="n">{liste.length}</span></button>{G.map(([id, t, l]) => <button key={id} className={f === id ? "on" : ""} onClick={() => setF(id)}>{t}<span className="n">{l.length}</span></button>)}</div>
+    {G.filter((g) => f === "alle" || g[0] === f).map(([id, t, l]) => <div key={id}>
+      <div className="hm-sek">{t}</div>
+      <div className="hm-gruppe">{l.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}>
+        {c.thumb ? <img className="bild" src={c.thumb} alt="" /> : <span className="bild" style={{ display: "grid", placeItems: "center", fontSize: 11, color: "var(--text-muted)" }}>{HM_TYPEN[c.typ]}</span>}
+        <div className="m"><div className="t">{c.titel}</div><div className="u">{[HM_TYPEN[c.typ], c.termin ? `${hmDatum(c.termin)} ${hmZeit(c.termin)}` : "ohne Termin", alleMakler ? name(c.maklerId) : null, id === "arbeit" ? hmSpalte(c.zustand).name : null].filter(Boolean).join(" · ")}</div></div>
+        <div className="r" onClick={(e) => id === "idee" && !teamSicht && e.stopPropagation()}>
+          {id === "idee" && !teamSicht ? <><button className="hm-klein-btn" onClick={() => setBeitrag(c.id, { zustand: "planung" }, "Idee gewählt", name(c.maklerId))}>Machen wir</button><button className="hm-klein-btn hell" onClick={() => setBeitrag(c.id, { zustand: "pausiert" }, "Idee verworfen", name(c.maklerId))}>Nein</button></> : id === "online" && c.kz ? <span className="hm-daten">{c.kz.reach.toLocaleString("de-AT")} erreicht</span> : null}
+          <span className="hm-chev">›</span>
+        </div>
+      </div>)}</div>
+    </div>)}
+    {!liste.length && <Leer titel="Noch keine Inhalte." text="Neue Ideen kommen jeden Monat aus deiner Strategie." />}
+  </div>;
+}
+
+Object.assign(window, { InhaltListe, HM_LISTEN_GRUPPEN, Inhalte2, Board, Karte, Beitrag, InhalteKalender, FreigabenQ, Wirkung, Assistent, setBeitrag });

@@ -455,6 +455,74 @@ select.hm-sel { border: 0; background: var(--paper-2); border-radius: 999px; pad
   .hm-board { grid-template-columns: repeat(9, 78vw); } .hm-board.makler { grid-template-columns: repeat(5, 78vw); }
   .hm-fab { right: 16px; bottom: 16px; }
 }
+
+/* ===== v3: nativer, ruhiger ===== */
+.hm-mono { font-family: "Power Grotesk", ui-sans-serif, system-ui, sans-serif; font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--text-muted); }
+.hm-daten { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .06em; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.hm-top { background: rgba(247,245,241,.8); padding: 12px 24px; }
+.hm-top h1 { font-size: 15px; color: var(--text-muted); }
+.hm-side { background: rgba(240,237,230,.55); border-right: 1px solid var(--hairline-dark); padding: 18px 12px; gap: 2px; }
+.hm-side a { padding: 8px 12px; border-radius: 10px; font-size: 14px; color: var(--ink-2); }
+.hm-side a.on { background: var(--paper-3); color: var(--ink); font-weight: 500; }
+.hm-side a:hover:not(.on) { background: rgba(231,226,216,.55); }
+.hm-side .hm-badge { background: var(--signal); }
+.hm-side-sek { font-size: 12px; color: var(--text-muted); padding: 16px 12px 6px; }
+.hm-main { padding: 34px clamp(20px, 4vw, 64px) 96px; max-width: 1360px; }
+.hm-h1 { font-size: clamp(32px, 3.4vw, 44px); letter-spacing: -.035em; }
+.hm-sub { font-size: 15px; }
+.hm-sek { font-size: 13px; font-weight: 500; color: var(--text-muted); margin: 30px 4px 8px; display: flex; justify-content: space-between; align-items: baseline; }
+.hm-sek a, .hm-sek button { font-weight: 400; color: var(--ink); background: none; border: 0; font-size: 13px; cursor: pointer; }
+.hm-gruppe { background: var(--surface-raised); border-radius: 16px; box-shadow: inset 0 0 0 1px var(--hairline-dark); overflow: hidden; }
+.hm-gruppe > .hm-zeile, .hm-gruppe > .hm-reihe { padding: 12px 16px; border-bottom: 0; position: relative; }
+.hm-gruppe > .hm-zeile + .hm-zeile::before, .hm-gruppe > .hm-reihe + .hm-reihe::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline-dark); }
+.hm-gruppe > .hm-zeile.klick:hover, .hm-gruppe > .hm-reihe.klick:hover { background: rgba(240,237,230,.6); }
+.hm-reihe { display: flex; gap: 14px; align-items: center; cursor: default; }
+.hm-reihe.klick { cursor: pointer; }
+.hm-reihe .bild { width: 44px; height: 54px; border-radius: 8px; object-fit: cover; flex: none; background: var(--paper-2); display: block; }
+.hm-reihe .m { flex: 1; min-width: 0; } .hm-reihe .t { color: var(--ink); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .hm-reihe .u { color: var(--text-muted); font-size: 13px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-reihe .r { flex: none; display: flex; gap: 8px; align-items: center; color: var(--text-muted); font-size: 13px; }
+.hm-chev { color: var(--steel); font-size: 18px; line-height: 1; }
+.hm-status { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--ink-3); white-space: nowrap; } .hm-status i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.hm-link { border: 0; background: none; padding: 0; color: var(--ink); font-size: 14px; text-decoration: underline; text-decoration-color: var(--steel); text-underline-offset: 3px; cursor: pointer; }
+.hm-link:hover { text-decoration-color: var(--ink); }
+.hm-weiter { background: var(--ink); border-radius: 20px; }
+.hm-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 20px; }
+.hm-filter button { border: 0; background: transparent; border-radius: 999px; padding: 7px 13px; font-size: 14px; color: var(--ink-3); display: inline-flex; gap: 6px; align-items: center; box-shadow: inset 0 0 0 1px var(--hairline-dark); }
+.hm-filter button.on { background: var(--ink); color: var(--paper); box-shadow: none; }
+.hm-filter button .n { font-size: 12px; opacity: .6; font-variant-numeric: tabular-nums; }
+.hm-demo { position: relative; }
+.hm-demo-pop { position: absolute; right: 0; top: calc(100% + 8px); width: 280px; background: var(--surface-raised); border-radius: 16px; box-shadow: 0 24px 60px -20px rgba(12,11,9,.45), inset 0 0 0 1px var(--hairline-dark); padding: 14px; display: flex; flex-direction: column; gap: 10px; z-index: 30; }
+.hm-review { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.hm-review > div { background: var(--surface-raised); border-radius: 18px; box-shadow: inset 0 0 0 1px var(--hairline-dark); overflow: hidden; display: flex; flex-direction: column; }
+.hm-review img, .hm-review .platz { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: var(--paper-2); cursor: pointer; }
+.hm-review .txt { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.hm-review .t { font-size: 15px; color: var(--ink); } .hm-review .u { font-size: 13px; color: var(--text-muted); }
+.hm-review .a { display: flex; gap: 8px; margin-top: auto; padding-top: 10px; }
+.hm-klein-btn { border: 0; border-radius: 999px; padding: 8px 14px; font-size: 13px; background: var(--ink); color: var(--paper); }
+.hm-klein-btn.hell { background: var(--paper-2); color: var(--ink); }
+.hm-doc { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 36px; align-items: start; margin-top: 18px; }
+.hm-doc-r { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 14px; }
+.hm-schrittleiste { display: flex; gap: 4px; margin-top: 16px; }
+.hm-schrittleiste i { flex: 1; height: 4px; border-radius: 2px; background: var(--paper-3); } .hm-schrittleiste i.ok { background: var(--ink); } .hm-schrittleiste i.akt { background: var(--signal); }
+.hm-abschnitt { border-top: 1px solid var(--hairline-dark); }
+.hm-abschnitt:first-of-type { border-top: 0; }
+.hm-abschnitt > .kopf { width: 100%; border: 0; background: none; text-align: left; display: flex; gap: 14px; align-items: center; padding: 18px 0; }
+.hm-abschnitt > .kopf i { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--steel); display: grid; place-items: center; font-style: normal; font-size: 12px; color: var(--ink-3); flex: none; }
+.hm-abschnitt.ok > .kopf i { background: var(--ink); color: var(--paper); box-shadow: none; }
+.hm-abschnitt > .kopf .n { flex: 1; min-width: 0; } .hm-abschnitt > .kopf b { display: block; font-weight: 500; font-size: 17px; color: var(--ink); letter-spacing: -.01em; }
+.hm-abschnitt > .kopf small { display: block; font-size: 13px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-abschnitt > .body { padding: 0 0 26px 40px; }
+.hm-abschnitt .hm-phase-fuss { border-top: 0; padding-top: 4px; }
+.hm-fakten { display: flex; flex-direction: column; } .hm-fakten > div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--hairline-dark); font-size: 13px; } .hm-fakten > div:last-child { border-bottom: 0; } .hm-fakten span:first-child { color: var(--text-muted); } .hm-fakten span:last-child { color: var(--ink); text-align: right; }
+.hm-wz { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; background: var(--surface-raised); border-radius: 16px; box-shadow: inset 0 0 0 1px var(--hairline-dark); margin-top: 22px; }
+.hm-wz > div { padding: 18px 20px; border-left: 1px solid var(--hairline-dark); } .hm-wz > div:first-child { border-left: 0; }
+.hm-wz b { display: block; font-size: 30px; font-weight: 400; letter-spacing: -.03em; color: var(--ink); font-variant-numeric: tabular-nums; } .hm-wz span { font-size: 13px; color: var(--text-muted); } .hm-wz em { font-style: normal; font-size: 12px; margin-left: 6px; }
+.hm-card { box-shadow: inset 0 0 0 1px var(--hairline-dark); border-radius: 18px; }
+.hm-pill { font-family: "Power Grotesk", sans-serif; text-transform: none; letter-spacing: 0; font-size: 12px; }
+.hm-ez { font-family: "Power Grotesk", sans-serif; text-transform: none; letter-spacing: 0; font-size: 12px; padding: 3px 9px; }
+.hm-typ { font-family: "Power Grotesk", sans-serif; text-transform: none; letter-spacing: 0; font-size: 12px; }
+.hm-kette button.on { background: var(--paper-3); color: var(--ink); } .hm-kette button.on i { background: var(--ink); color: var(--paper); }
+@media (max-width: 1100px) { .hm-doc { grid-template-columns: 1fr; } .hm-doc-r { position: static; } .hm-wz { grid-template-columns: repeat(2, 1fr); } .hm-wz > div:nth-child(3) { border-left: 0; } .hm-abschnitt > .body { padding-left: 0; } }
 </style>
 </head>
 <body>
