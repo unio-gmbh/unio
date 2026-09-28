@@ -29,6 +29,7 @@ function App() {
   const content = useHm("content") || [];
   const ein = useHm("einrichtung") || {};
   const leads = useHm("leads") || [];
+  useHm("portraits");
   const m = makler.find((x) => x.id === mid) || makler[0];
   useEffect(() => { const q = new URLSearchParams({ rolle, makler: mid, screen }); if (sub) q.set("sub", sub); if (beitrag) q.set("beitrag", beitrag); if (tm) q.set("tm", tm); if (bereich) q.set("bereich", bereich); history.replaceState(null, "", "?" + q); }, [rolle, mid, screen, sub, beitrag, tm, bereich]);
   const go = (s, o) => { setScreen(s); setSub((o && o.sub) || null); setBeitragId(null); window.scrollTo({ top: 0 }); };
@@ -85,4 +86,4 @@ function App() {
 }
 
 hmSeed();
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+hmPortraitsLaden().finally(() => ReactDOM.createRoot(document.getElementById("root")).render(<App />));

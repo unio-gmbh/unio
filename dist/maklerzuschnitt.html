@@ -71,7 +71,7 @@ main { display: grid; grid-template-columns: 200px 1fr 340px; min-height: 0; }
 .qitem .dot.err { background: transparent; box-shadow: inset 0 0 0 1.5px var(--signal-deep); }
 .qitem .x {
   position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 999px; border: 0;
-  background: rgba(247,245,241,.8); backdrop-filter: blur(12px); cursor: pointer; font-family: var(--mono); font-size: 13px;
+  background: rgba(247,245,241,.8); backdrop-filter: blur(12px); cursor: pointer; display: grid; place-items: center;
   opacity: 0; transition: opacity .4s var(--ease-unio);
 }
 .qitem:hover .x { opacity: 1; }
@@ -79,7 +79,7 @@ main { display: grid; grid-template-columns: 200px 1fr 340px; min-height: 0; }
   border: 1px dashed rgba(11,10,9,.28); background: transparent; border-radius: 12px; aspect-ratio: 3/4;
   cursor: pointer; color: var(--text-muted); display: grid; place-items: center; text-align: center; padding: 12px;
 }
-.addmore span { font-size: 26px; font-family: var(--mono); display: block; color: var(--ink); }
+.addmore span { display: grid; place-items: center; color: var(--ink); margin-bottom: 6px; }
 
 /* Stage */
 .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--paper-2); }
@@ -197,6 +197,16 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
 }
 .toast.on { transform: translate(-50%, 0); opacity: 1; }
 
+/* Eingebettet: ohne Kopfzeile, schmalere Spalten, füllt das Fenster */
+body.embed .app { grid-template-rows: 1fr; }
+body.embed header { display: none; }
+@media (min-width: 1101px) { body.embed main { grid-template-columns: 150px 1fr 300px; } }
+@media (max-width: 1100px) { body.embed .app { height: auto; } body.embed main { grid-template-rows: auto minmax(360px, 62vh) auto; } }
+body.embed .drop { inset: 16px; }
+body.embed .drop h2 { font-size: 40px; }
+body.embed .panel { padding: 18px 20px 22px; gap: 22px; }
+.knob svg, .addmore svg, .qitem .x svg { display: block; }
+
 @media (max-width: 1100px) {
   main { grid-template-columns: 1fr; grid-template-rows: auto minmax(420px, 70vh) auto; overflow-y: auto; }
   .app { height: auto; min-height: 100vh; }
@@ -224,7 +234,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
   <main>
     <aside class="queue" id="queue">
       <div class="head mono"><span>Bilder</span><span id="qcount">0</span></div>
-      <button class="addmore" id="addmore" type="button"><div><span>+</span><div class="mono">Hinzufügen</div></div></button>
+      <button class="addmore" id="addmore" type="button"><div><span><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4v14M4 11h14"/></svg></span><div class="mono">Hinzufügen</div></div></button>
     </aside>
 
     <section class="stage" id="stage">
@@ -243,7 +253,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
           </svg>
           <h2>Portraits hier ablegen.</h2>
           <p>Das Gesicht wird erkannt und nach der Guideline platziert: Nasenspitze auf dem Fadenkreuz, Augen und Kinn auf den Hilfslinien. Export ohne Hilfslinien.</p>
-          <button class="btn solid" id="pick" type="button">Dateien wählen <span class="knob">→</span></button>
+          <button class="btn solid" id="pick" type="button">Dateien wählen <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg></span></button>
           <div class="mono" style="margin-top:22px;color:var(--text-muted)">JPG · PNG · WEBP · mehrere möglich</div>
         </div>
       </div>
@@ -288,8 +298,8 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
           <div class="seg" id="segBg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Paper</button></div>
           <div class="keys">Standard laut Backoffice: 3 : 4, Nase zwischen 40 und 60 Prozent, PNG, Originalauflösung, transparent. Änderungen hier gelten für alle Bilder dieser Sitzung.</div>
         </div>
-        <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob">↓</span></button>
-        <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob">↓</span></button>
+        <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
+        <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
       </div>
     </aside>
   </main>
@@ -339,7 +349,9 @@ function fitFromLandmarks(it, lm) {
   it.rot = rot;
   it.s = (G.chin - G.eyes) / d;
   it.A = { x: lm.nose.x, y: lm.nose.y };
+  it.sG = it.s; it.passung = null;
   it.base = { A: { ...it.A }, s: it.s, rot: it.rot };
+  if (it.cut) passeSchultern(it);
   return true;
 }
 function fitFallback(it) {
@@ -389,6 +401,7 @@ async function detect(it) {
     const q = S / Z, r = res[0], P = r.landmarks.positions.map((p) => ({ x: p.x * q + cx - S / 2, y: p.y * q + cy - S / 2 }));
     it.lm = it.autoLm = { eyeL: mean(P.slice(36, 42)), eyeR: mean(P.slice(42, 48)), nose: P[30], chin: P[8] };
     it.conf = r.detection.score;
+    bildguete(it, P);
     it.faces = rough.filter((d) => d.score > 0.3).length || 1;
     if (!fitFromLandmarks(it, it.lm)) throw new Error("geom");
     it.status = "ok";
@@ -402,6 +415,25 @@ async function detect(it) {
   refreshStatus(); renderQueue();
 }
 
+/* Bildgüte im Gesichtsbereich: Schärfe (Varianz des Laplace-Filters) und Belichtung (mittlere Helligkeit) */
+function bildguete(it, P) {
+  try {
+    const xs = P.map((p) => p.x), ys = P.map((p) => p.y);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const Z = 200, c = document.createElement("canvas"); c.width = c.height = Z;
+    const g = c.getContext("2d", { willReadFrequently: true });
+    g.drawImage(it.img, x0, y0, x1 - x0, y1 - y0, 0, 0, Z, Z);
+    const d = g.getImageData(0, 0, Z, Z).data, L = new Float32Array(Z * Z);
+    let sum = 0;
+    for (let i = 0; i < Z * Z; i++) { L[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; sum += L[i]; }
+    let m = 0, m2 = 0, n = 0;
+    for (let y = 1; y < Z - 1; y++) for (let x = 1; x < Z - 1; x++) { const i = y * Z + x; const v = 4 * L[i] - L[i - 1] - L[i + 1] - L[i - Z] - L[i + Z]; m += v; m2 += v * v; n++; }
+    const varianz = m2 / n - (m / n) ** 2;
+    it.schaerfe = Math.min(1, varianz / 120);
+    it.hell = sum / (Z * Z);
+  } catch (e) { it.schaerfe = null; it.hell = null; }
+}
+
 /* Dateien */
 async function addFiles(files) {
   const list = [...files].filter((f) => f.type.startsWith("image/"));
@@ -411,14 +443,14 @@ async function addFiles(files) {
     const img = new Image();
     const ok = await new Promise((res) => { img.onload = () => res(true); img.onerror = () => res(false); img.src = url; });
     if (!ok) { toast("Datei nicht lesbar: " + f.name); continue; }
-    const it = { id: Math.random().toString(36).slice(2), name: f.name, img, w: img.naturalWidth, h: img.naturalHeight, status: "busy", lm: null };
+    const it = { id: Math.random().toString(36).slice(2), name: f.name || "portrait.png", file: f, img, w: img.naturalWidth, h: img.naturalHeight, status: "busy", lm: null };
     fitFallback(it);
     items.push(it);
     if (!cur) select(it);
     renderQueue();
   }
   // Nacheinander erkennen, damit das Modell nur einmal lädt
-  for (const it of items.filter((i) => i.status === "busy" && !i.detecting)) { it.detecting = true; await detect(it); it.detecting = false; if (opts.cut) await cutout(it); }
+  for (const it of items.filter((i) => i.status === "busy" && !i.detecting)) { it.detecting = true; await detect(it); it.detecting = false; if (opts.cut) { await cutout(it); passeSchultern(it); } }
 }
 
 function select(it) {
@@ -548,7 +580,7 @@ function refreshStatus() {
   if (!cur) { $("stT").textContent = "Noch kein Bild"; $("stS").textContent = "Bilder links ablegen oder auswählen."; return; }
   st.classList.add(cur.status === "error" ? "err" : cur.status);
   if (cur.status === "busy") { $("stT").textContent = "Gesicht wird gesucht"; $("stS").textContent = faceapiP ? "Einen Moment." : "Beim ersten Bild wird das Erkennungsmodell geladen."; }
-  else if (cur.status === "ok") { $("stT").textContent = "Gesicht erkannt · " + Math.round(cur.conf * 100) + " %"; $("stS").textContent = cur.faces > 1 ? cur.faces + " Gesichter gefunden, das größte wurde verwendet." : "Nasenspitze, Augen und Kinn sind eingepasst."; }
+  else if (cur.status === "ok") { $("stT").textContent = "Gesicht erkannt · " + Math.round(cur.conf * 100) + " %"; $("stS").textContent = (cur.faces > 1 ? cur.faces + " Gesichter gefunden, das größte wurde verwendet. " : "") + (cur.passung === "kleiner" ? `Nase eingepasst, auf ${Math.round(cur.sFaktor * 100)} % verkleinert, damit Schultern und Arme ganz im Bild sind.` : cur.passung === "eng" ? "Foto ist seitlich zu knapp. Arme oder Schultern können angeschnitten sein." : cur.cut ? "Nase eingepasst, Schultern und Arme liegen im Bild." : "Nasenspitze, Augen und Kinn sind eingepasst."); }
   else if (cur.status === "manual") { $("stT").textContent = "Manuell eingepasst"; $("stS").textContent = "Aus den vier gesetzten Punkten berechnet."; }
   else { $("stT").textContent = cur.errMsg || "Nicht erkannt"; $("stS").textContent = "Bitte die Punkte manuell setzen oder das Bild von Hand ausrichten."; }
 }
@@ -569,7 +601,7 @@ function renderQueue() {
     if (it.status !== "busy") drawItem(g, it, c.width, 200, opts.bg === "transparent" ? "#fff" : opts.bg);
     if (opts.cut && it.cutting) { g.fillStyle = "rgba(247,245,241,.75)"; g.fillRect(0, 0, c.width, 200); }
     const dotCls = { ok: "ok", manual: "manual", err: "err" }[it.status] || "";
-    b.innerHTML = `<button class="x" type="button" title="Entfernen">×</button>`;
+    b.innerHTML = `<button class="x" type="button" title="Entfernen" aria-label="Entfernen"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7"/></svg></button>`;
     b.prepend(c);
     b.insertAdjacentHTML("beforeend", `<div class="meta"><span class="name">${esc(it.name)}</span><span class="dot ${dotCls}"></span></div>`);
     b.addEventListener("click", (e) => { if (e.target.closest(".x")) { removeItem(it); return; } select(it); });
@@ -616,10 +648,57 @@ async function cutout(it) {
   refreshFacts(); renderQueue();
   return it.cut;
 }
+/* Schultern und Arme: Die Nase bleibt auf dem Fadenkreuz, nur die Größe wird verringert,
+   bis alle sichtbaren Teile der freigestellten Person mit Rand im Rahmen liegen.
+   Grenzen: höchstens auf 60 % der Guideline-Größe, und keine Fotokante darf in den Rahmen rutschen,
+   an der die Person bereits angeschnitten ist (sonst entstünde eine harte Schnittkante). */
+function maske(it) {
+  if (it.maske) return it.maske;
+  const k = Math.min(1, 360 / Math.max(it.w, it.h));
+  const w = Math.max(1, Math.round(it.w * k)), h = Math.max(1, Math.round(it.h * k));
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(it.cut, 0, 0, w, h);
+  const d = g.getImageData(0, 0, w, h).data;
+  const pts = [], rand = { l: false, r: false, u: false };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 140) {
+    pts.push((x + .5) / k, (y + .5) / k);
+    if (x <= 1) rand.l = true; if (x >= w - 2) rand.r = true; if (y >= h - 2) rand.u = true;
+  }
+  return (it.maske = { pts: new Float32Array(pts), rand });
+}
+function passeSchultern(it) {
+  if (!it.cut || !it.lm) return;
+  const { pts: P, rand } = maske(it);
+  const s0 = it.sG || it.base.s, r = R(), marge = 0.025 * r;
+  const cos = Math.cos(it.rot), sin = Math.sin(it.rot);
+  const rx = (x, y) => (x - it.A.x) * cos - (y - it.A.y) * sin;
+  const ry = (x, y) => (x - it.A.x) * sin + (y - it.A.y) * cos;
+  let sMin = 0.6 * s0;
+  // Wo die Person die Fotokante berührt, muss diese Kante außerhalb des Rahmens bleiben
+  if (rand.l) sMin = Math.max(sMin, C.x / Math.max(1, -Math.min(rx(0, 0), rx(0, it.h))));
+  if (rand.r) sMin = Math.max(sMin, (r - C.x) / Math.max(1, Math.min(rx(it.w, 0), rx(it.w, it.h))));
+  if (rand.u) sMin = Math.max(sMin, (1 - C.y) / Math.max(1, Math.min(ry(0, it.h), ry(it.w, it.h))));
+  sMin = Math.min(sMin, s0);
+  let s = s0;
+  for (let i = 0; i < 10; i++) {
+    let lim = s0;
+    for (let j = 0; j < P.length; j += 2) {
+      const a = rx(P[j], P[j + 1]), fy = C.y + s * ry(P[j], P[j + 1]);
+      if (fy < 0 || fy > 1) continue;
+      if (a < 0) lim = Math.min(lim, (C.x - marge) / -a); else if (a > 0) lim = Math.min(lim, (r - marge - C.x) / a);
+    }
+    const neu = Math.max(sMin, lim);
+    const fertig = Math.abs(neu - s) < s * 0.002; s = neu; if (fertig) break;
+  }
+  it.passung = s < s0 * 0.995 ? (s <= sMin * 1.001 && sMin > 0.6 * s0 * 1.001 ? "eng" : "kleiner") : null;
+  it.sFaktor = s / s0;
+  it.s = s; it.base = { ...it.base, s };
+  if (it === cur) { syncControls(); draw(); refreshStatus(); }
+}
 $("swCut").addEventListener("click", async () => {
   opts.cut = !opts.cut; $("swCut").classList.toggle("on", opts.cut); refreshFacts();
   draw(); queueSoon();
-  if (opts.cut && cur) { toast("Wird freigestellt"); await cutout(cur); if (cur && cur.cut) toast("Freigestellt"); }
+  if (opts.cut && cur) { toast("Wird freigestellt"); await cutout(cur); if (cur && cur.cut) { passeSchultern(cur); toast("Freigestellt"); } }
 });
 function seg(id, key, after) {
   $(id).addEventListener("click", (e) => {
@@ -750,6 +829,82 @@ window.addEventListener("paste", (e) => { const f = [...e.clipboardData.files]; 
 
 let tTimer;
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(tTimer); tTimer = setTimeout(() => el.classList.remove("on"), 2400); }
+
+/* Einbettung (UNIO HUMAN und andere UNIO-Werkzeuge): ?embed=1, optional &auto=1.
+   Nachrichten nur von derselben Herkunft.
+   Eingang: zs:bilder {dateien: File[]}, zs:holen {id}, zs:alle.
+   Ausgang: zs:bereit, zs:stand {bilder}, zs:ergebnis {blob, original, w, h, meta}, zs:fertig.
+   Mit auto=1 wird jedes Bild nach Erkennung und Freistellen ohne Klick zurückgeschickt. */
+const QS = new URLSearchParams(location.search);
+const EMBED = QS.has("embed"), AUTO = QS.has("auto");
+function qualitaet(it, H) {
+  if (it.status === "err" || !it.lm) return 0;
+  const nx = toFrame(it, it.lm.nose).x / R();
+  const up = it.s * H;
+  let p = it.status === "manual" ? 30 : 35;
+  p += Math.min(1, it.conf || 0) * 15;
+  p += it.schaerfe == null ? 5 : it.schaerfe * 10;
+  if (it.hell != null) p -= it.hell < 70 ? Math.min(10, (70 - it.hell) / 4) : it.hell > 205 ? Math.min(10, (it.hell - 205) / 4) : 0;
+  p += nx >= 0.4 && nx <= 0.6 ? 10 : 0;
+  p += up <= 1.05 ? 10 : 0;
+  p += Math.min(1, H / 2000) * 10;
+  p += (it.faces || 1) === 1 ? 5 : 0;
+  p += Math.abs(it.rot) < 0.07 ? 3 : 0;
+  p += it.cut ? 2 : 0;
+  p -= it.passung === "eng" ? 12 : 0;
+  if (it.schaerfe != null && it.schaerfe < 0.15) p = Math.min(p, 55);
+  if (it.hell != null && (it.hell < 55 || it.hell > 215)) p = Math.min(p, 62);
+  return Math.round(Math.max(0, p));
+}
+function hinweise(it, H) {
+  const h = [];
+  if (it.status === "err") h.push("Kein Gesicht erkannt");
+  if (it.schaerfe != null && it.schaerfe < 0.15) h.push("Unscharf");
+  if (it.hell != null && it.hell < 70) h.push("Zu dunkel");
+  if (it.hell != null && it.hell > 205) h.push("Zu hell");
+  if (it.passung === "eng") h.push("Arme angeschnitten");
+  if (it.s * H > 1.05) h.push("Auflösung zu gering");
+  if ((it.faces || 1) > 1) h.push("Mehrere Personen");
+  return h;
+}
+async function ergebnis(it) {
+  if (opts.cut && !it.cut) await cutout(it);
+  const blob = await renderExport(it);
+  const { W, H } = outSize(it);
+  return {
+    typ: "zs:ergebnis", id: it.id, name: outName(it), blob, original: it.file || null, w: W, h: H,
+    meta: {
+      status: it.status, conf: it.conf || 0, gesichter: it.faces || 0,
+      nase: it.lm ? toFrame(it, it.lm.nose).x / R() : null,
+      faktor: it.s * H, drehung: it.rot * 180 / Math.PI,
+      freigestellt: !!it.cut, quelle: { w: it.w, h: it.h }, score: qualitaet(it, H),
+      passung: it.passung || "guideline", groesse: it.sFaktor || 1,
+      schaerfe: it.schaerfe, helligkeit: it.hell, hinweise: hinweise(it, H),
+    },
+  };
+}
+if (EMBED) {
+  document.body.classList.add("embed");
+  const an = (msg) => parent !== window && parent.postMessage(msg, location.origin);
+  const kurz = (it) => ({ id: it.id, name: it.name, status: it.status, conf: it.conf || 0, freigestellt: !!it.cut, freistellen: !!it.cutting });
+  let sT;
+  const rq = renderQueue;
+  renderQueue = function () { rq(); clearTimeout(sT); sT = setTimeout(() => an({ typ: "zs:stand", bilder: items.map(kurz), aktiv: cur && cur.id }), 120); };
+  const ersetze = (id, text, fn) => { const alt = $(id); const neu = alt.cloneNode(true); neu.firstChild.textContent = text + " "; alt.replaceWith(neu); neu.addEventListener("click", fn); };
+  ersetze("export", "Übernehmen", async () => { if (!cur) return; toast("Wird übernommen"); an(await ergebnis(cur)); an({ typ: "zs:fertig" }); });
+  ersetze("exportAll", "Alle übernehmen", async () => { for (const it of items) an(await ergebnis(it)); an({ typ: "zs:fertig" }); });
+  window.addEventListener("message", async (e) => {
+    if (e.origin !== location.origin || !e.data || typeof e.data !== "object") return;
+    const d = e.data;
+    if (d.typ === "zs:bilder" && d.dateien) {
+      await addFiles(d.dateien);
+      if (AUTO) { for (const it of items.filter((i) => !i.gesendet)) { it.gesendet = true; an(await ergebnis(it)); } an({ typ: "zs:fertig" }); }
+    }
+    if (d.typ === "zs:holen") { const it = items.find((i) => i.id === d.id) || cur; if (it) an(await ergebnis(it)); }
+    if (d.typ === "zs:alle") { for (const it of items) an(await ergebnis(it)); an({ typ: "zs:fertig" }); }
+  });
+  an({ typ: "zs:bereit" });
+}
 
 new ResizeObserver(layout).observe($("stage"));
 layout();

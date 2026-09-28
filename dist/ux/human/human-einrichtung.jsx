@@ -141,23 +141,25 @@ function EKonten({ m, zu }) {
   </div>;
 }
 
-function EFoto({ m, zu }) {
+function EFoto({ m, zu, teamSicht }) {
   const { st, daten, setZ, setD } = useEinrichtung(m.id);
   const d = daten.foto || {};
-  const [weg, setWeg] = React.useState(d.weg || null);
-  const [bilder, setBilder] = React.useState([]);
-  if (st.foto === "fertig") return <div className="hm-stack"><Leer titel="Portraits sind da." text="Freigestellt und im Format 3 : 4 zugeschnitten. Sie landen automatisch auf Website, Visitenkarte und Profilbildern." />{HM_PORTRAIT[m.id] && <img src={HM_PORTRAIT[m.id]} alt="" style={{ width: 160, borderRadius: 16, alignSelf: "center" }} />}</div>;
+  const P = (useHm("portraits") || {})[m.id] || { liste: [] };
+  const [weg, setWeg] = React.useState(d.weg || "upload");
+  const hat = P.liste.length > 0;
+  React.useEffect(() => { if (hat && st.foto !== "fertig") setZ("foto", "fertig", teamSicht ? "Porträts vom Foto-Termin zugeschnitten" : "Porträt hochgeladen, freigestellt und zugeschnitten"); if (hat && teamSicht && P.liste.length > 1 && !P.gewaehlt) hmStore.patch("portraits", (a) => ({ ...a, [m.id]: { ...a[m.id], auswahlOffen: true } })); }, [P.liste.length]);
+  if (hat || teamSicht) return <div className="hm-stack">
+    {teamSicht && !hat && <p className="hm-sub" style={{ marginTop: 0 }}>{d.termin ? `Foto-Termin ${d.termin}. ` : ""}Fotos vom Termin hier ablegen. Alle werden automatisch zugeschnitten und freigestellt, die beste Aufnahme wird aktiv, {m.name.split(" ")[0]} kann tauschen.</p>}
+    <Portraits m={m} teamSicht={teamSicht} />
+  </div>;
+  if (st.foto === "wartet_team") return <div className="hm-stack"><Leer titel="Termin steht." text={`${d.termin}. Danach liegen deine Porträts hier, fertig zugeschnitten.`} /><button className="hm-link" style={{ alignSelf: "center" }} onClick={() => { setZ("foto", "offen"); setWeg("upload"); }}>Doch eigene Fotos hochladen</button></div>;
+  const termine = [["Mo 29.09., 13:00", "Mit deinem Drehtag, kein Extratermin"], ["Do 02.10., 09:00", "Büro Kärntner Straße"], ["Mi 08.10., 14:00", "Büro Kärntner Straße"]];
   return <div className="hm-stack">
-    <div className="hm-kacheln zwei">
-      <button className={"hm-kachel" + (weg === "termin" ? " on" : "")} onClick={() => setWeg("termin")}><div className="t">Foto-Termin</div><div className="s">20 Minuten, am Drehtag oder im Büro. Wir bringen Licht und Hintergrund.</div></button>
-      <button className={"hm-kachel" + (weg === "upload" ? " on" : "")} onClick={() => setWeg("upload")}><div className="t">Eigene Fotos</div><div className="s">Hochladen, wir stellen frei und schneiden nach der Guideline zu.</div></button>
-    </div>
-    {weg === "termin" && <><div className="hm-chips">{["Mo 29.09., 13:00 (mit Drehtag)", "Do 02.10., 09:00", "Mi 08.10., 14:00"].map((t) => <button key={t} className={"hm-chip" + (d.termin === t ? " on" : "")} onClick={() => setD("foto", { termin: t, weg: "termin" })}>{t}</button>)}</div><Btn disabled={!d.termin} onClick={() => { setZ("foto", "wartet_team", `Foto-Termin gebucht: ${d.termin}`); toast("Termin gebucht"); zu(); }}>Termin buchen</Btn></>}
-    {weg === "upload" && <>
-      <label className="hm-drop"><input type="file" accept="image/*" multiple hidden onChange={(e) => setBilder([...e.target.files].map((f) => ({ n: f.name, u: URL.createObjectURL(f) })))} /><span>{bilder.length ? `${bilder.length} Fotos gewählt` : "Fotos wählen oder hierher ziehen. Am besten stehend, heller Hintergrund, Oberkörper im Bild."}</span></label>
-      {bilder.length > 0 && <div className="hm-thumbs">{bilder.map((x) => <img key={x.u} src={x.u} alt={x.n} />)}</div>}
-      <div className="hm-note">Der Zuschnitt läuft mit dem UNIO-Werkzeug: Augen auf der Guideline, Hintergrund transparent, Originalauflösung. <a href="/maklerzuschnitt" target="_blank" rel="noopener">Werkzeug öffnen</a></div>
-      <Btn disabled={!bilder.length} onClick={() => { setD("foto", { weg: "upload", anzahl: bilder.length }); setZ("foto", "wartet_team", `${bilder.length} Portrait-Fotos hochgeladen`); toast("Hochgeladen. Wir schneiden zu."); zu(); }}>Hochladen</Btn>
+    <div className="hm-seg">{[["upload", "Eigene Fotos"], ["termin", "Foto-Termin"]].map(([v, t]) => <button key={v} className={weg === v ? "on" : ""} onClick={() => setWeg(v)}>{t}</button>)}</div>
+    {weg !== "termin" && <><Portraits m={m} /><div className="hm-daten">Stehend, Oberkörper im Bild, gleichmäßiges Licht. Mehrere Fotos: die beste Aufnahme wird automatisch gewählt.</div></>}
+    {weg === "termin" && <>
+      <div className="hm-gruppe">{termine.map(([t, u]) => <Zeile key={t} titel={t} unter={u} aktiv={d.termin === t} onClick={() => setD("foto", { termin: t, weg: "termin" })} rechts={d.termin === t ? <Ico n="haken" /> : null} />)}</div>
+      <Btn disabled={!d.termin} onClick={() => { setZ("foto", "wartet_team", `Foto-Termin gebucht: ${d.termin}`); toast("Termin gebucht"); zu(); }}>Termin buchen</Btn>
     </>}
   </div>;
 }

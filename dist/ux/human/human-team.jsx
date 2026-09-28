@@ -9,6 +9,8 @@ function MaklerHeute({ m, go, oeffne }) {
   useHm("branding");
   const b = hmBrand(m.id);
   const [ein, setEin] = React.useState(null);
+  const P = (useHm("portraits") || {})[m.id];
+  const portraitWahl = P && P.auswahlOffen && !P.gewaehlt ? [...P.liste].filter((e) => e.id === P.aktiv || (e.score || 0) >= 70).sort((x, y) => (y.score || 0) - (x.score || 0)).slice(0, 3) : null;
   const freigaben = content.filter((c) => c.zustand === "freigabe");
   const ideen = content.filter((c) => c.zustand === "idee");
   const offenE = HM_EINRICHTUNG.filter((e) => st[e.id] !== "fertig");
@@ -25,6 +27,8 @@ function MaklerHeute({ m, go, oeffne }) {
   return <div>
     <Kopf ueber={datum} titel={`Guten Morgen, ${m.name.split(" ")[0]}.`} />
     {next && <button className="hm-weiter gross" onClick={next[2]}><div><div className="hm-mono" style={{ color: "var(--text-inverse-muted)" }}>Als Nächstes</div><div style={{ fontSize: 26, letterSpacing: "-.02em", marginTop: 6 }}>{next[0]}</div><div style={{ color: "var(--text-inverse-muted)", marginTop: 4, fontSize: 15 }}>{next[1]}</div></div><span className="k">→</span></button>}
+    {portraitWahl && <><div className="hm-sek">Dein Porträt vom Foto-Termin<button onClick={() => hmPortraitWaehlen(m.id, P.aktiv, "makler")}>Vorschlag passt</button></div>
+      <div className="hm-portraits wahl">{portraitWahl.map((e) => <figure key={e.id} className={e.id === P.aktiv ? "on" : ""}><button className="hm-portrait-bild" onClick={() => { hmPortraitWaehlen(m.id, e.id, "makler"); toast("Porträt gewählt. Website und Visitenkarte übernehmen es."); }}><img src={e.url || HM_BLOB_URL["p:" + e.id]} alt="" />{e.id === P.aktiv && <span className="hm-portrait-haken"><Ico n="haken" /></span>}</button><figcaption><span>{e.id === P.aktiv ? "Unser Vorschlag" : hmScoreText(e.score)}</span></figcaption></figure>)}</div></>}
     {freigaben.length > 0 && <><div className="hm-sek">{freigaben.length === 1 ? "Ein Beitrag wartet auf dich" : `${freigaben.length} Beiträge warten auf dich`}</div>
       <div className="hm-review">{freigaben.map((c) => <div key={c.id}>{c.thumb ? <img src={c.thumb} alt="" onClick={() => oeffne(c.id)} /> : <div className="platz" onClick={() => oeffne(c.id)}></div>}<div className="txt"><div className="t">{c.titel}</div><div className="u">{HM_TYPEN[c.typ]} · geplant {hmDatum(c.termin)}</div><div className="a"><button className="hm-klein-btn" onClick={() => setBeitrag(c.id, { zustand: "freigegeben" }, "freigegeben", m.name)}>Freigeben</button><button className="hm-klein-btn hell" onClick={() => oeffne(c.id)}>Ansehen</button></div></div></div>)}</div></>}
     {offenE.length > 0 && <><div className="hm-sek">Einrichtung · {HM_EINRICHTUNG.length - offenE.length} von {HM_EINRICHTUNG.length}<button onClick={() => go("einrichtung")}>Alle ansehen</button></div>

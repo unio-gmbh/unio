@@ -83,6 +83,7 @@ function Studio({ m, setSub, teamSicht }) {
     <div className="hm-studio">
       <div className="hm-studio-l">
         <MaterialKompakt m={m} />
+        <PortraitZeile m={m} teamSicht={teamSicht} />
         <section><div className="hm-mono">Logo</div><div className="hm-optionen">{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div></section>
         <section><div className="hm-mono">Schrift · empfohlen für {w.archetyp.name}</div><div className="hm-optionen">{Object.entries(HM_WEB_SCHRIFTEN).sort((x, y) => (empfS.includes(y[0]) ? 1 : 0) - (empfS.includes(x[0]) ? 1 : 0)).map(([id, f]) => <button key={id} className={"hm-option" + (b.schriftId === id ? " on" : "")} onClick={() => set({ schrift: id })}><div className="bild" style={{ fontFamily: hmFont(f.d), fontSize: 30, color: "var(--ink)" }}>Aa</div><div className="t">{f.name}{empfS.includes(id) ? " · empfohlen" : ""}</div><div className="s">{f.d} und {f.t}</div></button>)}</div></section>
         <section><div className="hm-mono">Akzentfarbe</div><div className="hm-farben">{HM_WEB_AKZENTE.map((x) => <button key={x.id} className={b.akzentId === x.id ? "on" : ""} onClick={() => set({ akzent: x.id })} title={x.name}><i style={{ background: x.hex }}></i><span>{x.name}{empfA.includes(x.id) ? " ·" : ""}</span></button>)}</div><div className="hm-note" style={{ marginTop: 10 }}>Empfohlen (mit Punkt markiert) nach deiner Figur und deinen Bildpaaren. Farbe ist das schwächste Wiedererkennungsmerkmal, dein Gesicht das stärkste.</div></section>
@@ -121,7 +122,7 @@ function hmWebFelder(m, b, web) {
     F("name", "Name", "UNIO", m.name, "Profil"),
     F("tel", "Telefon", "UNIO", (kd.visitenkarten || {}).tel || "", "Visitenkarte", true),
     F("mail", "E-Mail", "UNIO", k.mail || "", "Kontakte", true),
-    F("portrait", "Portrait, freigestellt", "UNIO", e.foto === "fertig" ? (b.portrait ? "Aus Foto-Termin" : "Monogramm, bis Portrait da ist") : "", "Foto-Termin und Zuschnitt", true),
+    F("portrait", "Porträt, freigestellt", "UNIO", b.portrait ? "Aus dem Zuschnitt" : "", "Porträt", true),
     F("region", "Region", "UNIO", (fb.bezirke || []).map((x) => x.replace(/^\d{4}\s/, "")).slice(0, 3).join(", ") || m.region.replace(/^\d{4}\s/, ""), "Fragebogen"),
     F("objekte", "Objekte", "UNIO", "6 aktuelle aus deinem Bestand", "Objekte im Dashboard"),
     F("instagram", "Instagram", "UNIO", e.konten === "fertig" ? "@" + (b.vor + "." + b.nach).toLowerCase() + ".immo" : "", "Konten"),
@@ -222,11 +223,24 @@ function BrandKit({ m, setSub }) {
   </div>;
 }
 
+/* Porträt im Studio: eine Zeile, Verwaltung im Fenster */
+function PortraitZeile({ m, teamSicht }) {
+  useHm("portraits");
+  const b = hmBrand(m.id);
+  const [offen, setOffen] = React.useState(false);
+  return <section>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Porträt</div><button className="hm-link" onClick={() => setOffen(true)}>{b.portrait ? "Ändern" : "Hochladen"}</button></div>
+    <div className="hm-row" style={{ gap: 14 }}>{b.portrait ? <img className="hm-portrait-mini" src={b.portrait} alt="" /> : <Avatar name={m.name} gross />}<div className="hm-sub" style={{ margin: 0, fontSize: 14 }}>{b.portrait ? "Freigestellt nach der UNIO-Guideline. Website, Visitenkarte und Shop nutzen es." : "Bis ein Porträt da ist, steht dein Monogramm."}</div></div>
+    <Sheet offen={offen} zu={() => setOffen(false)} titel="Porträt" breit><Portraits m={m} teamSicht={teamSicht} /></Sheet>
+  </section>;
+}
+
 /* Downloads direkt im Design (ersetzt das separate Brand-Kit) */
 function StudioDownloads({ b }) {
   const laden = (typ) => { const el = document.querySelector(`[data-logo="${typ}"] svg`); if (!el) return; const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(el)], { type: "image/svg+xml" })); a.download = `${(b.vor + "-" + b.nach).toLowerCase()}-${typ}.svg`; a.click(); };
   return <div className="hm-gruppe">
     {HM_LOGO_TYPEN.map((t) => <div key={t.id} className="hm-reihe"><div className="m"><div className="t">{t.name}{b.logo === t.id ? " · Hauptlogo" : ""}</div><div className="u">SVG, frei skalierbar</div></div><div className="r"><button className="hm-klein-btn hell" onClick={() => laden(t.id)}>Laden</button></div></div>)}
+    {b.portrait && <div className="hm-reihe"><div className="m"><div className="t">Porträt</div><div className="u">PNG, freigestellt, Originalauflösung</div></div><div className="r"><a className="hm-klein-btn hell" style={{ textDecoration: "none" }} href={b.portrait} download={`${(b.vor + "-" + b.nach).toLowerCase()}-portrait.png`}>Laden</a></div></div>}
     <div className="hm-reihe"><div className="m"><div className="t">Farben</div><div className="u">Akzent {b.akzent} · Grund #F7F5F1 · Text #0B0A09</div></div><div className="r"><Kopieren text={b.akzent} /></div></div>
     <div className="hm-reihe"><div className="m"><div className="t">Schriften</div><div className="u">{b.schrift.d} und {b.schrift.t}, über Google Fonts</div></div></div>
   </div>;

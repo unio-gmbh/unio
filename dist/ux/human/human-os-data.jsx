@@ -12,7 +12,7 @@ const HM_EINRICHTUNG = [
   { id: "plattform", titel: "UNIO kennenlernen", satz: "In vier Bildern, wie du hier arbeitest.", dauer: "4 Min", wer: "Du", gruppe: "Start" },
   { id: "import", titel: "Kunden und Objekte übernehmen", satz: "Deinen Bestand bringen wir mit, du wählst nur die Quelle.", dauer: "5 Min", wer: "Du und Team", gruppe: "Start" },
   { id: "konten", titel: "Social-Media-Konten", satz: "Vorhandene verbinden oder neue anlegen, Schritt für Schritt.", dauer: "10 bis 20 Min", wer: "Du", gruppe: "Sichtbarkeit" },
-  { id: "foto", titel: "Portrait-Fotos", satz: "Termin buchen oder eigene Fotos hochladen.", dauer: "2 Min", wer: "Du", gruppe: "Sichtbarkeit" },
+  { id: "foto", titel: "Porträt", satz: "Fotos hochladen oder Termin buchen.", dauer: "2 Min", wer: "Du", gruppe: "Sichtbarkeit" },
   { id: "strategie", titel: "Strategie-Termin", satz: "Das Gespräch mit Daniel, danach steht deine Marke.", dauer: "2 Min", wer: "Du", gruppe: "Marke" },
   { id: "backoffice", titel: "Backoffice", satz: "Shop, Girafee und Orakel in je einer Minute.", dauer: "3 Min", wer: "Du", gruppe: "Werkzeuge" },
   { id: "visitenkarten", titel: "Visitenkarten", satz: "Entstehen aus deinem Branding. Prüfen, bestellen, fertig.", dauer: "1 Min", wer: "Du", gruppe: "Marke", braucht: "branding" },

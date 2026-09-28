@@ -1,6 +1,14 @@
 /* UNIO HUMAN. UI-Bausteine v2: Sheet, Tabs, Liste, Logo, Handy-Vorschau, Brand-Ableitung. */
 
-const HM_PORTRAIT = { markus: "/assets/team/portrait-06.jpg" };
+const HM_PORTRAIT = {};
+
+/* Icons: 1,5-px-Stroke, 16 px, currentColor. Keine Textzeichen als Icons. */
+const HM_ICO = {
+  pfeil: "M3 8h10M9 4l4 4-4 4", zurueck: "M10 3.5 5.5 8l4.5 4.5", weiter: "M6 3.5 10.5 8 6 12.5", haken: "M3.5 8.5l3 3 6-7",
+  x: "M4 4l8 8M12 4l-8 8", extern: "M6 3.5h6.5V10M12.5 3.5 4 12", runter: "M8 3v9M4.5 8.5 8 12l3.5-3.5M3.5 13.5h9", hoch: "M8 13V4M4.5 7.5 8 4l3.5 3.5M3.5 2.5h9",
+  plus: "M8 3v10M3 8h10", play: "M5.5 3.5v9l7-4.5z", unten: "M3.5 6 8 10.5 12.5 6",
+};
+function Ico({ n, g = 16 }) { return <svg className="hm-ico" width={g} height={g} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HM_ICO[n]} /></svg>; }
 
 /* Eine Quelle für alles Markenbezogene: Branding (falls freigegeben) plus gewählter Strategie-Weg */
 function hmBrand(maklerId) {
@@ -21,7 +29,7 @@ function hmBrand(maklerId) {
     bio: w ? w.bio : "",
     logo: br.logo || "wort",
     fertig: br.status === "freigegeben",
-    portrait: HM_PORTRAIT[maklerId] || null,
+    portrait: (window.hmPortraitUrl && hmPortraitUrl(maklerId)) || HM_PORTRAIT[maklerId] || null,
   };
 }
 const hmFont = (f) => `"${f}", ui-serif, Georgia, serif`;
@@ -38,12 +46,12 @@ function BrandLogo({ b, typ, farbe, grund, h = 44, invert }) {
 }
 
 /* Sheet: Modal von unten auf Mobil, zentriert auf Desktop */
-function Sheet({ offen, zu, titel, unter, children, breit, fuss }) {
+function Sheet({ offen, zu, titel, unter, children, breit, voll, fuss }) {
   React.useEffect(() => { if (!offen) return; const k = (e) => e.key === "Escape" && zu(); window.addEventListener("keydown", k); document.body.style.overflow = "hidden"; return () => { window.removeEventListener("keydown", k); document.body.style.overflow = ""; }; }, [offen]);
   if (!offen) return null;
   return (
     <div className="hm-overlay" onMouseDown={(e) => e.target === e.currentTarget && zu()}>
-      <div className={"hm-sheet" + (breit ? " breit" : "")} role="dialog" aria-modal="true">
+      <div className={"hm-sheet" + (breit ? " breit" : "") + (voll ? " voll" : "")} role="dialog" aria-modal="true">
         <div className="hm-sheet-kopf"><div><h3 className="hm-h hm-h2">{titel}</h3>{unter && <div className="hm-sub" style={{ marginTop: 6 }}>{unter}</div>}</div><button className="hm-x" onClick={zu} aria-label="Schließen"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button></div>
         <div className="hm-sheet-body">{children}</div>
         {fuss && <div className="hm-sheet-fuss">{fuss}</div>}
@@ -82,4 +90,4 @@ const hmZeit = (iso) => iso && iso.length > 10 ? iso.slice(11, 16) : "";
 const hmSpalte = (id) => HM_SPALTEN.find((s) => s.id === id) || HM_SPALTEN[0];
 function ZPunkt({ z }) { const s = hmSpalte(z); return <span className="hm-zpunkt"><i style={{ background: s.farbe }}></i>{s.name}</span>; }
 
-Object.assign(window, { hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });
+Object.assign(window, { Ico, HM_ICO, hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });

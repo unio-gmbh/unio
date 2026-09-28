@@ -556,21 +556,49 @@ select.hm-sel { border: 0; background: var(--paper-2); border-radius: 999px; pad
 .hm-webframe iframe { border: 0; transform-origin: 0 0; display: block; position: absolute; top: 0; left: 0; }
 .hm-webframe .lade { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper-2); color: var(--text-muted); font-size: 13px; }
 @media (max-width: 1100px) { .hm-abst, .hm-werk { grid-template-columns: 1fr; } .hm-abst-l, .hm-werk-r { position: static; } }
+
+/* ===== v5: Icons, Porträts, Zuschnitt ===== */
+.hm-ico { display: inline-block; vertical-align: -3px; flex: none; }
+.hm-sheet.voll { width: min(1400px, 100%); height: calc(100vh - 7vh - 16px); }
+.hm-sheet.voll .hm-sheet-body { flex: 1; padding: 0; min-height: 0; overflow: hidden; border-radius: 0 0 24px 24px; }
+.hm-zs-frame { width: 100%; height: 100%; border: 0; display: block; }
+.hm-zs-stapel { position: fixed; left: -3000px; top: 0; width: 1280px; height: 800px; border: 0; }
+.hm-zs-lauf { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 16px 18px; border-radius: 16px; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark); font-size: 14px; color: var(--ink); }
+.hm-zs-lauf > span:last-of-type { grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; }
+.hm-zs-balken { height: 4px; border-radius: 2px; background: var(--paper-3); overflow: hidden; } .hm-zs-balken i { display: block; height: 100%; background: var(--ink); transition: width .3s var(--ease-unio); }
+.hm-drop.ueber { border-color: var(--ink); color: var(--ink); background: #fff; }
+.hm-schach { background-color: #fff; background-image: linear-gradient(45deg, #ECE8E0 25%, transparent 25%), linear-gradient(-45deg, #ECE8E0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ECE8E0 75%), linear-gradient(-45deg, transparent 75%, #ECE8E0 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; border-radius: 14px; overflow: hidden; }
+.hm-portrait-kopf { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 22px; align-items: center; }
+.hm-portrait-bild { border: 0; padding: 0; background: var(--paper-2); border-radius: 12px; overflow: hidden; position: relative; display: block; width: 100%; aspect-ratio: 3/4; cursor: pointer; }
+.hm-portrait-bild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hm-portrait-bild.gross { background: linear-gradient(180deg, var(--paper-2), var(--paper-3)); }
+.hm-portraits { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 10px; }
+.hm-portraits figure { margin: 0; } .hm-portraits figure.on .hm-portrait-bild { box-shadow: 0 0 0 2px var(--ink); }
+.hm-portraits figcaption { display: flex; justify-content: space-between; gap: 6px; font-size: 12px; color: var(--text-muted); margin-top: 6px; } .hm-portraits figcaption .hm-link { font-size: 12px; }
+.hm-portrait-haken { position: absolute; right: 8px; top: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; }
+.hm-abschnitt-t { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.hm-ava { background-color: var(--paper-3); }
+img.hm-ava { object-position: 50% 12%; }
+.hm-portrait-mini { width: 60px; height: 80px; object-fit: cover; border-radius: 10px; background: linear-gradient(180deg, var(--paper-2), var(--paper-3)); flex: none; }
+.hm-portraits.wahl { grid-template-columns: repeat(auto-fill, minmax(140px, 180px)); }
+.hm-hinweis { font-size: 13px; color: var(--signal-deep); }
+@media (max-width: 700px) { .hm-portrait-kopf { grid-template-columns: 110px 1fr; gap: 14px; } .hm-sheet.voll { height: calc(100vh - 32px); } }
 </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="/ux/human/human-data.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-store.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-os-data.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-more.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-flow.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-ui.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-einrichtung.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-marke.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-medien.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-content.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-team.jsx?v=e932a595"></script>
-<script type="text/babel" src="/ux/human/human-app.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-data.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-store.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-os-data.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-more.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-flow.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-ui.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-foto.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-einrichtung.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-marke.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-medien.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-content.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-team.jsx?v=e9c3bf2c"></script>
+<script type="text/babel" src="/ux/human/human-app.jsx?v=e9c3bf2c"></script>
 </body>
 </html>
