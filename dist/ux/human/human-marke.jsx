@@ -241,7 +241,7 @@ function hmWebObjekte() {
     ["Das Albrecht, Dachgeschoss", "Wieden · 1040", "€ 1.290.000", "128 m²", "4 Zi", "albrechts-dachgeschoss.jpg"],
     ["Beheimgasse", "Hernals · 1170", "€ 468.000", "64 m²", "2 Zi", "beheim.jpg"],
     ["Oben Zwei, Terrasse", "Leopoldstadt · 1020", "€ 1.190.000", "118 m²", "4 Zi", "obenzwei-terrasse.jpg"],
-    ["Zinshaus, Gründerzeit", "Margareten · 1050", "Preis auf Anfrage", "1.180 m²", "—", "zinshaus-fassaden.jpg"],
+    ["Zinshaus, Gründerzeit", "Margareten · 1050", "Preis auf Anfrage", "1.180 m²", "12 Einheiten", "zinshaus-fassaden.jpg"],
     ["EcoLuxe, Erstbezug", "Donaustadt · 1220", "€ 540.000", "71 m²", "3 Zi", "ecoluxe.jpg"],
     ["Penthouse am Ring", "Innere Stadt · 1010", "€ 3.450.000", "196 m²", "5 Zi", "penthouse.jpg"],
     ["Wohnen bei Schönbrunn", "Hietzing · 1130", "€ 1.080.000", "104 m²", "3 Zi", "schoenbrunn.jpg"],
