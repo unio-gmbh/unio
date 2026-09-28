@@ -7,6 +7,7 @@ const HM_ICO = {
   pfeil: "M3 8h10M9 4l4 4-4 4", zurueck: "M10 3.5 5.5 8l4.5 4.5", weiter: "M6 3.5 10.5 8 6 12.5", haken: "M3.5 8.5l3 3 6-7",
   x: "M4 4l8 8M12 4l-8 8", extern: "M6 3.5h6.5V10M12.5 3.5 4 12", runter: "M8 3v9M4.5 8.5 8 12l3.5-3.5M3.5 13.5h9", hoch: "M8 13V4M4.5 7.5 8 4l3.5 3.5M3.5 2.5h9",
   plus: "M8 3v10M3 8h10", play: "M5.5 3.5v9l7-4.5z", unten: "M3.5 6 8 10.5 12.5 6",
+  schnitt: "M5.6 5.4 13 12.5M5.6 10.6 13 3.5M5.8 4.3a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0zM5.8 11.7a1.8 1.8 0 1 1-3.6 0 1.8 1.8 0 0 1 3.6 0z", frage: "M2.5 3.5h11v7.5H7l-3.5 2.5V11h-1z",
 };
 function Ico({ n, g = 16 }) { return <svg className="hm-ico" width={g} height={g} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HM_ICO[n]} /></svg>; }
 
@@ -60,9 +61,10 @@ function Sheet({ offen, zu, titel, unter, children, breit, voll, fuss }) {
   );
 }
 function Tabs({ tabs, akt, set, klein }) { return <div className={"hm-tabs" + (klein ? " klein" : "")} role="tablist">{tabs.map(([id, t, n]) => <button key={id} role="tab" aria-selected={akt === id} className={akt === id ? "on" : ""} onClick={() => set(id)}>{t}{n ? <span className="n">{n}</span> : null}</button>)}</div>; }
-function Kopf({ ueber, titel, text, rechts }) { return <div className="hm-kopf"><div style={{ minWidth: 0 }}>{ueber && <div className="hm-mono">{ueber}</div>}<h2 className="hm-h hm-h1" style={{ marginTop: ueber ? 10 : 0 }}>{titel}</h2>{text && <p className="hm-sub">{text}</p>}</div>{rechts && <div className="hm-kopf-r">{rechts}</div>}</div>; }
+/* Kopf ohne Eyebrow: Kontext (Datum, Makler) steht als ruhige Zeile unter der Überschrift */
+function Kopf({ ueber, titel, text, rechts }) { return <div className="hm-kopf"><div style={{ minWidth: 0 }}><h2 className="hm-h hm-h1">{titel}</h2>{ueber && <div className="hm-kontext">{ueber}</div>}{text && <p className="hm-sub">{text}</p>}</div>{rechts && <div className="hm-kopf-r">{rechts}</div>}</div>; }
 function Zeile({ links, titel, unter, rechts, onClick, aktiv }) { return <div className={"hm-zeile" + (onClick ? " klick" : "") + (aktiv ? " on" : "")} onClick={onClick}>{links && <div className="l">{links}</div>}<div className="m"><div className="t">{titel}</div>{unter && <div className="u">{unter}</div>}</div>{rechts && <div className="r">{rechts}</div>}</div>; }
-function Haken({ an, set, children }) { return <button className={"hm-haken" + (an ? " an" : "")} onClick={() => set(!an)}><i>{an ? "✓" : ""}</i><span>{children}</span></button>; }
+function Haken({ an, set, children }) { return <button className={"hm-haken" + (an ? " an" : "")} onClick={() => set(!an)}><i>{an ? <Ico n="haken" g={12} /> : ""}</i><span>{children}</span></button>; }
 function Avatar({ name, gross, bild }) { const k = (name || "?").split(" ").map((x) => x[0]).slice(0, 2).join(""); return bild ? <img className={"hm-ava" + (gross ? " g" : "")} src={bild} alt="" /> : <span className={"hm-ava" + (gross ? " g" : "")}>{k}</span>; }
 function Kopieren({ text }) {
   const [ok, setOk] = React.useState(false);

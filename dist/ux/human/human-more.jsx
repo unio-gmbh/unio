@@ -168,7 +168,7 @@ function Aufbau({ m, st }) {
     { id: "tour", t: "Dein Werkzeug", z: s.tour && s.tour.status, sub: "Vier Minuten, dann kennst du alles", owner: "System" },
     { id: "dreh", t: "Drehtage", z: meine.length >= 3 ? "fertig" : meine.length ? "in_arbeit" : "wartet_makler", sub: meine.length ? `${meine.length} gebucht` : "Drei Termine im Quartal", owner: "Du" },
   ];
-  if (!w) return <div><div className="hm-mono">Etappe 04 · Aufbau</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Der Aufbau startet mit deinem Weg.</h2><p className="hm-sub">Branding, Website und Vorlagen entstehen aus der gewählten Strategie. Erst wählen, dann bauen.</p></div>;
+  if (!w) return <div><h2 className="hm-h hm-h1">Der Aufbau startet mit deinem Weg.</h2><p className="hm-sub">Branding, Website und Vorlagen entstehen aus der gewählten Strategie. Erst wählen, dann bauen.</p></div>;
   return (
     <div>
       <div className="hm-mono">Etappe 04 · Aufbau · Tag 10 bis 24</div>
@@ -176,14 +176,14 @@ function Aufbau({ m, st }) {
       <p className="hm-sub">Drei davon macht das Team oder das System. Zwei brauchen dich: Konten verbinden und Drehtage buchen.</p>
       <div className="hm-kap">{cards.map((c) => <button key={c.id} className={"hm-kapc" + (c.z === "fertig" ? " fertig" : "")} onClick={() => setDet(c.id)}><div className="hm-mono">{c.owner}</div><div className="t">{c.t}</div><div className="s">{c.sub}</div><div style={{ marginTop: "auto" }}><Pill z={c.z || "offen"} /></div></button>)}</div>
       {det === "branding" && <div className="hm-card" style={{ marginTop: 20 }}>
-        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Branding</div><h3 className="hm-h hm-h2" style={{ marginTop: 6 }}>Farbwelt wählen.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
+        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h3 className="hm-h hm-h2">Farbwelt wählen.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
         <p className="hm-sub">Aus deinem Weg kommen drei Vorschläge, die erste ist die Empfehlung. Daniel legt Schrift und Leitidee danach fest.</p>
         <div className="hm-seg" style={{ marginTop: 16 }}>{["Behalten und schärfen", "Neu aufsetzen"].map((v) => <button key={v} className={(s.branding || {}).variante === v ? "on" : ""} onClick={() => put({ branding: { ...(s.branding || {}), variante: v, status: "in_arbeit" } })}>{v}</button>)}</div>
         <div className="hm-bp" style={{ marginTop: 16 }}>{[{ id: "weg", name: "Aus deinem Weg", p: w.palette }, ...HM_FARBWELTEN.slice(0, 3)].map((f) => <button key={f.id} className="hm-karte" style={{ boxShadow: (s.branding || {}).farbwelt === f.id ? "inset 0 0 0 2px var(--ink)" : "" }} onClick={() => { put({ branding: { ...(s.branding || {}), farbwelt: f.id, status: "in_arbeit" } }); hmEvent(m.id, "branding", `Farbwelt ${f.name} gewählt`, m.name); toast("Farbwelt gespeichert, Daniel legt Schrift und Leitidee fest"); }}><div className="img" style={{ background: `linear-gradient(90deg, ${f.p[0]} 55%, ${f.p[1]} 55% 85%, ${f.p[2]} 85%)` }}></div><div className="tx"><div className="t">{f.name}</div><div className="s hm-mono">{f.p.join(" · ")}</div></div></button>)}</div>
         <div className="hm-card" style={{ marginTop: 16, background: "var(--paper-2)", boxShadow: "none" }}><div className="hm-mono">Leitidee und Schrift (Vorschlag)</div><div style={{ fontSize: 20, color: "var(--ink)", marginTop: 6 }}>{w.leitidee}</div><div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{w.schrift[0]} für Titel, {w.schrift[1]} für Daten. Wortmarke aus dem Schriftpaar, Bildmarke auf Wunsch als Option.</div></div>
       </div>}
       {det === "website" && <div className="hm-card" style={{ marginTop: 20 }}>
-        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Website</div><h3 className="hm-h hm-h2" style={{ marginTop: 6 }}>Entsteht aus dem Profil.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
+        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h3 className="hm-h hm-h2">Entsteht aus dem Profil.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
         <div className="hm-seg" style={{ marginTop: 16 }}>{["Klar", "Warm", "Editorial"].map((l) => <button key={l} className={(s.website || {}).look === l ? "on" : ""} onClick={() => put({ website: { ...(s.website || {}), look: l, status: "in_arbeit" } })}>{l}</button>)}</div>
         <div style={{ marginTop: 16, borderRadius: 18, overflow: "hidden", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
           <div style={{ background: w.palette[0], color: w.palette[1], padding: "clamp(24px, 4vw, 56px)", minHeight: 260, display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 10 }}>
@@ -197,7 +197,7 @@ function Aufbau({ m, st }) {
         <div className="hm-row" style={{ marginTop: 14 }}><Btn onClick={() => { put({ website: { ...(s.website || {}), status: "freigabe" } }); toast("Entwurf an Daniel zur Prüfung"); }}>Entwurf so prüfen lassen</Btn><span className="hm-mono">Daniel prüft, dann live in 2 Tagen</span></div>
       </div>}
       {det === "konten" && <div className="hm-card" style={{ marginTop: 20 }}>
-        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Konten</div><h3 className="hm-h hm-h2" style={{ marginTop: 6 }}>Fünf Häkchen.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
+        <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h3 className="hm-h hm-h2">Fünf Häkchen.</h3></div><button className="hm-chip" onClick={() => setDet(null)}>Schließen</button></div>
         <div className="hm-list" style={{ marginTop: 10 }}>{[["instagram", "Instagram auf Professional-Konto umstellen", "Einstellungen, Konto, zu professionellem Konto wechseln"], ["facebook", "Facebook-Seite anlegen oder verknüpfen", "Wird Spiegel von Instagram"], ["meta", "Meta Business Suite einrichten", "Beide Konten in einem Business-Konto"], ["unio", "UNIO als Partner freigeben", "Business Partner-Zugriff, du bleibst Inhaber"], ["posting", "Posting-Werkzeug verbinden", "Erledigt das Team, sobald der Zugriff steht"]].map(([k, t, h]) => <div key={k} className="hm-li"><div><div className="t">{t}</div><div className="m">{h}</div></div><Pill z={konten[k] ? "fertig" : "wartet_makler"} /><button className="hm-chip" onClick={() => { put({ konten: { ...konten, [k]: !konten[k] } }); if (!konten[k]) hmEvent(m.id, "konten", `${t}: erledigt`, m.name); }}>{konten[k] ? "Zurück" : "Erledigt"}</button></div>)}</div>
       </div>}
       {det === "tour" && <div className="hm-card hm-dark" style={{ marginTop: 20 }}>
@@ -218,7 +218,7 @@ function DrehBuchung({ m, drehtage, schliessen }) {
   const mitfahren = (d) => { hmStore.patch("drehtage", (l) => l.map((x) => x.id === d.id ? { ...x, slots: [...x.slots, { maklerId: m.id, von: "13:00", bis: "15:00" }] } : x)); hmEvent(m.id, "drehtag", `Sammel-Drehtag ${hmFmtDate(d.datum)} in ${d.region} gebucht`, m.name); toast("Sammel-Drehtag gebucht"); };
   return (
     <div className="hm-card" style={{ marginTop: 20 }}>
-      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Drehtage</div><h3 className="hm-h hm-h2" style={{ marginTop: 6 }}>Drei Termine im Quartal.</h3></div><button className="hm-chip" onClick={schliessen}>Schließen</button></div>
+      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h3 className="hm-h hm-h2">Drei Termine im Quartal.</h3></div><button className="hm-chip" onClick={schliessen}>Schließen</button></div>
       <p className="hm-sub">Ein Drehtag dauert drei Stunden und liefert Material für einen Monat. Termine, an denen das Team schon in deiner Nähe ist, sparen Anfahrt und sind zuerst gelistet.</p>
       <div className="hm-list" style={{ marginTop: 10 }}>
         {meine.map((d) => <div key={d.id} className="hm-li"><div><div className="t">{hmFmtDate(d.datum)} · {d.region}</div><div className="m">{d.location} · {d.slots.find((x) => x.maklerId === m.id).von} bis {d.slots.find((x) => x.maklerId === m.id).bis}{d.slots.length > 1 ? " · Sammel-Drehtag" : ""}</div></div><Pill z={d.status === "fertig" ? "fertig" : d.status === "vorschlag" ? "offen" : "geplant"} />{d.status === "vorschlag" ? <Btn onClick={() => buchen(d)}>Buchen</Btn> : <span></span>}</div>)}
@@ -238,7 +238,7 @@ function Inhalte({ m, st }) {
   const w = st && st.gewaehlt ? st.wege[st.gewaehlt] : null;
   const frei = posts.filter((p) => p.zustand === "freigabe");
   const tabs = [["ideen", "Ideen", ideen.filter((i) => i.zustand === "vorgeschlagen").length], ["dreh", "Drehplan"], ["freigabe", "Freigaben", frei.length], ["plan", "Geplant"], ["bib", "Bibliothek"]];
-  if (!w) return <div><div className="hm-mono">Inhalte</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Erst die Strategie, dann die Inhalte.</h2><p className="hm-sub">Ideen, Drehplan und Freigaben bauen auf deinen Säulen auf.</p></div>;
+  if (!w) return <div><h2 className="hm-h hm-h1">Erst die Strategie, dann die Inhalte.</h2><p className="hm-sub">Ideen, Drehplan und Freigaben bauen auf deinen Säulen auf.</p></div>;
   return (
     <div>
       <div className="hm-mono">Inhalte · Oktober 2026 · Kontingent {m.kontingent.videos - m.verbraucht.videos} Videos, {m.kontingent.fotos - m.verbraucht.fotos} Fotos, {m.kontingent.grafiken - m.verbraucht.grafiken} Grafiken offen</div>
@@ -290,7 +290,7 @@ function Drehplan({ m, drehtage }) {
     <div className="hm-grid" style={{ gridTemplateColumns: "minmax(0, 1.3fr) minmax(0, 1fr)", marginTop: 20 }}>
       <div className="hm-card">
         <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Nächster Drehtag · in {hmTage(HM_HEUTE, d.datum)} Tagen</div><h3 className="hm-h hm-h2" style={{ marginTop: 6 }}>{hmFmtDate(d.datum)}, {slot.von} bis {slot.bis}</h3><div style={{ color: "var(--text-muted)", marginTop: 4 }}>{d.location}{d.slots.length > 1 ? " · Sammel-Drehtag, du bist der zweite Slot" : ""}</div></div><Pill z={d.status === "geplant" ? "geplant" : "offen"} /></div>
-        {d.plan.length ? <div className="hm-list" style={{ marginTop: 12 }}>{d.plan.map((p, i) => <div key={i} className="hm-li" style={{ gridTemplateColumns: "auto minmax(0, 1fr) auto" }}><button className="hm-chip" style={{ width: 34, padding: 0, height: 34 }} onClick={() => toggle(i)}>{p.done ? "●" : "○"}</button><div><div className="t" style={{ textDecoration: p.done ? "line-through" : "" }}>{p.shot}</div><div className="m">{p.ort} · {p.dauer}{p.hook ? ` · Hook: ${p.hook}` : ""}</div></div>{p.hook ? <button className="hm-chip" onClick={() => setTp(p)}>Skript</button> : <span></span>}</div>)}</div> : <div className="hm-empty" style={{ marginTop: 12, padding: 20 }}>Shotlist entsteht aus deinen gewählten Ideen. Ahmet legt sie 5 Tage vor dem Dreh an.</div>}
+        {d.plan.length ? <div className="hm-list" style={{ marginTop: 12 }}>{d.plan.map((p, i) => <div key={i} className="hm-li" style={{ gridTemplateColumns: "auto minmax(0, 1fr) auto" }}><button className="hm-chip" style={{ width: 34, padding: 0, height: 34 }} onClick={() => toggle(i)}><span className={"hm-radio" + (p.done ? " an" : "")}></span></button><div><div className="t" style={{ textDecoration: p.done ? "line-through" : "" }}>{p.shot}</div><div className="m">{p.ort} · {p.dauer}{p.hook ? ` · Hook: ${p.hook}` : ""}</div></div>{p.hook ? <button className="hm-chip" onClick={() => setTp(p)}>Skript</button> : <span></span>}</div>)}</div> : <div className="hm-empty" style={{ marginTop: 12, padding: 20 }}>Shotlist entsteht aus deinen gewählten Ideen. Ahmet legt sie 5 Tage vor dem Dreh an.</div>}
         <div style={{ marginTop: 14, fontSize: 13, color: "var(--text-muted)" }}>Mitbringen: zwei Outfits (ein helles, ein dunkles), Schlüssel für das Objekt, Ruhe. Teleprompter und Licht bringt Ahmet.</div>
       </div>
       <div className="hm-card hm-dark" style={{ minHeight: 280 }}>
@@ -349,7 +349,7 @@ function Kalender({ maklerId, makler }) {
   const col = { dreh: "var(--signal)", veroffentlicht: "var(--positive)", geplant: "var(--ink)", freigabe: "var(--signal-deep)", im_schnitt: "var(--steel)", frist: "var(--signal-deep)", termin: "var(--ink-3)" };
   return (
     <div>
-      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Kalender</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{first.toLocaleDateString("de-AT", { month: "long", year: "numeric" })}</h2></div><div className="hm-seg"><button onClick={() => setMon(Math.max(8, mon - 1))}>←</button><button className="on" onClick={() => setMon(9)}>Heute</button><button onClick={() => setMon(Math.min(11, mon + 1))}>→</button></div></div>
+      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h2 className="hm-h hm-h1">{first.toLocaleDateString("de-AT", { month: "long", year: "numeric" })}</h2></div><div className="hm-seg"><button onClick={() => setMon(Math.max(8, mon - 1))} aria-label="Voriger Monat"><Ico n="zurueck" /></button><button className="on" onClick={() => setMon(9)}>Heute</button><button onClick={() => setMon(Math.min(11, mon + 1))} aria-label="Nächster Monat"><Ico n="weiter" /></button></div></div>
       <div className="hm-row" style={{ marginTop: 14, gap: 16 }}>{[["dreh", "Drehtag"], ["geplant", "Post geplant"], ["veroffentlicht", "Veröffentlicht"], ["frist", "Freigabefrist"], ["termin", "Gespräch"]].map(([k, t]) => <span key={k} className="hm-mono" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}><i style={{ width: 8, height: 8, borderRadius: "50%", background: col[k], display: "inline-block" }}></i>{t}</span>)}</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 4, marginTop: 18 }}>
         {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((d) => <div key={d} className="hm-mono" style={{ padding: "0 8px 6px" }}>{d}</div>)}
@@ -394,14 +394,14 @@ function Report({ m, st }) {
   const reports = ((useHm("reports") || {})[m.id]) || [];
   const [i, setI] = useState(reports.length - 1);
   const r = reports[i];
-  if (!r) return <div><div className="hm-mono">Report</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Der erste Report kommt nach dem ersten Monat live.</h2><p className="hm-sub">Reichweite, Saves, Sends, Follower, deine besten Posts und drei Empfehlungen. Automatisch am Monatsersten.</p></div>;
+  if (!r) return <div><h2 className="hm-h hm-h1">Der erste Report kommt nach dem ersten Monat live.</h2><p className="hm-sub">Reichweite, Saves, Sends, Follower, deine besten Posts und drei Empfehlungen. Automatisch am Monatsersten.</p></div>;
   const prev = reports[i - 1];
   const delta = (k) => prev ? Math.round((r[k] - prev[k]) / prev[k] * 100) : null;
   const KZ = [["reach", "Reichweite"], ["follower", "Follower"], ["saves", "Saves"], ["sends", "Sends"]];
   const quartal = reports.length >= 3;
   return (
     <div>
-      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Report</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{hmMonatName(r.monat + "-01")}</h2></div><div className="hm-seg">{reports.map((x, j) => <button key={x.monat} className={j === i ? "on" : ""} onClick={() => setI(j)}>{new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "short" })}</button>)}</div></div>
+      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h2 className="hm-h hm-h1">{hmMonatName(r.monat + "-01")}</h2></div><div className="hm-seg">{reports.map((x, j) => <button key={x.monat} className={j === i ? "on" : ""} onClick={() => setI(j)}>{new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "short" })}</button>)}</div></div>
       <div className="hm-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", marginTop: 24 }}>{KZ.map(([k, t]) => { const d = delta(k); return <div key={k} className="hm-card" style={{ padding: 18 }}><div className="hm-mono">{t}</div><div style={{ fontSize: 36, letterSpacing: "-.03em", color: "var(--ink)", marginTop: 6, fontVariantNumeric: "tabular-nums" }}>{r[k].toLocaleString("de-AT")}</div>{d != null && <div className="hm-mono" style={{ color: d >= 0 ? "var(--positive)" : "var(--signal-deep)", marginTop: 4 }}>{d >= 0 ? "+" : ""}{d} % zum Vormonat</div>}</div>; })}</div>
       <div className="hm-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", marginTop: 16 }}>
         <div className="hm-card"><div className="hm-mono">Verlauf Reichweite</div><Sparkline data={reports.map((x) => x.reach)} aktiv={i} /><div className="hm-row" style={{ justifyContent: "space-between", marginTop: 6 }}>{reports.map((x) => <span key={x.monat} className="hm-mono">{new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "short" })}</span>)}</div></div>

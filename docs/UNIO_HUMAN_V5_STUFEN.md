@@ -104,3 +104,87 @@ Vault-Regeln, die ab v5 gelten (aus "Feedback, Dos & Don'ts" und "Design-Masterr
 - **Lead-Radar:** CSV aus Portalen einlesen und bewerten. Offen ist, woher die Rohdaten rechtlich sauber kommen.
 - **Vertrag:** Für eine qualifizierte Signatur braucht es Yousign. Die Prüfsumme belegt nur die Unverändertheit.
 - **Import:** Objekte gehen noch nicht in NOVA. Die Brücke braucht die Schnittstelle zu Zero-One.
+
+---
+
+## Stufe 3. Strategie
+
+**Diagramm:** Start, Strategy Workshop mit Fragebogen, Results Upload, Strategy Generated, Presentation und Planning.
+
+**Umgesetzt** (`human-strategie.jsx`)
+- **Leitfaden:** Aus den Antworten entstehen Fragen für Daniel in drei Gruppen: Klären, Vertiefen, Bestätigen. Jede Frage nennt ihren Grund. Beispiele:
+  - Kanäle gegen Zeitbudget: 2 bis 4 Stunden tragen zwei Kanäle.
+  - Kamera-Komfort gegen gewählte Formate.
+  - Meinungsstark, aber Politik tabu.
+  - Sie gegen Instagram.
+  - Fremdbild fehlt.
+  - Lücken in "Deine Geschichte".
+  - Der Grätzl-Anteil wird zum festen Format.
+  - Das Ziel bekommt eine Messgröße.
+  
+  Der Leitfaden ist druckbar und liegt unter Gespräche.
+- **Mitschrift:**
+  - Aufnahme ablegen. Das Audio wird auf 16 kHz gebracht und von Whisper im Browser transkribiert (transformers.js, Modell small "Genau" oder base "Schnell").
+  - Das Glossar korrigiert typische Hörfehler (Leads, Immobilien, Makler, UNIO) und gleicht Namen aus Team und Makler ab.
+  - Aufgaben und Zitate werden nach Mustern markiert. Das Ergebnis wird als Gespräch gespeichert.
+  - Whisper läuft in einem Worker, damit die Oberfläche bedienbar bleibt.
+- **Plan bis live:**
+  - Elf Etappen rückwärts vom Tag 30 (Vertrag Tag 0 bis Live Tag 30). Der Stand kommt aus den echten Daten: Einrichtung, Fragebogen, Strategie, Branding, Porträt, Drehtage, Website, Beiträge.
+  - Überfälliges ist markiert.
+  - Im Team-Überblick steht der Plan vollständig, auf Heute des Maklers als Etappenleiste mit dem nächsten Schritt.
+
+**Tests**
+
+| Test | Ergebnis |
+|---|---|
+| Leitfaden Markus | 12 Punkte aus 46 Antworten, alle mit nachvollziehbarem Grund |
+| Mitschrift, 64 s Testaufnahme (UNIO-Teamvideo) | base 12 s, small 39 s im Hauptthread; im Worker 183 s im Hintergrund-Tab, Oberfläche dabei bedienbar. small erkennt UNIO, Leads und Immobilien richtig |
+| Plan Sara | Tag 0 bis 30 mit Daten, Vertrag erledigt |
+
+**Gefundene Fehler, behoben**
+- Babel schreibt `import()` in `require()` um. Der dynamische Import läuft jetzt über `new Function`, Bibliotheken kommen per Script-Tag. Den Hinweis habe ich an die parallel arbeitenden Agenten weitergegeben.
+- Die Paketwurzel von transformers.js lädt einen Node-Build. Richtig ist `dist/transformers.min.js`.
+- Die Dateiablage nahm nur Bilder an. Der Dateityp ist jetzt einstellbar.
+- Fremde Schriftzeichen aus Halluzinationen werden entfernt.
+
+**Verbesserungen für später**
+- Lange Workshops (60 Minuten) brauchen im Browser rund 30 bis 90 Minuten. Im Betrieb läuft das serverseitig (Whisper large, `api/human-mitschrift.js`) oder im Browser mit WebGPU.
+- Sprecher trennen (Daniel oder Makler) geht nur serverseitig.
+- Aus Mitschrift und Leitfaden die Strategie v1 vorschlagen: Zitate in die Brand Story, Antworten auf Klärungsfragen in die Regeln. Das braucht Tokens und bekommt einen Regel-Fallback.
+
+---
+
+## Stufe 4. Setups
+
+**Diagramm:** Branding Setup (neu oder Rebranding: Logo, Farben, Schrift, Leitidee), Website Setup, Media Accounts Setup.
+
+**Umgesetzt** (`human-setup.jsx`)
+- **Logos als Vektorpfade:**
+  - opentype.js wandelt die Schrift in Pfade, mit Kerning und Laufweite wie im Live-Logo. Die Schriften kommen von Fontsource (WOFF), Power Grotesk als WOFF aus dem Repo (aus WOFF2 konvertiert).
+  - Das SVG druckt damit ohne installierte Schrift. PNG in 2000 px.
+- **Brand-Kit als ZIP:** drei Logo-Typen je dunkel und hell als SVG und PNG, das Porträt, Farben mit Kontrastwerten, Schriften und Leitidee. 18 Dateien.
+- **Kontrast nach WCAG** im Studio: Akzent auf hellem Grund und Weiß auf Akzent, mit Einsatzempfehlung.
+- **Rebranding:** Aus einem hochgeladenen Logo wird die dominante Farbe bestimmt, grau und weiß zählen nicht. Dazu kommt die nächste Akzentfarbe zum Übernehmen.
+- **Website als Paket (ZIP):**
+  - Enthält das Original-Template, das Füll-Skript (inklusive der nötigen Babel-Helfer), die Daten und das Porträt.
+  - Öffnet sich ohne HUMAN, Objektbilder kommen von unio.at.
+- **Impressum-Prüfung** nach ECG § 5, MedienG § 25 und GewO: Firmenwortlaut mit Rechtsform, Anschrift, Kontakt, GISA-Zahl, Behörde, UID-Format, Kammer, Berufshaftpflicht.
+- **Konten:** Die Instagram-Bio wird auf 150 Zeichen geprüft.
+
+**Tests**
+
+| Test | Ergebnis |
+|---|---|
+| Logos Markus und Elif | Wortmarke, Punkt und Monogramm korrekt in Playfair und Fraunces, Pfade statt Text |
+| Brand-Kit | 18 Dateien, Kontrast Nachtblau 10,5 zu 1 |
+| Website-Paket Look 3 | über HTTP geöffnet: Titel "Markus Leitner, Immobilien in Döbling", keine Demo-Person mehr, 21 Bilder, keines kaputt |
+| Impressum Markus | fünf offene Pflichtangaben erkannt |
+
+**Gefundene Fehler, behoben**
+- Namenskonflikt `hmFont`, weil die UI-Datei ihn schon nutzt.
+- Beim Einbetten in den Template-String gingen Backslashes im regulären Ausdruck verloren. Die Hilfsfunktion wird jetzt per `toString` übernommen.
+- Babel-Helfer wie `_slicedToArray` fehlten im exportierten Skript und werden jetzt mitgenommen.
+
+**Verbesserungen für später**
+- Deploy per Vercel-Schnittstelle statt ZIP (`api/human-website.js`), mit eigener Domain.
+- Bildmarke bleibt Handarbeit, der Auftrag dafür sollte im Shop liegen.

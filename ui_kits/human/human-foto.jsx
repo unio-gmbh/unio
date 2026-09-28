@@ -79,10 +79,11 @@ function Zuschnitt({ dateien, auto, zu, ergebnis, fertig, titel }) {
   return <Sheet offen voll titel={titel || "Zuschnitt"} unter="Automatisch nach der Guideline. Ziehen, um zu korrigieren." zu={zu}>{frame}</Sheet>;
 }
 
-function Dateiablage({ onDateien, text, klein }) {
+function Dateiablage({ onDateien, text, klein, accept = "image/*" }) {
   const [ueber, setUeber] = React.useState(false);
-  return <label className={"hm-drop" + (klein ? " klein" : "") + (ueber ? " ueber" : "")} onDragOver={(e) => { e.preventDefault(); setUeber(true); }} onDragLeave={() => setUeber(false)} onDrop={(e) => { e.preventDefault(); setUeber(false); const l = [...e.dataTransfer.files].filter((f) => f.type.startsWith("image/")); if (l.length) onDateien(l); }}>
-    <input type="file" accept="image/*" multiple hidden onChange={(e) => { const l = [...e.target.files]; e.target.value = ""; if (l.length) onDateien(l); }} />
+  const passt = (f) => accept.split(",").some((t) => { t = t.trim(); return t.endsWith("/*") ? f.type.startsWith(t.slice(0, -1)) : t.startsWith(".") ? f.name.toLowerCase().endsWith(t) : f.type === t; });
+  return <label className={"hm-drop" + (klein ? " klein" : "") + (ueber ? " ueber" : "")} onDragOver={(e) => { e.preventDefault(); setUeber(true); }} onDragLeave={() => setUeber(false)} onDrop={(e) => { e.preventDefault(); setUeber(false); const l = [...e.dataTransfer.files].filter(passt); if (l.length) onDateien(l); }}>
+    <input type="file" accept={accept} multiple hidden onChange={(e) => { const l = [...e.target.files]; e.target.value = ""; if (l.length) onDateien(l); }} />
     <span className="hm-row" style={{ gap: 10, justifyContent: "center" }}><Ico n="hoch" />{text}</span>
   </label>;
 }

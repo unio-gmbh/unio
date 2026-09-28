@@ -13,7 +13,7 @@ function Toast() { const [t, setT] = useState(""); const [on, setOn] = useState(
 const toast = (t) => hmToastFn(t);
 
 function Pill({ z }) { return <span className={"hm-pill z-" + z}><i></i>{HM_ZUSTAND[z] || z}</span>; }
-function Btn({ children, knob = "→", ghost, paper, ...r }) { return <button className={"hm-btn" + (ghost ? " hm-ghost" : "") + (paper ? " hm-paper" : "")} {...r}>{children}{!ghost && <span className="k">{knob}</span>}</button>; }
+function Btn({ children, knob = "pfeil", ghost, paper, ...r }) { return <button className={"hm-btn" + (ghost ? " hm-ghost" : "") + (paper ? " hm-paper" : "")} {...r}>{children}{!ghost && <span className="k">{HM_ICO[knob] ? <Ico n={knob} /> : knob}</span>}</button>; }
 
 /* ---------- Shell ---------- */
 /* ---------- Makler ---------- */
@@ -100,8 +100,8 @@ function Frei({ q, freiVal, setFrei }) {
 function Frage({ q, val, set, freiVal, setFrei }) {
   const toggleMulti = (x, max) => { const l = Array.isArray(val) ? val : []; if (l.includes(x)) set(l.filter((y) => y !== x)); else if (l.length < (max || 99)) set([...l, x]); else if (max === 1) set([x]); };
   if (q.typ === "gruppen") { const G = q.gruppen === "regionen" ? HM_REGIONEN.map((g) => ({ n: g.gruppe, o: g.orte })) : HM_IMMOTYPEN.map((g) => ({ n: g.gruppe, o: g.typen })); const l = val || []; return <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{G.map((g) => <div key={g.n}><div className="hm-mono" style={{ marginBottom: 8 }}>{g.n}</div><div className="hm-chips">{g.o.map((o) => <button key={o} className={"hm-chip" + (l.includes(o) ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}</button>)}</div></div>)}<div className="hm-mono">{l.length} von {q.max} gewählt</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>; }
-  if (q.typ === "auswahl") return <div><div className="hm-opts">{q.optionen.map((o) => <button key={o} className={"hm-opt" + (val === o ? " on" : "")} onClick={() => set(o)}>{o}<span className="g">{val === o ? "●" : "○"}</span></button>)}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
-  if (q.typ === "mehrfach") return <div><div className="hm-opts">{q.optionen.map((o) => { const on = (val || []).includes(o); return <button key={o} className={"hm-opt" + (on ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}<span className="g">{on ? "●" : "+"}</span></button>; })}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
+  if (q.typ === "auswahl") return <div><div className="hm-opts">{q.optionen.map((o) => <button key={o} className={"hm-opt" + (val === o ? " on" : "")} onClick={() => set(o)}>{o}<span className={"g radio" + (val === o ? " an" : "")}></span></button>)}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
+  if (q.typ === "mehrfach") return <div><div className="hm-opts">{q.optionen.map((o) => { const on = (val || []).includes(o); return <button key={o} className={"hm-opt" + (on ? " on" : "")} onClick={() => toggleMulti(o, q.max)}>{o}<span className="g">{on ? <Ico n="haken" g={12} /> : <Ico n="plus" g={12} />}</span></button>; })}</div><Frei q={q} freiVal={freiVal} setFrei={setFrei} /></div>;
   if (q.typ === "bezirke") return <div className="hm-chips">{HM_BEZIRKE.map((b) => <button key={b} className={"hm-chip" + ((val || []).includes(b) ? " on" : "")} onClick={() => toggleMulti(b, 6)}>{b}</button>)}</div>;
   if (q.typ === "slider") { const v = val == null ? 50 : val; return <div className="hm-slider"><div className="lab"><span style={{ opacity: v > 60 ? .45 : 1 }}>{q.links}</span><span style={{ opacity: v < 40 ? .45 : 1 }}>{q.rechts}</span></div><input type="range" min="0" max="100" value={v} onChange={(e) => set(+e.target.value)} /><div className="hm-mono" style={{ textAlign: "center", marginTop: 8 }}>{val == null ? "Regler bewegen" : v < 40 ? q.links : v > 60 ? q.rechts : "Dazwischen"}</div></div>; }
   if (q.typ === "skala") return <div><div className="hm-skala">{[1, 2, 3, 4, 5].map((n) => <button key={n} className={val === n ? "on" : ""} onClick={() => set(n)}>{n}</button>)}</div><div className="hm-row" style={{ justifyContent: "space-between", marginTop: 10, maxWidth: 392 }}><span className="hm-mono">{q.von}</span><span className="hm-mono">{q.bis}</span></div></div>;
@@ -156,7 +156,7 @@ function WegKarte({ w, key_, on, onWahl, kompakt }) {
 
 function Strategie({ m, fb, st, go }) {
   const [zeige, setZeige] = useState(null);
-  if (!st || !fb || !fb.fertig) return <div><div className="hm-mono">Etappe 03 · Strategie</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Erst der Fragebogen, dann deine Strategie.</h2><p className="hm-sub">Sobald alle fünf Kapitel beantwortet sind, rechnen wir zwei Wege für dich. Das dauert keine Sekunde.</p><div style={{ marginTop: 24 }}><Btn onClick={() => go("fragebogen")}>Zum Fragebogen</Btn></div></div>;
+  if (!st || !fb || !fb.fertig) return <div><h2 className="hm-h hm-h1">Erst der Fragebogen, dann deine Strategie.</h2><p className="hm-sub">Sobald alle fünf Kapitel beantwortet sind, rechnen wir zwei Wege für dich. Das dauert keine Sekunde.</p><div style={{ marginTop: 24 }}><Btn onClick={() => go("fragebogen")}>Zum Fragebogen</Btn></div></div>;
   const wahl = (k) => {
     hmStore.patch("strategien", (all) => ({ ...all, [m.id]: { ...st, gewaehlt: k, status: "entwurf" } }));
     hmStore.patch("schritte", (l) => l.map((s) => s.id === `${m.id}-wege` ? { ...s, zustand: "fertig" } : s.id === `${m.id}-workshop` && s.zustand === "offen" ? { ...s, zustand: "geplant" } : s.id === `${m.id}-review` && s.zustand === "offen" ? { ...s, zustand: "wartet_team" } : s));
@@ -213,13 +213,13 @@ function StrategieReveal({ w, m }) {
   return (
     <div className="hm-strat">
       <div className="idx">{sections.map(([t], i) => <button key={t} className={akt === i ? "on" : ""} onClick={() => refs.current[i].scrollIntoView({ behavior: "smooth", block: "start" })}><span className="n">{String(i + 1).padStart(2, "0")}</span>{t}</button>)}</div>
-      <div>{sections.map(([t, body], i) => <div key={t} className="hm-sblock" data-i={i} ref={(el) => (refs.current[i] = el)} style={{ scrollMarginTop: 90 }}><div className="hm-mono">{String(i + 1).padStart(2, "0")}</div><h3 className="hm-h hm-h2">{t}</h3>{body}</div>)}</div>
+      <div>{sections.map(([t, body], i) => <div key={t} className="hm-sblock" data-i={i} ref={(el) => (refs.current[i] = el)} style={{ scrollMarginTop: 90 }}><h3 className="hm-h hm-h2">{t}</h3>{body}</div>)}</div>
     </div>
   );
 }
 
 function BrandProfil({ m, st, go }) {
-  if (!st || !st.gewaehlt) return <div><div className="hm-mono">Brand-Profil</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Entsteht aus deinem Weg.</h2><p className="hm-sub">Sobald du einen Weg gewählt hast, steht hier alles, was Website, Grafiken und Print brauchen: Farben, Schrift, Leitidee, Bio, Zeichen.</p><div style={{ marginTop: 24 }}><Btn onClick={() => go("strategie")}>Zur Strategie</Btn></div></div>;
+  if (!st || !st.gewaehlt) return <div><h2 className="hm-h hm-h1">Entsteht aus deinem Weg.</h2><p className="hm-sub">Sobald du einen Weg gewählt hast, steht hier alles, was Website, Grafiken und Print brauchen: Farben, Schrift, Leitidee, Bio, Zeichen.</p><div style={{ marginTop: 24 }}><Btn onClick={() => go("strategie")}>Zur Strategie</Btn></div></div>;
   const w = st.wege[st.gewaehlt];
   return (
     <div>
@@ -253,7 +253,7 @@ function Review({ makler }) {
   if (!st) return <div className="hm-empty">Noch keine Strategie zu prüfen.</div>;
   return (
     <div>
-      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><div className="hm-mono">Strategie-Review</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{m.name}</h2></div><select className="hm-sel" value={mid} onChange={(e) => setMid(e.target.value)}>{offen.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
+      <div className="hm-row" style={{ justifyContent: "space-between" }}><div><h2 className="hm-h hm-h1">{m.name}</h2></div><select className="hm-sel" value={mid} onChange={(e) => setMid(e.target.value)}>{offen.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
       <p className="hm-sub">{st.gewaehlt ? `Makler hat Weg ${st.gewaehlt.toUpperCase()} gewählt. Status: ${st.status}, Version ${st.version}.` : "Makler hat noch nicht gewählt. Beide Wege sind sichtbar."}</p>
       <div className="hm-row" style={{ marginTop: 18 }}>{st.gewaehlt && st.status !== "aktiv" && <Btn onClick={() => setStatus(st.status === "geprueft" ? "aktiv" : "geprueft")}>{st.status === "geprueft" ? "Als aktiv setzen" : "Als geprüft freigeben"}</Btn>}{st.gewaehlt && <button className="hm-chip" onClick={() => wechsel(st.gewaehlt === "a" ? "b" : "a")}>Auf Weg {st.gewaehlt === "a" ? "B" : "A"} wechseln</button>}</div>
       <div className="hm-wege"><WegKarte w={st.wege.a} key_="a" on={st.gewaehlt === "a"} kompakt /><WegKarte w={st.wege.b} key_="b" on={st.gewaehlt === "b"} kompakt /></div>

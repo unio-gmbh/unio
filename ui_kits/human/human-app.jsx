@@ -9,7 +9,7 @@ function DemoMenu({ rolle, setRolle, makler, mid, setMid, go }) {
     {offen && <div className="hm-demo-pop" onMouseLeave={() => setOffen(false)}>
       <div className="hm-mono">Ansicht</div>
       <div className="hm-seg"><button className={rolle === "makler" ? "on" : ""} onClick={() => { setRolle("makler"); go("heute"); }}>Makler</button><button className={rolle === "team" ? "on" : ""} onClick={() => { setRolle("team"); go("heute"); }}>Team</button></div>
-      {rolle === "makler" && <><div className="hm-mono">Makler</div><div className="hm-gruppe">{makler.map((x) => <div key={x.id} className="hm-reihe klick" onClick={() => { setMid(x.id); go("heute"); setOffen(false); }}><div className="m"><div className="t">{x.name}</div><div className="u">{x.tag > 30 ? `Monat ${Math.floor(x.tag / 30)}` : `Tag ${x.tag}`}</div></div><div className="r">{x.id === mid ? "✓" : ""}</div></div>)}</div></>}
+      {rolle === "makler" && <><div className="hm-mono">Makler</div><div className="hm-gruppe">{makler.map((x) => <div key={x.id} className="hm-reihe klick" onClick={() => { setMid(x.id); go("heute"); setOffen(false); }}><div className="m"><div className="t">{x.name}</div><div className="u">{x.tag > 30 ? `Monat ${Math.floor(x.tag / 30)}` : `Tag ${x.tag}`}</div></div><div className="r">{x.id === mid ? <Ico n="haken" /> : ""}</div></div>)}</div></>}
       <button className="hm-link" onClick={() => { hmStore.reset(); location.reload(); }}>Demo-Daten zurücksetzen</button>
     </div>}
   </div>;
@@ -61,7 +61,7 @@ function App() {
         <main className="hm-main">
           {beitrag ? <Beitrag key={beitrag} id={beitrag} zurueck={() => setBeitragId(null)} teamSicht={rolle === "team"} /> : rolle === "makler" ? (
             screen === "heute" ? <MaklerHeute m={m} go={go} oeffne={oeffne} /> :
-            screen === "einrichtung" ? <div><button className="hm-zurueck" onClick={() => go("heute")}>‹ Heute</button><Einrichtung m={m} go={go} /></div> :
+            screen === "einrichtung" ? <div><button className="hm-zurueck" onClick={() => go("heute")}><Ico n="zurueck" />Heute</button><Einrichtung m={m} go={go} /></div> :
             screen === "marke" ? <Marke m={m} sub={sub} setSub={setSub} go={go} /> :
             screen === "inhalte" ? <Inhalte2 m={m} sub={sub} setSub={setSub} oeffne={oeffne} /> :
             screen === "freigaben" ? <Inhalte2 m={m} sub={sub} setSub={setSub} oeffne={oeffne} /> :

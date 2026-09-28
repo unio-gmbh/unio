@@ -588,6 +588,15 @@ img.hm-ava { object-position: 50% 12%; }
 .hm-pruefliste { display: flex; flex-direction: column; gap: 6px; font-size: 14px; } .hm-pruefliste > div { display: flex; gap: 10px; align-items: center; color: var(--ink-2); } .hm-pruefliste .ok svg { color: var(--ink); } .hm-pruefliste .nein { color: var(--signal-deep); }
 .hm-nachricht { background: var(--paper-2); box-shadow: none; }
 .hm-seg.klein button { padding: 6px 10px; font-size: 13px; }
+.hm-plan-kurz { display: flex; flex-direction: column; gap: 8px; margin: 18px 4px 0; font-size: 13px; color: var(--text-muted); }
+.hm-plan-balken { display: flex; gap: 3px; } .hm-plan-balken i { flex: 1; height: 4px; border-radius: 2px; background: var(--paper-3); } .hm-plan-balken i.ok { background: var(--ink); } .hm-plan-balken i.spaet { background: var(--signal); }
+.hm-plan-punkt { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--steel); display: grid; place-items: center; flex: none; } .hm-plan-punkt.ok { background: var(--ink); color: var(--paper); box-shadow: none; } .hm-plan-punkt.spaet { box-shadow: inset 0 0 0 1.5px var(--signal-deep); }
+.hm-opt .g.radio { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; display: inline-block; } .hm-opt .g.radio.an { box-shadow: inset 0 0 0 4.5px currentColor; }
+.hm-radio { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--steel); display: inline-block; } .hm-radio.an { box-shadow: inset 0 0 0 4.5px var(--ink); }
+.hm-zurueck { display: inline-flex; gap: 4px; align-items: center; }
+.hm-chev { display: inline-flex; color: var(--steel); }
+.hm-btn .k svg, .hm-weiter .k svg { display: block; }
+.hm-kontext { font-size: 15px; color: var(--text-muted); margin-top: 6px; }
 @media (max-width: 700px) { .hm-portrait-kopf { grid-template-columns: 110px 1fr; gap: 14px; } .hm-sheet.voll { height: calc(100vh - 32px); } }
 </style>
 </head>
@@ -601,6 +610,8 @@ img.hm-ava { object-position: 50% 12%; }
 <script type="text/babel" src="human-ui.jsx"></script>
 <script type="text/babel" src="human-foto.jsx"></script>
 <script type="text/babel" src="human-werkzeuge.jsx"></script>
+<script type="text/babel" src="human-strategie.jsx"></script>
+<script type="text/babel" src="human-setup.jsx"></script>
 <script type="text/babel" src="human-einrichtung.jsx"></script>
 <script type="text/babel" src="human-marke.jsx"></script>
 <script type="text/babel" src="human-medien.jsx"></script>
