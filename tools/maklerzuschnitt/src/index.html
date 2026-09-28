@@ -183,6 +183,11 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
 .keys { color: var(--text-muted); font-size: 12px; line-height: 1.6; }
 .keys kbd { font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--hairline-dark); color: var(--ink); }
 .panel.off .sec.needs { opacity: .35; pointer-events: none; }
+.chip-toggle { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 0; background: var(--paper-2); border-radius: 12px; padding: 11px 14px; font-size: 14px; color: var(--ink); cursor: pointer; }
+.chip-toggle:hover { background: var(--paper-3); }
+#details { display: flex; flex-direction: column; gap: 10px; padding: 12px 0 4px; }
+#details[hidden] { display: none; }
+.dlbl { margin-top: 4px; }
 
 .toast {
   position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0;
@@ -208,8 +213,9 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
     %%LOGO%%
     <h1>Foto-Zuschnitt</h1>
     <div class="spec mono">
-      <span>Format <b id="specFmt">1 : 1</b></span>
-      <span>Nasenspitze <b id="specPos">Mitte · 73 %</b></span>
+      <span>Format <b id="specFmt">3 : 4</b></span>
+      <span>Nase <b id="specPos">40 bis 60 % · 73 %</b></span>
+      <span>Export <b>PNG · Original · transparent</b></span>
       <span>Guideline <b>V1</b></span>
     </div>
   </header>
@@ -254,14 +260,7 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
       </div>
 
       <div class="sec needs">
-        <div class="lbl mono"><span>02 · Rahmen</span></div>
-        <div class="seg" id="segRatio"><button data-v="0.75">3 : 4</button><button data-v="0.8">4 : 5</button><button data-v="1" class="on">1 : 1</button><button data-v="1.3333">4 : 3</button></div>
-        <div class="seg" id="segPos"><button data-v="mitte" class="on">Mitte</button><button data-v="40">Nase 40 %</button></div>
-        <div class="keys">Die Augen liegen immer auf der 73-Prozent-Linie, die Kopfgröße bleibt gleich. Breitere Rahmen geben links und rechts Platz für die Schultern. 3 : 4 mit Nase 40 % ist die Guideline.</div>
-      </div>
-
-      <div class="sec needs">
-        <div class="lbl mono"><span>03 · Feinjustierung</span><span class="n" id="reset" style="cursor:pointer">Zurücksetzen</span></div>
+        <div class="lbl mono"><span>02 · Feinjustierung</span><span class="n" id="reset" style="cursor:pointer">Zurücksetzen</span></div>
         <div class="slider"><span class="name">Größe</span><span class="val" id="zoomV">100 %</span><input type="range" id="zoom" min="-100" max="100" step="1" value="0"></div>
         <div class="slider"><span class="name">Drehung</span><span class="val" id="rotV">0.0°</span><input type="range" id="rot" min="-15" max="15" step="0.1" value="0"></div>
         <div class="switch on" id="swGuides"><span class="name">Hilfslinien anzeigen</span><i></i></div>
@@ -270,13 +269,24 @@ input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; bord
       </div>
 
       <div class="sec needs">
-        <div class="lbl mono"><span>04 · Export</span></div>
-        <div class="seg" id="segFmt"><button data-v="jpg" class="on">JPG</button><button data-v="png">PNG</button><button data-v="webp">WEBP</button></div>
-        <div class="seg" id="segSize"><button data-v="750">750</button><button data-v="1500" class="on">1500</button><button data-v="3000">3000</button><button data-v="native">Original</button></div>
-        <div class="switch" id="swCut"><span class="name">Hintergrund freistellen</span><i></i></div>
-        <div class="keys" id="cutHint">Läuft im Browser, das Foto verlässt den Rechner nicht. Erstes Bild ca. 20 Sekunden (Modell wird geladen), danach 5 bis 10 Sekunden.</div>
-        <div class="seg" id="segBg"><button data-v="#ffffff" class="on">Weiß</button><button data-v="#F7F5F1">Paper</button><button data-v="transparent">Transparent</button></div>
+        <div class="lbl mono"><span>03 · Export</span></div>
+        <div class="keys" id="cutHint">Freigestellt, transparent, PNG in Originalauflösung. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.</div>
         <dl class="facts" id="facts"></dl>
+        <button class="chip-toggle" id="detailsBtn" type="button"><span>Detailanpassung</span><span class="mono" id="detailsState">Einblenden</span></button>
+        <div id="details" hidden>
+          <div class="dlbl mono">Rahmen</div>
+          <div class="seg" id="segRatio"><button data-v="0.75" class="on">3 : 4</button><button data-v="0.8">4 : 5</button><button data-v="1">1 : 1</button><button data-v="1.3333">4 : 3</button></div>
+          <div class="dlbl mono">Nasenposition</div>
+          <div class="seg" id="segPos"><button data-v="mitte" class="on">50 %</button><button data-v="40">40 %</button><button data-v="60">60 %</button></div>
+          <div class="dlbl mono">Dateiformat</div>
+          <div class="seg" id="segFmt"><button data-v="png" class="on">PNG</button><button data-v="webp">WEBP</button><button data-v="jpg">JPG</button></div>
+          <div class="dlbl mono">Breite</div>
+          <div class="seg" id="segSize"><button data-v="native" class="on">Original</button><button data-v="750">750</button><button data-v="1500">1500</button><button data-v="3000">3000</button></div>
+          <div class="dlbl mono">Hintergrund</div>
+          <div class="switch on" id="swCut"><span class="name">Freistellen</span><i></i></div>
+          <div class="seg" id="segBg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Paper</button></div>
+          <div class="keys">Standard laut Backoffice: 3 : 4, Nase zwischen 40 und 60 Prozent, PNG, Originalauflösung, transparent. Änderungen hier gelten für alle Bilder dieser Sitzung.</div>
+        </div>
         <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob">↓</span></button>
         <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob">↓</span></button>
       </div>
@@ -306,10 +316,10 @@ const view = $("view"), ctx = view.getContext("2d");
 const guides = $("guides");
 const items = [];
 let cur = null;
-const opts = { fmt: "jpg", size: "1500", bg: "#ffffff", guides: true, points: false, ratio: "1", pos: "mitte", cut: false };
+const opts = { fmt: "png", size: "native", bg: "transparent", guides: true, points: false, ratio: "0.75", pos: "mitte", cut: true };
 const BG_REMOVAL = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/index.mjs";
 const R = () => +opts.ratio;                       // Rahmenbreite in Rahmenhöhen
-const CX = () => (opts.pos === "mitte" ? 0.5 : G.nose.x) * R(); // Nasenspitze horizontal
+const CX = () => (opts.pos === "mitte" ? 0.5 : opts.pos === "60" ? 0.6 : 0.4) * R(); // Nasenspitze horizontal, Korridor 40 bis 60 %
 let frame = { x: 0, y: 0, w: 0, h: 0 };
 let pick = null;
 
@@ -407,7 +417,7 @@ async function addFiles(files) {
     renderQueue();
   }
   // Nacheinander erkennen, damit das Modell nur einmal lädt
-  for (const it of items.filter((i) => i.status === "busy" && !i.detecting)) { it.detecting = true; await detect(it); it.detecting = false; }
+  for (const it of items.filter((i) => i.status === "busy" && !i.detecting)) { it.detecting = true; await detect(it); it.detecting = false; if (opts.cut) await cutout(it); }
 }
 
 function select(it) {
@@ -491,11 +501,12 @@ function drawGuides() {
       `<text x="${W - px * 8}" y="${y * u - px * 6}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="${px * 10}" letter-spacing="${px * 1.6}" fill="#0B0A09" fill-opacity=".7">${label}</text>`;
     s += helper(G.crown, "SCHEITEL") + helper(G.eyes, "AUGEN") + helper(G.chin, "KINN");
     const fx = CX() * u, gy = G.nose.y * u;
-    s += `<line x1="${fx}" y1="${-px * 14}" x2="${fx}" y2="${20 + px * 14}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`;
+    for (const q of [0.4, 0.6]) { const qx = q * W; s += `<line x1="${qx}" y1="${-px * 14}" x2="${qx}" y2="${20 + px * 14}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`; s += `<text x="${qx + px * 8}" y="${20 + px * 22}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">${Math.round(q * 100)} %</text>`; }
+    if (opts.pos === "mitte") s += `<line x1="${fx}" y1="${-px * 14}" x2="${fx}" y2="${20 + px * 14}" stroke="#0B0A09" stroke-opacity=".35" stroke-width="${px}" stroke-dasharray="${px * 4} ${px * 6}"/>`;
     s += `<line x1="${-px * 14}" y1="${gy}" x2="${W + px * 14}" y2="${gy}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`;
     s += `<circle cx="${fx}" cy="${gy}" r="${px * 6}" fill="#FFAA09" stroke="#0B0A09" stroke-width="${px * 1.5}"/>`;
     s += `<text x="${px * 8}" y="${gy - px * 9}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">73 %</text>`;
-    s += `<text x="${fx + px * 8}" y="${20 + px * 22}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">${opts.pos === "mitte" ? "50 %" : "40 %"}</text>`;
+    s += `<rect x="${0.4 * W}" y="0" width="${0.2 * W}" height="20" fill="#FFAA09" fill-opacity=".06"/>`;
   }
   if (opts.points && cur.lm) {
     const pts = [cur.lm.eyeL, cur.lm.eyeR, cur.lm.nose, cur.lm.chin];
@@ -522,7 +533,8 @@ function refreshFacts() {
     `<dt>Quelle</dt><dd>${cur.w} × ${cur.h} px</dd>` +
     `<dt>Skalierung</dt><dd class="${up > 1.05 ? "warn" : ""}">${up > 1.05 ? "Hochskaliert ×" + up.toFixed(2) : "×" + up.toFixed(2)}</dd>` +
     `<dt>Rand</dt><dd class="${cov ? "" : "warn"}">${cov ? "Voll abgedeckt" : opts.bg === "transparent" ? "Transparent gefüllt" : "Mit Hintergrund gefüllt"}</dd>` +
-    (opts.cut ? `<dt>Hintergrund</dt><dd class="${cur.cut ? "" : "warn"}">${cur.cut ? "Freigestellt" : cur.cutting ? "Wird freigestellt" : cur.cutErr ? "Freistellen fehlgeschlagen" : "Wartet"}</dd>` : "");
+    (opts.cut ? `<dt>Hintergrund</dt><dd class="${cur.cut ? "" : "warn"}">${cur.cut ? "Freigestellt" : cur.cutting ? "Wird freigestellt" : cur.cutErr ? "Freistellen fehlgeschlagen" : "Wartet"}</dd>` : "") +
+    (cur.lm ? (() => { const nx = toFrame(cur, cur.lm.nose).x / R(); const ok = nx >= 0.4 && nx <= 0.6; return `<dt>Nase</dt><dd class="${ok ? "" : "warn"}">${Math.round(nx * 100)} % ${ok ? "im Korridor" : "außerhalb 40 bis 60 %"}</dd>`; })() : "");
   $("hud").innerHTML = `<span>${esc(cur.name)}</span><span><b>${W} × ${H}</b></span>`;
 }
 const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -596,7 +608,7 @@ async function cutout(it) {
     const img = new Image();
     await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = URL.createObjectURL(blob); });
     it.cut = img;
-    $("cutHint").textContent = "Läuft im Browser, das Foto verlässt den Rechner nicht.";
+    $("cutHint").textContent = "Freigestellt, transparent, PNG in Originalauflösung. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.";
   } catch (e) { console.warn("Freistellen:", e); it.cutErr = true; toast("Freistellen fehlgeschlagen, Original wird verwendet"); }
   it.cutting = false;
   if (it === cur) draw();
@@ -604,7 +616,7 @@ async function cutout(it) {
   return it.cut;
 }
 $("swCut").addEventListener("click", async () => {
-  opts.cut = !opts.cut; $("swCut").classList.toggle("on", opts.cut);
+  opts.cut = !opts.cut; $("swCut").classList.toggle("on", opts.cut); refreshFacts();
   draw(); queueSoon();
   if (opts.cut && cur) { toast("Wird freigestellt"); await cutout(cur); if (cur && cur.cut) toast("Freigestellt"); }
 });
@@ -623,7 +635,8 @@ function fmtRules() {
 }
 seg("segFmt", "fmt", fmtRules); seg("segSize", "size"); seg("segBg", "bg");
 const RATIO_NAME = { "0.75": "3 : 4", "0.8": "4 : 5", "1": "1 : 1", "1.3333": "4 : 3" };
-function frameRules() { $("specFmt").textContent = RATIO_NAME[opts.ratio]; $("specPos").textContent = (opts.pos === "mitte" ? "Mitte" : "40 %") + " · 73 %"; layout(); }
+function frameRules() { $("specFmt").textContent = RATIO_NAME[opts.ratio]; $("specPos").textContent = (opts.pos === "mitte" ? "50 %" : opts.pos + " %") + " · 73 %"; layout(); }
+$("detailsBtn").addEventListener("click", () => { const d = $("details"); d.hidden = !d.hidden; $("detailsState").textContent = d.hidden ? "Einblenden" : "Ausblenden"; });
 seg("segRatio", "ratio", frameRules); seg("segPos", "pos", frameRules);
 frameRules();
 fmtRules();
