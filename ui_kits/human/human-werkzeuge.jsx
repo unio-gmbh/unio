@@ -14,8 +14,8 @@ function hmSlots({ dauer = 60, anzahl = 6, zeiten = ["09:00", "11:00", "14:00", 
   const d = new Date(HM_HEUTE + "T12:00");
   for (let i = 0; i < 30 && out.length < anzahl; i++) {
     d.setDate(d.getDate() + 1);
-    if (d.getDay() === 0 || d.getDay() === 6) continue;
     const tag = hmIsoLokal(d);
+    if (window.hmIstWerktag ? !hmIstWerktag(tag) : d.getDay() === 0 || d.getDay() === 6) continue;
     if (dreh.has(tag) && !vorzug) continue;
     let proTag = 0;
     const reihe = i % 2 ? [...zeiten].reverse() : zeiten;
@@ -30,7 +30,10 @@ function hmIcs({ titel, iso, dauer = 60, ort = "", text = "" }) {
   const ende = new Date(new Date(iso).getTime() + dauer * 6e4);
   const endIso = `${hmIsoLokal(ende)}T${String(ende.getHours()).padStart(2, "0")}:${String(ende.getMinutes()).padStart(2, "0")}`;
   const esc = (s) => s.replace(/[,;]/g, (c) => "\\" + c).replace(/\n/g, "\\n");
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//UNIO//HUMAN//DE", "BEGIN:VEVENT", `UID:${Date.now()}@unio.at`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, `DTSTART:${f(iso)}`, `DTEND:${f(endIso)}`, `SUMMARY:${esc(titel)}`, `LOCATION:${esc(ort)}`, `DESCRIPTION:${esc(text)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const tz = ["BEGIN:VTIMEZONE", "TZID:Europe/Vienna", "BEGIN:DAYLIGHT", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "DTSTART:19700329T020000", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT", "BEGIN:STANDARD", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "DTSTART:19701025T030000", "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD", "END:VTIMEZONE"];
+  const uid = (titel + iso).toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 60) + "@human.unio.at";
+  const alarm = (t) => ["BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${esc(titel)}`, `TRIGGER:${t}`, "END:VALARM"];
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//UNIO//HUMAN//DE", ...tz, "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, `DTSTART;TZID=Europe/Vienna:${f(iso)}`, `DTEND;TZID=Europe/Vienna:${f(endIso)}`, `SUMMARY:${esc(titel)}`, `LOCATION:${esc(ort)}`, `DESCRIPTION:${esc(text)}`, ...alarm("-P1D"), ...alarm("-PT1H"), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = titel.toLowerCase().replace(/[^a-zäöüß0-9]+/g, "-") + ".ics"; a.click();
 }
 function TerminWahl({ wahl, set, dauer, vorzug, hinweis, anzahl = 6 }) {
@@ -53,19 +56,26 @@ function hmNachfass(l) {
   const s = HM_NACHFASS[runde];
   const basis = l.ersterKontakt || HM_HEUTE;
   const faellig = new Date(basis + "T12:00"); faellig.setDate(faellig.getDate() + s.tag);
-  const iso = hmIsoLokal(faellig);
+  let iso = hmIsoLokal(faellig);
+  if (window.hmIstWerktag) { while (!hmIstWerktag(iso)) { faellig.setDate(faellig.getDate() + 1); iso = hmIsoLokal(faellig); } }
   return { runde, name: s.name, faellig: iso, ueberfaellig: iso < HM_HEUTE, heute: iso <= HM_HEUTE, text: s.text(l.name.split(" ")[0], l.ort.replace(/^\d{4}\s/, "")) };
 }
 function hmNachfassGesendet(l) {
   hmStore.patch("leads", (a) => a.map((x) => x.id === l.id ? { ...x, runde: (x.runde || 0) + 1, ersterKontakt: x.ersterKontakt || HM_HEUTE, letzterKontakt: HM_HEUTE, stufe: x.stufe === "research" ? "followup" : x.stufe, naechstes: (HM_NACHFASS[(x.runde || 0) + 1] || { name: "Abwarten" }).name } : x));
   toast("Als gesendet vermerkt");
 }
+/* Ausstieg aus dem Takt: Antwort, Termin oder kein Interesse beenden die Nachrichten */
+function hmNachfassEnde(l, grund) {
+  const z = { antwort: { stufe: "kennenlernen", naechstes: "Termin vereinbaren", t: "hat geantwortet" }, termin: { stufe: "kennenlernen", naechstes: "Kennenlernen steht", t: "Termin gebucht" }, nein: { stufe: "archiv", naechstes: "Kein Interesse", t: "kein Interesse" } }[grund];
+  hmStore.patch("leads", (a) => a.map((x) => x.id === l.id ? { ...x, stufe: z.stufe, naechstes: z.naechstes, takt: grund, letzterKontakt: HM_HEUTE } : x));
+  toast(`${l.name.split(" ")[0]}: ${z.t}`);
+}
 function NachfassListe({ oeffneLead }) {
   const leads = useHm("leads") || [];
   const f = leads.map((l) => ({ l, n: hmNachfass(l) })).filter((x) => x.n && x.n.heute);
   if (!f.length) return null;
   return <><div className="hm-sek">Nachfassen · {f.length}</div>
-    <div className="hm-gruppe">{f.map(({ l, n }) => <div key={l.id} className="hm-reihe"><Avatar name={l.name} /><div className="m"><div className="t">{l.name}</div><div className="u">{n.name}{n.ueberfaellig ? ", seit " + hmFmtDate(n.faellig) : ", heute"} · {l.ort}</div></div><div className="r"><KopierKnopf text={n.text} label="Text kopieren" /><button className="hm-klein-btn" onClick={() => hmNachfassGesendet(l)}>Gesendet</button></div></div>)}</div></>;
+    <div className="hm-gruppe">{f.map(({ l, n }) => <div key={l.id} className="hm-reihe"><Avatar name={l.name} /><div className="m"><div className="t">{l.name}</div><div className="u">{n.name}{n.ueberfaellig ? ", seit " + hmFmtDate(n.faellig) : ", heute"} · {l.ort}</div></div><div className="r"><KopierKnopf text={n.text} label="Text kopieren" /><button className="hm-klein-btn hell" onClick={() => hmNachfassEnde(l, "antwort")}>Geantwortet</button><button className="hm-klein-btn" onClick={() => hmNachfassGesendet(l)}>Gesendet</button></div></div>)}</div></>;
 }
 
 /* ---------- Potenzial-Rechner (Deep Dive) ---------- */
@@ -129,10 +139,12 @@ function hmCsv(text) {
   return zeilen.filter((r) => r.some((x) => x.trim()));
 }
 let hmXlsxP = null;
-const hmXlsx = () => hmXlsxP || (hmXlsxP = new Promise((res, rej) => { const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; s.onload = () => res(window.XLSX); s.onerror = rej; document.head.appendChild(s); }));
+const hmXlsx = () => hmXlsxP || (hmXlsxP = new Promise((res, rej) => { const s = document.createElement("script"); s.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"; /* 0.18.5 hat CVE-2023-30533 */ s.onload = () => res(window.XLSX); s.onerror = rej; document.head.appendChild(s); }));
 async function hmTabelleLesen(file) {
   if (/\.(xlsx|xls)$/i.test(file.name)) { const X = await hmXlsx(); const wb = X.read(await file.arrayBuffer()); return X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "", raw: false }).filter((r) => r.some((x) => String(x).trim())); }
-  return hmCsv(await file.text());
+  const buf = await file.arrayBuffer();
+  let text; try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch { text = new TextDecoder("windows-1252").decode(buf); }
+  return hmCsv(text.replace(/^\uFEFF/, ""));
 }
 const hmNorm = (s) => String(s || "").toLowerCase().replace(/[^a-zäöüß0-9²]/g, " ").trim();
 function hmZuordnen(kopf) {
@@ -224,24 +236,28 @@ function hmVkPruefung(b, tel, mail) {
     { ok: !!hmTelefon(tel), t: hmTelefon(tel) ? `Telefon ${tel}` : "Telefon fehlt oder ist ungültig" },
     { ok: /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(mail || ""), t: mail ? `E-Mail ${mail}` : "E-Mail fehlt" },
     { ok: k >= 3, t: `Logo auf der Rückseite: Kontrast ${k.toLocaleString("de-AT", { maximumFractionDigits: 1 })} zu 1${k >= 3 ? "" : ", unter 3 zu 1, schlecht lesbar"}` },
-    { ok: true, t: "85 × 55 mm, 3 mm Beschnitt, Schnittmarken" },
+    { ok: true, t: "85 × 55 mm, Beschnitt und Marken je Druckerei" },
     { ok: true, t: "Kleinste Schrift 6,5 pt, Sicherheitsabstand 4 mm" },
   ];
 }
-function hmVkDruck(b) {
+/* Druckerei-Profile: Beschnitt und Schnittmarken je Anbieter */
+const HM_DRUCKPROFILE = { standard: { name: "Standard", beschnitt: 3, marken: true }, flyeralarm: { name: "Flyeralarm", beschnitt: 1, marken: false }, moo: { name: "Moo", beschnitt: 2, marken: false } };
+function hmVkDruck(b, profilId) {
+  const pr = HM_DRUCKPROFILE[profilId || "standard"];
   const karten = [...document.querySelectorAll(".hm-vk-druck .hm-vk")];
   if (karten.length < 2) return;
   const mm = 96 / 25.4;
   const seiten = karten.map((el) => { const r = el.getBoundingClientRect(); const s = (85 * mm) / r.width; const bg = getComputedStyle(el).backgroundColor; return `<section class="seite"><div class="anschnitt" style="background:${bg}"></div><div class="endformat"><div class="karte" style="width:${r.width}px;height:${r.height}px;transform:scale(${s})">${el.outerHTML}</div></div><i class="m h o l"></i><i class="m h o r"></i><i class="m h u l"></i><i class="m h u r"></i><i class="m v o l"></i><i class="m v o r"></i><i class="m v u l"></i><i class="m v u r"></i></section>`; });
   const css = [...document.styleSheets].flatMap((s) => { try { return [...s.cssRules].map((r) => r.cssText).filter((t) => t.includes("hm-vk")); } catch { return []; } }).join("\n");
-  hmDrucken(`Visitenkarte ${b.makler.name}`, seiten.join(""), `@page{size:105mm 75mm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Hanken Grotesk',system-ui}${css}
-.seite{position:relative;width:105mm;height:75mm;page-break-after:always;overflow:hidden}
-.anschnitt{position:absolute;left:7mm;top:7mm;width:91mm;height:61mm}
-.endformat{position:absolute;left:10mm;top:10mm;width:85mm;height:55mm;overflow:hidden}
+  const rand = pr.marken ? 10 : pr.beschnitt; const bw = 85 + 2 * pr.beschnitt, bh = 55 + 2 * pr.beschnitt; const pw = 85 + 2 * rand, ph = 55 + 2 * rand;
+  hmDrucken(`Visitenkarte ${b.makler.name}`, seiten.join(""), `@page{size:${pw}mm ${ph}mm;margin:0}*{box-sizing:border-box}body{margin:0;font-family:'Hanken Grotesk',system-ui}${css}
+.seite{position:relative;width:${pw}mm;height:${ph}mm;page-break-after:always;overflow:hidden}
+.anschnitt{position:absolute;left:${rand - pr.beschnitt}mm;top:${rand - pr.beschnitt}mm;width:${bw}mm;height:${bh}mm}
+.endformat{position:absolute;left:${rand}mm;top:${rand}mm;width:85mm;height:55mm;overflow:hidden}
 .karte{transform-origin:0 0}.karte .hm-vk{width:100%;height:100%;border-radius:0;box-shadow:none;aspect-ratio:auto}
-.m{position:absolute;background:#000}.m.h{height:.2mm;width:4mm}.m.v{width:.2mm;height:4mm}
+.m{position:absolute;background:#000;${pr.marken ? "" : "display:none;"}}.m.h{height:.2mm;width:4mm}.m.v{width:.2mm;height:4mm}
 .m.h.l{left:2mm}.m.h.r{right:2mm}.m.h.o{top:10mm}.m.h.u{top:65mm}
 .m.v.o{top:2mm}.m.v.u{bottom:2mm}.m.v.l{left:10mm}.m.v.r{left:95mm}`);
 }
 
-Object.assign(window, { hmSlots, hmIcs, TerminWahl, hmSlotText, HM_NACHFASS, hmNachfass, hmNachfassGesendet, NachfassListe, Potenzial, hmSha256, hmVertragText, hmDrucken, hmVertragPdf, ImportMapper, hmCsv, hmTabelleLesen, hmZuordnen, hmPruefen, hmTelefon, hmKontrast, hmVkPruefung, hmVkDruck, hmIsoLokal });
+Object.assign(window, { hmNachfassEnde, hmSlots, hmIcs, TerminWahl, hmSlotText, HM_NACHFASS, hmNachfass, hmNachfassGesendet, NachfassListe, Potenzial, hmSha256, hmVertragText, hmDrucken, hmVertragPdf, ImportMapper, hmCsv, hmTabelleLesen, hmZuordnen, hmPruefen, hmTelefon, hmKontrast, hmVkPruefung, hmVkDruck, HM_DRUCKPROFILE, hmIsoLokal });

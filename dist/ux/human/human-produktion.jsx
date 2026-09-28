@@ -496,6 +496,13 @@ function hmAbgabeCheck(c, b, clips) {
   const termOk = !!c.termin && c.termin.slice(0, 10) >= hmProdHeute();
   P(termOk, !c.termin ? "Kein Termin gesetzt." : termOk ? `Termin ${hmProdTT(c.termin)} ${c.termin.slice(11, 16)}.` : "Termin liegt in der Vergangenheit.");
 
+  /* Energieausweis-Vorlage-Gesetz (EAVG 2012, § 3): Anzeigen für Verkauf oder Vermietung nennen HWB und fGEE, sonst bis 1.450 € Strafe */
+  const objektPost = c.typ === "walkthrough" || !!c.objekt || (c.saeule === "beweise" && /\b(verkauf|miete|zu haben|verfügbar|m²|zimmer|preis|€)/i.test((c.caption || "") + " " + (c.titel || "")));
+  /* Seit der EAVG-Novelle (01.07.2026): HWB, Endenergiebedarf und Energieklasse; bei älteren Ausweisen HWB und fGEE */
+  if (objektPost) { const t = c.caption || ""; const hwb = /HWB/i.test(t), alt = /fGEE/i.test(t), neu = /(EEB|Endenergie)/i.test(t) && /Klasse\s*[A-G]/i.test(t); P(hwb && (alt || neu), hwb && (alt || neu) ? "Energieausweis-Angaben in der Caption." : "Objekt-Beitrag: Energiekennzahlen fehlen (HWB, Endenergiebedarf und Klasse, bei älteren Ausweisen HWB und fGEE)."); }
+  /* Grenzen der Meta-Schnittstelle für Reels */
+  if (reel && segs) { const d = segs.reduce((n, s) => n + (+s.dauer || 0), 0); P(d >= 3, d >= 3 ? "Mindestlänge für die Meta-Schnittstelle erreicht." : "Reels brauchen mindestens 3 Sekunden."); }
+
   const ok = punkte.filter((x) => x.ok).length;
   return { punkte, score: Math.round((ok / punkte.length) * 100), bereit: ok === punkte.length, caption: cap };
 }

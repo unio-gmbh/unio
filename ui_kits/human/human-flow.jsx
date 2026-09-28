@@ -36,8 +36,7 @@ function Fragebogen({ m, fb, go }) {
     const beantwortet = Object.keys(antworten).length;
     return (
       <div>
-        <div className="hm-mono">Etappe 01 · Entdecken</div>
-        <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel. Achtzehn Minuten."}</h2>
+        <h2 className="hm-h hm-h1">{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel. Achtzehn Minuten."}</h2>
         <p className="hm-sub">{done ? "Du kannst jede Antwort ändern. Deine Strategie rechnet dann neu. Kapitel 6 schreibt deine Geschichte, wann du willst." : "Es gibt keine falschen Antworten. Wir fragen nach dem, was du getan hast, nicht nach dem, was du über dich denkst. Am Ende jedes Kapitels siehst du, was wir daraus lesen. Unterbrechen geht jederzeit."}</p>
         <div className="hm-kap">
           {HM_KAPITEL.map((k, i) => { const f = fertig.includes(k.id); const n = k.fragen.filter((q) => antworten[q.id] != null).length; return (
@@ -166,8 +165,7 @@ function Strategie({ m, fb, st, go }) {
   };
   if (!st.gewaehlt) return (
     <div>
-      <div className="hm-mono">Etappe 01 · Zwei Wege</div>
-      <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>Zwei Wege für deine Marke.</h2>
+      <h2 className="hm-h hm-h1">Zwei Wege für deine Marke.</h2>
       <p className="hm-sub">Beide kommen aus deinen Antworten. Weg A verstärkt, was du heute schon bist. Weg B setzt einen Kontrast und fordert etwas mehr. Du wählst, Daniel prüft, im Gespräch schärfen wir.</p>
       <div className="hm-wege"><WegKarte w={st.wege.a} key_="a" onWahl={() => wahl("a")} /><WegKarte w={st.wege.b} key_="b" onWahl={() => wahl("b")} /></div>
       <div className="hm-card" style={{ marginTop: 16 }}><div className="hm-mono">Wie gerechnet</div><div style={{ marginTop: 8, fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>Fünf Regler (Aaker-Dimensionen), deine Bildwahl, die Wohnwelten deiner Kunden, dein Ziel und dein Kamera-Komfort ergeben eine Rangliste von sechs Figuren. Weg A ist Platz eins, Weg B der beste Kandidat auf einer anderen Achse. Rangliste: {st.wege.scores.map((s) => `${s.name} ${s.score}`).join(" · ")}.</div></div>

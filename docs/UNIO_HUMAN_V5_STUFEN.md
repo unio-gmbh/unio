@@ -188,3 +188,61 @@ Vault-Regeln, die ab v5 gelten (aus "Feedback, Dos & Don'ts" und "Design-Masterr
 **Verbesserungen für später**
 - Deploy per Vercel-Schnittstelle statt ZIP (`api/human-website.js`), mit eigener Domain.
 - Bildmarke bleibt Handarbeit, der Auftrag dafür sollte im Shop liegen.
+
+---
+
+## Stufe 5. Monatszyklus
+
+**Diagramm:** Content Ideas, Planning, Production, Cut/Edit, Delivery, Feedback/Freigabe, Posting Scheduled, Quarterly Reviews und zurück zu Ideas.
+
+**Umgesetzt** (`human-produktion.jsx`, gebaut von einem parallel arbeitenden Agenten, verdrahtet und getestet im Hauptstrang)
+- **Ideen-Generator:** Säulenquoten aus der Strategie (Pflichtsäule "Wie ich arbeite" mindestens 15 %), Formate des Wegs, Hook-Muster, österreichische Anlässe Oktober bis Dezember und Objekte aus dem Bestand. Keine Wiederholung gegen vorhandene Titel. In Inhalte und Produktion unter "Ideen für Oktober".
+- **Teleprompter:** Vollbild im Sprechtempo (0,3 s je Wort), spiegelbar, mit Pause, Tempo, Satzsprung und 3-Sekunden-Countdown. Der Bildschirm bleibt wach, es gibt eine Tastensteuerung.
+- **Abgabe-Check vor dem Verschicken** (Vault-Regel Qualitätskontrolle):
+  - Prüft Untertitel gegen das Skript, den Namen, bekannte Tippfehler, einheitliche Zahlen, die Länge, die Endkarte, die Caption, Kanäle und Termin.
+  - "An {Vorname} schicken" ist erst bei Grün aktiv.
+- **Caption-Prüfung:** erste Zeile unter 100 Zeichen, Suchbegriff in den ersten 125 Zeichen, 3 bis 5 Hashtags, ein Handlungsaufruf, keine Emojis, keine Ausrufezeichen, einheitliche Anrede, höchstens 2.200 Zeichen.
+- **Terminvorschläge im Inspektor:** Start-Hypothese Di und Do 18 bis 21 Uhr. Sobald eigene Zahlen da sind, gewinnen die besten Tage.
+- **CSV für Metricool** als Brücke ohne API. Die Spalten laut Metricool-Hilfe sind vor dem ersten echten Import mit der Vorlage abzugleichen.
+- **Insights-Import:** Meta-Business-Suite-Export (deutsch und englisch) wird zum Monatsreport mit drei Folgerungen aus Regeln.
+- **Quartals-Review** (`human-strategie.jsx`), bisher fest verdrahtet, jetzt aus den Daten:
+  - Reichweite und Teilen über drei Monate, stärkstes Format, stärkste Säule, Säulen ohne Beitrag, Gesichtsanteil.
+  - Dazu ein Vorschlag für neue Säulenquoten (plus 5 für die stärkste, minus 5 für die schwächste). "Übernehmen" schreibt die Strategie als neue Version mit Unterschied.
+  - Der Ideen-Generator nutzt ab dann die neuen Quoten. Damit ist der Kreis im Diagramm geschlossen.
+- **Abstimmung** nach Vault-Regeln:
+  - Die dritte Runde ist vorab als kostenpflichtig angekündigt (150 € je Stunde) und erzeugt ein Ticket "Aufwand schätzen".
+  - Jede Freigabe wird mit Name und Zeit protokolliert.
+  - Automatische Freigabe nach Ablauf der Frist, ebenfalls protokolliert.
+- **Werkstatt:** Drehort (Objekt, Grätzl, Büro, Studio, beim Kunden) und Stil (Vlog natürlich, erklärend, Kundenstimme, Rundgang) im Inspektor.
+
+## Stufe 6. Shop, Sonderwünsche, Fristen
+
+**Umgesetzt** (`human-shop2.jsx`, paralleler Agent)
+- **Grafik-Generator:** Carousel, Objekt-Post und Story per Canvas in der Markenschrift. Export als PNG oder ZIP. In der Werkstatt bei allen Formaten außer Reel.
+- **Format-Lotse:** Ein Sonderwunsch wird zum nächsten Standardformat mit Ähnlichkeit und Preisunterschied gelenkt. Im Shop direkt unter dem Eingabefeld. Stundensatz 150 € wie die dritte Runde.
+- **Anfrage-Sortierer:** Aus einer Nachricht wird ein Ticket mit Art, Owner und Frist in Werktagen, mit österreichischen Feiertagen.
+- **Drehtage bündeln:** Offene Drehwünsche werden nach Region gebündelt, die Abo-Grenze beachtet, Slots, Shotlist und Kalenderdatei erzeugt, die Ersparnis ausgewiesen. Auf Team-Heute unter Sparpotenzial.
+- **Fristen:**
+  - Freigaben länger als drei Tage, Tickets, Einrichtung beim Team, Kontingent am 20., Community-Nachrichten älter als 60 Minuten.
+  - Auf Team-Heute als "Überfällig". Ungenutztes Kontingent steht unter Sparpotenzial.
+- **Community:** Kommentare und Nachrichten auf Heute des Maklers, rot ab 60 Minuten. Der Makler antwortet selbst.
+
+**Tests:** 14 Selbsttests Produktion und 21 Selbsttests Shop im Browser grün. Klicktests für Werkstatt (Abgabe-Check, Teleprompter mit Escape, Caption), Ideen (20 übernommen), Format-Lotse, dritte Runde und Quartals-Review. Crawl mit 36 Ansichten ohne Fehler.
+
+**Gefundene Fehler, behoben**
+- **Anrede:** `hmWeg` erkannte "Sie" nie, weil die Antwort "Sie, überall" lautet. Captions für Markus duzten dadurch.
+- **Deklaration:** `promotion` wurde vor der Deklaration benutzt, die Texte zu Reichweite oder Bestand waren falsch gewählt.
+- **Team-Heute:** Fristen, "Braucht uns" und "Wartet auf Makler" zeigten denselben Beitrag doppelt. Jetzt hat jede Information einen Ort.
+- **Stundensatz:** Der Format-Lotse rechnete mit angenommenen 95 € statt 150 €.
+
+**Offen**
+- Die EZB-Termine im Ideen-Generator (29.10. und 17.12.2026) sind nicht gegen den Sitzungskalender geprüft.
+- Die Metricool-Vorlage und die Spaltennamen des Meta-Exports mit echten Dateien gegenprüfen.
+
+## Stufe 7. Design
+
+- **Icons:** 33 Textzeichen-Icons (Pfeile, Haken, Winkel, Kreuze, Radio-Punkte) sind 1,5-px-Stroke-SVGs oder CSS-Formen. `Btn` nimmt Icon-Namen.
+- **Assistent:** Das Sparkle-Symbol am Assistenten ist eine Sprechblase ("Fragen"), weil laut Plan kein KI-Symbol vorkommt.
+- **Eyebrows:** 18 Eyebrows entfernt. Datum und Kontext stehen als ruhige Zeile unter der Headline. "Als Nächstes" ist aus den dunklen Karten raus, die Handlung ist die Headline.
+- **Texte:** gekürzt, Kopf- und Hinweistexte im Schnitt halb so lang.
+- **Wording:** Freigabe-Karten auf Heute sagen "Passt so" wie die Abstimmung.

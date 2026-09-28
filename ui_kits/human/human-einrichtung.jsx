@@ -19,7 +19,7 @@ function Einrichtung({ m, go, teamSicht }) {
   const naechster = HM_EINRICHTUNG.find((e) => st[e.id] !== "fertig" && st[e.id] !== "wartet_team" && !(e.braucht && !b.fertig));
   return (
     <div>
-      <Kopf ueber={teamSicht ? `Einrichtung · ${m.name}` : "Einrichtung"} titel={fertig === HM_EINRICHTUNG.length ? "Alles eingerichtet." : "Einmal einrichten, dann läuft es."} text={teamSicht ? "Zehn Bausteine. Was beim Team liegt, ist markiert." : "Zehn kurze Bausteine, ein paar erledigen wir für dich."}
+      <Kopf ueber={fertig === HM_EINRICHTUNG.length ? "Alles eingerichtet" : `${fertig} von ${HM_EINRICHTUNG.length} erledigt`} titel="Einrichtung" text={teamSicht ? "Zehn Bausteine. Was beim Team liegt, ist markiert." : "Zehn kurze Bausteine, ein paar erledigen wir für dich."}
         rechts={<div className="hm-row" style={{ gap: 14 }}><Ring wert={fertig / HM_EINRICHTUNG.length} groesse={72} /><div><div style={{ fontSize: 28, letterSpacing: "-.03em", color: "var(--ink)" }}>{fertig} von {HM_EINRICHTUNG.length}</div><div className="hm-mono">erledigt</div></div></div>} />
       {naechster && !teamSicht && <button className="hm-weiter" onClick={() => setOffen(naechster.id)}><div><div style={{ fontSize: 22, letterSpacing: "-.02em" }}>{naechster.titel}</div><div style={{ color: "var(--text-inverse-muted)", fontSize: 14, marginTop: 4 }}>{naechster.satz} {naechster.dauer}.</div></div><span className="k"><Ico n="pfeil" /></span></button>}
       {gruppen.map((g) => (
@@ -203,6 +203,7 @@ function EVisitenkarten({ m, zu, go }) {
   const [tel, setTel] = React.useState(d.tel || "+43 1 000 00 00");
   const [mail, setMail] = React.useState(d.mail || k.mail || "");
   const [stk, setStk] = React.useState(d.stk || 250);
+  const [profil, setProfil] = React.useState("standard");
   const preis = { 100: 39, 250: 59, 500: 89 }[stk];
   if (!b.fertig) return <Leer titel="Kommt nach deinem Branding." text="Sobald das Branding freigegeben ist, steht die Karte hier fertig." aktion={<Btn onClick={() => { zu(); go("marke", { sub: "design" }); }}>Zum Branding</Btn>} />;
   if (st.visitenkarten === "fertig") return <div className="hm-stack"><div className="hm-vk-paar"><Visitenkarte b={b} tel={d.tel || tel} mail={d.mail || mail} /><Visitenkarte b={b} seite="hinten" /></div><Leer titel="Zugestellt." text={`${d.stk || 250} Stück, geliefert ins Büro Kärntner Straße 12.`} /></div>;
@@ -214,7 +215,7 @@ function EVisitenkarten({ m, zu, go }) {
     <div className="hm-pruefliste">{pruef.map((x) => <div key={x.t} className={x.ok ? "ok" : "nein"}><Ico n={x.ok ? "haken" : "x"} />{x.t}</div>)}</div>
     <div className="hm-feld2"><label className="hm-feld"><span>Telefon</span><input value={tel} onChange={(e) => setTel(e.target.value)} /></label><label className="hm-feld"><span>E-Mail</span><input value={mail} onChange={(e) => setMail(e.target.value)} /></label></div>
     <div className="hm-seg">{[100, 250, 500].map((n) => <button key={n} className={stk === n ? "on" : ""} onClick={() => setStk(n)}>{n} Stück</button>)}</div>
-    <div className="hm-row" style={{ justifyContent: "space-between" }}><button className="hm-link" onClick={() => hmVkDruck(b)}>Druck-PDF ansehen</button><span className="hm-daten">Druckdaten mit Beschnitt und Schnittmarken</span></div>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><button className="hm-link" onClick={() => hmVkDruck(b, profil)}>Druck-PDF ansehen</button><div className="hm-seg klein">{Object.entries(HM_DRUCKPROFILE).map(([id, x]) => <button key={id} className={profil === id ? "on" : ""} onClick={() => setProfil(id)}>{x.name}</button>)}</div></div>
     <Btn disabled={!ok} onClick={() => { setD("visitenkarten", { tel, mail, stk }); hmStore.patch("auftraege", (l) => [...(l || []), { id: "o" + Date.now(), maklerId: m.id, katalog: "visitenkarte", name: `Visitenkarten ${stk} Stück`, preis, stufe: 2, zustand: "in_arbeit", datum: "2026-09-28", wer: "System" }]); setZ("visitenkarten", "in_arbeit", `Visitenkarten bestellt, ${stk} Stück`); toast("Bestellt"); }}>{`Bestellen · ${preis} €`}</Btn>
   </div>;
 }

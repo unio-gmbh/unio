@@ -62,7 +62,7 @@ function Mediathek({ m, teamSicht }) {
     setTimeout(() => { HM_SITZUNG_CLIPS.forEach((c) => { if (c.tags.includes("Wird analysiert")) c.tags = c.tags.filter((t) => t !== "Wird analysiert").concat(["Analysiert"]); }); window.dispatchEvent(new Event("hm-clips")); }, 1800);
   };
   return <div>
-    <Kopf ueber={m ? `Material · ${m.name}` : "Mediathek · alle Makler"} titel="Alles Material an einem Ort." text="Vom Drehtag, vom Handy, vom Objekt. Der Schnitt greift automatisch darauf zu." rechts={<span className="hm-mono">{clips.length} Dateien · {clips.filter((c) => c.typ === "video").reduce((n, c) => n + (c.bis - c.von), 0).toFixed(0)} s Video</span>} />
+    <Kopf ueber={m ? `Material · ${m.name}` : "Mediathek · alle Makler"} titel={m ? "Material" : "Mediathek"} rechts={<span className="hm-mono">{clips.length} Dateien · {clips.filter((c) => c.typ === "video").reduce((n, c) => n + (c.bis - c.von), 0).toFixed(0)} s Video</span>} />
     <label className="hm-drop" style={{ marginTop: 22 }} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); upload(e.dataTransfer.files); }}><input type="file" accept="video/*,image/*" multiple hidden onChange={(e) => upload(e.target.files)} /><span>Videos und Fotos hierher ziehen. Vom Handy direkt nach dem Dreh, in voller Qualität.</span></label>
     <div className="hm-chips" style={{ marginTop: 16 }}>{tags.map((t) => <button key={t} className={"hm-chip" + (filter === t ? " on" : "")} onClick={() => setFilter(t)}>{t}</button>)}</div>
     <div className="hm-medien">{liste.map((c) => <button key={c.id} className="hm-medium" onClick={() => setDetail(c)}>

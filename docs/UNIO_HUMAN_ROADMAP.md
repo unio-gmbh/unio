@@ -152,3 +152,50 @@ Nach Hebel: Handarbeit, die wegfällt, und Wartezeit, die kürzer wird.
 - **Die finale Freigabe durch den Makler:** Es ist sein Gesicht.
 - **Antworten auf Kommentare und Nachrichten:** Maklerarbeit ist ein Vertrauensberuf. Das Werkzeug erinnert nur, es antwortet nicht.
 - **Die Bildmarke, wenn gewünscht:** Grafik ist Handarbeit, die Wortmarke kommt automatisch.
+
+---
+
+## 5. Branding auf Agenturniveau (Schwerpunkt ab 28.09.2026)
+
+Das wichtigste Ergebnis von HUMAN ist die Marke des Maklers: Optik, Brand Story, Konzeptideen und ausgearbeitete Content-Säulen. Der Maßstab ist das, was eine High-End-Brand- und Social-Agentur abliefert. Dafür gelten vier Prinzipien.
+
+1. **Eigene Worte statt Floskeln.** Die Plattform baut auf den Freitexten des Maklers und auf der Workshop-Mitschrift auf: Abschlüsse, Abgeraten, Wendepunkt, Kundenstimme, Grätzl. Fehlt etwas, steht dort eine ehrliche Lücke und keine Erfindung.
+2. **Kuratierte Systeme statt Generator-Optik.** Sechs visuelle Markenwelten sind von Hand gestaltet, jede mit Idee, Zeichen, Farbrollen, Schrift und Bildsprache. Der Makler bekommt eine davon, personalisiert. So bleibt die gestalterische Qualität gesichert, und trotzdem ist jede Marke eigen (gleiches Prinzip wie die Website-Looks).
+3. **Messbare Qualität.** Eine Bewertung prüft fünf Kriterien, bevor Daniel freigibt: Spezifität, Unterscheidbarkeit, Glaubwürdigkeit, Konsistenz und Umsetzbarkeit.
+   - Die Unterscheidbarkeit misst die Textähnlichkeit zu den anderen Maklern.
+   - Die Klischee-Liste zählt als harter Fehler.
+4. **Tokens dort, wo Sprache zählt.** Für Story, Stimme und Serien läuft im Betrieb eine Claude-Kette in sechs Schritten mit festem Schema (`api/human-marke.js`). Der Regel-Generator ist der Fallback.
+
+Datenvertrag: `docs/HUMAN_MARKE_SCHEMA.md`. Qualitätsstandard und Prompt-Kette: `docs/UNIO_HUMAN_MARKENQUALITAET.md`.
+
+## 6. Nächste Schritte aus den Benchmarks
+
+Die vollständigen Ergebnisse stehen in `docs/research/HUMAN_BENCHMARK_*.md`. Bereits umgesetzt sind:
+- Energieausweis-Prüfung nach EAVG-Novelle
+- Druckerei-Profile
+- Befehlsmenü
+- "Passt, mit Kleinigkeit"
+- gebündelte Erinnerungen
+- Kennzahlen je 1.000 Erreichte
+- Nachfass-Ausstieg
+- Werktage mit Feiertagen
+- Kalenderdatei mit Zeitzone und Erinnerungen
+- Windows-1252-Import
+- SheetJS ohne bekannte Lücke
+
+Offen, nach Priorität:
+
+| Priorität | Punkt | Bereich |
+|---|---|---|
+| Entscheidung | Lizenz der Freistell-Bibliothek `@imgly/background-removal` (AGPL-3.0) im live laufenden Zuschnitt klären: kommerzielle Lizenz oder Wechsel auf BiRefNet_lite (MIT) oder MODNet (Apache) | Zuschnitt |
+| P1 | Gesichtserkennung von face-api (archiviert seit 02/2025) auf MediaPipe Face Landmarker umstellen, dazu Haltungsprüfung (Kopf gedreht, Augen zu) | Zuschnitt |
+| P1 | Abstimmung per Link ohne Login für den Makler, zeitgenaue Anmerkungen im Video mit Marken auf der Timeline | Abstimmung |
+| P1 | Kontingent-Regel schriftlich im Shop, mit Vorwarnung am 20. und Verbrauchskurve | Shop |
+| P1 | Briefing im Checkout, zwei bis vier Pflichtfelder je Produkt | Shop |
+| P1 | Empfehlungen nur bei echten Ausreißern gegenüber den letzten 12 Beiträgen, Mindestmenge 8 | Wirkung |
+| P1 | Schriftskala auf sechs Größen, Rückgängig statt Nachfrage | Design |
+| P1 | Vertrag: Protokoll je Abschnitt, Prüfsumme über das PDF, Auftragsverarbeitung nach Art. 28 DSGVO im selben Ablauf, Verbraucherstatus bei Gründern prüfen | Vertrag |
+| P1 | Mitschrift: Zeitmarken für Zitat, Aufgabe und Widerspruch während der Aufnahme, Leitfaden als Notizvorlage | Workshop |
+| P2 | Whisper large-v3-turbo für Deutsch, Backend-Probe WebGPU oder WASM, Sprechertrennung im Browser | Workshop |
+| P2 | Transkript als Schnittfläche, 9:16 mit MediaPipe, Rendern mit WebCodecs | Schnitt |
+| P2 | Stichwort-Kommentar löst Exposé-Nachricht aus. Braucht eine bewusste Freigabe, weil HUMAN bisher nie selbst antwortet | Community |

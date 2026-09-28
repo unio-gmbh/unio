@@ -5,12 +5,12 @@
 function Marke({ m, sub, setSub, go, teamSicht }) {
   const fb = (useHm("fragebogen") || {})[m.id];
   const st = (useHm("strategien") || {})[m.id];
-  useHm("branding"); useHm("website");
+  useHm("branding"); useHm("website"); const mb = (useHm("markenbuch") || {})[m.id] || {};
   const b = hmBrand(m.id);
   const web = (hmStore.get("website") || {})[m.id] || {};
-  const schritte = [["fragebogen", "Fragebogen", fb && fb.fertig], ["konzept", "Konzept", st && st.gewaehlt], ["design", "Design", b.fertig], ["website", "Website", web.status === "live"]];
+  const schritte = [["fragebogen", "Fragebogen", fb && fb.fertig], ["konzept", "Konzept", st && st.gewaehlt], ["design", "Design", b.fertig], ["markenbuch", "Markenbuch", mb.status === "freigegeben"], ["website", "Website", web.status === "live"]];
   const roh = sub === "material" || sub === "kit" ? "design" : sub;
-  const s = roh || (fb && fb.fertig ? (b.fertig ? "website" : st && st.gewaehlt ? "design" : "konzept") : "fragebogen");
+  const s = roh || (fb && fb.fertig ? (b.fertig ? (mb.status === "freigegeben" ? "website" : "markenbuch") : st && st.gewaehlt ? "design" : "konzept") : "fragebogen");
   const legacyGo = (x) => { if (x === "strategie") setSub("konzept"); else if (x === "fragebogen") setSub("fragebogen"); else go(x); };
   return (
     <div>
@@ -19,6 +19,7 @@ function Marke({ m, sub, setSub, go, teamSicht }) {
         {s === "fragebogen" && <Fragebogen m={m} fb={fb} go={legacyGo} />}
         {s === "konzept" && <Strategie m={m} fb={fb} st={st} go={legacyGo} />}
         {s === "design" && <Studio m={m} setSub={setSub} teamSicht={teamSicht} />}
+        {s === "markenbuch" && <Markenbuch m={m} teamSicht={teamSicht} />}
         {s === "website" && <Website m={m} setSub={setSub} teamSicht={teamSicht} />}
       </div>
     </div>
@@ -78,7 +79,7 @@ function Studio({ m, setSub, teamSicht }) {
   const pool = warm ? ["terrasse-golden.png", "interieur-wurzelholz.jpg", "lifestyle-paar.jpg", "essen-gruen.jpg"] : ["penthouse-glas.png", "skyline-terrasse.png", "kueche-schwarz.jpg", "villen-luftbild.jpg"];
   const empfS = HM_SCHRIFTPAARE[b.aid], empfA = HM_AKZENT_EMPF[b.aid];
   return <div>
-    <Kopf titel="Dein Branding" text={`Aus deinem Weg ${w.archetyp.name}. Website, Visitenkarte und Shop übernehmen, was du hier wählst.`}
+    <Kopf titel="Branding" ueber={`Aus deinem Weg ${w.archetyp.name}`}
       rechts={b.fertig ? <span className="hm-ez z-fertig">Freigegeben</span> : <Btn onClick={() => { set({ status: "freigegeben" }); hmEvent(m.id, "branding", "Branding freigegeben", teamSicht ? "Team" : m.name); toast("Branding freigegeben. Website und Visitenkarten sind vorbereitet."); }}>Branding freigeben</Btn>} />
     <div className="hm-studio">
       <div className="hm-studio-l">
@@ -162,7 +163,7 @@ function Website({ m, setSub, teamSicht }) {
   const gefuellt = felder.filter((f) => f.wert).length;
   const status = web.status || "entwurf";
   return <div>
-    <Kopf titel="Deine Website" text={`${gefuellt} von ${felder.length} Angaben sind da. Daniel prüft vor dem Livegang.`}
+    <Kopf titel="Website" ueber={`${gefuellt} von ${felder.length} Angaben da`}
       rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {felder.find((f) => f.id === "domain").wert}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
     <div className="hm-sek">Look</div>
     <div className="hm-looks">{HM_LOOKS.map((l) => <button key={l.n} className={look === l.n ? "on" : ""} onClick={() => set({ look: l.n })}><img src={l.bild} alt="" /><div className="t">{String(l.n).padStart(2, "0")} {l.name}</div><div className="s">{l.satz}</div></button>)}</div>
@@ -214,7 +215,7 @@ function BrandKit({ m, setSub }) {
   const palette = [["Grund", "#F7F5F1"], ["Text", "#0B0A09"], ["Akzent", b.akzent], ["Fläche", "#F0EDE6"], ["Linie", "#D1D3D5"]];
   const vorlagen = (hmStore.get("vorlagen") || []).slice(0, 4);
   return <div ref={ref}>
-    <Kopf titel="Alles zum Mitnehmen." text={b.fertig ? "Freigegeben. Logos als SVG, Farben mit Code, Schriften und die Vorlagen, mit denen wir produzieren." : "Entwurf. Nach der Freigabe ist das Kit verbindlich."} />
+    <Kopf titel="Brand-Kit" text={b.fertig ? "Freigegeben. Logos als SVG, Farben mit Code, Schriften und die Vorlagen, mit denen wir produzieren." : "Entwurf. Nach der Freigabe ist das Kit verbindlich."} />
     <div className="hm-kacheln" style={{ marginTop: 22 }}>{HM_LOGO_TYPEN.map((t) => <div key={t.id} className="hm-kachel" data-logo={t.id} style={{ cursor: "default" }}><div style={{ minHeight: 70, display: "grid", placeItems: "center", width: "100%" }}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 60 : 30} /></div><div className="t">{t.name}{b.logo === t.id ? " · Hauptlogo" : ""}</div><button className="hm-chip" onClick={() => svg(t.id)}>SVG laden</button></div>)}</div>
     <div className="hm-mono" style={{ marginTop: 26, marginBottom: 10 }}>Farben</div>
     <div className="hm-palette">{palette.map(([n, h]) => <div key={n}><i style={{ background: h }}></i><div className="t">{n}</div><Kopieren text={h} /></div>)}</div>
