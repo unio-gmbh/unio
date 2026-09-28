@@ -241,7 +241,7 @@ function hmWeg(t, a, rolle, gegen) {
   const grund = (a.gruende || [])[0] || "Vertrauen";
   const ausl = (a.ausloeser || [])[0];
   const tabus = a.tabus || [];
-  const anrede = a.anrede === "Sie" ? "Sie" : "Du";
+  const anrede = (a.anrede || "").startsWith("Sie") ? "Sie" : "Du";
   const zeit = a.zeit || HM_ZEIT[1];
   const hooks = {
     kenner: [`Was eine Wohnung in ${bezText} 2026 wirklich wert ist.`, "Drei Zahlen, die jeder Verkäufer kennen sollte.", "Der häufigste Preisfehler in Wien.", "Warum das erste Angebot selten das beste ist.", `So liest du das Grundbuch in ${bezText}.`],
@@ -280,6 +280,8 @@ function hmWeg(t, a, rolle, gegen) {
   if ((a.kamera || 3) <= 2 && formate.includes("talking")) fordert.push("Talking Heads brauchen Übung, die ersten zwei Drehtage sind Training.");
   if (milieus.some((m) => (t.achse === "Autorität" && ["kons", "perf"].includes(m.id)) || (t.achse === "Nähe" && ["mitte", "nost", "post"].includes(m.id)) || (t.achse === "Moderne" && ["exp", "neo", "perf"].includes(m.id)))) passt.push("Passt zu den Wohnwelten deiner Kunden.");
   if (tabus.includes("Familie zeigen") && t.saeulen.persoenlich >= 30) fordert.push("Die Säule Persönlich ist groß, Familie bleibt trotzdem außen vor: Alltag und Grätzl statt Privates.");
+  const fokusReg = a.fokus == null ? 50 : a.fokus;
+  const promotion = fokusReg < 50;
   if (gegen) fordert.push(promotion ? `Setzt sich gegen ${gegen.name} ab: ${t.achse} statt ${gegen.achse}. Mehr Reichweite, neue Zielgruppen.` : `Setzt sich gegen ${gegen.name} ab: ${t.achse} statt ${gegen.achse}. Bestand und Ruf bleiben geschützt, weil die Säule "Wie ich arbeite" gleich groß bleibt.`);
   if (!gegen && promotion) passt.push("Du willst Reichweite: dieser Weg ist der schnellste zur Routine, Weg B holt später mehr Neue.");
   if (!gegen && !promotion) passt.push("Du willst Bestand und Ruf sichern: dieser Weg bleibt nah an dem, wofür man dich schon kennt.");
@@ -291,8 +293,6 @@ function hmWeg(t, a, rolle, gegen) {
   const erfolge = a.erfolge || 3;
   const tonExtra = erfolge <= 2 ? ["Kompetenz indirekt zeigen: Kundenstimmen und Ablauf statt Eigenlob"] : erfolge >= 4 ? ["Eigene Ergebnisse dürfen vorkommen, höchstens jeder vierte Post"] : [];
   const privat = a.privat || [];
-  const fokusReg = a.fokus == null ? 50 : a.fokus;
-  const promotion = fokusReg < 50;
   const bio = `${t.name.replace("Der ", "")} für ${fokus.toLowerCase()} in ${bezText}. ${t.leitidee} ${anrede === "Du" ? "Schreib mir." : "Schreiben Sie mir."}`;
   return {
     rolle, archetyp: t, satz, story, milieus, saeulen: t.saeulen, formate, kanaele, frequenz, ton: [...t.ton, ...tonExtra], palette, schrift: t.schrift,

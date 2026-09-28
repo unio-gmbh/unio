@@ -318,7 +318,7 @@ function GrafikGenerator({ m, c, zu }) {
 /* ======================================================================
    2. Format-Lotse
    ====================================================================== */
-const HM_LOTSE_STUNDENSATZ = 95;   // ZU BESTÄTIGEN: interner Stundensatz für die Sonderformat-Schätzung
+const HM_LOTSE_STUNDENSATZ = 150; /* ADB-Standardkondition für Zusatzaufwand (Vault: Feedback, Dos & Donts), gleich wie die dritte Korrekturrunde */
 const HM_LOTSE_AUFWAND = 1.5;      // h Planungsschritt und Freigabe-Loop je Sonderformat (Plan Kap. 5.1)
 const HM_LOTSE_KONZEPTE = {
   interview: { name: "Interview", w: ["interview", "gespraech", "befrag", "zu wort", "erzaehl", "testimonial", "kundenstimme", "stimme"] },
@@ -771,7 +771,7 @@ function hmFristen(eingabe) {
   return out.sort((a, b) => b.ueberfaellig - a.ueberfaellig || ms(a.seit) - ms(b.seit));
 }
 
-function FristenListe({ makler, oeffne }) {
+function FristenListe({ makler, oeffne, nur, leer }) {
   useHm("content"); useHm("einrichtung"); useHm("community"); useHm("drehtage"); useHm("makler");
   const tickets = useHm("tickets") || [];
   const [, setTick] = React.useState(0);
@@ -779,7 +779,8 @@ function FristenListe({ makler, oeffne }) {
   const filter = typeof makler === "string" ? makler : makler && !Array.isArray(makler) ? makler.id : null;
   const alle = hmStore.get("makler") || [];
   const name = (id) => (alle.find((x) => x.id === id) || {}).name || id || "Team";
-  const liste = hmFristen().filter((f) => !filter || f.maklerId === filter);
+  const liste = hmFristen().filter((f) => (!filter || f.maklerId === filter) && (!nur || nur(f)));
+  if (!liste.length && leer === null) return null;
   const tun = (f) => {
     const a = f.aktion;
     if (a.typ === "erinnern") { hmEvent(f.maklerId, "erinnerung", a.text, "Team"); toast("Erinnert"); }
@@ -799,7 +800,7 @@ function FristenListe({ makler, oeffne }) {
 /* ======================================================================
    6. Community-Postfach: der Makler antwortet selbst, das Werkzeug erinnert nur
    ====================================================================== */
-function Community({ m }) {
+function Community({ m, kompakt }) {
   const alle = useHm("community") || [];
   const content = useHm("content") || [];
   const [jetzt, setJetzt] = React.useState(Date.now());
@@ -826,6 +827,7 @@ function Community({ m }) {
       <button className={"hm-klein-btn" + (fertig ? " hell" : "")} onClick={() => markieren(n, !fertig)}>{fertig ? "Zurück" : "Beantwortet"}</button>
     </div>
   </div>; };
+  if (kompakt) return offen.length ? <><div className="hm-sek">Kommentare und Nachrichten · {offen.length}{rot ? <span className="hm-sh-rot" style={{ fontWeight: 400 }}>{rot} warten länger als 60 Minuten</span> : null}</div><div className="hm-gruppe">{offen.map((n) => zeile(n, false))}</div></> : null;
   return <div className="hm-stack">
     <div className="hm-rechnung">
       <div><b>{offen.length}</b><span>offen</span></div>

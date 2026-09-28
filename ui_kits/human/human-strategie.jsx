@@ -160,4 +160,52 @@ function PlanBisLive({ m, kurz }) {
   return <div className="hm-gruppe">{plan.map((p) => <div key={p.id} className="hm-reihe"><span className={"hm-plan-punkt" + (p.fertig ? " ok" : p.spaet ? " spaet" : "")}>{p.fertig ? <Ico n="haken" g={12} /> : null}</span><div className="m"><div className="t">{p.name}</div><div className="u">Tag {p.tag} · {hmFmtDate(p.iso)}{p.spaet ? " · überfällig" : ""}</div></div></div>)}</div>;
 }
 
-Object.assign(window, { hmGlossar, HM_GLOSSAR, hmLeitfaden, Leitfaden, Mitschrift, hmTranskribieren, hmImport, hmAudio16k, hmAuswerten, hmPlan, PlanBisLive, HM_PLAN });
+/* ---------- Quartals-Review: Dossier aus Zahlen, Säulen neu gewichten, Strategie als neue Version ---------- */
+function hmQuartal(m) {
+  const reports = ((hmStore.get("reports") || {})[m.id] || []).slice(-3);
+  const st = (hmStore.get("strategien") || {})[m.id];
+  const w = st && st.gewaehlt ? st.wege[st.gewaehlt] : null;
+  const posts = (hmStore.get("content") || []).filter((c) => c.maklerId === m.id && c.zustand === "online" && c.kz);
+  if (!w || !reports.length) return null;
+  const wirkung = (c) => c.kz.reach / 1000 + (c.kz.saves || 0) * 0.5 + (c.kz.sends || 0) * 0.5;
+  const nach = (key) => { const g = {}; posts.forEach((c) => { const k = c[key]; (g[k] = g[k] || []).push(c); }); return Object.entries(g).map(([k, l]) => ({ k, n: l.length, reach: Math.round(l.reduce((x, c) => x + c.kz.reach, 0) / l.length), wert: l.reduce((x, c) => x + wirkung(c), 0) / l.length })).sort((a, b) => b.wert - a.wert); };
+  const saeulen = nach("saeule"), formate = nach("typ");
+  const erst = reports[0], letzt = reports[reports.length - 1];
+  const pct = (a, b) => (a ? Math.round(((b - a) / a) * 100) : 0);
+  const quote = { ...w.saeulen };
+  const beste = saeulen[0] && saeulen[0].k, schwach = [...saeulen].reverse().find((x) => x.k !== beste && x.k !== "wissen");
+  const neu = { ...quote };
+  if (beste && quote[beste] != null) neu[beste] = Math.min(40, quote[beste] + 5);
+  if (schwach && quote[schwach.k] != null) neu[schwach.k] = Math.max(10, quote[schwach.k] - 5);
+  const summe = Object.values(neu).reduce((x, y) => x + y, 0);
+  if (summe !== 100) { const k = Object.keys(neu).find((x) => x !== beste && x !== (schwach && schwach.k) && x !== "wissen"); if (k) neu[k] += 100 - summe; }
+  const fehlend = Object.keys(quote).filter((k) => !posts.some((c) => c.saeule === k));
+  const zuletzt = (st.versionen || []).slice(-1)[0];
+  const diff = zuletzt && hmTage(zuletzt.datum, HM_HEUTE) < 60 ? [] : Object.keys(neu).filter((k) => neu[k] !== quote[k]).map((k) => ({ k, von: quote[k], zu: neu[k] }));
+  const punkte = [
+    reports.length > 1 ? `Reichweite ${pct(erst.reach, letzt.reach) >= 0 ? "plus" : "minus"} ${Math.abs(pct(erst.reach, letzt.reach))} Prozent seit ${new Date(erst.monat + "-01").toLocaleDateString("de-AT", { month: "long" })}, Teilen ${pct(erst.sends, letzt.sends) >= 0 ? "plus" : "minus"} ${Math.abs(pct(erst.sends, letzt.sends))} Prozent.` : `${letzt.reach.toLocaleString("de-AT")} erreicht im ersten Monat.`,
+    formate[0] ? `Stärkstes Format: ${HM_TYPEN[formate[0].k] || formate[0].k}, im Schnitt ${formate[0].reach.toLocaleString("de-AT")} erreicht.` : null,
+    beste ? `Stärkste Säule: ${HM_SAEULEN[beste].name}.` : null,
+    fehlend.length ? `Ohne Beitrag online: ${fehlend.map((k) => HM_SAEULEN[k].name).join(", ")}.` : null,
+    letzt.gesicht != null && letzt.gesicht < 70 ? `Gesicht in ${letzt.gesicht} Prozent der Beiträge, Ziel 70.` : null,
+  ].filter(Boolean);
+  return { punkte, diff, neu, version: (st.versionen || []).length + 1, versionen: st.versionen || [] };
+}
+function QuartalsReview({ m, teamSicht }) {
+  useHm("strategien"); useHm("reports"); useHm("content");
+  const q = hmQuartal(m);
+  if (!q) return null;
+  const uebernehmen = () => {
+    hmStore.patch("strategien", (a) => { const st = a[m.id]; const wege = { ...st.wege, [st.gewaehlt]: { ...st.wege[st.gewaehlt], saeulen: q.neu } }; return { ...a, [m.id]: { ...st, wege, versionen: [...(st.versionen || []), { v: q.version + 1, datum: HM_HEUTE, diff: q.diff }] } }; });
+    hmEvent(m.id, "strategie", `Strategie Version ${q.version + 1}: ${q.diff.map((d) => `${HM_SAEULEN[d.k].name} ${d.von} auf ${d.zu} Prozent`).join(", ")}`, "Daniel");
+    toast(`Strategie Version ${q.version + 1} gilt ab den nächsten Ideen`);
+  };
+  const letzte = q.versionen[q.versionen.length - 1];
+  return <><div className="hm-sek">Quartal</div>
+    <div className="hm-gruppe">{q.punkte.map((t) => <div key={t} className="hm-reihe"><div className="m"><div className="t" style={{ whiteSpace: "normal" }}>{t}</div></div></div>)}
+      {q.diff.length > 0 && <div className="hm-reihe"><div className="m"><div className="t">Vorschlag für Version {q.version + 1}</div><div className="u" style={{ whiteSpace: "normal" }}>{q.diff.map((d) => `${HM_SAEULEN[d.k].name} ${d.von} auf ${d.zu} Prozent`).join(", ")}</div></div>{teamSicht && <div className="r"><button className="hm-klein-btn" onClick={uebernehmen}>Übernehmen</button></div>}</div>}
+      {letzte && <div className="hm-reihe"><div className="m"><div className="u">Version {letzte.v} seit {hmFmtDate(letzte.datum)}</div></div></div>}
+    </div></>;
+}
+
+Object.assign(window, { hmQuartal, QuartalsReview, hmGlossar, HM_GLOSSAR, hmLeitfaden, Leitfaden, Mitschrift, hmTranskribieren, hmImport, hmAudio16k, hmAuswerten, hmPlan, PlanBisLive, HM_PLAN });

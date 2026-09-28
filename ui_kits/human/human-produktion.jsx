@@ -20,7 +20,7 @@ function hmProdNaechsterMonat() {
 function hmProdMonatName(mon) { return new Date(mon + "-01T12:00").toLocaleDateString("de-AT", { month: "long", year: "numeric" }); }
 
 /* Emoji-Erkennung: Unicode-Eigenschaft, sonst grobe Bereiche */
-const HM_PROD_EMOJI = (() => { try { return new RegExp("\\p{Extended_Pictographic}", "u"); } catch (e) { return /[☀-➿]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/; } })();
+const HM_PROD_EMOJI = (() => { try { return new RegExp("\\p{Extended_Pictographic}", "u"); } catch (e) { return /[\u2600-\u27BF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/; } })();
 
 /* Wörter vergleichbar machen: klein, ohne Satzzeichen, Zahlwörter als Ziffern, 12.400 als 12400 */
 const HM_PROD_ZAHLWORT = { null: "0", zwei: "2", drei: "3", vier: "4", "fünf": "5", sechs: "6", sieben: "7", acht: "8", neun: "9", zehn: "10", elf: "11", "zwölf": "12", zwanzig: "20", "dreißig": "30", vierzig: "40", "fünfzig": "50", sechzig: "60", siebzig: "70", achtzig: "80", neunzig: "90", hundert: "100", tausend: "1000" };
@@ -76,7 +76,7 @@ function hmProdKanaele(w) {
 /* ---------- 1. Ideen-Generator ---------- */
 const HM_PROD_STANDARDWEG = { saeulen: { markt: 25, wissen: 25, meinung: 15, persoenlich: 20, beweise: 15 }, formate: ["talking", "carousel", "qa"], kanaele: ["instagram", "facebook"], bezirke: [], anrede: "Du", anredeRegel: "", graetzl: "" };
 const HM_HOOK_MUSTER = { zahl: "Zahl", frage: "Frage", mythos: "Mythos", graetzl: "Grätzl", ablauf: "Ablauf" };
-const HM_PROD_MUSTER_FORMAT = { zahl: ["carousel", "talking"], frage: ["qa", "talking"], mythos: ["talking", "qa"], graetzl: ["spaziergang", "walkthrough", "talking"], ablauf: ["carousel", "behind", "talking"], objekt: ["walkthrough", "behind"], anlass: [] };
+const HM_PROD_MUSTER_FORMAT = { zahl: ["carousel", "talking"], frage: ["qa", "talking"], mythos: ["talking", "qa"], graetzl: ["spaziergang", "walkthrough", "talking"], ablauf: ["carousel", "behind", "talking"], objekt: ["walkthrough", "behind"], anlass: ["talking", "qa", "carousel"] };
 
 /* Vorlagen je Säule und Muster, je zwei Varianten. x = { B: Ort, J: Jahr, a: (du, sie) } */
 const HM_IDEEN_VORLAGEN = {
@@ -205,23 +205,29 @@ function hmIdeen(m, monat, anzahl = 20) {
     const [titel, hook] = a.t(x);
     if (doppelt(titel)) return;
     const datum = `${J}${a.datum.slice(4)}`;
-    add(s, titel, hook, "anlass", formatFuer("anlass", a.format), `${a.name} am ${hmProdTT(datum)}${a.hinweis ? ", " + a.hinweis : ""}.`, { anlass: datum });
+    add(s, titel, hook, "anlass", formatFuer("anlass", a.format), `${a.name} am ${hmProdTT(datum)}${a.hinweis ? ", " + a.hinweis + "." : ""}`, { anlass: datum });
     an++;
   });
 
   /* 3. Säulen auffüllen: Muster reihum, Orte reihum */
   const ids = Object.keys(HM_SAEULEN);
   const reihe = Object.keys(HM_HOOK_MUSTER);
+  /* Jede Vorlage erst einmal, ein anderer Ort nur, wenn der erste schon im Plan steht. Zweite Runde erlaubt Wiederholung mit anderem Ort. */
+  const benutzt = new Set();
   ids.forEach((s, si) => {
     const V = HM_IDEEN_VORLAGEN[s] || {};
-    fuellen: for (let v = 0; v < 2; v++) for (let p = 0; p < bez.length; p++) for (let j = 0; j < reihe.length; j++) {
-      if (rest[s] <= 0) break fuellen;
-      const mu = reihe[(j + si) % reihe.length];
-      const f = (V[mu] || [])[v];
-      if (!f) continue;
-      const [titel, hook] = f({ ...x, B: bez[p] });
-      if (doppelt(titel)) continue;
-      add(s, titel, hook, mu, formatFuer(mu), `${s === "wissen" ? "Pflichtsäule" : "Säule"} ${HM_SAEULEN[s].name}, ${plan.quote[s]} % deiner Strategie. Muster ${HM_HOOK_MUSTER[mu]}.`);
+    for (const wieder of [false, true]) {
+      fuellen: for (let v = 0; v < 2; v++) for (let p = 0; p < bez.length; p++) for (let j = 0; j < reihe.length; j++) {
+        if (rest[s] <= 0) break fuellen;
+        const mu = reihe[(j + si) % reihe.length];
+        const f = (V[mu] || [])[v];
+        const key = `${s}|${mu}|${v}`;
+        if (!f || (!wieder && benutzt.has(key))) continue;
+        const [titel, hook] = f({ ...x, B: bez[p] });
+        if (doppelt(titel)) continue;
+        add(s, titel, hook, mu, formatFuer(mu), `${s === "wissen" ? "Pflichtsäule" : "Säule"} ${HM_SAEULEN[s].name}, ${plan.quote[s]} % deiner Strategie. Muster ${HM_HOOK_MUSTER[mu]}.`);
+        benutzt.add(key);
+      }
     }
   });
 
@@ -554,7 +560,7 @@ function hmPostingSlots(m, anzahl = 6) {
 /* ---------- 6. Metricool-CSV ---------- */
 /* Quelle: Metricool Help Center, "How to schedule posts in batch with a CSV file in Metricool"
    (help.metricool.com/en/article/how-to-schedule-posts-in-batch-with-a-csv-file-in-metricool-3wihqx)
-   und "Common troubleshooting when importing CSV into Metricool" (…/common-troubleshooting-when-importing-csv-into-metricool-16c2syb),
+   und "Common troubleshooting when importing CSV into Metricool" (help.metricool.com/en/article/common-troubleshooting-when-importing-csv-into-metricool-16c2syb),
    abgerufen 28.09.2026. Belegt: Spalten Text, Date, Time, Draft, je Netzwerk TRUE/FALSE (Facebook, Twitter/X, LinkedIn,
    GBP, Instagram, Pinterest, TikTok, YouTube, Threads, Bluesky), Picture Url 1 bis 10, Alt text picture 1 bis 10,
    Video Thumbnail Url, Video Cover Frame, Brand name, Instagram Post Type (POST, REEL, TRIAL_REEL, STORY),
@@ -619,7 +625,7 @@ const HM_INSIGHTS_SPALTEN = [
   ["kommentare", "Kommentare", ["comments", "kommentare"]],
   ["saves", "Gespeichert", ["saves", "gespeicherte beiträge", "gespeicherte inhalte", "gespeichert", "speicherungen", "saved"]],
 ];
-const hmProdKopfNorm = (s) => String(s || "").replace(/^﻿/, "").toLowerCase().replace(/[„“”"'‚‘’]/g, "").replace(/\s+/g, " ").trim();
+const hmProdKopfNorm = (s) => String(s || "").replace(/^\uFEFF/, "").toLowerCase().replace(/[„“”"'‚‘’]/g, "").replace(/\s+/g, " ").trim();
 function hmProdDatum(s) {
   const t = String(s || "").trim(); let m;
   const p = (x) => String(x).padStart(2, "0");
@@ -640,7 +646,7 @@ function hmProdTyp(s) {
   return "beitrag";
 }
 function hmInsightsLesen(text) {
-  const rows = hmCsv(String(text || "").replace(/^﻿/, ""));
+  const rows = hmCsv(String(text || "").replace(/^\uFEFF/, ""));
   const zuordnen = (kopf) => {
     const h = kopf.map(hmProdKopfNorm); const map = {}; const frei = (i) => !Object.values(map).includes(i);
     HM_INSIGHTS_SPALTEN.forEach(([id, , syn]) => {
@@ -674,8 +680,9 @@ function hmInsightsLesen(text) {
 function hmProdPasst(r, content) {
   const tag = (r.zeit || "").slice(0, 10);
   const erste = hmWortNorm(String(r.text || "").split("\n")[0].split(/[.?]\s/)[0]).join(" ");
-  return content.find((c) => c.termin && tag && c.termin.slice(0, 10) === tag)
-    || content.find((c) => { const t = hmWortNorm(c.titel).join(" "); return t.length > 8 && (erste.includes(t) || hmWortNorm(r.text).join(" ").includes(t)); })
+  const live = content.filter((c) => !["idee", "pausiert"].includes(c.zustand));
+  return live.find((c) => c.termin && tag && c.termin.slice(0, 10) === tag)
+    || live.find((c) => { const t = hmWortNorm(c.titel).join(" "); return t.length > 8 && (erste.includes(t) || hmWortNorm(r.text).join(" ").includes(t)); })
     || null;
 }
 /* Monatseintrag im Format der reports-Einträge. Reichweite ist die Summe je Beitrag (keine Konto-Reichweite).
@@ -705,7 +712,7 @@ function hmReportAus(m, zeilen, monat) {
   regeln.push(proWoche < 3 ? { p: 1, t: `${nf(proWoche)} Posts pro Woche, unter 3. Rhythmus auf 3 bis 5 heben, das verdoppelt das Wachstum` } : { p: 5, t: `Rhythmus gehalten, ${nf(proWoche)} Posts pro Woche` });
   const mitC = paare.filter((x) => x.c);
   const b = window.hmBrand ? hmBrand(mid) : { w: null };
-  if (mitC.length >= 3 && b.w) {
+  if (mitC.length >= Math.max(3, posts / 2) && b.w) {
     const anteil = {}; mitC.forEach(({ c }) => (anteil[c.saeule] = (anteil[c.saeule] || 0) + 1));
     const tief = Object.keys(b.w.saeulen).filter((k) => b.w.saeulen[k] > 0).map((k) => [k, Math.round(((anteil[k] || 0) / mitC.length) * 100)]).sort((a, c2) => a[1] - c2[1])[0];
     if (tief && tief[1] < 10) regeln.push({ p: 2, t: `Säule ${HM_SAEULEN[tief[0]].name} bei ${tief[1]} %, im nächsten Ideen-Set ausgleichen` });
@@ -807,7 +814,7 @@ function hmSelbsttestProduktion() {
   const markus = makler.find((x) => x.id === "markus") || { id: "markus", name: "Markus Leitner", region: "1190 Döbling" };
   const wDu = { anrede: "Du", anredeRegel: "Du auf Instagram und TikTok, Sie auf LinkedIn, Website und im Erstkontakt", bezirke: ["1100 Favoriten", "1120 Meidling"], saeulen: { markt: 15, wissen: 15, meinung: 10, persoenlich: 35, beweise: 25 } };
   const bDu = { makler: { name: "Elif Demir" }, vor: "Elif", nach: "Demir", w: wDu, br: {} };
-  const striche = /[–—]/;
+  const striche = /[\u2013\u2014]/;
 
   T("Säulenplan mit Pflichtsäule", () => { const p = hmSaeulenPlan({ markt: 50, wissen: 5, meinung: 15, persoenlich: 20, beweise: 10 }, 20); const s = Object.values(p.n).reduce((a, b) => a + b, 0); return { ok: s === 20 && p.n.wissen >= 3, detail: JSON.stringify(p.n) }; });
   T("Ideen-Generator Oktober", () => {
@@ -832,7 +839,7 @@ function hmSelbsttestProduktion() {
   });
   T("Sprechsätze", () => { const a = hmSprechSaetze('"Eins."\nRegie\n"Zwei Sätze hier."'); const b = hmSprechSaetze("Kachel 1: Frage\n[Bild]\nKachel 2: Antwort"); return { ok: a.length === 2 && b.length === 2 && b[0] === "Frage", detail: JSON.stringify([a, b]) }; });
   T("Caption gut", () => { const r = hmCaptionCheck("Favoriten in 60 Sekunden: drei Ecken, die sich gerade ändern.\n\nWelche Ecke fehlt? Schreib es mir.\n\n#Favoriten #Immobilien #Wien", wDu, "Grätzl-Check Favoriten"); return { ok: r.every((x) => x.ok), detail: r.filter((x) => !x.ok).map((x) => x.t).join(" ") }; });
-  T("Caption schlecht", () => { const r = hmCaptionCheck("Unglaublich, was hier passiert, das musst du sehen und Sie werden staunen, " + "x".repeat(40) + "! 😀\nSchreib mir. Speichern nicht vergessen.\n#a #b #c #d #e #f #g", wDu, ""); const nein = r.filter((x) => !x.ok).length; return { ok: nein >= 6, detail: `${nein} Punkte offen` }; });
+  T("Caption schlecht", () => { const r = hmCaptionCheck("Unglaublich, was hier passiert, das musst du sehen und Sie werden staunen, " + "x".repeat(40) + "! \uD83D\uDE00\nSchreib mir. Speichern nicht vergessen.\n#a #b #c #d #e #f #g", wDu, ""); const nein = r.filter((x) => !x.ok).length; return { ok: nein >= 6, detail: `${nein} Punkte offen` }; });
   const basis = { id: "test", maklerId: "elif", titel: "Grätzl-Check Favoriten in 60 Sekunden", typ: "reel", saeule: "markt", zustand: "schnitt", kanaele: ["instagram", "facebook"], termin: "2026-10-06T18:00", clips: [],
     skript: '"Favoriten in 60 Sekunden. Drei Ecken, die sich gerade ändern."\n"Erstens der Reumannplatz."\n"Ich bin Elif Demir und kenne jede Straße."\n"Welche Ecke fehlt? Schreib es mir."',
     caption: "Favoriten in 60 Sekunden: drei Ecken, die sich gerade ändern.\n\nWelche Ecke fehlt? Schreib es mir.\n\n#Favoriten #Immobilien #Wien" };

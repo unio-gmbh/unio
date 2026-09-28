@@ -34,6 +34,7 @@ function MaklerHeute({ m, go, oeffne }) {
       <div className="hm-review">{freigaben.map((c) => <div key={c.id}>{c.thumb ? <img src={c.thumb} alt="" onClick={() => oeffne(c.id)} /> : <div className="platz" onClick={() => oeffne(c.id)}></div>}<div className="txt"><div className="t">{c.titel}</div><div className="u">{HM_TYPEN[c.typ]} · geplant {hmDatum(c.termin)}</div><div className="a"><button className="hm-klein-btn" onClick={() => setBeitrag(c.id, { zustand: "freigegeben" }, "freigegeben", m.name)}>Passt so</button><button className="hm-klein-btn hell" onClick={() => oeffne(c.id)}>Ansehen</button></div></div></div>)}</div></>}
     {offenE.length > 0 && <><div className="hm-sek">Einrichtung · {HM_EINRICHTUNG.length - offenE.length} von {HM_EINRICHTUNG.length}<button onClick={() => go("einrichtung")}>Alle ansehen</button></div>
       <div className="hm-gruppe">{offenE.slice(0, 4).map((e) => { const z = st[e.id] || "offen"; const gesperrt = e.braucht && !b.fertig; return <div key={e.id} className="hm-reihe klick" onClick={() => setEin(e.id)}><div className="m"><div className="t">{e.titel}</div><div className="u">{gesperrt ? "Kommt nach deinem Branding" : e.satz}</div></div><div className="r">{z !== "offen" && <span className="hm-status"><i style={{ background: z === "wartet_team" ? "var(--ink)" : "var(--signal)" }}></i>{HM_EZ[z]}</span>}<span className="hm-chev"><Ico n="weiter" /></span></div></div>; })}</div></>}
+    <Community m={m} kompakt />
     {agenda.length > 0 && <><div className="hm-sek">Diese Woche</div>
       <div className="hm-gruppe">{agenda.map((a, i) => <div key={i} className={"hm-reihe" + (a.id ? " klick" : "")} onClick={() => a.id && oeffne(a.id)}><div className="m"><div className="t">{a.t}</div><div className="u">{a.u}</div></div><div className="r">{a.z ? <span className="hm-status"><i style={{ background: hmSpalte(a.z).farbe }}></i>{hmSpalte(a.z).name}</span> : <span className="hm-status"><i style={{ background: "var(--signal)" }}></i>Termin</span>}{a.id && <span className="hm-chev"><Ico n="weiter" /></span>}</div></div>)}</div></>}
     {!next && !freigaben.length && !offenE.length && !agenda.length && <Leer titel="Alles erledigt." text="Wir arbeiten an deinen nächsten Beiträgen." />}
@@ -53,16 +54,22 @@ function TeamHeute({ go, oeffne, oeffneMakler }) {
   Object.entries(branding).forEach(([mid, b2]) => { if (b2.status === "entwurf" || b2.status === "geaendert") auf.push({ k: "Marke", t: "Branding prüfen", m: mid, go: () => oeffneMakler(mid, "marke", "design") }); });
   Object.entries(web).forEach(([mid, w]) => { if (w.status === "pruefung") auf.push({ k: "Website", t: "Prüfen und live schalten", m: mid, go: () => oeffneMakler(mid, "marke", "website") }); });
   content.filter((c) => ["aenderung", "schnitt", "dreh"].includes(c.zustand)).forEach((c) => auf.push({ k: hmSpalte(c.zustand).name, t: c.titel, m: c.maklerId, go: () => oeffne(c.id) }));
-  const warten = content.filter((c) => c.zustand === "freigabe");
+  const ueber = hmFristen().filter((f) => f.ueberfaellig);
+  const warten = content.filter((c) => c.zustand === "freigabe" && !ueber.some((f) => f.id === "fg-" + c.id));
+  const [dreh, setDreh] = React.useState(false);
+  useHm("tickets"); useHm("community");
   const datum = new Date(2026, 8, 28).toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
   return <div>
     <Kopf ueber={datum} titel="Heute" />
+    {ueber.length > 0 && <><div className="hm-sek">Überfällig · {ueber.length}</div><FristenListe makler={makler} oeffne={oeffne} nur={(f) => f.ueberfaellig} /></>}
     <div className="hm-sek">Braucht uns · {auf.length}</div>
     <div className="hm-gruppe">{auf.map((a, i) => <div key={i} className="hm-reihe klick" onClick={a.go}><div className="m"><div className="t">{a.t}</div><div className="u">{a.k} · {name(a.m)}</div></div><div className="r"><span className="hm-chev"><Ico n="weiter" /></span></div></div>)}{!auf.length && <div className="hm-reihe"><div className="m"><div className="u">Nichts offen.</div></div></div>}</div>
     <NachfassListe />
     {warten.length > 0 && <><div className="hm-sek">Wartet auf Makler · {warten.length}</div><div className="hm-gruppe">{warten.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}><div className="m"><div className="t">{c.titel}</div><div className="u">{name(c.maklerId)} · geplant {hmDatum(c.termin)}</div></div><div className="r"><button className="hm-klein-btn hell" onClick={(e) => { e.stopPropagation(); hmEvent(c.maklerId, "erinnerung", `Erinnerung: ${c.titel}`, "Team"); toast("Erinnert"); }}>Erinnern</button><span className="hm-chev"><Ico n="weiter" /></span></div></div>)}</div></>}
-    <div className="hm-sek">Sparpotenzial</div>
+    <div className="hm-sek">Sparpotenzial<button onClick={() => setDreh(true)}>Drehtage bündeln</button></div>
+    <FristenListe makler={makler} oeffne={oeffne} nur={(f) => f.art === "Kontingent"} leer={null} />
     <Empfehlungen makler={makler} kurz />
+    <Sheet offen={dreh} zu={() => setDreh(false)} titel="Drehtage bündeln" breit><DrehtagPlaner zu={() => setDreh(false)} /></Sheet>
   </div>;
 }
 
@@ -178,7 +185,7 @@ function Arbeitsbereich({ m, sub, setSub, oeffne, zurueck, bereich, setBereich }
     <div style={{ marginTop: 8 }}>
       {t === "ueberblick" && <Ueberblick m={m} setBereich={setBereich} oeffne={oeffne} />}
       {t === "inhalte" && <Inhalte2 m={m} teamSicht sub={sub} setSub={setSub} oeffne={oeffne} />}
-      {t === "wirkung" && <Wirkung m={m} oeffne={oeffne} />}
+      {t === "wirkung" && <Wirkung m={m} oeffne={oeffne} teamSicht />}
       {t === "marke" && <Marke m={m} sub={sub} setSub={setSub} go={() => {}} teamSicht />}
       {t === "einrichtung" && <Einrichtung m={m} go={() => {}} teamSicht />}
       {t === "gespraeche" && <Meetings m={m} />}

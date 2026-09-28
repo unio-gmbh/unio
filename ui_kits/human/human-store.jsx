@@ -4,7 +4,7 @@
    Implementierung 2 (später): HTTP gegen Supabase oder Zero-One mit gleicher Schnittstelle. */
 
 const HM_PREFIX = "unio_hm_";
-const HM_SEED_FLAG = "unio_hm_seed_v8";
+const HM_SEED_FLAG = "unio_hm_seed_v9";
 
 function hmMakeLocalAdapter() {
   const subs = new Set();

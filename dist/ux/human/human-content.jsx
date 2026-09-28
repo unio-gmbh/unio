@@ -2,7 +2,7 @@
    Funktionsumfang wie Lucida OS, Aufbau neu: eine Liste, ein Beitrag, ein nächster Schritt. */
 
 const hmContent = (fn) => hmStore.patch("content", (l) => fn(l || []));
-const setBeitrag = (id, patch, text, wer) => { let c0; hmContent((l) => l.map((c) => { if (c.id === id) { c0 = c; return { ...c, ...patch }; } return c; })); if (text && c0) hmEvent(c0.maklerId, "content", `${c0.titel}: ${text}`, wer || "Team"); };
+const setBeitrag = (id, patch, text, wer) => { let c0; if (patch.zustand === "freigabe") patch = { ...patch, freigabeSeit: new Date().toISOString() }; hmContent((l) => l.map((c) => { if (c.id === id) { c0 = c; return { ...c, ...patch }; } return c; })); if (text && c0) hmEvent(c0.maklerId, "content", `${c0.titel}: ${text}`, wer || "Team"); };
 const HM_MAKLER_GRUPPEN = [["idee", "Ideen", ["idee"]], ["arbeit", "In Arbeit", ["planung", "dreh", "schnitt", "aenderung"]], ["freigabe", "Wartet auf dich", ["freigabe"]], ["geplant", "Geplant", ["freigegeben"]], ["online", "Online", ["online"]]];
 
 function Inhalte2({ m, teamSicht, sub, setSub, oeffne }) {
@@ -11,10 +11,15 @@ function Inhalte2({ m, teamSicht, sub, setSub, oeffne }) {
   const [mf, setMf] = React.useState("alle");
   const liste = alle.filter((c) => (m ? c.maklerId === m.id : mf === "alle" || c.maklerId === mf));
   const s = sub || "liste";
+  const [ideen, setIdeen] = React.useState(false);
+  const zielM = m || makler.find((x) => x.id === mf);
+  const monatName = new Date(2026, 9, 1).toLocaleDateString("de-AT", { month: "long" });
+  const csv = () => { const b = hmBrand(zielM.id); const l = liste.filter((c) => ["freigegeben", "geplant", "freigabe"].includes(c.zustand)); hmCsvLaden(`metricool-${b.vor.toLowerCase()}`, hmMetricoolCsv(l, b)); toast(`${l.length} Beiträge als CSV für Metricool`); };
   const neu = () => { const id = "n" + Date.now(); hmContent((l) => [{ id, maklerId: m ? m.id : (mf !== "alle" ? mf : "elif"), titel: "Neue Idee", typ: "reel", saeule: "markt", zustand: "idee", kanaele: ["instagram", "facebook"], skript: "", caption: "", manager: "Daniel Hayden", cutter: "Ahmet", clips: [], kommentare: [], notizen: [], korrekturen: 0, erstellt: "2026-09-28" }, ...l]); oeffne(id); };
   return <div>
-    <Kopf titel={m ? "Inhalte" : "Produktion"} rechts={<><Tabs klein tabs={[["liste", "Liste"], ["kalender", "Kalender"], ["material", m ? "Material" : "Mediathek"]]} akt={s} set={setSub} /><Btn knob="plus" onClick={neu}>Idee</Btn></>} />
-    {!m && s !== "material" && <div className="hm-row" style={{ marginTop: 14 }}><select className="hm-sel" value={mf} onChange={(e) => setMf(e.target.value)} aria-label="Makler"><option value="alle">Alle Makler</option>{makler.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>}
+    <Kopf titel={m ? "Inhalte" : "Produktion"} rechts={<><Tabs klein tabs={[["liste", "Liste"], ["kalender", "Kalender"], ["material", m ? "Material" : "Mediathek"]]} akt={s} set={setSub} />{zielM && <button className="hm-klein-btn hell" onClick={() => setIdeen(true)}>Ideen für {monatName}</button>}<Btn knob="plus" onClick={neu}>Idee</Btn></>} />
+    {!m && s !== "material" && <div className="hm-row" style={{ marginTop: 14, gap: 14 }}><select className="hm-sel" value={mf} onChange={(e) => setMf(e.target.value)} aria-label="Makler"><option value="alle">Alle Makler</option>{makler.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select>{zielM && <button className="hm-link" onClick={csv}>CSV für Metricool</button>}</div>}
+    {zielM && <Sheet offen={ideen} zu={() => setIdeen(false)} titel={`Ideen für ${monatName}`} unter={zielM.name} breit><IdeenGenerator m={zielM} zu={() => setIdeen(false)} /></Sheet>}
     {s === "liste" && <InhaltListe liste={liste} teamSicht={teamSicht || !m} oeffne={oeffne} alleMakler={!m} />}
     {s === "kalender" && <InhalteKalender liste={liste} m={m} oeffne={oeffne} />}
     {s === "material" && <Mediathek m={m} teamSicht={teamSicht} />}
@@ -178,23 +183,25 @@ function FreigabenQ({ m, teamSicht, oeffne }) {
   </div>;
 }
 
-function Wirkung({ m, oeffne }) {
+function Wirkung({ m, oeffne, teamSicht }) {
   const reports = ((useHm("reports") || {})[m.id]) || [];
+  const [imp, setImp] = React.useState(false);
+  const importKnopf = teamSicht ? <><button className="hm-klein-btn hell" onClick={() => setImp(true)}>Insights importieren</button><Sheet offen={imp} zu={() => setImp(false)} titel="Insights importieren" unter={m.name} breit><ReportImport m={m} zu={() => setImp(false)} /></Sheet></> : null;
   const alle = useHm("content") || [];
   const [i, setI] = React.useState(reports.length - 1);
   const online = alle.filter((c) => c.maklerId === m.id && c.zustand === "online" && c.kz).sort((a, b) => b.kz.reach - a.kz.reach);
   const r = reports[i], prev = reports[i - 1];
-  if (!r) return <div><Kopf titel="Wirkung" /><Leer titel="Die ersten Zahlen kommen nach dem ersten Monat online." text="Reichweite, Follower, gespeicherte und geteilte Beiträge. Automatisch am Monatsersten." /></div>;
+  if (!r) return <div><Kopf titel="Wirkung" rechts={importKnopf} /><Leer titel="Die ersten Zahlen kommen nach dem ersten Monat online." text="Reichweite, Follower, gespeicherte und geteilte Beiträge. Automatisch am Monatsersten." /></div>;
   const d = (k) => prev ? Math.round((r[k] - prev[k]) / prev[k] * 100) : null;
   return <div>
-    <Kopf titel="Wirkung" rechts={<Tabs klein tabs={reports.map((x, j) => [String(j), new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "long" })])} akt={String(i)} set={(x) => setI(+x)} />} />
+    <Kopf titel="Wirkung" rechts={<><Tabs klein tabs={reports.map((x, j) => [String(j), new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "long" })])} akt={String(i)} set={(x) => setI(+x)} />{importKnopf}</>} />
     <div className="hm-wz">{[["reach", "Erreicht"], ["follower", "Follower"], ["saves", "Gespeichert"], ["sends", "Geteilt"]].map(([k, t]) => { const v = d(k); return <div key={k}><b>{r[k].toLocaleString("de-AT")}</b><span>{t}{v != null && <em style={{ color: v >= 0 ? "var(--positive)" : "var(--signal-deep)" }}>{v >= 0 ? "+" : ""}{v} %</em>}</span></div>; })}</div>
     {reports.length > 1 && <><div className="hm-sek">Verlauf</div><div className="hm-gruppe" style={{ padding: "8px 16px 12px" }}><div style={{ maxWidth: 520 }}><Sparkline data={reports.map((x) => x.reach)} aktiv={i} /></div><div className="hm-row" style={{ gap: 0, justifyContent: "space-between", maxWidth: 520 }}>{reports.map((x) => <span key={x.monat} className="hm-daten">{new Date(x.monat + "-01").toLocaleDateString("de-AT", { month: "short" })}</span>)}</div></div></>}
     <div className="hm-sek">Beiträge nach Reichweite</div>
     <div className="hm-gruppe">{online.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}>{c.thumb ? <img className="bild" src={c.thumb} alt="" /> : <span className="bild"></span>}<div className="m"><div className="t">{c.titel}</div><div className="u">{HM_TYPEN[c.typ]} · {hmDatum(c.termin)}</div></div><div className="r"><span className="hm-daten">{c.kz.reach.toLocaleString("de-AT")} · {c.kz.saves} gesp. · {c.kz.sends} geteilt</span><span className="hm-chev"><Ico n="weiter" /></span></div></div>)}</div>
     <div className="hm-sek">Was wir daraus machen</div>
     <div className="hm-gruppe">{r.empf.map((e) => <div key={e} className="hm-reihe"><div className="m"><div className="t" style={{ whiteSpace: "normal" }}>{e}</div></div></div>)}</div>
-    {reports.length >= 3 && <><div className="hm-sek">Quartal</div><div className="hm-gruppe">{[["Reichweite", `plus ${Math.round((reports[2].reach - reports[0].reach) / reports[0].reach * 100)} Prozent in drei Monaten`], ["Stärkstes Format", "Grätzl-Spaziergang"], ["Nächster Schritt", "Säule Markt anheben, Review mit Daniel steht an"]].map(([t, v]) => <div key={t} className="hm-reihe"><div className="m"><div className="t">{t}</div><div className="u" style={{ whiteSpace: "normal" }}>{v}</div></div></div>)}</div></>}
+    <QuartalsReview m={m} teamSicht={teamSicht} />
   </div>;
 }
 
@@ -294,7 +301,12 @@ function Abstimmung({ c, zurueck }) {
   const frist = c.termin ? (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10); })() : "";
   const frei = 2 - (c.korrekturen || 0);
   const stufe = { idee: "Noch eine Idee", planung: "Das Team schreibt das Skript", dreh: "Wird gedreht", schnitt: "Wird geschnitten", aenderung: "Deine Änderung wird umgesetzt", freigabe: "Wartet auf dich", freigegeben: "Eingeplant", online: "Online", pausiert: "Pausiert" }[c.zustand];
-  const senden = () => { set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, kommentare: [...(c.kommentare || []), { von: b.makler.name, t: Date.now(), text: wunsch }] }, "Änderung gewünscht"); setWunsch(""); setAendern(false); toast("Ist beim Team. Du bekommst die neue Fassung zur Abstimmung."); };
+  const kostet = frei <= 0;
+  const senden = () => {
+    set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, kostenpflichtig: kostet || c.kostenpflichtig, kommentare: [...(c.kommentare || []), { von: b.makler.name, t: Date.now(), text: wunsch + (kostet ? " (kostenpflichtig)" : "") }] }, kostet ? "kostenpflichtige Änderung gewünscht" : "Änderung gewünscht");
+    if (kostet) hmStore.patch("tickets", (l) => [...(l || []), { id: "t" + Date.now(), maklerId: c.maklerId, titel: `Aufwand schätzen: ${c.titel}`, owner: "Daniel", zustand: "wartet_team", faellig: HM_HEUTE, text: `Dritte Runde: ${wunsch}` }]);
+    setWunsch(""); setAendern(false); toast(kostet ? "Wir nennen dir vorher den Aufwand." : "Ist beim Team. Du bekommst die neue Fassung zur Abstimmung.");
+  };
   return <div>
     <button className="hm-zurueck" onClick={zurueck}><Ico n="zurueck" />Inhalte</button>
     <div className="hm-abst">
@@ -305,9 +317,10 @@ function Abstimmung({ c, zurueck }) {
         <div className="hm-abst-block"><div className="hm-mono">Geht online</div><div className="v">{hmDatumLang(c.termin)}</div><div className="u">auf {hmKanalText(c.kanaele)}</div></div>
         <div className="hm-abst-block"><div className="hm-mono">Worum es geht</div><div className="v">{hook || c.titel}</div><div className="u">{HM_TYPEN[c.typ]} aus deiner Säule {HM_SAEULEN[c.saeule] ? HM_SAEULEN[c.saeule].name : ""}</div></div>
         {c.caption && <div className="hm-abst-block"><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Text zum Beitrag</div>{c.zustand === "freigabe" && <button className="hm-link" onClick={() => setCapEdit(!capEdit)}>{capEdit ? "Fertig" : "Selbst anpassen"}</button>}</div>{capEdit ? <textarea className="hm-skript" rows={5} value={c.caption} onChange={(e) => set({ caption: e.target.value })} /> : <div className="cap">{c.caption}</div>}</div>}
-        {c.zustand === "freigabe" && !aendern && <div className="hm-abst-aktion"><Btn onClick={() => { set({ zustand: "freigegeben" }, "freigegeben"); toast(`Eingeplant für ${hmDatumLang(c.termin)}`); }}>Passt so</Btn><button className="hm-link" disabled={frei <= 0} onClick={() => setAendern(true)}>Etwas ändern</button><div className="hm-mono" style={{ width: "100%" }}>{frei > 0 ? `Noch ${frei} ${frei === 1 ? "Änderungswunsch" : "Änderungswünsche"} frei.` : "Beide Änderungswünsche sind verbraucht, weitere sind kostenpflichtig."} Wenn du nichts sagst, geht der Beitrag am {hmDatum(frist)} so online.</div></div>}
+        {c.zustand === "freigabe" && !aendern && <div className="hm-abst-aktion"><Btn onClick={() => { set({ zustand: "freigegeben", freigabe: { von: b.makler.name, zeit: new Date().toISOString() } }, "abgestimmt: passt so"); toast(`Eingeplant für ${hmDatumLang(c.termin)}`); }}>Passt so</Btn><button className="hm-link" onClick={() => setAendern(true)}>{kostet ? "Weitere Änderung" : "Etwas ändern"}</button><div className="hm-mono" style={{ width: "100%" }}>{frei > 0 ? `Noch ${frei} ${frei === 1 ? "Änderungswunsch" : "Änderungswünsche"} frei.` : "Beide Änderungswünsche sind verbraucht. Jede weitere Runde kostet 150 € je Stunde, wir nennen dir vorher den Aufwand."} Wenn du nichts sagst, geht der Beitrag am {hmDatum(frist)} so online.</div></div>}
         {aendern && <div className="hm-abst-aktion"><div className="hm-chips">{["Anderer Einstieg", "Kürzer", "Anderes Bild", "Text anpassen", "Anderer Termin"].map((x) => <button key={x} className="hm-chip" onClick={() => setWunsch((w) => (w ? w + ", " : "") + x)}>{x}</button>)}</div><textarea className="hm-skript" rows={3} autoFocus value={wunsch} onChange={(e) => setWunsch(e.target.value)} placeholder="Was soll anders sein? Ein Satz reicht." /><div className="hm-row"><Btn disabled={!wunsch.trim()} onClick={senden}>An das Team</Btn><button className="hm-link" onClick={() => setAendern(false)}>Abbrechen</button></div></div>}
         {c.zustand === "idee" && <div className="hm-abst-aktion"><Btn onClick={() => set({ zustand: "planung" }, "Idee gewählt")}>Machen wir</Btn><button className="hm-link" onClick={() => set({ zustand: "pausiert" }, "Idee verworfen")}>Lieber nicht</button></div>}
+        {c.freigabe && ["freigegeben", "online"].includes(c.zustand) && <div className="hm-abst-block"><div className="hm-mono">Abgestimmt</div><div className="u">Von {c.freigabe.von} am {new Date(c.freigabe.zeit).toLocaleString("de-AT", { dateStyle: "medium", timeStyle: "short" })}{c.freigabe.auto ? ", automatisch nach Ablauf der Frist" : ""}</div></div>}
         {c.zustand === "online" && c.kz && <div className="hm-abst-block"><div className="hm-mono">Wirkung bisher</div><div className="v">{c.kz.reach.toLocaleString("de-AT")} erreicht</div><div className="u">{c.kz.saves} gespeichert · {c.kz.sends} geteilt · {c.kz.likes} Likes</div></div>}
         <div className="hm-abst-block"><div className="hm-mono">Verlauf</div><Verlauf c={c} /></div>
         <div className="hm-abst-block"><div className="hm-mono">Gespräch mit dem Team</div><Gespraech c={c} set={set} von={b.makler.name} platzhalter="Frage oder Hinweis an das Team" /></div>
@@ -321,7 +334,9 @@ function Werkstatt({ c, zurueck }) {
   const b = hmBrand(c.maklerId);
   const set = (patch, text) => setBeitrag(c.id, patch, text, "Team");
   const [tab, setTab] = React.useState(c.zustand === "schnitt" || c.zustand === "aenderung" ? "schnitt" : c.zustand === "freigabe" || c.zustand === "freigegeben" ? "text" : "skript");
-  const bereit = !!(c.caption && c.termin && (c.kanaele || []).length && ((c.schnitt && c.schnitt.length) || (c.typ !== "reel" && ((c.clips || []).length || c.thumb))));
+  const abgabe = hmAbgabeCheck(c, b, clips);
+  const bereit = abgabe.bereit;
+  const [grafik, setGrafik] = React.useState(false);
   const aktion = {
     idee: [c.skript ? "Zum Dreh" : "Skript schreiben", () => c.skript ? set({ zustand: "dreh" }, "bereit zum Dreh") : setTab("skript"), false],
     planung: ["Zum Dreh", () => set({ zustand: "dreh" }, "bereit zum Dreh"), !c.skript],
@@ -362,13 +377,19 @@ function Werkstatt({ c, zurueck }) {
           <label><span>Betreut von</span><select value={c.manager} onChange={(e) => set({ manager: e.target.value })}>{HM_TEAM.map((t) => <option key={t.id}>{t.name}</option>)}</select></label>
           <label><span>Schneidet</span><select value={c.cutter} onChange={(e) => set({ cutter: e.target.value })}>{[...new Set(["Automatisch", ...HM_TEAM.map((t) => t.name), c.cutter].filter(Boolean))].map((t) => <option key={t}>{t}</option>)}</select></label>
           <label><span>Drehtag</span><input type="date" value={c.drehtag || ""} onChange={(e) => set({ drehtag: e.target.value })} /></label>
+          <label><span>Drehort</span><select value={c.drehort || "Objekt"} onChange={(e) => set({ drehort: e.target.value })}>{["Objekt", "Grätzl", "Büro", "Studio", "Beim Kunden"].map((x) => <option key={x}>{x}</option>)}</select></label>
+          <label><span>Stil</span><select value={c.stil || "Vlog, natürlich"} onChange={(e) => set({ stil: e.target.value })}>{["Vlog, natürlich", "Erklärend", "Kundenstimme", "Rundgang"].map((x) => <option key={x}>{x}</option>)}</select></label>
           <label><span>Geht online</span><input type="datetime-local" value={(c.termin || "").slice(0, 16)} onChange={(e) => set({ termin: e.target.value })} /></label>
+          {!c.termin && <div className="kan"><span>Vorschlag</span><div>{hmPostingSlots(b.makler, 2).map((x) => <button key={x.iso} title={x.grund} onClick={() => set({ termin: x.iso })}>{hmDatum(x.iso)} {x.iso.slice(11, 16)}</button>)}</div></div>}
           <div className="kan"><span>Kanäle</span><div>{[["instagram", "IG"], ["facebook", "FB"], ["linkedin", "LI"], ["tiktok", "TT"]].map(([k, t]) => <button key={k} className={(c.kanaele || []).includes(k) ? "on" : ""} title={HM_KANAELE[k].name} onClick={() => set({ kanaele: (c.kanaele || []).includes(k) ? c.kanaele.filter((x) => x !== k) : [...(c.kanaele || []), k] })}>{t}</button>)}</div></div>
           <div><span>Prognose</span><b title={score.faktoren.map((f) => `${f.t} ${f.p}`).join(" · ")}>{score.score} von 100</b></div>
-          <div><span>Änderungswünsche</span><b>{c.korrekturen || 0} von 2</b></div>
+          <div><span>Änderungswünsche</span><b>{c.korrekturen || 0} von 2{c.kostenpflichtig ? ", weitere kostenpflichtig" : ""}</b></div>
         </div></div>
+        {["schnitt", "aenderung", "freigabe"].includes(c.zustand) && <div><div className="hm-mono" style={{ margin: "4px 2px 8px" }}>Abgabe-Check · {abgabe.punkte.filter((x) => x.ok).length} von {abgabe.punkte.length}</div><AbgabeCheck c={c} /></div>}
+        {c.typ !== "reel" && <button className="hm-klein-btn hell" style={{ alignSelf: "flex-start" }} onClick={() => setGrafik(true)}>Grafiken erzeugen</button>}
         <div><div className="hm-mono" style={{ margin: "4px 2px 8px" }}>Verlauf</div><Verlauf c={c} /></div>
       </aside>
+      <Sheet offen={grafik} zu={() => setGrafik(false)} titel="Grafiken" unter={c.titel} breit><GrafikGenerator m={b.makler} c={c} zu={() => setGrafik(false)} /></Sheet>
     </div>
   </div>;
 }
@@ -376,13 +397,15 @@ function Werkstatt({ c, zurueck }) {
 function SkriptTab({ c, set, b }) {
   const vorlagen = useHm("vorlagen") || [];
   const [check, setCheck] = React.useState(null);
+  const [tp, setTp] = React.useState(false);
   const sz = hmSprechzeit(c.skript);
   return <div className="hm-stack">
     <div className="hm-row" style={{ justifyContent: "space-between" }}>
       <span className="hm-daten">{sz.woerter} Wörter gesprochen · {sz.sekunden} s</span>
-      <div className="hm-row" style={{ gap: 8 }}><select className="hm-sel" value="" onChange={(e) => { const v = vorlagen.find((x) => x.id === e.target.value); if (v) set({ skript: v.text }); }}><option value="">Aus Vorlage</option>{vorlagen.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}</select><button className="hm-klein-btn hell" onClick={() => setCheck(hmSkriptCheck(c.skript, b))}>Prüfen</button></div>
+      <div className="hm-row" style={{ gap: 8 }}><select className="hm-sel" value="" onChange={(e) => { const v = vorlagen.find((x) => x.id === e.target.value); if (v) set({ skript: v.text }); }}><option value="">Aus Vorlage</option>{vorlagen.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}</select><button className="hm-klein-btn hell" onClick={() => setCheck(hmSkriptCheck(c.skript, b))}>Prüfen</button><button className="hm-klein-btn hell" disabled={!sz.woerter} onClick={() => setTp(true)}>Teleprompter</button></div>
     </div>
     <textarea className="hm-skript gross" rows={12} value={c.skript} onChange={(e) => { set({ skript: e.target.value }); setCheck(null); }} placeholder={'"Der erste Satz ist der Einstieg, unter 12 Wörtern."\n"Dann die Aussage."\n"Zum Schluss eine Frage."\n\nGesprochenes in Anführungszeichen, Regieanweisungen ohne.'} />
+    {tp && <Teleprompter skript={c.skript} zu={() => setTp(false)} />}
     {check && <div className="hm-check">{check.map((x, i) => <div key={i} className={x.ok ? "ok" : "no"}><i>{x.ok ? <Ico n="haken" g={12} /> : <Ico n="x" g={12} />}</i>{x.t}</div>)}</div>}
     {b.w && <div className="hm-stack" style={{ gap: 6 }}><div className="hm-mono">Einstiege aus der Strategie von {b.vor}</div><div className="hm-chips">{b.w.hooks.slice(0, 5).map((h) => <button key={h} className="hm-chip" onClick={() => set({ skript: `"${h}"\n` + (c.skript || "") })}>{h}</button>)}</div></div>}
   </div>;
@@ -406,8 +429,15 @@ function TextTab({ c, set, b }) {
   return <div className="hm-stack">
     <div className="hm-row" style={{ justifyContent: "space-between" }}><span className="hm-daten">{(c.caption || "").length} Zeichen</span><button className="hm-klein-btn hell" onClick={() => set({ caption: hmCaption(c, b.br, b.w) })}>Aus Skript und Marke</button></div>
     <textarea className="hm-skript gross" rows={8} value={c.caption || ""} onChange={(e) => set({ caption: e.target.value })} placeholder="Die erste Zeile entscheidet. Danach eine Frage, dann Hashtags." />
-    <div className="hm-mono">Anrede und Ton kommen aus der Marke von {b.vor}: {b.w ? b.w.anredeRegel : "noch offen"}.</div>
+    {c.caption && <div className="hm-pruefliste" style={{ fontSize: 13 }}>{hmCaptionCheck(c.caption, b.w, c.titel, (c.kanaele || [])[0]).map((x) => <div key={x.t} className={x.ok ? "ok" : "nein"}><Ico n={x.ok ? "haken" : "x"} />{x.t}</div>)}</div>}
+    <div className="hm-mono">Anrede und Ton aus der Marke von {b.vor}: {b.w ? b.w.anredeRegel : "noch offen"}.</div>
   </div>;
 }
 
-Object.assign(window, { Abstimmung, Werkstatt, Gespraech, Verlauf, Vorschau, SkriptTab, SchnittTab, TextTab, hmDatumLang, InhaltListe, HM_LISTEN_GRUPPEN, Inhalte2, Board, Karte, Beitrag, InhalteKalender, FreigabenQ, Wirkung, Assistent, setBeitrag });
+/* Automatik beim Start: abgelaufene Abstimmungsfristen (Tag vor dem Termin) werden protokolliert freigegeben */
+function hmAutomatik() {
+  const faellig = (hmStore.get("content") || []).filter((c) => c.zustand === "freigabe" && c.termin && (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return hmIsoLokal(d) < HM_HEUTE; })());
+  faellig.forEach((c) => setBeitrag(c.id, { zustand: "freigegeben", freigabe: { von: "Automatisch", zeit: new Date().toISOString(), auto: true } }, "automatisch freigegeben, Frist abgelaufen", "System"));
+  return faellig.length;
+}
+Object.assign(window, { hmAutomatik, Abstimmung, Werkstatt, Gespraech, Verlauf, Vorschau, SkriptTab, SchnittTab, TextTab, hmDatumLang, InhaltListe, HM_LISTEN_GRUPPEN, Inhalte2, Board, Karte, Beitrag, InhalteKalender, FreigabenQ, Wirkung, Assistent, setBeitrag });

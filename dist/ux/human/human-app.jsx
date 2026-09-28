@@ -86,4 +86,5 @@ function App() {
 }
 
 hmSeed();
+hmAutomatik();
 hmPortraitsLaden().finally(() => ReactDOM.createRoot(document.getElementById("root")).render(<App />));
