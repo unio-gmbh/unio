@@ -72,7 +72,7 @@ function Beitrag({ id, zurueck, teamSicht }) {
         <input className="hm-titel-edit" value={c.titel} onChange={(e) => set({ titel: e.target.value })} aria-label="Titel" />
         <div className="hm-schrittleiste">{[1, 2, 3, 4].map((n) => <i key={n} className={fertig[n] ? "ok" : n === aktuell ? "akt" : ""}></i>)}</div>
         <div style={{ marginTop: 10 }}>{HM_PHASEN.map((x) => { const K = P[x.id]; return <section key={x.id} className={"hm-abschnitt" + (fertig[x.id] ? " ok" : "")}>
-          <button className="kopf" onClick={() => setOffen(offen === x.id ? 0 : x.id)}><i>{fertig[x.id] ? "✓" : x.id}</i><span className="n"><b>{x.name}</b><small>{zus[x.id]}</small></span><span className="hm-chev">{offen === x.id ? "–" : "+"}</span></button>
+          <button className="kopf" onClick={() => setOffen(offen === x.id ? 0 : x.id)}><i>{fertig[x.id] ? "✓" : x.id}</i><span className="n"><b>{x.name}</b><small>{zus[x.id]}</small></span><span className="hm-chev" style={{ display: "inline-block", transform: offen === x.id ? "rotate(-90deg)" : "rotate(90deg)" }}>›</span></button>
           {offen === x.id && <div className="body"><K c={c} set={set} b={b} clips={clips} teamSicht={teamSicht} weiter={() => { if (x.id === 1 && ["idee", "planung"].includes(c.zustand)) set({ zustand: "dreh" }, "Skript fertig, bereit zum Dreh"); setOffen(x.id + 1); }} /></div>}
         </section>; })}</div>
       </div>
