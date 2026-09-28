@@ -478,11 +478,14 @@ function Tickets({ makler }) {
   );
 }
 
-function Empfehlungen({ makler, nurMakler }) {
-  const drehtage = useHm("drehtage") || []; const posts = useHm("posts") || []; const auftraege = useHm("auftraege") || []; const ideen = useHm("ideen") || [];
+/* Beiträge aus dem Content Board in die Form der Engine bringen */
+const hmPostsAusContent = (content) => (content || []).map((c) => ({ id: c.id, maklerId: c.maklerId, kanal: (c.kanaele || ["instagram"])[0], format: c.typ === "reel" ? "talking" : "carousel", titel: c.titel, termin: (c.termin || "2026-10-30").slice(0, 10), frist: c.termin ? (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10); })() : "", zustand: { online: "veroffentlicht", freigabe: "freigabe", schnitt: "im_schnitt", freigegeben: "geplant" }[c.zustand] || "entwurf", gesicht: c.typ === "reel", kz: c.kz }));
+function Empfehlungen({ makler, nurMakler, kurz }) {
+  const drehtage = useHm("drehtage") || []; const posts = hmPostsAusContent(useHm("content")); const auftraege = useHm("auftraege") || []; const ideen = useHm("ideen") || [];
   const status = useHm("empf_status") || {};
   const alle = useMemo(() => hmEngine({ drehtage, posts, makler, auftraege, ideen }), [drehtage, posts, makler, auftraege, ideen]);
-  const list = alle.filter((e) => nurMakler ? (e.maklerId === nurMakler && e.fuer !== "team") : e.fuer !== "makler");
+  const list0 = alle.filter((e) => nurMakler ? (e.maklerId === nurMakler && e.fuer !== "team") : e.fuer !== "makler");
+  const list = kurz ? list0.filter((e) => !status[e.id]).slice(0, 2) : list0;
   const setS = (id, s) => hmStore.patch("empf_status", (all) => ({ ...(all || {}), [id]: s }));
   const ausfuehren = (e) => {
     if (e.aktion && e.aktion.typ === "merge") { const a = drehtage.find((d) => d.id === e.aktion.a), b = drehtage.find((d) => d.id === e.aktion.b); hmStore.patch("drehtage", (l) => l.filter((d) => d.id !== b.id).map((d) => d.id === a.id ? { ...d, slots: [...d.slots, ...b.slots.map((s) => ({ ...s, von: "13:00", bis: "16:00" }))], status: "geplant", location: d.location === "offen" ? `Region ${d.region}, Ort folgt` : d.location } : d)); b.slots.forEach((s) => hmEvent(s.maklerId, "drehtag", `Drehtag auf ${hmFmtDate(a.datum)} zusammengelegt (Sammel-Drehtag ${a.region})`, "Team")); }
@@ -494,7 +497,7 @@ function Empfehlungen({ makler, nurMakler }) {
   const summe = offen.reduce((n, e) => n + (HM_REGELN.find((r) => r.id === e.regel) || {}).ersparnis * (typeof (HM_REGELN.find((r) => r.id === e.regel) || {}).ersparnis === "number" && (HM_REGELN.find((r) => r.id === e.regel) || {}).einheit.startsWith("h") ? 1 : 0), 0);
   return (
     <div>
-      {!nurMakler && <><div className="hm-mono">Empfehlungs-Engine · {HM_REGELN.length} Regeln · {offen.length} offen</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{offen.length ? `${summe.toFixed(1).replace(".", ",")} Stunden liegen auf dem Tisch.` : "Nichts liegt auf dem Tisch."}</h2><p className="hm-sub">Jede Empfehlung ist eine Rechnung aus den Daten: Regel, Betroffene, Ersparnis, eine Handlung. Ablehnen speichert den Grund und verbessert die Regel.</p></>}
+      {!nurMakler && !kurz && <><div className="hm-mono">Empfehlungs-Engine · {HM_REGELN.length} Regeln · {offen.length} offen</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{offen.length ? `${summe.toFixed(1).replace(".", ",")} Stunden liegen auf dem Tisch.` : "Nichts liegt auf dem Tisch."}</h2><p className="hm-sub">Jede Empfehlung ist eine Rechnung aus den Daten: Regel, Betroffene, Ersparnis, eine Handlung. Ablehnen speichert den Grund und verbessert die Regel.</p></>}
       <div className="hm-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", marginTop: nurMakler ? 20 : 24 }}>
         {list.map((e) => { const s = status[e.id]; const R = HM_REGELN.find((r) => r.id === e.regel) || {}; return <div key={e.id} className={"hm-card" + (s ? "" : " hm-dark")} style={{ display: "flex", flexDirection: "column", gap: 10, opacity: s ? .7 : 1 }}><div className="hm-row" style={{ justifyContent: "space-between" }}><span className="hm-mono">{R.name || e.regel}{e.maklerId && !nurMakler ? ` · ${(makler.find((m) => m.id === e.maklerId) || {}).name}` : ""}</span>{s && <Pill z={s === "angenommen" ? "fertig" : "blockiert"} />}</div><div style={{ fontSize: 19, letterSpacing: "-.01em" }}>{e.titel}</div><div style={{ fontSize: 14, lineHeight: 1.5, color: s ? "var(--text-muted)" : "var(--text-inverse-muted)" }}>{e.text}</div><div className="hm-mono" style={{ color: s ? "" : "var(--signal)" }}>Ersparnis: {e.ersparnis}</div>{!s && <div className="hm-row" style={{ marginTop: 4 }}><Btn paper onClick={() => ausfuehren(e)}>Annehmen</Btn><button className="hm-chip" style={{ color: "var(--paper)", boxShadow: "inset 0 0 0 1px rgba(247,245,241,.3)" }} onClick={() => { setS(e.id, "abgelehnt"); toast("Abgelehnt, Grund gespeichert"); }}>Ablehnen</button></div>}</div>; })}
         {!list.length && <div className="hm-empty">Keine Regel feuert.</div>}

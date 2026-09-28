@@ -4,7 +4,7 @@
    Implementierung 2 (später): HTTP gegen Supabase oder Zero-One mit gleicher Schnittstelle. */
 
 const HM_PREFIX = "unio_hm_";
-const HM_SEED_FLAG = "unio_hm_seed_v5";
+const HM_SEED_FLAG = "unio_hm_seed_v7";
 
 function hmMakeLocalAdapter() {
   const subs = new Set();
@@ -100,6 +100,7 @@ function hmSeed() {
     { id: "n2", maklerId: "markus", schrittId: "markus-branding", von: "Markus Leitner", t: Date.now() - 3600e3 * 28, text: "Ja, dunkel passt. Der Amber-Ton darf etwas zurückhaltender sein." },
   ]);
   if (window.hmSeedMore) window.hmSeedMore();
+  if (window.hmSeedOS) window.hmSeedOS();
   localStorage.setItem(HM_SEED_FLAG, "1");
 }
 
