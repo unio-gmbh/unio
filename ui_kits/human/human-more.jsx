@@ -2,7 +2,7 @@
    Kalender, Aufträge und Shop, Report und Review, Nachrichten; Team: Produktion, Kalender,
    Tickets, Empfehlungs-Engine, Einstellungen. Plus Seed für diese Sammlungen. */
 
-const HM_HEUTE = "2026-09-23";
+const HM_HEUTE = "2026-09-28";
 const hmISO = (y, m, d) => `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 const hmTage = (a, b) => Math.round((new Date(b) - new Date(a)) / 864e5);
 const hmMonatName = (iso) => new Date(iso).toLocaleDateString("de-AT", { month: "long", year: "numeric" });

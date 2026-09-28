@@ -47,20 +47,23 @@ function EinrichtungSheet({ id, m, zu, go, teamSicht }) {
 }
 
 function EVertrag({ m, zu }) {
-  const { st, setZ } = useEinrichtung(m.id);
+  const { st, daten, setZ, setD } = useEinrichtung(m.id);
   const abo = HM_ABOS.find((a) => a.name === m.abo) || HM_ABOS[0];
-  const [gelesen, setGelesen] = React.useState(st.vertrag === "fertig");
-  const [name, setName] = React.useState(st.vertrag === "fertig" ? m.name : "");
-  if (st.vertrag === "fertig") return <Leer titel="Unterschrieben." text={`${abo.name}, ${abo.preis} € pro Monat, ${abo.note}. Das PDF liegt in deinen Unterlagen.`} />;
+  const sig = daten.vertrag || {};
+  const [gelesen, setGelesen] = React.useState(false);
+  const [name, setName] = React.useState("");
+  const T = hmVertragText(m, abo);
+  if (st.vertrag === "fertig") return <div className="hm-stack">
+    <Leer titel="Unterschrieben." text={sig.zeit ? `Von ${sig.name} am ${new Date(sig.zeit).toLocaleString("de-AT", { dateStyle: "long", timeStyle: "short" })}.` : `${abo.name}, ${abo.preis} € pro Monat.`} />
+    {sig.hash && <div className="hm-daten" style={{ textAlign: "center", wordBreak: "break-all" }}>Prüfsumme {sig.hash.slice(0, 16)}…{sig.hash.slice(-8)}</div>}
+    <button className="hm-link" style={{ alignSelf: "center" }} onClick={() => hmVertragPdf(m, abo, sig.hash ? sig : { name: m.name, zeit: "2026-09-22T10:00", hash: "vor Einführung der Prüfsumme unterschrieben" })}>Als PDF sichern</button>
+  </div>;
+  const unterschreiben = async () => { const zeit = new Date().toISOString(); const hash = await hmSha256(JSON.stringify({ T, name: name.trim(), zeit })); setD("vertrag", { name: name.trim(), zeit, hash }); setZ("vertrag", "fertig", "Vertrag digital unterschrieben"); toast("Unterschrieben. Willkommen bei UNIO."); zu(); };
   return <div className="hm-stack">
-    <div className="hm-card">
-      <div className="hm-mono">Das Wichtigste auf einen Blick</div>
-      <div className="hm-list" style={{ marginTop: 6 }}>{[["Paket", abo.name], ["Preis", `${abo.preis} € pro Monat, netto`], ["Laufzeit", abo.note], ["Leistung pro Monat", `${abo.kontingent.videos} Videos, ${abo.kontingent.fotos} Fotos, ${abo.kontingent.grafiken} Grafiken, ${abo.drehtage} Drehtag`], ["Rechte", "Alle Inhalte gehören dir ab Produktion"], ["Korrekturen", "Zwei Runden je Beitrag inklusive"]].map(([t, v]) => <Zeile key={t} titel={t} rechts={<span style={{ color: "var(--ink)" }}>{v}</span>} />)}</div>
-    </div>
-    <div className="hm-note">Konditionen sind Arbeitsstand und werden vor dem Start rechtlich geprüft.</div>
-    <Haken an={gelesen} set={setGelesen}>Ich habe den Vertrag gelesen und bin einverstanden.</Haken>
+    <div className="hm-gruppe">{T.map(([t, x]) => <div key={t} className="hm-reihe"><div className="m"><div className="t">{t}</div><div className="u" style={{ whiteSpace: "normal" }}>{x}</div></div></div>)}</div>
+    <Haken an={gelesen} set={setGelesen}>Gelesen und einverstanden.</Haken>
     <label className="hm-feld"><span>Mit deinem Namen unterschreiben</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder={m.name} style={{ fontFamily: "'Fraunces', serif", fontSize: 22 }} /></label>
-    <Btn disabled={!gelesen || name.trim().length < 3} onClick={() => { setZ("vertrag", "fertig", "Vertrag digital unterschrieben"); toast("Unterschrieben. Willkommen bei UNIO."); zu(); }}>Digital unterschreiben</Btn>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><span className="hm-daten">Mit Zeitstempel und Prüfsumme</span><Btn disabled={!gelesen || name.trim().length < 3} onClick={unterschreiben}>Unterschreiben</Btn></div>
   </div>;
 }
 
@@ -85,22 +88,22 @@ function EPlattform({ m, zu }) {
 function EImport({ m, zu }) {
   const { st, daten, setZ, setD } = useEinrichtung(m.id);
   const d = daten.import || {};
-  const [datei, setDatei] = React.useState(d.datei || "");
-  if (st.import === "fertig") return <Leer titel="Übernommen." text={`${d.kontakte || 142} Kontakte und ${d.objekte || 18} Objekte aus ${d.quelle || "deiner Quelle"} liegen im Dashboard.`} />;
-  if (st.import === "wartet_team") return <Leer titel="Termin steht." text={`Übernahme aus ${d.quelle} am ${d.termin}. Wir melden uns am Schritt, falls etwas fehlt.`} />;
+  const [weg, setWeg] = React.useState(null);
+  if (st.import === "fertig") return <Leer titel="Übernommen." text={d.anzahl != null ? `${d.anzahl} ${d.art === "objekte" ? "Objekte" : "Kontakte"} aus ${d.datei || d.quelle} liegen im Dashboard.` : `Kontakte und Objekte aus ${d.quelle || "deiner Quelle"} liegen im Dashboard.`} />;
+  if (st.import === "wartet_team") return <Leer titel="Termin steht." text={`Übernahme aus ${d.quelle} am ${d.termin}. Du brauchst nur deinen Zugang.`} />;
+  const crm = ["onOffice", "Propstack", "JUSTIMMO"].includes(d.quelle);
+  const fertig = (e) => { setD("import", { ...e }); setZ("import", "fertig", `${e.anzahl} ${e.art === "objekte" ? "Objekte" : "Kontakte"} übernommen`); toast("Übernommen"); zu(); };
   return <div className="hm-stack">
-    <div className="hm-mono">1 · Woher kommt dein Bestand?</div>
-    <div className="hm-chips">{HM_IMPORT_QUELLEN.map((q) => <button key={q} className={"hm-chip" + (d.quelle === q ? " on" : "")} onClick={() => setD("import", { quelle: q })}>{q}</button>)}</div>
-    {d.quelle === "Excel oder CSV" && <><div className="hm-mono">2 · Datei hochladen</div><label className="hm-drop klein"><input type="file" accept=".csv,.xlsx,.xls" hidden onChange={(e) => { const f = e.target.files[0]; if (f) { setDatei(f.name); setD("import", { datei: f.name, kontakte: 142, objekte: 18 }); } }} /><span>{datei ? `${datei} · 142 Kontakte und 18 Objekte erkannt (Vorschau)` : "Datei wählen oder hierher ziehen"}</span></label>
-      <Btn disabled={!datei} onClick={() => { setZ("import", "fertig", "Kunden und Objekte übernommen"); toast("Übernommen"); zu(); }}>Übernehmen</Btn></>}
+    <div className="hm-chips">{HM_IMPORT_QUELLEN.map((q) => <button key={q} className={"hm-chip" + (d.quelle === q ? " on" : "")} onClick={() => { setD("import", { quelle: q }); setWeg(null); }}>{q}</button>)}</div>
+    {d.quelle === "Excel oder CSV" && <ImportMapper m={m} fertig={fertig} />}
+    {crm && !weg && <div className="hm-gruppe"><Zeile titel="Export hochladen" unter={`In ${d.quelle} Kontakte oder Objekte als CSV oder Excel exportieren`} onClick={() => setWeg("datei")} rechts={<Ico n="weiter" />} /><Zeile titel="Gemeinsam übernehmen" unter="20 Minuten, du brauchst nur deinen Zugang" onClick={() => setWeg("termin")} rechts={<Ico n="weiter" />} /></div>}
+    {crm && weg === "datei" && <ImportMapper m={m} fertig={(e) => fertig({ ...e, quelle: d.quelle })} />}
+    {crm && weg === "termin" && <><TerminWahl wahl={d.termin} set={(x) => setD("import", { termin: x.text, terminIso: x.iso })} anzahl={4} /><Btn disabled={!d.termin} onClick={() => { setZ("import", "wartet_team", `Übernahme aus ${d.quelle} gebucht: ${d.termin}`); hmIcs({ titel: `UNIO Übernahme ${d.quelle}`, iso: d.terminIso, dauer: 20, text: "Zugang bereithalten" }); toast("Gebucht, Kalendereintrag geladen"); zu(); }}>Termin buchen</Btn></>}
+    {d.quelle === "willhaben-Profil" && <><label className="hm-feld"><span>Link zu deinem willhaben-Profil</span><input value={d.link || ""} onChange={(e) => setD("import", { link: e.target.value })} placeholder="willhaben.at/iad/immobilien/..." /></label><Btn disabled={!(d.link || "").includes("willhaben")} onClick={() => { setZ("import", "wartet_team", "willhaben-Profil zur Übernahme"); toast("Wir übernehmen deine Objekte"); zu(); }}>Übernehmen lassen</Btn></>}
     {d.quelle === "Ich habe noch keinen Bestand" && <Btn onClick={() => { setZ("import", "fertig", "Kein Bestand zu übernehmen"); zu(); }}>Passt, weiter</Btn>}
-    {d.quelle && !["Excel oder CSV", "Ich habe noch keinen Bestand"].includes(d.quelle) && <><div className="hm-mono">2 · Termin für die Übernahme</div><p className="hm-sub" style={{ marginTop: 0 }}>Aus {d.quelle} holen wir die Daten gemeinsam in 20 Minuten. Du brauchst nur deinen Zugang.</p>
-      <div className="hm-chips">{["Di 30.09., 10:00", "Mi 01.10., 14:00", "Fr 03.10., 09:30"].map((t) => <button key={t} className={"hm-chip" + (d.termin === t ? " on" : "")} onClick={() => setD("import", { termin: t })}>{t}</button>)}</div>
-      <Btn disabled={!d.termin} onClick={() => { setZ("import", "wartet_team", `Übernahme aus ${d.quelle} gebucht: ${d.termin}`); toast("Termin gebucht"); zu(); }}>Termin buchen</Btn></>}
   </div>;
 }
 
-/* Social-Media-Konten: vorhandene übergeben oder neu anlegen, am Ende UNIO als Admin hinterlegen */
 function EKonten({ m, zu }) {
   const { st, daten, setZ, setD } = useEinrichtung(m.id);
   const d = daten.konten || {};
@@ -153,13 +156,12 @@ function EFoto({ m, zu, teamSicht }) {
     <Portraits m={m} teamSicht={teamSicht} />
   </div>;
   if (st.foto === "wartet_team") return <div className="hm-stack"><Leer titel="Termin steht." text={`${d.termin}. Danach liegen deine Porträts hier, fertig zugeschnitten.`} /><button className="hm-link" style={{ alignSelf: "center" }} onClick={() => { setZ("foto", "offen"); setWeg("upload"); }}>Doch eigene Fotos hochladen</button></div>;
-  const termine = [["Mo 29.09., 13:00", "Mit deinem Drehtag, kein Extratermin"], ["Do 02.10., 09:00", "Büro Kärntner Straße"], ["Mi 08.10., 14:00", "Büro Kärntner Straße"]];
   return <div className="hm-stack">
     <div className="hm-seg">{[["upload", "Eigene Fotos"], ["termin", "Foto-Termin"]].map(([v, t]) => <button key={v} className={weg === v ? "on" : ""} onClick={() => setWeg(v)}>{t}</button>)}</div>
     {weg !== "termin" && <><Portraits m={m} /><div className="hm-daten">Stehend, Oberkörper im Bild, gleichmäßiges Licht. Mehrere Fotos: die beste Aufnahme wird automatisch gewählt.</div></>}
     {weg === "termin" && <>
-      <div className="hm-gruppe">{termine.map(([t, u]) => <Zeile key={t} titel={t} unter={u} aktiv={d.termin === t} onClick={() => setD("foto", { termin: t, weg: "termin" })} rechts={d.termin === t ? <Ico n="haken" /> : null} />)}</div>
-      <Btn disabled={!d.termin} onClick={() => { setZ("foto", "wartet_team", `Foto-Termin gebucht: ${d.termin}`); toast("Termin gebucht"); zu(); }}>Termin buchen</Btn>
+      <TerminWahl wahl={d.termin} set={(x) => setD("foto", { termin: x.text, terminIso: x.iso, weg: "termin" })} vorzug hinweis="Am Drehtag, kein Extratermin" anzahl={4} />
+      <Btn disabled={!d.termin} onClick={() => { setZ("foto", "wartet_team", `Foto-Termin gebucht: ${d.termin}`); hmIcs({ titel: "UNIO Foto-Termin", iso: d.terminIso, dauer: 20, ort: "Kärntner Straße 12, 1010 Wien" }); toast("Gebucht, Kalendereintrag geladen"); zu(); }}>Termin buchen</Btn>
     </>}
   </div>;
 }
@@ -168,12 +170,13 @@ function EStrategie({ m, zu, go }) {
   const { st, daten, setZ, setD } = useEinrichtung(m.id);
   const fb = (hmStore.get("fragebogen") || {})[m.id];
   const d = daten.strategie || {};
-  if (st.strategie === "fertig") return <Leer titel="Workshop war." text="Deine Strategie ist geprüft. Sie liegt unter Marke, Konzept." aktion={<Btn onClick={() => { zu(); go("marke", { sub: "konzept" }); }}>Konzept ansehen</Btn>} />;
+  if (st.strategie === "fertig") return <Leer titel="Workshop war." text="Deine Strategie ist geprüft und liegt im Konzept." aktion={<Btn onClick={() => { zu(); go("marke", { sub: "konzept" }); }}>Konzept ansehen</Btn>} />;
+  if (st.strategie === "wartet_team") return <div className="hm-stack"><Leer titel="Termin steht." text={`${d.termin} mit Daniel, 60 Minuten.${fb && fb.fertig ? "" : " Vorher den Fragebogen, dann ist der Termin halb so lang."}`} aktion={d.terminIso ? <button className="hm-link" onClick={() => hmIcs({ titel: "UNIO Strategie-Workshop", iso: d.terminIso, dauer: 60, ort: "Kärntner Straße 12, 1010 Wien oder online" })}>In den Kalender</button> : null} /></div>;
   return <div className="hm-stack">
     <Zeile titel="Fragebogen" unter={fb && fb.fertig ? "Beantwortet. Zwei Wege liegen bereit." : "Vorher ausfüllen, dann ist der Termin halb so lang."} rechts={fb && fb.fertig ? <span className="hm-ez z-fertig">Erledigt</span> : <button className="hm-chip" onClick={() => { zu(); go("marke", { sub: "fragebogen" }); }}>Starten</button>} />
-    <div className="hm-mono">Termin mit Daniel · 60 Minuten · online oder vor Ort</div>
-    <div className="hm-chips">{["Di 30.09., 10:00", "Mi 01.10., 16:00", "Do 02.10., 11:00", "Mo 06.10., 09:00"].map((t) => <button key={t} className={"hm-chip" + (d.termin === t ? " on" : "")} onClick={() => setD("strategie", { termin: t })}>{t}</button>)}</div>
-    <Btn disabled={!d.termin} onClick={() => { setZ("strategie", "wartet_team", `Strategie-Termin gebucht: ${d.termin}`); toast("Gebucht. Die Einladung kommt per Mail."); zu(); }}>Termin buchen</Btn>
+    <div className="hm-abschnitt-t">Termin mit Daniel, 60 Minuten</div>
+    <TerminWahl wahl={d.termin} set={(x) => setD("strategie", { termin: x.text, terminIso: x.iso })} anzahl={5} />
+    <Btn disabled={!d.termin} onClick={() => { setZ("strategie", "wartet_team", `Strategie-Termin gebucht: ${d.termin}`); hmIcs({ titel: "UNIO Strategie-Workshop", iso: d.terminIso, dauer: 60, ort: "Kärntner Straße 12, 1010 Wien oder online" }); toast("Gebucht, Kalendereintrag geladen"); zu(); }}>Termin buchen</Btn>
   </div>;
 }
 
@@ -204,12 +207,15 @@ function EVisitenkarten({ m, zu, go }) {
   if (!b.fertig) return <Leer titel="Kommt nach deinem Branding." text="Logo, Schrift und Farbe kommen aus deiner Marke. Sobald das Branding freigegeben ist, steht die Karte hier fertig." aktion={<Btn onClick={() => { zu(); go("marke", { sub: "design" }); }}>Zum Branding</Btn>} />;
   if (st.visitenkarten === "fertig") return <div className="hm-stack"><div className="hm-vk-paar"><Visitenkarte b={b} tel={d.tel || tel} mail={d.mail || mail} /><Visitenkarte b={b} seite="hinten" /></div><Leer titel="Zugestellt." text={`${d.stk || 250} Stück, geliefert ins Büro Kärntner Straße 12.`} /></div>;
   if (st.visitenkarten === "in_arbeit") return <div className="hm-stack"><div className="hm-vk-paar"><Visitenkarte b={b} tel={d.tel} mail={d.mail} /><Visitenkarte b={b} seite="hinten" /></div><div className="hm-verlauf">{["Bestellt", "Im Druck", "Versandt", "Zugestellt"].map((t, i) => <div key={t} className={i <= 1 ? "on" : ""}><i></i>{t}</div>)}</div><div className="hm-note">Voraussichtlich in 4 Werktagen. Druckdaten entstehen aus dem LaTeX-Template von UNIO.</div><button className="hm-chip" onClick={() => { setZ("visitenkarten", "fertig", "Visitenkarten zugestellt"); zu(); }}>Demo: als zugestellt markieren</button></div>;
+  const pruef = hmVkPruefung(b, tel, mail);
+  const ok = pruef.every((x) => x.ok);
   return <div className="hm-stack">
-    <div className="hm-vk-paar"><Visitenkarte b={b} tel={tel} mail={mail} /><Visitenkarte b={b} seite="hinten" /></div>
-    <div className="hm-note">Aus deiner Marke: Logo {HM_LOGO_TYPEN.find((x) => x.id === b.logo).name}, Schrift {b.schrift.name}, Akzent. Du prüfst nur Telefon und E-Mail.</div>
+    <div className="hm-vk-paar hm-vk-druck"><Visitenkarte b={b} tel={tel} mail={mail} /><Visitenkarte b={b} seite="hinten" /></div>
+    <div className="hm-pruefliste">{pruef.map((x) => <div key={x.t} className={x.ok ? "ok" : "nein"}><Ico n={x.ok ? "haken" : "x"} />{x.t}</div>)}</div>
     <div className="hm-feld2"><label className="hm-feld"><span>Telefon</span><input value={tel} onChange={(e) => setTel(e.target.value)} /></label><label className="hm-feld"><span>E-Mail</span><input value={mail} onChange={(e) => setMail(e.target.value)} /></label></div>
     <div className="hm-seg">{[100, 250, 500].map((n) => <button key={n} className={stk === n ? "on" : ""} onClick={() => setStk(n)}>{n} Stück</button>)}</div>
-    <Btn onClick={() => { setD("visitenkarten", { tel, mail, stk }); hmStore.patch("auftraege", (l) => [...(l || []), { id: "o" + Date.now(), maklerId: m.id, katalog: "visitenkarte", name: `Visitenkarten ${stk} Stück`, preis, stufe: 2, zustand: "in_arbeit", datum: "2026-09-28", wer: "System" }]); setZ("visitenkarten", "in_arbeit", `Visitenkarten bestellt, ${stk} Stück`); toast("Bestellt"); }}>{`Bestellen · ${preis} €`}</Btn>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><button className="hm-link" onClick={() => hmVkDruck(b)}>Druck-PDF ansehen</button><span className="hm-daten">Druckdaten mit Beschnitt und Schnittmarken</span></div>
+    <Btn disabled={!ok} onClick={() => { setD("visitenkarten", { tel, mail, stk }); hmStore.patch("auftraege", (l) => [...(l || []), { id: "o" + Date.now(), maklerId: m.id, katalog: "visitenkarte", name: `Visitenkarten ${stk} Stück`, preis, stufe: 2, zustand: "in_arbeit", datum: "2026-09-28", wer: "System" }]); setZ("visitenkarten", "in_arbeit", `Visitenkarten bestellt, ${stk} Stück`); toast("Bestellt"); }}>{`Bestellen · ${preis} €`}</Btn>
   </div>;
 }
 

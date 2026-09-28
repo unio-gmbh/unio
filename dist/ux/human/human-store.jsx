@@ -4,7 +4,7 @@
    Implementierung 2 (später): HTTP gegen Supabase oder Zero-One mit gleicher Schnittstelle. */
 
 const HM_PREFIX = "unio_hm_";
-const HM_SEED_FLAG = "unio_hm_seed_v7";
+const HM_SEED_FLAG = "unio_hm_seed_v8";
 
 function hmMakeLocalAdapter() {
   const subs = new Set();
@@ -75,6 +75,9 @@ const HM_SEED_ANTWORTEN = {
 
 function hmSeed() {
   if (localStorage.getItem(HM_SEED_FLAG)) return;
+  /* Neuer Seed: alte Demo-Daten vollständig entfernen, auch Porträt-Blobs */
+  Object.keys(localStorage).filter((k) => k.startsWith(HM_PREFIX)).forEach((k) => localStorage.removeItem(k));
+  try { indexedDB.deleteDatabase("unio_hm_blobs"); } catch {}
   hmStore.put("makler", HM_SEED_MAKLER);
   const schritte = HM_SEED_MAKLER.flatMap((m) => hmSchritteFuer(m.id, m.tag));
   hmStore.put("schritte", schritte);

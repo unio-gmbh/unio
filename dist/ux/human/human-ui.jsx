@@ -39,10 +39,10 @@ function BrandLogo({ b, typ, farbe, grund, h = 44, invert }) {
   const t = typ || b.logo;
   const ink = invert ? "#F7F5F1" : (farbe || "#0B0A09");
   const f = b.schrift ? b.schrift.d : "Power Grotesk";
-  if (t === "monogramm") return <svg height={h} viewBox="0 0 100 100" style={{ display: "block" }}><circle cx="50" cy="50" r="47" fill="none" stroke={ink} strokeWidth="3" /><text x="50" y="62" textAnchor="middle" fontFamily={hmFont(f)} fontSize="38" fill={ink} letterSpacing="-1">{b.initialen}</text><circle cx="78" cy="26" r="6" fill={b.akzent} /></svg>;
+  if (t === "monogramm") return <svg height={h} viewBox="0 0 100 100" preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><circle cx="50" cy="50" r="47" fill="none" stroke={ink} strokeWidth="3" /><text x="50" y="62" textAnchor="middle" fontFamily={hmFont(f)} fontSize="38" fill={ink} letterSpacing="-1">{b.initialen}</text><circle cx="78" cy="26" r="6" fill={b.akzent} /></svg>;
   const w = Math.max(160, (b.vor.length + b.nach.length) * 22 + 40);
-  if (t === "punkt") return <svg height={h} viewBox={`0 0 ${w} 60`} style={{ display: "block" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} {b.nach}</text><circle cx={w - 12} cy="38" r="6" fill={b.akzent} /></svg>;
-  return <svg height={h} viewBox={`0 0 ${w} 60`} style={{ display: "block" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} <tspan fontWeight="700">{b.nach}</tspan></text></svg>;
+  if (t === "punkt") return <svg height={h} viewBox={`0 0 ${w} 60`} preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} {b.nach}</text><circle cx={w - 12} cy="38" r="6" fill={b.akzent} /></svg>;
+  return <svg height={h} viewBox={`0 0 ${w} 60`} preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} <tspan fontWeight="700">{b.nach}</tspan></text></svg>;
 }
 
 /* Sheet: Modal von unten auf Mobil, zentriert auf Desktop */
@@ -70,6 +70,11 @@ function Kopieren({ text }) {
   const los = async () => { try { await navigator.clipboard.writeText(text); setOk(true); setTimeout(() => setOk(false), 1600); } catch { const r = document.createRange(); r.selectNodeContents(ref.current); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } };
   return <span className="hm-kopier"><code ref={ref}>{text}</code><button onClick={los}>{ok ? "Kopiert" : "Kopieren"}</button></span>;
 }
+function KopierKnopf({ text, label = "Kopieren" }) {
+  const [ok, setOk] = React.useState(false);
+  const los = async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(text); } catch {} setOk(true); setTimeout(() => setOk(false), 1600); };
+  return <button className="hm-klein-btn hell" onClick={los}>{ok ? "Kopiert" : label}</button>;
+}
 function Leer({ titel, text, aktion }) { return <div className="hm-leer"><div className="t">{titel}</div>{text && <div className="s">{text}</div>}{aktion}</div>; }
 function Ring({ wert, groesse = 64, dicke = 6, farbe = "var(--signal)" }) { const r = (groesse - dicke) / 2, u = 2 * Math.PI * r; return <svg width={groesse} height={groesse} style={{ transform: "rotate(-90deg)", flex: "none" }}><circle cx={groesse / 2} cy={groesse / 2} r={r} fill="none" stroke="var(--paper-3)" strokeWidth={dicke} /><circle cx={groesse / 2} cy={groesse / 2} r={r} fill="none" stroke={farbe} strokeWidth={dicke} strokeDasharray={u} strokeDashoffset={u * (1 - wert)} strokeLinecap="round" /></svg>; }
 
@@ -90,4 +95,4 @@ const hmZeit = (iso) => iso && iso.length > 10 ? iso.slice(11, 16) : "";
 const hmSpalte = (id) => HM_SPALTEN.find((s) => s.id === id) || HM_SPALTEN[0];
 function ZPunkt({ z }) { const s = hmSpalte(z); return <span className="hm-zpunkt"><i style={{ background: s.farbe }}></i>{s.name}</span>; }
 
-Object.assign(window, { Ico, HM_ICO, hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });
+Object.assign(window, { KopierKnopf, Ico, HM_ICO, hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });

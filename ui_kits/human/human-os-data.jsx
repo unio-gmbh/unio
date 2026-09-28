@@ -167,9 +167,9 @@ const HM_AKQUISE_STUFEN = [
 
 const HM_TEAM = [
   { id: "daniel", name: "Daniel Hayden", rolle: "Strategie und Marke", mail: "daniel@ad.boutique", kurz: "DH" },
-  { id: "florian", name: "Florian Höhrmann", rolle: "Marketing", mail: "florian@ad.boutique", kurz: "FH" },
-  { id: "ahmet", name: "Ahmet", rolle: "Produktion und Agent Success", mail: "", kurz: "AH" },
-  { id: "nikita", name: "Nikita", rolle: "Akquise und Vertrag", mail: "", kurz: "NI" },
+  { id: "florian", name: "Florian Hörmann", rolle: "Marketing", mail: "florian@ad.boutique", kurz: "FH" },
+  { id: "ahmet", name: "Ahmet Erken", rolle: "Produktion und Agent Success", mail: "", kurz: "AH" },
+  { id: "nikita", name: "Nikita Neznamov", rolle: "Akquise und Vertrag", mail: "", kurz: "NI" },
 ];
 
 /* ---------- Regeln ohne KI-Aufruf (Prototyp) ---------- */
@@ -270,8 +270,8 @@ function hmSeedOS() {
   const leads = [
     { id: "l1", name: "Katharina Weiss", ort: "1130 Hietzing", quelle: "Empfehlung", stufe: "kennenlernen", naechstes: "Kennenlernen am 30.09., 10:00", notiz: "Seit 12 Jahren, Villen und Häuser, sucht Marke statt Portal.", owner: "Nikita" },
     { id: "l2", name: "Jonas Berger", ort: "1070 Neubau", quelle: "Instagram", stufe: "research", naechstes: "Erste Nachricht senden", notiz: "Postet selbst Reels, 3.200 Follower.", owner: "Nikita" },
-    { id: "l3", name: "Mira Hofer", ort: "Mödling", quelle: "Veranstaltung", stufe: "followup", naechstes: "Angebot nachfassen", notiz: "Umland Süd, Häuser, will LinkedIn aufbauen.", owner: "Nikita" },
-    { id: "l4", name: "Leon Aigner", ort: "1020 Leopoldstadt", quelle: "Website", stufe: "deepdive", naechstes: "Deep Dive mit Daniel am 02.10.", notiz: "Bauträgerprojekte, Abverkauf.", owner: "Daniel" },
+    { id: "l3", name: "Mira Hofer", ort: "Mödling", quelle: "Veranstaltung", stufe: "followup", naechstes: "Beispiel schicken", notiz: "Umland Süd, Häuser, will LinkedIn aufbauen.", owner: "Nikita", ersterKontakt: "2026-09-21", runde: 2 },
+    { id: "l4", name: "Leon Aigner", ort: "1020 Leopoldstadt", quelle: "Website", stufe: "deepdive", naechstes: "Deep Dive mit Daniel am 02.10.", notiz: "Bauträgerprojekte, Abverkauf.", owner: "Daniel", potenzial: { provision: 12000, abschluesse: 10, hat: { website: true, portrait: true } } },
     { id: "l5", name: "Sara Novak", ort: "1070 Neubau", quelle: "Empfehlung", stufe: "onboarding", naechstes: "Einrichtung läuft", notiz: "Seit 22.09. im Onboarding.", owner: "Nikita", maklerId: "sara" },
   ];
   const meetings = [

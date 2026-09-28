@@ -58,6 +58,7 @@ function TeamHeute({ go, oeffne, oeffneMakler }) {
     <Kopf ueber={datum} titel="Heute" />
     <div className="hm-sek">Braucht uns · {auf.length}</div>
     <div className="hm-gruppe">{auf.map((a, i) => <div key={i} className="hm-reihe klick" onClick={a.go}><div className="m"><div className="t">{a.t}</div><div className="u">{a.k} · {name(a.m)}</div></div><div className="r"><span className="hm-chev">›</span></div></div>)}{!auf.length && <div className="hm-reihe"><div className="m"><div className="u">Nichts offen.</div></div></div>}</div>
+    <NachfassListe />
     {warten.length > 0 && <><div className="hm-sek">Wartet auf Makler · {warten.length}</div><div className="hm-gruppe">{warten.map((c) => <div key={c.id} className="hm-reihe klick" onClick={() => oeffne(c.id)}><div className="m"><div className="t">{c.titel}</div><div className="u">{name(c.maklerId)} · geplant {hmDatum(c.termin)}</div></div><div className="r"><button className="hm-klein-btn hell" onClick={(e) => { e.stopPropagation(); hmEvent(c.maklerId, "erinnerung", `Erinnerung: ${c.titel}`, "Team"); toast("Erinnert"); }}>Erinnern</button><span className="hm-chev">›</span></div></div>)}</div></>}
     <div className="hm-sek">Sparpotenzial</div>
     <Empfehlungen makler={makler} kurz />
@@ -90,6 +91,9 @@ function Akquise({ oeffneMakler }) {
     <Sheet offen={!!l} zu={() => setDetail(null)} titel={l ? l.name : ""} unter={l ? `${l.ort} · über ${l.quelle} · ${l.owner}` : ""}>
       {l && <div className="hm-stack">
         <div className="hm-feld2"><label className="hm-feld"><span>Name</span><input value={l.name} onChange={(e) => set(l.id, { name: e.target.value })} /></label><label className="hm-feld"><span>Region</span><input value={l.ort} onChange={(e) => set(l.id, { ort: e.target.value })} /></label></div>
+        {(() => { const n = hmNachfass(l); return n ? <div className="hm-card hm-nachricht"><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-abschnitt-t">{n.name} · {n.heute ? "heute fällig" : "ab " + hmFmtDate(n.faellig)}</div><button className="hm-klein-btn" onClick={() => hmNachfassGesendet(l)}>Gesendet</button></div><p style={{ margin: "8px 0 10px", fontSize: 14, lineHeight: 1.5 }}>{n.text}</p><KopierKnopf text={n.text} label="Text kopieren" /></div> : null; })()}
+        {l.stufe === "kennenlernen" && <><div className="hm-abschnitt-t">Kennenlernen, 30 Minuten</div><TerminWahl wahl={l.termin} set={(x) => { set(l.id, { termin: x.text, naechstes: "Kennenlernen am " + x.text }); hmIcs({ titel: `UNIO Kennenlernen ${l.name}`, iso: x.iso, dauer: 30, ort: "Kärntner Straße 12, 1010 Wien" }); }} anzahl={4} /></>}
+        {l.stufe === "deepdive" && <><div className="hm-abschnitt-t">Potenzial</div><Potenzial lead={l} set={(x) => set(l.id, x)} /></>}
         <label className="hm-feld"><span>Nächster Schritt</span><input value={l.naechstes} onChange={(e) => set(l.id, { naechstes: e.target.value })} /></label>
         <label className="hm-feld"><span>Notiz</span><textarea rows={3} value={l.notiz} onChange={(e) => set(l.id, { notiz: e.target.value })} /></label>
         <div className="hm-seg">{HM_AKQUISE_STUFEN.map((s) => <button key={s.id} className={l.stufe === s.id ? "on" : ""} onClick={() => set(l.id, { stufe: s.id })}>{s.name.split(" ")[0]}</button>)}</div>
