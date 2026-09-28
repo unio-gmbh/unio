@@ -164,7 +164,6 @@ function Website({ m, setSub, teamSicht }) {
       rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {felder.find((f) => f.id === "domain").wert}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
     <div className="hm-sek">Look</div>
     <div className="hm-looks">{HM_LOOKS.map((l) => <button key={l.n} className={look === l.n ? "on" : ""} onClick={() => set({ look: l.n })}><img src={l.bild} alt="" /><div className="t">{String(l.n).padStart(2, "0")} {l.name}</div><div className="s">{l.satz}</div></button>)}</div>
-    <div className="hm-row" style={{ marginTop: 8 }}><a className="hm-chip" href={`/showcase${look}`} target="_blank" rel="noopener">Look {look} als Beispiel öffnen ↗</a></div>
     <div className="hm-web-split">
       <div className="hm-web-felder">
         {Object.entries(HM_WEB_GRUPPEN).map(([g, [titel, text]]) => <div key={g}>
@@ -184,27 +183,22 @@ function Website({ m, setSub, teamSicht }) {
 
 function WebVorschau({ m, b, felder, look }) {
   const F = Object.fromEntries(felder.map((f) => [f.id, f.wert]));
-  const objekte = [["Das Albrecht", "Wieden · 1040", "ab 590.000 €", "72 m²", "3", "albrechts-wohnen.jpg"], ["Beheimgasse", "Hernals · 1170", "468.000 €", "64 m²", "2", "beheim.jpg"], ["Oben Zwei", "Leopoldstadt · 1020", "1.190.000 €", "118 m²", "4", "obenzwei-terrasse.jpg"]];
-  const hell = look === 3;
-  const grund = hell ? "#FFFFFF" : "#F7F5F1";
-  return <div className="hm-web" style={{ background: grund, fontFamily: hmFont(b.schrift.t), "--akz": b.akzent }}>
-    <div className="hm-web-nav"><BrandLogo b={b} h={16} /><div className="hm-row" style={{ gap: 12, fontSize: 10 }}><span>Objekte</span><span>Verkaufen</span><span>Referenzen</span><span className="cta">Erstgespräch</span></div></div>
-    <div className={"hm-web-hero l" + look}>
-      {(look === 2 || look === 4) && <img className="obj" src="/assets/img/albrechts-fassade.jpg" alt="" />}
-      <div className="txt">
-        <div className="hm-mono" style={{ color: b.akzent }}>Immobilienvermittlung · {F.region || "Wien"}</div>
-        <div className="name" style={{ fontFamily: hmFont(b.schrift.d) }}>{look === 6 ? b.nach : `${b.vor} ${b.nach}`}</div>
-        <div className="hl" style={{ fontFamily: hmFont(b.schrift.d) }}>{F.headline}</div>
-        <div className="hm-row" style={{ gap: 6, marginTop: 10 }}><span className="cta">Immobilie bewerten</span><span className="cta2">Objekte</span></div>
-        <div className="stats">{(F.stats || "").split(" · ").map((x) => <span key={x}>{x}</span>)}</div>
-      </div>
-      <div className="por">{b.portrait ? <img src={b.portrait} alt="" /> : <div className="mono" style={{ background: b.akzent }}>{b.initialen}</div>}</div>
+  const box = React.useRef(null);
+  const [breite, setBreite] = React.useState(560);
+  const [geladen, setGeladen] = React.useState(false);
+  React.useEffect(() => { const el = box.current; if (!el) return; const ro = new ResizeObserver(() => setBreite(el.clientWidth)); ro.observe(el); return () => ro.disconnect(); }, []);
+  const schluessel = JSON.stringify([look, F, b.akzent, b.schriftId, b.logo, b.portrait]);
+  React.useEffect(() => setGeladen(false), [schluessel]);
+  const skala = breite / 1280;
+  const src = hmShowcaseSrc(look);
+  const oeffnen = () => { const w = window.open(src, "_blank"); if (w) w.addEventListener("load", () => hmFuelleTemplate(w.document, F, b)); };
+  return <div>
+    <div className="hm-row" style={{ justifyContent: "space-between", marginBottom: 8 }}><span className="hm-mono">Look {look} mit deinen Inhalten, Original-HTML</span><button className="hm-link" onClick={oeffnen}>In voller Größe öffnen ↗</button></div>
+    <div className="hm-webframe" ref={box} style={{ height: Math.min(760, 1700 * skala) }}>
+      <iframe key={schluessel} src={src} title="Website-Vorschau" width="1280" height={Math.round(Math.min(760, 1700 * skala) / skala)} style={{ transform: `scale(${skala})`, width: 1280 }} onLoad={(e) => { try { hmFuelleTemplate(e.target.contentDocument, F, b); } catch (err) { console.warn(err); } setGeladen(true); }} />
+      {!geladen && <div className="lade">Look {look} wird mit deinen Inhalten gefüllt</div>}
     </div>
-    {F.zitat && <div className="hm-web-zitat" style={{ fontFamily: hmFont(b.schrift.d) }}>„{F.zitat}“<div className="bio">{F.bio}</div></div>}
-    <div className="hm-web-sek"><div className="h" style={{ fontFamily: hmFont(b.schrift.d) }}>Ausgewählte Objekte</div><div className="hm-web-obj">{objekte.map(([t, l, p, q, z, img]) => <div key={t}><img src={"/assets/img/" + img} alt="" /><div className="t">{t}</div><div className="s">{l}</div><div className="s"><b>{p}</b> · {q} · {z} Zi.</div></div>)}</div></div>
-    <div className="hm-web-sek"><div className="h" style={{ fontFamily: hmFont(b.schrift.d) }}>Referenzen</div>{F.referenzen ? <div className="hm-web-ref">{F.referenzen}</div> : <div className="hm-web-fehlt">Referenzen fehlen noch</div>}</div>
-    <div className="hm-web-unio">Ein Fundament, das trägt · powered by UNIO</div>
-    <div className="hm-web-fuss"><div><BrandLogo b={b} h={14} /><div>{F.adresse}</div></div><div>{F.tel || <span className="hm-web-fehlt">Telefon</span>}<br />{F.mail}<br />{F.instagram}</div><div>Impressum: {F.firma || <span className="hm-web-fehlt">Firma</span>} · GISA {F.gisa || <span className="hm-web-fehlt">fehlt</span>}</div></div>
+    <div className="hm-mono" style={{ marginTop: 8 }}>Getauscht werden nur Name, Texte, Porträt, Objektfotos, Logo, Akzentfarbe und Schrift. Referenzen erscheinen erst, wenn echte Kundenstimmen da sind.</div>
   </div>;
 }
 
@@ -238,4 +232,71 @@ function StudioDownloads({ b }) {
   </div>;
 }
 
-Object.assign(window, { StudioDownloads, MaterialKompakt, Marke, Material, Studio, Website, WebVorschau, BrandKit, hmWebFelder });
+function hmShowcaseSrc(n) { return location.pathname.startsWith("/ux/") ? `/showcase${n}` : `../../showcase/showcase${n}.html`; }
+
+function hmAbs(u) { return new URL(u, location.href).href; }
+
+function hmWebObjekte() {
+  return [
+    ["Das Albrecht, Dachgeschoss", "Wieden · 1040", "€ 1.290.000", "128 m²", "4 Zi", "albrechts-dachgeschoss.jpg"],
+    ["Beheimgasse", "Hernals · 1170", "€ 468.000", "64 m²", "2 Zi", "beheim.jpg"],
+    ["Oben Zwei, Terrasse", "Leopoldstadt · 1020", "€ 1.190.000", "118 m²", "4 Zi", "obenzwei-terrasse.jpg"],
+    ["Zinshaus, Gründerzeit", "Margareten · 1050", "Preis auf Anfrage", "1.180 m²", "—", "zinshaus-fassaden.jpg"],
+    ["EcoLuxe, Erstbezug", "Donaustadt · 1220", "€ 540.000", "71 m²", "3 Zi", "ecoluxe.jpg"],
+    ["Penthouse am Ring", "Innere Stadt · 1010", "€ 3.450.000", "196 m²", "5 Zi", "penthouse.jpg"],
+    ["Wohnen bei Schönbrunn", "Hietzing · 1130", "€ 1.080.000", "104 m²", "3 Zi", "schoenbrunn.jpg"],
+    ["Das Albrecht, Wohnen", "Wieden · 1040", "€ 720.000", "82 m²", "3 Zi", "albrechts-wohnen.jpg"],
+    ["Maxingstraße", "Hietzing · 1130", "€ 890.000", "96 m²", "3 Zi", "maxingstrasse-zimmer.jpg"],
+  ].map(([t, loc, price, m2, zi, img]) => ({ t, loc, price, m2, zi, img: hmAbs("/assets/img/" + img) }));
+}
+
+function hmFuelleTemplate(doc, F, b) {
+  const win = doc.defaultView; if (!win) return;
+  const IMG = win.IMG || {};
+  const html = doc.documentElement;
+  const region = (F.region || "Wien").split(",")[0].trim();
+  const mail = F.mail || "", tel = F.tel || "", ig = F.instagram || "";
+  const objekte = hmWebObjekte();
+  const life = ["lifestyle-paar.jpg", "terrasse-golden.png", "interieur-esszimmer.jpg", "dachlounge.jpg", "essen-gruen.jpg", "skyline-terrasse.png"].map((f) => hmAbs("/assets/photos/" + f));
+  /* 1 Bilder: jeder Schlüssel im IMG-Objekt bekommt ein UNIO-Bild */
+  const karte = {}; let oi = 0, li = 0, ri = 0;
+  Object.keys(IMG).forEach((k) => {
+    if (k === "hero") karte[IMG[k]] = b.portrait ? hmAbs(b.portrait) : "";
+    else if (/^life/.test(k)) karte[IMG[k]] = life[li++ % life.length];
+    else if (/^ref_/.test(k)) karte[IMG[k]] = objekte[(ri++ + 3) % objekte.length].img;
+    else karte[IMG[k]] = objekte[oi++ % objekte.length].img;
+  });
+  doc.querySelectorAll("img").forEach((im) => { const n = karte[im.getAttribute("src")]; if (n !== undefined) { if (n) im.setAttribute("src", n); else im.style.visibility = "hidden"; } });
+  html.style.setProperty("--pmask", b.portrait ? `url(${hmAbs(b.portrait)})` : "none");
+  /* 2 Texte */
+  const paare = [["Immobilien mit Strategie, Sichtbarkeit und persönlicher Begleitung.", F.headline], ["Immobilien, persönlich verkauft.", F.headline], ["Für mich ist eine Immobilie kein Objekt, sondern ein Lebensraum.", F.zitat], ["marcus@example.at", mail], ["@marcus.weiss.immo", ig || "@" + (b.vor + "." + b.nach).toLowerCase() + ".immo"], ["marcus.weiss.immo", (ig || "").replace("@", "") || (b.vor + "." + b.nach).toLowerCase() + ".immo"], ["+43 (0)1 000 00 00", tel], ["Marcus", b.vor], ["Weiss", b.nach], ["· Wien", "· " + region], ["Wien )", region + " )"]];
+  const w = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+  let n; while ((n = w.nextNode())) { let t = n.nodeValue; paare.forEach(([a, z]) => { if (z != null && t.includes(a)) t = t.split(a).join(z); }); if (t !== n.nodeValue) n.nodeValue = t; }
+  doc.querySelectorAll("[alt]").forEach((e) => e.setAttribute("alt", e.getAttribute("alt").replace(/Marcus/g, b.vor).replace(/Weiss/g, b.nach)));
+  doc.querySelectorAll(".intro-body, .h2-introtext").forEach((e) => { if (F.bio) e.textContent = F.bio; });
+  const stats = (F.stats || "").split(" · ").filter(Boolean).map((s) => { const [x, ...r] = s.split(" "); return [x, r.join(" ")]; });
+  doc.querySelectorAll(".hero-facts").forEach((box) => box.querySelectorAll(".fact").forEach((f, i) => { if (stats[i]) { f.querySelector(".n").textContent = stats[i][0]; f.querySelector(".l").textContent = stats[i][1]; } else f.style.display = "none"; }));
+  /* 3 Objekte */
+  doc.querySelectorAll("#grid .card").forEach((c, i) => { const o = objekte[i % objekte.length]; const q = (s) => c.querySelector(s); if (q("h3")) q("h3").textContent = o.t; if (q(".loc")) q(".loc").textContent = o.loc; if (q(".price")) q(".price").textContent = o.price; const bs = c.querySelectorAll(".specs b"); if (bs[0]) bs[0].textContent = o.m2; if (bs[1]) bs[1].textContent = o.zi; if (q("img")) { q("img").src = o.img; q("img").alt = o.t; } });
+  /* 4 Referenzen: nur echte Stimmen zeigen */
+  const refSek = doc.getElementById("referenzen");
+  if (refSek) { if (F.referenzen) { doc.querySelectorAll("#car .ref-card").forEach((r, i) => { if (i === 0) { const q = r.querySelector(".rquote"); if (q) q.textContent = F.referenzen; } else r.style.display = "none"; }); } else refSek.style.display = "none"; }
+  /* 5 Logo */
+  const f = b.schrift;
+  doc.querySelectorAll(".brand").forEach((e) => { e.innerHTML = b.logo === "monogramm" ? `<span style="display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;border:1.5px solid currentColor;font-size:.8em">${b.initialen}</span>` : b.logo === "punkt" ? `${b.vor} ${b.nach}<span style="color:${b.akzent}">.</span>` : `${b.vor} <b>${b.nach}</b>`; });
+  /* 6 Farbe und Schrift */
+  const a = b.akzent;
+  html.style.setProperty("--loden", a); html.style.setProperty("--loden-2", `color-mix(in srgb, ${a} 78%, #000)`); html.style.setProperty("--clay", `color-mix(in srgb, ${a} 22%, #F7F5F1)`); html.style.setProperty("--head-tint", `color-mix(in srgb, ${a} 12%, #F7F5F1)`);
+  if (f.d !== "Power Grotesk") { const l = doc.createElement("link"); l.rel = "stylesheet"; l.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f.d)}:wght@300;400;500;600&family=${encodeURIComponent(f.t)}:wght@400;500;600&display=swap`; doc.head.appendChild(l); }
+  html.style.setProperty("--fd", `"${f.d}", Georgia, serif`); html.style.setProperty("--fb", `"${f.t}", system-ui, sans-serif`);
+  /* 7 Kontakt, Impressum, Aufräumen */
+  doc.querySelectorAll('a[href^="mailto:"]').forEach((e) => e.setAttribute("href", "mailto:" + mail));
+  doc.querySelectorAll('a[href^="tel:"]').forEach((e) => e.setAttribute("href", "tel:" + tel.replace(/[^+\d]/g, "")));
+  const fb = doc.querySelector(".foot-bottom"); if (fb && (F.firma || F.gisa)) { const s = doc.createElement("span"); s.textContent = `Impressum: ${F.firma || "Firma folgt"} · GISA ${F.gisa || "folgt"}${F.behoerde ? " · " + F.behoerde : ""}`; fb.appendChild(s); }
+  const tw = doc.getElementById("tweak"); if (tw) tw.style.display = "none";
+  doc.title = `${b.makler.name}, Immobilien in ${region}`;
+  html.classList.remove("pre");
+  doc.querySelectorAll(".rv,.rl,.ri").forEach((e) => e.classList.add("in"));
+}
+
+Object.assign(window, { hmFuelleTemplate, hmShowcaseSrc, StudioDownloads, MaterialKompakt, Marke, Material, Studio, Website, WebVorschau, BrandKit, hmWebFelder });

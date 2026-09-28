@@ -126,3 +126,23 @@ Ziel: nativer, weniger nach Lucida, keine doppelten Daten.
 3. Eine Primäraktion je Ansicht (schwarze Pille), alles andere als Text-Link oder kleiner Knopf.
 4. Unterabläufe als Fenster über dem Kontext, nicht als neue Seite.
 5. Mono nur für Daten (Zahlen, Zeiten), Beschriftungen in Satzschreibung.
+
+
+## 9. Beitrag und Website-Vorschau v4 (28.09.2026)
+
+**Beitrag in zwei Ansichten statt vier Phasen**
+- *Abstimmung (Makler):* links die große Handy-Vorschau, rechts in dieser Reihenfolge: Stand, Titel, "Geht online" in Klartext (Wochentag, Datum, Uhrzeit, Kanäle), "Worum es geht" (Einstieg aus dem Skript, Format, Säule), der Text so wie er erscheint (bei Abstimmung selbst anpassbar), die Entscheidung "Passt so" oder "Etwas ändern" (mit Schnellwahl: anderer Einstieg, kürzer, anderes Bild, Text anpassen, anderer Termin), Verlauf von Idee bis Online, ein Gespräch mit dem Team. Keine Felder, keine Phasen, keine Prognose.
+- *Werkstatt (Team):* Tabs nach Arbeitsstück (Skript, Schnitt oder Bilder, Text, Gespräch). Rechts ein Inspektor (Format, Säule, Betreut von, Schneidet, Drehtag, Geht online, Kanäle, Prognose, Änderungswünsche), darüber die Vorschau, darunter der Verlauf. Oben genau ein Knopf, der zum Stand passt: Zum Dreh, Gedreht, An {Vorname} schicken, Wieder an {Vorname} schicken, Liegt bei {Vorname}.
+- Kommentare und Freigabe-Notizen sind zu einem Gespräch zusammengelegt.
+- Wording: "Freigeben" wird "Passt so", "Änderung wünschen" wird "Etwas ändern", "Auto-Freigabe am" wird "Wenn du nichts sagst, geht der Beitrag am … so online", "Korrekturrunde 1 von 2" wird "Noch 1 Änderungswunsch frei".
+
+**Website-Vorschau aus dem Original-HTML**
+Die Vorschau lädt `showcase/showcaseN.html` unverändert in einen Frame und tauscht danach nur Inhalte (`hmFuelleTemplate` in `human-marke.jsx`):
+- Bilder: jeder Schlüssel des `IMG`-Objekts im Template bekommt ein UNIO-Bild (Porträt, Objekte, Referenzen, Lifestyle), auch die Porträt-Maske `--pmask`.
+- Texte: Name (Vor- und Nachname in allen Textknoten und Alt-Texten), Headline, Zitat, Bio, Region, Kennzahlen, Telefon, E-Mail, Instagram, Titel.
+- Objekte: Titel, Lage, Preis, Fläche, Zimmer und Bild der neun Karten.
+- Referenzen: nur mit echter Kundenstimme sichtbar, sonst wird der Abschnitt ausgeblendet.
+- Logo: Wortmarke, Name mit Punkt oder Monogramm im Kopf und Fuß.
+- Farbe und Schrift: CSS-Variablen `--loden`, `--loden-2`, `--clay`, `--head-tint`, `--fd`, `--fb`; das Design-Panel des Templates ist ausgeblendet.
+- Impressum: Firma, GISA-Zahl und Behörde werden in die Fußzeile geschrieben, sobald eingetragen.
+"In voller Größe öffnen" zeigt dasselbe Template gefüllt in einem neuen Tab. Für den Livebetrieb ist das derselbe Weg: Template bleibt Datei, ein Füll-Skript setzt die Daten aus dem Brand-Profil ein.

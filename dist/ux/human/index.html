@@ -321,7 +321,7 @@ select.hm-sel { border: 0; background: var(--paper-2); border-radius: 999px; pad
 .hm-web-vorschau { position: sticky; top: 90px; }
 .hm-wfeld { border-bottom: 1px solid var(--hairline-dark); } .hm-wfeld:last-child { border-bottom: 0; }
 .hm-wfeld button { width: 100%; border: 0; background: none; text-align: left; display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 2px 12px; padding: 10px 0; }
-.hm-wfeld .l { font-size: 13px; color: var(--text-muted); } .hm-wfeld .v { font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .hm-wfeld .q { grid-column: 2; font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.hm-wfeld .l { font-size: 13px; color: var(--text-muted); } .hm-wfeld .v { font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .hm-wfeld .q { grid-column: 2; font-size: 12px; color: var(--text-muted); }
 .hm-wfeld.fehlt .v { color: var(--signal-deep); }
 .hm-wfeld input { width: 100%; margin: 6px 0; border: 0; box-shadow: inset 0 0 0 2px var(--ink); border-radius: 10px; padding: 9px 11px; font-size: 14px; }
 .hm-web { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px -24px rgba(12,11,9,.4), inset 0 0 0 1px var(--hairline-dark); font-size: 11px; color: #1B1A16; }
@@ -523,21 +523,54 @@ select.hm-sel { border: 0; background: var(--paper-2); border-radius: 999px; pad
 .hm-typ { font-family: "Power Grotesk", sans-serif; text-transform: none; letter-spacing: 0; font-size: 12px; }
 .hm-kette button.on { background: var(--paper-3); color: var(--ink); } .hm-kette button.on i { background: var(--ink); color: var(--paper); }
 @media (max-width: 1100px) { .hm-doc { grid-template-columns: 1fr; } .hm-doc-r { position: static; } .hm-wz { grid-template-columns: repeat(2, 1fr); } .hm-wz > div:nth-child(3) { border-left: 0; } .hm-abschnitt > .body { padding-left: 0; } }
+
+/* ===== v4: Abstimmung und Werkstatt ===== */
+.hm-abst { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 56px; margin-top: 18px; align-items: start; }
+.hm-abst-l { position: sticky; top: 84px; }
+.hm-abst-r { max-width: 600px; }
+.hm-abst-block { padding: 20px 0; border-bottom: 1px solid var(--hairline-dark); display: flex; flex-direction: column; gap: 6px; }
+.hm-abst-block:last-child { border-bottom: 0; }
+.hm-abst-block .v { font-size: 20px; color: var(--ink); letter-spacing: -.01em; line-height: 1.3; }
+.hm-abst-block .u { font-size: 14px; color: var(--text-muted); }
+.hm-abst-block .cap { white-space: pre-line; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+.hm-abst-aktion { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--hairline-dark); }
+.hm-status.stark { background: var(--signal); color: var(--on-signal); padding: 5px 12px; border-radius: 999px; } .hm-status.stark i { background: var(--on-signal) !important; }
+.hm-verlauf2 { display: flex; gap: 0; margin-top: 6px; }
+.hm-verlauf2 > div { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--text-muted); position: relative; }
+.hm-verlauf2 i { height: 3px; background: var(--paper-3); margin-right: 3px; border-radius: 2px; }
+.hm-verlauf2 .ok i { background: var(--ink); } .hm-verlauf2 .ok { color: var(--ink-3); }
+.hm-verlauf2 .jetzt i { background: var(--signal); } .hm-verlauf2 .jetzt { color: var(--ink); font-weight: 500; }
+.hm-blase { max-width: 86%; margin: 8px 0; } .hm-blase .w { font-size: 12px; color: var(--text-muted); margin-bottom: 3px; }
+.hm-blase .x { background: var(--paper-2); border-radius: 16px 16px 16px 4px; padding: 10px 14px; font-size: 14px; line-height: 1.45; color: var(--ink); display: inline-block; }
+.hm-blase.ich { margin-left: auto; text-align: right; } .hm-blase.ich .x { background: var(--ink); color: var(--paper); border-radius: 16px 16px 4px 16px; text-align: left; }
+.hm-werk-kopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.hm-werk { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 36px; margin-top: 20px; align-items: start; }
+.hm-werk-r { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 14px; }
+.hm-insp > label, .hm-insp > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--hairline-dark); font-size: 13px; }
+.hm-insp > *:last-child { border-bottom: 0; }
+.hm-insp span { color: var(--text-muted); flex: none; } .hm-insp b { font-weight: 400; color: var(--ink); }
+.hm-insp select, .hm-insp input { border: 0; background: transparent; text-align: right; font: inherit; font-size: 13px; color: var(--ink); min-width: 0; max-width: 170px; outline: none; }
+.hm-insp .kan > div { display: flex; gap: 4px; } .hm-insp .kan button { border: 0; border-radius: 6px; padding: 3px 7px; font-size: 11px; background: var(--paper-2); color: var(--ink-3); } .hm-insp .kan button.on { background: var(--ink); color: var(--paper); }
+.hm-skript.gross { font-size: 16px; line-height: 1.7; background: var(--surface-raised); }
+.hm-webframe { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px -24px rgba(12,11,9,.4), inset 0 0 0 1px var(--hairline-dark); background: #fff; }
+.hm-webframe iframe { border: 0; transform-origin: 0 0; display: block; position: absolute; top: 0; left: 0; }
+.hm-webframe .lade { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper-2); color: var(--text-muted); font-size: 13px; }
+@media (max-width: 1100px) { .hm-abst, .hm-werk { grid-template-columns: 1fr; } .hm-abst-l, .hm-werk-r { position: static; } }
 </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="/ux/human/human-data.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-store.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-os-data.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-more.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-flow.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-ui.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-einrichtung.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-marke.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-medien.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-content.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-team.jsx?v=e92d07d1"></script>
-<script type="text/babel" src="/ux/human/human-app.jsx?v=e92d07d1"></script>
+<script type="text/babel" src="/ux/human/human-data.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-store.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-os-data.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-more.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-flow.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-ui.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-einrichtung.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-marke.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-medien.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-content.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-team.jsx?v=e932a595"></script>
+<script type="text/babel" src="/ux/human/human-app.jsx?v=e932a595"></script>
 </body>
 </html>
