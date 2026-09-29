@@ -281,7 +281,7 @@ body.embed .panel { padding: 18px 20px 22px; gap: 22px; }
 
       <div class="sec needs">
         <div class="lbl mono"><span>03 · Export</span></div>
-        <div class="keys" id="cutHint">Freigestellt, transparent, PNG in Originalauflösung. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.</div>
+        <div class="keys" id="cutHint">Freigestellt, transparent, PNG in Originalauflösung, höchstens 5 MB je Datei. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.</div>
         <dl class="facts" id="facts"></dl>
         <button class="chip-toggle" id="detailsBtn" type="button" hidden><span>Detailanpassung</span><span class="mono" id="detailsState">Einblenden</span></button>
         <div id="details" hidden>
@@ -296,7 +296,7 @@ body.embed .panel { padding: 18px 20px 22px; gap: 22px; }
           <div class="dlbl mono">Hintergrund</div>
           <div class="switch on" id="swCut"><span class="name">Freistellen</span><i></i></div>
           <div class="seg" id="segBg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Paper</button></div>
-          <div class="keys">Standard laut Backoffice: 3 : 4, Nase zwischen 40 und 60 Prozent, PNG, Originalauflösung, transparent. Änderungen hier gelten für alle Bilder dieser Sitzung.</div>
+          <div class="keys">Standard laut Backoffice: 3 : 4, Nase zwischen 40 und 60 Prozent, PNG, Originalauflösung, transparent. Jede Datei höchstens 5 MB, größere werden beim Export verkleinert. Änderungen hier gelten für alle Bilder dieser Sitzung.</div>
         </div>
         <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
         <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
@@ -641,7 +641,7 @@ async function cutout(it) {
     const img = new Image();
     await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = URL.createObjectURL(blob); });
     it.cut = img;
-    $("cutHint").textContent = "Freigestellt, transparent, PNG in Originalauflösung. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.";
+    $("cutHint").textContent = "Freigestellt, transparent, PNG in Originalauflösung, höchstens 5 MB je Datei. Das Freistellen läuft im Browser, das Foto verlässt den Rechner nicht.";
   } catch (e) { console.warn("Freistellen:", e); it.cutErr = true; toast("Freistellen fehlgeschlagen, Original wird verwendet"); }
   it.cutting = false;
   if (it === cur) draw();
@@ -785,14 +785,36 @@ window.addEventListener("keydown", (e) => {
 
 /* Export */
 const MIME = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
-function renderExport(it) {
-  const { W, H } = outSize(it);
+/* Obergrenze für Dateien der eigenständigen Seite: höchstens 5 MB je Bild (5.000.000 Byte).
+   JPG und WebP zuerst über die Qualität, danach wie PNG über die Pixelmaße. Eingebettet (Werkbank) gilt keine Grenze. */
+const MAX_BYTES = 5 * 1000 * 1000;
+function renderAt(it, W, H, q) {
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const g = c.getContext("2d");
   const bg = opts.bg === "transparent" && opts.fmt !== "jpg" ? null : (opts.bg === "transparent" ? "#ffffff" : opts.bg);
   drawItem(g, it, W, H, bg);
-  return new Promise((res) => c.toBlob(res, MIME[opts.fmt], 0.93));
+  return new Promise((res) => c.toBlob(res, MIME[opts.fmt], q));
 }
+async function renderExport(it) {
+  let { W, H } = outSize(it);
+  let q = 0.93;
+  let blob = await renderAt(it, W, H, q);
+  it.exportInfo = null;
+  if (typeof EMBED !== "undefined" && EMBED) return blob;
+  const start = { W, H, size: blob.size };
+  if (blob.size > MAX_BYTES && opts.fmt !== "png") {
+    for (const qq of [0.88, 0.82, 0.76, 0.7]) { q = qq; blob = await renderAt(it, W, H, q); if (blob.size <= MAX_BYTES) break; }
+  }
+  for (let i = 0; i < 8 && blob.size > MAX_BYTES; i++) {
+    const k = Math.min(0.95, Math.sqrt(MAX_BYTES / blob.size) * 0.97);
+    W = Math.max(200, Math.round(W * k)); H = Math.round(W / R());
+    blob = await renderAt(it, W, H, q);
+  }
+  if (start.size > MAX_BYTES) it.exportInfo = { von: start, W, H, size: blob.size };
+  return blob;
+}
+const mb = (n) => (n / 1000 / 1000).toFixed(1).replace(".", ",") + " MB";
+const exportHinweis = (it) => it.exportInfo ? ` · auf ${mb(it.exportInfo.size)} begrenzt, ${it.exportInfo.W} × ${it.exportInfo.H} px` : "";
 const outName = (it) => it.name.replace(/\.[^.]+$/, "") + "_portrait_" + RATIO_NAME[opts.ratio].replace(/\s/g, "").replace(":", "x") + (opts.cut ? "_freigestellt" : "") + "." + opts.fmt;
 function download(blob, name) {
   const a = document.createElement("a");
@@ -800,7 +822,7 @@ function download(blob, name) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-$("export").addEventListener("click", async () => { if (!cur) return; if (opts.cut && !cur.cut) { toast("Wird freigestellt"); await cutout(cur); } const b = await renderExport(cur); download(b, outName(cur)); toast("Exportiert · " + outName(cur)); });
+$("export").addEventListener("click", async () => { if (!cur) return; if (opts.cut && !cur.cut) { toast("Wird freigestellt"); await cutout(cur); } const b = await renderExport(cur); download(b, outName(cur)); toast("Exportiert · " + outName(cur) + exportHinweis(cur)); });
 let zipP = null;
 const loadZip = () => zipP || (zipP = new Promise((res, rej) => { const s = document.createElement("script"); s.src = JSZIP; s.onload = () => res(window.JSZip); s.onerror = rej; document.head.appendChild(s); }));
 $("exportAll").addEventListener("click", async () => {
@@ -811,7 +833,8 @@ $("exportAll").addEventListener("click", async () => {
     const zip = new JSZip();
     for (const it of items) { if (opts.cut && !it.cut) { select(it); toast(`Wird freigestellt · ${it.name}`); await cutout(it); } zip.file(outName(it), await renderExport(it)); }
     download(await zip.generateAsync({ type: "blob" }), "portraits.zip");
-    toast(items.length + " Bilder als ZIP exportiert");
+    const begrenzt = items.filter((it) => it.exportInfo).length;
+    toast(items.length + " Bilder als ZIP exportiert" + (begrenzt ? ` · ${begrenzt} auf höchstens 5 MB begrenzt` : ""));
   } catch { for (const it of items) download(await renderExport(it), outName(it)); }
 });
 

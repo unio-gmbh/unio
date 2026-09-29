@@ -120,6 +120,39 @@ async function hmBwDateien(mid, files) {
   return hmBwEinlesen(erg, liste);
 }
 
+/* Automatik: Warteschlange auf dem Server (api/wb-bildwelt.js), eine geplante Claude-Routine arbeitet sie ab.
+   Nur unter /ux erreichbar, der Browser schickt dort das UX-Passwort selbst mit. Lokal und ohne Speicher: Übergabe per Zwischenablage. */
+const HM_BW_API = typeof location !== "undefined" && location.pathname.startsWith("/ux/") ? "/ux/api/bildwelt" : null;
+let hmBwStatusP = null;
+function hmBwStatus(neu) {
+  if (!HM_BW_API) return Promise.resolve({ bereit: false, grund: "lokal" });
+  if (!hmBwStatusP || neu) hmBwStatusP = fetch(HM_BW_API + "?aktion=status", { credentials: "same-origin" }).then(async (r) => { const j = await r.json().catch(() => ({})); return r.ok ? { ...j, bereit: !!j.bereit } : { bereit: false, grund: j.fehler || "Status " + r.status }; }).catch(() => ({ bereit: false, grund: "nicht erreichbar" }));
+  return hmBwStatusP;
+}
+async function hmBwEinreihen(a) {
+  const r = await fetch(HM_BW_API, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ aktion: "auftrag", auftrag: a }) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.ok) throw new Error(j.fehler || "Warteschlange nicht erreichbar");
+  return j;
+}
+function hmBwSetze(mid, id, patch) { hmStore.patch("bildwelt", (x) => ({ ...(x || {}), [mid]: (((x || {})[mid]) || []).map((a) => a.id === id ? { ...a, ...patch } : a) })); }
+/* Alle 30 Sekunden: automatische Aufträge nachfragen, fertige Ergebnisse direkt einlesen */
+async function hmBwAbfragen() {
+  if (!HM_BW_API) return;
+  const alle = hmStore.get("bildwelt") || {};
+  for (const [mid, liste] of Object.entries(alle)) for (const a of liste || []) {
+    if (!a.auto || !["warteschlange", "in_arbeit"].includes(a.status)) continue;
+    try {
+      const r = await fetch(`${HM_BW_API}?aktion=auftrag&id=${encodeURIComponent(a.id)}`, { credentials: "same-origin" }); const j = await r.json();
+      if (!j.ok) continue;
+      if (j.status === "in_arbeit" && a.status !== "in_arbeit") hmBwSetze(mid, a.id, { status: "in_arbeit" });
+      if (j.status === "fehler") { hmBwSetze(mid, a.id, { status: "fehler", grund: j.grund }); toast("Bildwelt-Auftrag fehlgeschlagen: " + (j.grund || "ohne Grund")); }
+      if (j.status === "fertig" && j.ergebnis) { const e = await hmBwEinlesen(j.ergebnis); toast(`${e.n} Bildwelt-Bilder sind da`); }
+    } catch (e) { /* nächster Versuch in 30 Sekunden */ }
+  }
+}
+if (typeof window !== "undefined" && HM_BW_API && !window.__hmBwAbfrage) { window.__hmBwAbfrage = setInterval(hmBwAbfragen, 30000); setTimeout(hmBwAbfragen, 4000); }
+
 /* Rücklink aus Claude: #bildwelt=<encodeURIComponent(JSON)> */
 function hmBwAusHash(hash) {
   const h = hash != null ? hash : location.hash;
@@ -154,7 +187,7 @@ function BwBild({ x, onWeg }) {
   const [bw, bh] = x.format.split(":").map(Number);
   return <figure className="hm-bw-bild">
     <div className="rahmen" style={{ aspectRatio: `${bw} / ${bh}` }}>{u ? <img src={u} alt={x.titel} loading="lazy" /> : null}<span className="ki">KI-generiert</span></div>
-    <figcaption><span>{x.titel}</span><span className="aktionen"><button className="hm-link" onClick={laden}>Laden</button><button className="hm-link" onClick={onWeg}>Entfernen</button></span></figcaption>
+    <figcaption><span>{x.titel}</span><span className="aktionen"><button className="hm-link" onClick={laden}>Laden</button>{onWeg && <button className="hm-link" onClick={onWeg}>Entfernen</button>}</span></figcaption>
     {!x.lokal && <div className="hm-daten">Nur als Verweis, bitte laden und sichern</div>}
   </figure>;
 }
@@ -172,9 +205,20 @@ function BildweltBruecke({ m, teamSicht }) {
   const mod = HM_BW_MODELLE.find((x) => x.id === modell);
   const n = motive.filter((x) => x.an).length * varianten;
   const setM = (id, patch) => setMotive((l) => l.map((x) => x.id === id ? { ...x, ...patch } : x));
+  const [auto, setAuto] = React.useState(null);
+  React.useEffect(() => { let weg = false; hmBwStatus().then((s) => !weg && setAuto(s)); return () => { weg = true; }; }, []);
   const uebergeben = async () => {
     if (!n) { toast("Mindestens ein Motiv wählen"); return; }
     const a = { ...hmBwAuftrag(m.id, motive, modell, varianten), status: "offen" };
+    if (auto && auto.bereit) {
+      try {
+        await hmBwEinreihen(a);
+        hmStore.patch("bildwelt", (x) => ({ ...(x || {}), [m.id]: [{ ...a, status: "warteschlange", auto: true }, ...(((x || {})[m.id]) || [])].slice(0, 30) }));
+        hmEvent(m.id, "branding", `Bildwelt-Auftrag in die Warteschlange, ${a.bilder} Bilder`, teamSicht ? "Team" : m.name);
+        toast("In der Warteschlange. Die Bilder erscheinen hier von selbst.");
+        return;
+      } catch (e) { toast(e.message + ". Übergabe per Zwischenablage."); }
+    }
     hmStore.patch("bildwelt", (x) => ({ ...(x || {}), [m.id]: [a, ...(((x || {})[m.id]) || [])].slice(0, 30) }));
     hmEvent(m.id, "branding", `Bildwelt-Auftrag an Higgsfield übergeben, ${a.bilder} Bilder`, teamSicht ? "Team" : m.name);
     try { await navigator.clipboard.writeText(hmBwUebergabe(a)); toast("Auftrag kopiert. In Claude einfügen und abschicken."); } catch (e) { toast("Auftrag erstellt. Bitte unten kopieren."); }
@@ -184,7 +228,8 @@ function BildweltBruecke({ m, teamSicht }) {
   const dateien = async (files) => { try { const r = await hmBwDateien(m.id, files); toast(`${r.n} Bilder übernommen`); } catch (e) { toast(e.message); } };
   const erster = motive.find((x) => x.an) || motive[0];
   return <section className="hm-bw">
-    <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Bildwelt · Higgsfield</div><span className="hm-ez">{k.welt ? k.welt.name : "Ohne Welt"}</span></div>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Bildwelt · Higgsfield · nur Team</div><span className="hm-ez">{k.welt ? k.welt.name : "Ohne Welt"}</span></div>
+    <div className="hm-bw-auto">{auto == null ? "Automatik wird geprüft" : auto.bereit ? <>Automatik an{auto.worker && auto.worker.zuletzt ? `, Routine zuletzt vor ${Math.max(1, Math.round((Date.now() - auto.worker.zuletzt) / 60000))} Min` : ", Routine hat sich noch nicht gemeldet"}{auto.monat ? ` · ${hmBwZahl(auto.monat.credits)} von ${auto.monat.budget} Credits im Monat` : ""}</> : <>Automatik aus ({auto.grund === "lokal" ? "lokale Vorschau" : auto.grund}). Übergabe per Zwischenablage an Claude.</>}</div>
     <p className="hm-bw-satz">Stimmungsbilder für Posts und Stories aus deiner Bildsprache. Ohne erkennbare Menschen, jedes Bild als KI-generiert gekennzeichnet. Dein Gesicht kommt aus dem echten Shooting.</p>
     <div className="hm-gruppe">{motive.map((x) => <div key={x.id} className={"hm-reihe" + (x.an ? "" : " aus")}>
       <button className={"hm-bw-haken" + (x.an ? " an" : "")} onClick={() => setM(x.id, { an: !x.an })} aria-pressed={x.an} aria-label={x.titel}>{x.an && <Ico n="haken" g={12} />}</button>
@@ -205,9 +250,10 @@ function BildweltBruecke({ m, teamSicht }) {
       <div className="hm-gruppe">{auftraege.slice(0, 5).map((a) => <div key={a.id} className="hm-bw-auftrag">
         <div className="hm-reihe klick" onClick={() => setOffen(offen === a.id ? null : a.id)}>
           <div className="m"><div className="t">{a.bilder} Bilder · {(HM_BW_MODELLE.find((x) => x.id === a.modell) || {}).name}</div><div className="u">{hmDatum(a.erstellt)} · {a.status === "fertig" ? `fertig, ${hmBwZahl(a.credits || 0)} Credits` : `rund ${hmBwZahl(a.credits_schaetzung)} Credits`}</div></div>
-          <span className={"hm-ez" + (a.status === "fertig" ? " z-fertig" : " z-in_arbeit")}>{a.status === "fertig" ? "Fertig" : "Bei Claude"}</span>
+          <span className={"hm-ez" + (a.status === "fertig" ? " z-fertig" : a.status === "fehler" ? " z-wartet_team" : " z-in_arbeit")}>{{ fertig: "Fertig", fehler: "Fehler", warteschlange: "Warteschlange", in_arbeit: "Wird erzeugt" }[a.status] || "Bei Claude"}</span>
         </div>
-        {offen === a.id && a.status !== "fertig" && <div className="hm-bw-schritte">
+        {offen === a.id && a.status === "fehler" && <div className="hm-bw-schritte">{a.grund || "Ohne Grund."}</div>}
+        {offen === a.id && a.status === "offen" && <div className="hm-bw-schritte">
           <ol>
             <li>Claude öffnen, in dem der Higgsfield-Connector aktiv ist, und den Auftrag einfügen. Er liegt in der Zwischenablage.</li>
             <li>Claude nennt die Credits und das Guthaben und erzeugt erst nach deinem Ja.</li>
@@ -225,6 +271,17 @@ function BildweltBruecke({ m, teamSicht }) {
   </section>;
 }
 
+/* Makler sehen nur die fertigen Bilder, keine Credits und keine Aufträge */
+function BildweltGalerie({ m }) {
+  const bilder = (useHm("bildwelt_bilder") || {})[m.id] || [];
+  if (!bilder.length) return null;
+  return <section className="hm-bw">
+    <div className="hm-mono">Bildwelt · vom UNIO-Team</div>
+    <p className="hm-bw-satz">Stimmungsbilder aus deiner Bildsprache, KI-generiert und gekennzeichnet. Du findest sie auch bei der Website unter Bilder.</p>
+    <div className="hm-bw-raster">{bilder.map((x) => <BwBild key={x.id} x={x} />)}</div>
+  </section>;
+}
+
 function hmSelbsttestBildwelt() {
   const out = []; const t = (name, fn) => { try { const r = fn(); out.push({ name, ok: !!r.ok, detail: r.detail || "" }); } catch (e) { out.push({ name, ok: false, detail: e.message }); } };
   const mid = (hmStore.get("makler") || [])[0] ? hmStore.get("makler")[0].id : "markus";
@@ -239,4 +296,4 @@ function hmSelbsttestBildwelt() {
   return out;
 }
 
-Object.assign(window, { HM_BW_MODELLE, hmBwKontext, hmBwMotive, hmBwPrompt, hmBwAuftrag, hmBwUebergabe, hmBwEinlesen, hmBwDateien, hmBwAusHash, BildweltBruecke, hmSelbsttestBildwelt });
+Object.assign(window, { BildweltGalerie, hmBwStatus, hmBwAbfragen, HM_BW_MODELLE, hmBwKontext, hmBwMotive, hmBwPrompt, hmBwAuftrag, hmBwUebergabe, hmBwEinlesen, hmBwDateien, hmBwAusHash, BildweltBruecke, hmSelbsttestBildwelt });

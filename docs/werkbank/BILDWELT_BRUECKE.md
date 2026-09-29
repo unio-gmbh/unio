@@ -61,6 +61,27 @@ Die Werkbank versucht jedes Bild per `fetch` in IndexedDB zu sichern (`bw:<id>`)
 - Jedes Bild trägt in der Werkbank das Zeichen „KI-generiert“. Täuschend echte KI-Bilder realer Orte sind nach Art. 50 AI Act auch beim Veröffentlichen zu kennzeichnen.
 - Credits fließen nur nach ausdrücklicher Freigabe in der Claude-Sitzung. Die Kostenabfrage (`get_cost`) ist gratis.
 
+## Automatik (Warteschlange)
+
+Seit 29.09.2026 gebaut, aktiv sobald der Speicher verbunden ist. Nur das Team sieht den Bildwelt-Bereich, Makler sehen nur die fertigen Bilder.
+
+```
+Werkbank (Team)  POST /ux/api/bildwelt  ──▶  api/wb-bildwelt.js  ──▶  Upstash Redis
+                 GET alle 30 s          ◀──  status, ergebnis
+Claude-Routine   GET ?aktion=offen      ──▶  (x-wb-token)
+  mit Higgsfield-Connector, Skill /bildwelt warteschlange
+                 POST aktion=ergebnis   ──▶
+```
+
+- `/ux/api/:name` ist per Rewrite in `vercel.json` auf `/api/wb-:name` gelegt. Dort schickt der Browser das UX-Passwort selbst mit, weil der Pfad unter dem geschützten `/ux` liegt.
+- Grenzen: `budget_credits` je Auftrag, `WB_BW_MONATSBUDGET` je Monat (Standard 150 Credits). Der Server lehnt Aufträge über dem Budget mit 402 ab.
+- Ohne Speicher (503) oder lokal fällt die Werkbank auf die Übergabe per Zwischenablage zurück.
+
+Einrichtung (einmalig):
+1. Vercel, Projekt unio, Storage: Upstash Redis aus dem Marketplace anlegen und mit dem Projekt verbinden. Das setzt `KV_REST_API_URL` und `KV_REST_API_TOKEN`.
+2. Vercel, Environment Variables: `WB_WORKER_TOKEN` mit einem langen Zufallswert anlegen, danach neu deployen.
+3. Routine anlegen: eine geplante Claude-Sitzung mit Higgsfield-Connector, alle 15 bis 30 Minuten, Auftrag `/bildwelt warteschlange`, derselbe `WB_WORKER_TOKEN` in ihrer Umgebung.
+
 ## Nächste Stufe
 
-Voll automatisch ohne Kopieren geht es erst mit einer Warteschlange auf dem Server (etwa Vercel KV oder Supabase): die Werkbank legt Aufträge ab, eine geplante Claude-Routine mit Higgsfield-Connector arbeitet sie ab und schreibt die Ergebnisse zurück. Die Formate oben bleiben dabei gleich.
+Echtzeit statt Abfrage alle 30 Sekunden, und eine Freigabe durch Daniel vor großen Aufträgen. Die Formate oben bleiben gleich.

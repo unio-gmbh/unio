@@ -153,29 +153,4 @@ function hmImpressumCheck(F) {
 /* Im Paket: eigene Dateien relativ, UNIO-Bilder von der Basis-Adresse */
 function hmPaketAbs(u) { try { if (/^(portrait\.png|data:|https?:|blob:)/.test(u)) return new URL(u, location.href).href; return new URL(u.replace(/^(\.\.\/)+assets\//, ""), HM_BASIS + "/assets/").href; } catch (e) { return u; } }
 /* Paket = Original-Template + Füll-Skript + Daten + Porträt. Öffnet sich ohne die Werkbank, Bilder der Objekte von unio.at. */
-async function hmWebsitePaket(m, b, F, look) {
-  const JSZip = await hmJszip();
-  const zip = new JSZip();
-  const html = await (await fetch(hmShowcaseSrc(look))).text();
-  const basis = location.pathname.startsWith("/ux/") ? location.origin : "https://www.unio.at";
-  const bb = { vor: b.vor, nach: b.nach, initialen: b.initialen, logo: b.logo, akzent: b.akzent, schrift: b.schrift, makler: { name: b.makler.name }, portrait: b.portrait ? "portrait.png" : null };
-  if (b.portrait) zip.file("portrait.png", await (await fetch(b.portrait)).blob());
-  /* Funktionen samt Babel-Hilfsfunktionen (_toArray usw.) mitnehmen, damit das Skript alleine läuft */
-  const quelle = [hmWebObjekte, hmFuelleTemplate].map((f) => f.toString());
-  const helfer = new Set();
-  const sammle = (txt) => (txt.match(/\b_[a-zA-Z]+\b/g) || []).forEach((n) => { if (!helfer.has(n) && n !== "_loop" && typeof window[n] === "function") { helfer.add(n); sammle(window[n].toString()); } });
-  quelle.forEach(sammle);
-  const skript = `<script>
-/* Werkbank: Inhalte für ${b.makler.name}, erzeugt am ${new Date().toLocaleDateString("de-AT")}. */
-var HM_BASIS = ${JSON.stringify(basis)};
-var hmAbs = ${hmPaketAbs.toString()};
-${[...helfer].map((n) => window[n].toString()).join("\n")}
-${quelle.join("\n")}
-window.addEventListener("load", function () { hmFuelleTemplate(document, ${JSON.stringify(F)}, ${JSON.stringify(bb)}); });
-</scr` + `ipt>`;
-  zip.file("/", html.replace("</body>", skript + "\n</body>"));
-  zip.file("LIESMICH.txt", `Website ${b.makler.name}, Look ${look}.\n\nindex.html im Browser öffnen oder den Ordner auf einen Webspace laden.\nVor dem Livegang: Domain ${F.domain || ""}, Impressum und Datenschutz prüfen.\nIm Betrieb veröffentlicht UNIO direkt über die Vercel-Schnittstelle.`);
-  hmLaden(await zip.generateAsync({ type: "blob" }), `${(b.vor + "-" + b.nach).toLowerCase()}-website.zip`);
-}
-
-Object.assign(window, { hmSkriptLaden, hmJszip, hmOpentype, hmFontDatei, hmTextPfad, hmLogoSvg, hmSvgZuPng, hmLaden, hmKontrastInfo, hmZahl, hmBrandKit, BrandKitKnopf, hmLogoLaden, hmLogoFarbe, LogoFarbe, hmImpressumCheck, hmWebsitePaket });
+Object.assign(window, { hmSkriptLaden, hmJszip, hmOpentype, hmFontDatei, hmTextPfad, hmLogoSvg, hmSvgZuPng, hmLaden, hmKontrastInfo, hmZahl, hmBrandKit, BrandKitKnopf, hmLogoLaden, hmLogoFarbe, LogoFarbe, hmImpressumCheck });

@@ -35,6 +35,12 @@
       "permanent": true
     }
   ],
+  "rewrites": [
+    {
+      "source": "/ux/api/:name",
+      "destination": "/api/wb-:name"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

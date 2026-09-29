@@ -1115,8 +1115,9 @@ function hmPlattformSpeichern(mid, plattform) {
 function hmPlattformAktuell(mid) { const s = (hmStore.get("plattformen") || {})[mid]; return s ? s.aktuell : null; }
 function hmPlattformVersionen(mid) { const s = (hmStore.get("plattformen") || {})[mid]; return s ? s.versionen : []; }
 
-/* ---------- 11. Claude-Kette über /api/wb-marke, mit Rückfall auf die Regeln ---------- */
-const HM_PF_API = "/api/wb-marke";
+/* ---------- 11. Claude-Kette über /api/wb-marke (unter /ux: /ux/api/marke), mit Rückfall auf die Regeln ---------- */
+/* Unter /ux läuft die Schnittstelle über den Rewrite /ux/api/marke, dann schickt der Browser das UX-Passwort selbst mit */
+const HM_PF_API = typeof location !== "undefined" && location.pathname.startsWith("/ux/") ? "/ux/api/marke" : "/api/wb-marke";
 function hmPfAnfrage(mid, extra) {
   const q = hmPfQuellen(mid);
   const letzte = q.meetings.slice().sort((x, y) => String(y.datum).localeCompare(String(x.datum)))[0];

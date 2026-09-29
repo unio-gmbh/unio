@@ -772,34 +772,124 @@ img.hm-ava { object-position: 50% 12%; }
 .hm-bw-auftrag + .hm-bw-auftrag { border-top: 1px solid var(--hairline-dark); }
 .hm-bw-auftrag > .hm-reihe.klick:hover { background: rgba(240,237,230,.6); }
 @media (max-width: 640px) { .hm-bw .hm-reihe { flex-wrap: wrap; } .hm-bw .hm-reihe .m { flex-basis: calc(100% - 40px); } }
+/* Website-Baukasten */
+.hm-stil { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
+.hm-stil-k { position: relative; }
+.hm-stil-knopf { display: flex; align-items: center; gap: 10px; border: 0; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark); border-radius: 14px; padding: 8px 12px 8px 8px; cursor: pointer; color: var(--ink); text-align: left; transition: box-shadow .12s, background .12s; }
+.hm-stil-knopf:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.hm-stil-knopf.on { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.hm-stil-knopf .z { width: 34px; height: 34px; border-radius: 10px; background: var(--paper-2); display: grid; place-items: center; overflow: hidden; flex: none; color: var(--ink); }
+.hm-stil-knopf .z img { width: 100%; height: 100%; object-fit: cover; }
+.hm-stil-knopf .tx { display: grid; line-height: 1.2; min-width: 0; }
+.hm-stil-knopf .l { font-size: 11px; color: var(--text-muted); } .hm-stil-knopf .v { font-size: 14px; white-space: nowrap; }
+.hm-stil-knopf .hm-ico { color: var(--text-muted); margin-left: 2px; }
+.hm-stil-dot { width: 20px; height: 20px; border-radius: 50%; display: block; }
+.hm-stil-logo { display: grid; place-items: center; width: 100%; height: 100%; padding: 0 3px; }
+.hm-stil-logo svg { max-width: 100%; }
+.hm-stil-pop { position: absolute; top: calc(100% + 8px); left: 0; z-index: 60; width: min(560px, calc(100vw - 32px)); background: var(--surface-raised); border-radius: 18px; padding: 14px; box-shadow: 0 24px 60px -20px rgba(12,11,9,.35), inset 0 0 0 1px var(--hairline-dark); }
+.hm-stil-fuss { font-size: 12px; color: var(--text-muted); margin-top: 12px; }
+.hm-stil-farben { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; }
+.hm-stil-farben button, .hm-stil-schriften button, .hm-stil-logos button, .hm-stil-gruende button, .hm-stil-looks button { border: 0; background: transparent; border-radius: 12px; padding: 8px; text-align: left; cursor: pointer; display: grid; gap: 3px; color: var(--ink); transition: background .1s; }
+.hm-stil-farben button:hover, .hm-stil-schriften button:hover, .hm-stil-logos button:hover, .hm-stil-gruende button:hover, .hm-stil-looks button:hover { background: var(--paper-2); }
+.hm-stil-farben button.on, .hm-stil-schriften button.on, .hm-stil-logos button.on, .hm-stil-gruende button.on, .hm-stil-looks button.on { background: var(--paper-2); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.hm-stil-farben i { width: 100%; height: 44px; border-radius: 10px; display: grid; place-items: center; }
+.hm-stil-farben .t, .hm-stil-logos .t, .hm-stil-gruende .t, .hm-stil-looks .t { font-size: 13px; } .hm-stil-farben .s, .hm-stil-logos .s, .hm-stil-gruende .s, .hm-stil-looks .s { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
+.hm-stil-schriften { display: grid; gap: 4px; }
+.hm-stil-schriften button { grid-template-columns: minmax(0, 1fr); padding: 10px 12px; }
+.hm-stil-schriften .d { font-size: 26px; line-height: 1.05; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-stil-schriften .b { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-stil-schriften .n { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 10px; } .hm-stil-schriften .n em { font-style: normal; }
+.hm-stil-logos, .hm-stil-gruende { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.hm-stil-logos .bild { height: 72px; border-radius: 10px; background: #F7F5F1; display: grid; place-items: center; color: #0B0A09; overflow: hidden; }
+.hm-stil-gruende .flaeche { height: 72px; border-radius: 10px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px 12px; font-size: 22px; box-shadow: inset 0 0 0 1px rgba(11,10,9,.12); }
+.hm-stil-gruende .flaeche i { width: 12px; height: 12px; border-radius: 50%; margin-bottom: 6px; }
+.hm-stil-gruende button:disabled { opacity: .45; cursor: default; }
+.hm-stil-looks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.hm-stil-looks img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 8px; display: block; }
+.hm-web-leiste { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.hm-geraete button { display: inline-flex; align-items: center; gap: 6px; }
+.hm-wr { width: 100%; min-width: 0; display: flex; justify-content: center; overflow: hidden; }
+.hm-wr-geraet { position: relative; overflow: hidden; border-radius: 14px; background: var(--paper-2); box-shadow: 0 20px 50px -24px rgba(12,11,9,.4), inset 0 0 0 1px var(--hairline-dark); transition: width .25s ease, height .25s ease; }
+.hm-wr.g-mobil .hm-wr-geraet { border-radius: 30px; box-shadow: 0 20px 50px -24px rgba(12,11,9,.45), 0 0 0 6px #141312, 0 0 0 7px rgba(255,255,255,.08); margin: 8px 0; }
+.hm-wr.g-tablet .hm-wr-geraet { border-radius: 22px; box-shadow: 0 20px 50px -24px rgba(12,11,9,.45), 0 0 0 5px #141312; margin: 6px 0; }
+.hm-wr-buehne { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.hm-wr-buehne iframe { position: absolute; inset: 0; border: 0; display: block; background: #fff; transition: opacity .2s ease; }
+.hm-wr-lade { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper-2); }
+.hm-wr-lade span { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--hairline-dark); border-top-color: var(--ink); animation: hm-dreh 1s linear infinite; }
+@keyframes hm-dreh { to { transform: rotate(360deg); } }
+.hm-wr.mini .hm-wr-geraet { border-radius: 10px; box-shadow: inset 0 0 0 1px var(--hairline-dark); margin: 0; }
+.hm-web-pruef { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 10px; font-size: 13px; }
+.hm-web-pruef .ok, .hm-web-pruef .nein { display: inline-flex; gap: 6px; align-items: center; } .hm-web-pruef .ok { color: var(--ink-2); } .hm-web-pruef .nein { color: var(--signal-deep); }
+.hm-wand { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.hm-wand.mobil { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.hm-wand-k { border: 0; background: transparent; padding: 0; text-align: left; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; color: var(--ink); min-width: 0; }
+.hm-wand-k .hm-wr { overflow: visible; }
+.hm-wand-k .hm-wr-geraet { outline: 2px solid transparent; outline-offset: 3px; transition: outline-color .12s; }
+.hm-wand-k:hover .hm-wr-geraet { outline-color: var(--hairline-dark); } .hm-wand-k.on .hm-wr-geraet { outline-color: var(--ink); }
+.hm-wand-k .t { font-size: 14px; margin-top: 6px; } .hm-wand-k .s { font-size: 12px; color: var(--text-muted); }
+.hm-wand .hm-wr.mini:empty { background: var(--paper-2); border-radius: 10px; }
+.hm-drop.ueber { border-color: var(--ink); color: var(--ink); background: var(--paper-2); }
+.hm-film { display: flex; gap: 6px; align-items: center; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: thin; }
+.hm-film img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; flex: none; cursor: grab; box-shadow: inset 0 0 0 1px var(--hairline-dark); }
+.hm-film .hm-link { flex: none; margin-left: 6px; font-size: 13px; }
+.hm-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 14px 12px; margin-top: 16px; align-items: start; }
+.hm-slot { margin: 0; }
+.hm-slot:first-child, .hm-slot:nth-child(2) { grid-column: span 2; }
+.hm-slot .rahmen { position: relative; border-radius: 12px; overflow: hidden; background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--hairline-dark); cursor: grab; transition: box-shadow .12s; }
+.hm-slot:first-child .rahmen { aspect-ratio: 16/10 !important; background: #F0EDE6; }
+.hm-slot.ueber .rahmen { box-shadow: inset 0 0 0 2px var(--ink); }
+.hm-slot.fokus .rahmen { cursor: crosshair; }
+.hm-slot img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.hm-slot .leer { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: var(--text-muted); border: 1.5px dashed rgba(11,10,9,.22); border-radius: 12px; }
+.hm-slot .ring { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(11,10,9,.5), 0 2px 8px rgba(0,0,0,.3); pointer-events: none; }
+.hm-slot .ki, .hm-bib-b .ki { position: absolute; left: 6px; bottom: 6px; font-size: 10px; background: rgba(11,10,9,.72); color: #F7F5F1; padding: 2px 6px; border-radius: 999px; }
+.hm-slot figcaption { display: grid; gap: 2px; margin-top: 6px; font-size: 12px; }
+.hm-slot figcaption .t { font-size: 13px; color: var(--ink); display: flex; justify-content: space-between; gap: 6px; } .hm-slot figcaption .t em { font-style: normal; color: var(--text-muted); font-size: 11px; }
+.hm-slot figcaption .s { color: var(--text-muted); } .hm-slot figcaption .s b { color: var(--signal-deep); font-weight: 400; }
+.hm-slot figcaption .a { display: flex; gap: 12px; margin-top: 2px; }
+.hm-bib { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+.hm-bib-b { border: 0; background: transparent; padding: 0; text-align: left; cursor: pointer; display: grid; gap: 2px; color: var(--ink); }
+.hm-bib-b .bild { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--hairline-dark); }
+.hm-bib-b img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
+.hm-bib-b:hover img { transform: scale(1.03); }
+.hm-bib-b .t { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; } .hm-bib-b .s { font-size: 11px; color: var(--text-muted); }
+.hm-wfeld-edit { display: grid; gap: 4px; padding: 10px 0; }
+.hm-wfeld-edit .l { font-size: 13px; color: var(--text-muted); }
+.hm-wfeld-edit textarea { width: 100%; border: 0; box-shadow: inset 0 0 0 2px var(--ink); border-radius: 10px; padding: 9px 11px; font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; }
+.hm-wfeld-edit input { margin: 0; }
+.hm-wfeld-edit .z { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; } .hm-wfeld-edit .z.rot { color: var(--signal-deep); }
+.hm-bw-auto { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+@media (max-width: 1100px) { .hm-wand { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hm-wand.mobil { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .hm-stil-knopf .v { font-size: 13px; } .hm-stil-logos, .hm-stil-gruende, .hm-stil-looks { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hm-wand { grid-template-columns: minmax(0, 1fr); } .hm-slot:first-child, .hm-slot:nth-child(2) { grid-column: auto; } .hm-geraete span { display: none; } }
 </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="/ux/werkbank/wb-data.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-store.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-os-data.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-more.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-flow.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-ui.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-foto.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-werkzeuge.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-strategie.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-setup.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-produktion.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-shop2.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-markenwelten.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-plattform.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-markenbuch.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-reel.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-betrieb.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-material.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-einrichtung.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-bildwelt.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-marke.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-medien.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-content.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-team.jsx?v=mumrzzb8"></script>
-<script type="text/babel" src="/ux/werkbank/wb-app.jsx?v=mumrzzb8"></script>
+<script type="text/babel" src="/ux/werkbank/wb-data.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-store.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-os-data.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-more.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-flow.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-ui.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-foto.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-werkzeuge.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-strategie.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-setup.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-produktion.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-shop2.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-markenwelten.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-plattform.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-markenbuch.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-reel.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-betrieb.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-material.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-einrichtung.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-bildwelt.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-marke.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-web.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-medien.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-content.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-team.jsx?v=mumzbjep"></script>
+<script type="text/babel" src="/ux/werkbank/wb-app.jsx?v=mumzbjep"></script>
 </body>
 </html>

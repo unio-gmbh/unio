@@ -48,7 +48,8 @@ function Material({ m }) {
     for (const f of [...files]) {
       let vorschau = null;
       if (f.type.startsWith("image/")) vorschau = await new Promise((res) => { const img = new Image(); img.onload = () => { const k = Math.min(1, 360 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = img.width * k; c.height = img.height * k; c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .8)); }; img.onerror = () => res(null); img.src = URL.createObjectURL(f); });
-      neu.push({ id: "mt" + Date.now() + Math.random().toString(36).slice(2, 5), name: f.name, art, groesse: f.size, vorschau, datum: "2026-09-28" });
+      let bild = null; if (f.type.startsWith("image/") && window.hmWebBildSpeichern) { try { bild = await hmWebBildSpeichern(m.id, f, { quelle: "material" }); } catch (e) { bild = null; } }
+      neu.push({ id: "mt" + Date.now() + Math.random().toString(36).slice(2, 5), name: f.name, art, groesse: f.size, vorschau, bild, datum: new Date().toISOString().slice(0, 10) });
     }
     hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), material: [...(((a || {})[m.id] || {}).material || []), ...neu] } }));
     hmEvent(m.id, "material", `${neu.length} Dateien als ${art} hochgeladen`, m.name);
@@ -86,7 +87,7 @@ function Studio({ m, setSub, teamSicht }) {
         <section><div className="hm-mono">Akzentfarbe</div><div className="hm-farben">{HM_WEB_AKZENTE.map((x) => <button key={x.id} className={b.akzentId === x.id ? "on" : ""} onClick={() => set({ akzent: x.id })} title={x.name}><i style={{ background: x.hex }}></i><span>{x.name}{empfA.includes(x.id) ? " ·" : ""}</span></button>)}</div>{(() => { const k = hmKontrastInfo(b.akzent); return <div className="hm-pruefliste" style={{ marginTop: 10, fontSize: 13 }}><div className={k.gross ? "ok" : "nein"}><Ico n={k.gross ? "haken" : "x"} />Auf hellem Grund {hmZahl(k.aufPapier)} zu 1, {k.text ? "auch für Text" : k.gross ? "für Überschriften und Flächen" : "nur für Flächen"}</div><div className={k.knopf ? "ok" : "nein"}><Ico n={k.knopf ? "haken" : "x"} />Weiß darauf {hmZahl(k.weissDrauf)} zu 1, {k.knopf ? "gut für Knöpfe" : "Knöpfe mit dunkler Schrift"}</div></div>; })()}
           <LogoFarbe m={m} set={set} /></section>
         <section><div className="hm-mono">Leitidee</div><input className="hm-text" style={{ fontFamily: hmFont(b.schrift.d) }} value={b.claim} onChange={(e) => set({ claim: e.target.value })} /></section>
-        <BildweltBruecke m={m} teamSicht={teamSicht} />
+        {teamSicht ? <BildweltBruecke m={m} teamSicht={teamSicht} /> : <BildweltGalerie m={m} />}
       </div>
       <div className="hm-studio-r">
         <div className="hm-mono">So sieht es aus</div>
@@ -143,64 +144,6 @@ function hmWebFelder(m, b, web) {
   ];
 }
 const HM_WEB_GRUPPEN = { UNIO: ["Automatisch aus UNIO", "Kommt aus Profil, Einrichtung und Bestand. Ändert sich mit, wenn sich dort etwas ändert."], Marke: ["Aus deiner Marke", "Aus Branding und Konzept. Änderst du dein Branding, ändert sich die Website mit."], Du: ["Von dir", "Nur du weißt das. Einmal eintragen."], Recht: ["Rechtliches", "Pflichtangaben für das Impressum eines Immobilienmaklers. Wir prüfen vor dem Livegang."] };
-
-function Website({ m, setSub, teamSicht }) {
-  useHm("website"); useHm("branding");
-  const b = hmBrand(m.id);
-  const web = (hmStore.get("website") || {})[m.id] || {};
-  const weltLook = window.hmMbWelt ? (hmMbWelt(m.id, window.hmMbPlattform ? hmMbPlattform(m.id) : null) || {}).websiteLook : null;
-  const look = web.look || weltLook || 1;
-  const felder = hmWebFelder(m, b, web);
-  const [edit, setEdit] = React.useState(null);
-  const set = (patch) => hmStore.patch("website", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), ...patch } }));
-  const setF = (id, v) => set({ felder: { ...(web.felder || {}), [id]: v } });
-  if (!b.fertig) return <Leer titel="Kommt nach deinem Branding." text="Sobald das Branding freigegeben ist, füllt sich die Seite fast von selbst." aktion={<Btn onClick={() => setSub("design")}>Zum Branding</Btn>} />;
-  const pflichtOffen = felder.filter((f) => f.pflicht && !f.wert);
-  const gefuellt = felder.filter((f) => f.wert).length;
-  const status = web.status || "entwurf";
-  return <div>
-    <Kopf titel="Website" ueber={`${gefuellt} von ${felder.length} Angaben da`}
-      rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {felder.find((f) => f.id === "domain").wert}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
-    <div className="hm-sek">Look</div>
-    <div className="hm-looks">{HM_LOOKS.map((l) => <button key={l.n} className={look === l.n ? "on" : ""} onClick={() => set({ look: l.n })}><img src={l.bild} alt="" /><div className="t">{String(l.n).padStart(2, "0")} {l.name}</div><div className="s">{l.satz}</div></button>)}</div>
-    <div className="hm-web-split">
-      <div className="hm-web-felder">
-        {Object.entries(HM_WEB_GRUPPEN).map(([g, [titel, text]]) => <div key={g}>
-          <div className="hm-sek" style={{ marginTop: g === "UNIO" ? 0 : 24 }}>{titel}<span className="hm-daten">{felder.filter((f) => f.gruppe === g && f.wert).length} / {felder.filter((f) => f.gruppe === g).length}</span></div>
-          <div className="hm-gruppe" style={{ padding: "0 16px" }}>
-          {felder.filter((f) => f.gruppe === g).map((f) => <div key={f.id} className={"hm-wfeld" + (!f.wert && f.pflicht ? " fehlt" : "")}>
-            {edit === f.id ? <input autoFocus defaultValue={f.wert} onBlur={(e) => { setF(f.id, e.target.value); setEdit(null); }} onKeyDown={(e) => e.key === "Enter" && e.target.blur()} /> : <button onClick={() => setEdit(f.id)}><span className="l">{f.label}{f.pflicht ? " *" : ""}</span><span className="v">{f.wert || "Fehlt"}</span><span className="q">{f.eigen ? "Von dir geändert" : f.quelle}</span></button>}
-          </div>)}
-          </div>
-          <div className="hm-mono" style={{ margin: "6px 4px 0" }}>{text}</div>
-          {g === "Recht" && <div className="hm-pruefliste" style={{ margin: "12px 4px 0", fontSize: 13 }}>{hmImpressumCheck(Object.fromEntries(felder.map((f) => [f.id, f.wert]))).map((x) => <div key={x.t} className={x.ok ? "ok" : "nein"}><Ico n={x.ok ? "haken" : "x"} />{x.t}</div>)}</div>}
-        </div>)}
-      </div>
-      <div className="hm-web-vorschau"><WebVorschau m={m} b={b} felder={felder} look={look} /></div>
-    </div>
-  </div>;
-}
-
-function WebVorschau({ m, b, felder, look }) {
-  const F = Object.fromEntries(felder.map((f) => [f.id, f.wert]));
-  const box = React.useRef(null);
-  const [breite, setBreite] = React.useState(560);
-  const [geladen, setGeladen] = React.useState(false);
-  React.useEffect(() => { const el = box.current; if (!el) return; const ro = new ResizeObserver(() => setBreite(el.clientWidth)); ro.observe(el); return () => ro.disconnect(); }, []);
-  const schluessel = JSON.stringify([look, F, b.akzent, b.schriftId, b.logo, b.portrait]);
-  React.useEffect(() => setGeladen(false), [schluessel]);
-  const skala = breite / 1280;
-  const src = hmShowcaseSrc(look);
-  const oeffnen = () => { const w = window.open(src, "_blank"); if (w) w.addEventListener("load", () => hmFuelleTemplate(w.document, F, b)); };
-  return <div>
-    <div className="hm-row" style={{ justifyContent: "space-between", marginBottom: 8 }}><span className="hm-mono">Look {look} mit deinen Inhalten</span><span className="hm-row" style={{ gap: 14 }}><button className="hm-link" onClick={() => hmWebsitePaket(m, b, F, look).then(() => toast("Paket geladen")).catch((e) => { console.warn(e); toast("Paket konnte nicht erstellt werden"); })}>Als Paket laden</button><button className="hm-link" onClick={oeffnen}>Groß öffnen</button></span></div>
-    <div className="hm-webframe" ref={box} style={{ height: Math.min(760, 1700 * skala) }}>
-      <iframe key={schluessel} src={src} title="Website-Vorschau" width="1280" height={Math.round(Math.min(760, 1700 * skala) / skala)} style={{ transform: `scale(${skala})`, width: 1280 }} onLoad={(e) => { try { hmFuelleTemplate(e.target.contentDocument, F, b); } catch (err) { console.warn(err); } setGeladen(true); }} />
-      {!geladen && <div className="lade">Look {look} wird mit deinen Inhalten gefüllt</div>}
-    </div>
-    <div className="hm-mono" style={{ marginTop: 8 }}>Getauscht werden nur Name, Texte, Porträt, Objektfotos, Logo, Akzentfarbe und Schrift. Referenzen erscheinen erst, wenn echte Kundenstimmen da sind.</div>
-  </div>;
-}
 
 function BrandKit({ m, setSub }) {
   useHm("branding");
@@ -264,53 +207,4 @@ function hmWebObjekte() {
   ].map(([t, loc, price, m2, zi, img]) => ({ t, loc, price, m2, zi, img: hmAbs("../../assets/img/" + img) }));
 }
 
-function hmFuelleTemplate(doc, F, b) {
-  const win = doc.defaultView; if (!win) return;
-  const IMG = win.IMG || {};
-  const html = doc.documentElement;
-  const region = (F.region || "Wien").split(",")[0].trim();
-  const mail = F.mail || "", tel = F.tel || "", ig = F.instagram || "";
-  const objekte = hmWebObjekte();
-  const life = ["lifestyle-paar.jpg", "terrasse-golden.png", "interieur-esszimmer.jpg", "dachlounge.jpg", "essen-gruen.jpg", "skyline-terrasse.png"].map((f) => hmAbs("../../assets/photos/" + f));
-  /* 1 Bilder: jeder Schlüssel im IMG-Objekt bekommt ein UNIO-Bild */
-  const karte = {}; let oi = 0, li = 0, ri = 0;
-  Object.keys(IMG).forEach((k) => {
-    if (k === "hero") karte[IMG[k]] = b.portrait ? hmAbs(b.portrait) : "";
-    else if (/^life/.test(k)) karte[IMG[k]] = life[li++ % life.length];
-    else if (/^ref_/.test(k)) karte[IMG[k]] = objekte[(ri++ + 3) % objekte.length].img;
-    else karte[IMG[k]] = objekte[oi++ % objekte.length].img;
-  });
-  doc.querySelectorAll("img").forEach((im) => { const n = karte[im.getAttribute("src")]; if (n !== undefined) { if (n) im.setAttribute("src", n); else im.style.visibility = "hidden"; } });
-  html.style.setProperty("--pmask", b.portrait ? `url(${hmAbs(b.portrait)})` : "none");
-  /* 2 Texte */
-  const paare = [["Immobilien mit Strategie, Sichtbarkeit und persönlicher Begleitung.", F.headline], ["Immobilien, persönlich verkauft.", F.headline], ["Für mich ist eine Immobilie kein Objekt, sondern ein Lebensraum.", F.zitat], ["marcus@example.at", mail], ["@marcus.weiss.immo", ig || "@" + (b.vor + "." + b.nach).toLowerCase() + ".immo"], ["marcus.weiss.immo", (ig || "").replace("@", "") || (b.vor + "." + b.nach).toLowerCase() + ".immo"], ["+43 (0)1 000 00 00", tel], ["Marcus", b.vor], ["Weiss", b.nach], ["· Wien", "· " + region], ["Wien )", region + " )"]];
-  const w = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
-  let n; while ((n = w.nextNode())) { let t = n.nodeValue; paare.forEach(([a, z]) => { if (z != null && t.includes(a)) t = t.split(a).join(z); }); if (t !== n.nodeValue) n.nodeValue = t; }
-  doc.querySelectorAll("[alt]").forEach((e) => e.setAttribute("alt", e.getAttribute("alt").replace(/Marcus/g, b.vor).replace(/Weiss/g, b.nach)));
-  doc.querySelectorAll(".intro-body, .h2-introtext").forEach((e) => { if (F.bio) e.textContent = F.bio; });
-  const stats = (F.stats || "").split(" · ").filter(Boolean).map((s) => { const [x, ...r] = s.split(" "); return [x, r.join(" ")]; });
-  doc.querySelectorAll(".hero-facts").forEach((box) => box.querySelectorAll(".fact").forEach((f, i) => { if (stats[i]) { f.querySelector(".n").textContent = stats[i][0]; f.querySelector(".l").textContent = stats[i][1]; } else f.style.display = "none"; }));
-  /* 3 Objekte */
-  doc.querySelectorAll("#grid .card").forEach((c, i) => { const o = objekte[i % objekte.length]; const q = (s) => c.querySelector(s); if (q("h3")) q("h3").textContent = o.t; if (q(".loc")) q(".loc").textContent = o.loc; if (q(".price")) q(".price").textContent = o.price; const bs = c.querySelectorAll(".specs b"); if (bs[0]) bs[0].textContent = o.m2; if (bs[1]) bs[1].textContent = o.zi; if (q("img")) { q("img").src = o.img; q("img").alt = o.t; } });
-  /* 4 Referenzen: nur echte Stimmen zeigen */
-  const refSek = doc.getElementById("referenzen");
-  if (refSek) { if (F.referenzen) { doc.querySelectorAll("#car .ref-card").forEach((r, i) => { if (i === 0) { const q = r.querySelector(".rquote"); if (q) q.textContent = F.referenzen; } else r.style.display = "none"; }); } else refSek.style.display = "none"; }
-  /* 5 Logo */
-  const f = b.schrift;
-  doc.querySelectorAll(".brand").forEach((e) => { e.innerHTML = b.logo === "monogramm" ? `<span style="display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;border:1.5px solid currentColor;font-size:.8em">${b.initialen}</span>` : b.logo === "punkt" ? `${b.vor} ${b.nach}<span style="color:${b.akzent}">.</span>` : `${b.vor} <b>${b.nach}</b>`; });
-  /* 6 Farbe und Schrift */
-  const a = b.akzent;
-  html.style.setProperty("--loden", a); html.style.setProperty("--loden-2", `color-mix(in srgb, ${a} 78%, #000)`); html.style.setProperty("--clay", `color-mix(in srgb, ${a} 22%, #F7F5F1)`); html.style.setProperty("--head-tint", `color-mix(in srgb, ${a} 12%, #F7F5F1)`);
-  if (f.d !== "Power Grotesk") { const l = doc.createElement("link"); l.rel = "stylesheet"; l.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(f.d)}:wght@300;400;500;600&family=${encodeURIComponent(f.t)}:wght@400;500;600&display=swap`; doc.head.appendChild(l); }
-  html.style.setProperty("--fd", `"${f.d}", Georgia, serif`); html.style.setProperty("--fb", `"${f.t}", system-ui, sans-serif`);
-  /* 7 Kontakt, Impressum, Aufräumen */
-  doc.querySelectorAll('a[href^="mailto:"]').forEach((e) => e.setAttribute("href", "mailto:" + mail));
-  doc.querySelectorAll('a[href^="tel:"]').forEach((e) => e.setAttribute("href", "tel:" + tel.replace(/[^+\d]/g, "")));
-  const fb = doc.querySelector(".foot-bottom"); if (fb && (F.firma || F.gisa)) { const s = doc.createElement("span"); s.textContent = `Impressum: ${F.firma || "Firma folgt"} · GISA ${F.gisa || "folgt"}${F.behoerde ? " · " + F.behoerde : ""}`; fb.appendChild(s); }
-  const tw = doc.getElementById("tweak"); if (tw) tw.style.display = "none";
-  doc.title = `${b.makler.name}, Immobilien in ${region}`;
-  html.classList.remove("pre");
-  doc.querySelectorAll(".rv,.rl,.ri").forEach((e) => e.classList.add("in"));
-}
-
-Object.assign(window, { hmFuelleTemplate, hmShowcaseSrc, StudioDownloads, MaterialKompakt, Marke, Material, Studio, Website, WebVorschau, BrandKit, hmWebFelder });
+Object.assign(window, { hmShowcaseSrc, hmAbs, hmWebObjekte, HM_WEB_GRUPPEN, StudioDownloads, MaterialKompakt, Marke, Material, Studio, BrandKit, hmWebFelder });
