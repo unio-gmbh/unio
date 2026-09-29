@@ -134,10 +134,11 @@ function LogoFarbe({ m, set }) {
 }
 
 /* ---------- Impressum-Prüfung (ECG § 5, MedienG § 25, GewO) ---------- */
+const HM_RECHTSFORM = /(^|\s)(e\.\s?U\.|GmbH|OG|KG|AG|GesbR)(?=$|[\s,])/;
 function hmImpressumCheck(F) {
   const P = [];
   const add = (ok, t) => P.push({ ok, t });
-  add(!!F.firma && /\b(e\.\s?U\.|GmbH|OG|KG|AG|Einzelunternehmen)\b/.test(F.firma), F.firma ? (/\b(e\.\s?U\.|GmbH|OG|KG|AG)\b/.test(F.firma) ? `Firmenwortlaut ${F.firma}` : "Rechtsform fehlt im Firmenwortlaut, etwa e.U. oder GmbH") : "Firmenwortlaut fehlt");
+  add(!!F.firma && HM_RECHTSFORM.test(F.firma), F.firma ? (HM_RECHTSFORM.test(F.firma) ? `Firmenwortlaut ${F.firma}` : "Rechtsform fehlt im Firmenwortlaut, etwa e.U. oder GmbH") : "Firmenwortlaut fehlt");
   add(!!F.adresse, F.adresse ? "Anschrift vorhanden" : "Anschrift fehlt");
   add(!!F.mail && !!F.tel, F.mail && F.tel ? "E-Mail und Telefon vorhanden" : "E-Mail oder Telefon fehlt");
   add(/^\d{6,9}$/.test((F.gisa || "").replace(/\s/g, "")), F.gisa ? (/^\d{6,9}$/.test(F.gisa.replace(/\s/g, "")) ? `GISA-Zahl ${F.gisa}` : "GISA-Zahl besteht nur aus Ziffern") : "GISA-Zahl fehlt");

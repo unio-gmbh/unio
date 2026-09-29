@@ -79,6 +79,7 @@ function Akquise({ oeffneMakler }) {
   const leads = useHm("leads") || [];
   const [detail, setDetail] = React.useState(null);
   const [ueber, setUeber] = React.useState(null);
+  const [radar, setRadar] = React.useState(false);
   const set = (id, patch) => hmStore.patch("leads", (l) => l.map((x) => x.id === id ? { ...x, ...patch } : x));
   const l = leads.find((x) => x.id === detail);
   const starten = (lead) => {
@@ -93,7 +94,8 @@ function Akquise({ oeffneMakler }) {
     setDetail(null);
   };
   return <div>
-    <Kopf titel="Akquise" rechts={<Btn knob="plus" onClick={() => { const id = "l" + Date.now(); hmStore.patch("leads", (a) => [{ id, name: "Neuer Kontakt", ort: "Wien", quelle: "Recherche", stufe: "research", naechstes: "Erste Nachricht senden", notiz: "", owner: "Nikita" }, ...(a || [])]); setDetail(id); }}>Kontakt</Btn>} />
+    <Kopf titel="Akquise" rechts={<><button className="hm-klein-btn hell" onClick={() => setRadar(true)}>Liste einlesen</button><Btn knob="plus" onClick={() => { const id = "l" + Date.now(); hmStore.patch("leads", (a) => [{ id, name: "Neuer Kontakt", ort: "Wien", quelle: "Recherche", stufe: "research", naechstes: "Erste Nachricht senden", notiz: "", owner: "Nikita" }, ...(a || [])]); setDetail(id); }}>Kontakt</Btn></>} />
+    <Sheet offen={radar} zu={() => setRadar(false)} titel="Lead-Radar" breit><LeadRadar zu={() => setRadar(false)} /></Sheet>
     <div className="hm-board" style={{ gridTemplateColumns: `repeat(${HM_AKQUISE_STUFEN.length}, minmax(210px, 1fr))` }}>{HM_AKQUISE_STUFEN.map((s) => { const ls = leads.filter((x) => x.stufe === s.id); return <div key={s.id} className={"hm-spalte" + (ueber === s.id ? " ueber" : "")} onDragOver={(e) => { e.preventDefault(); setUeber(s.id); }} onDragLeave={() => setUeber(null)} onDrop={(e) => { e.preventDefault(); setUeber(null); set(e.dataTransfer.getData("text/plain"), { stufe: s.id }); }}>
       <div className="hd"><span>{s.name}</span><span className="n">{ls.length}</span></div>
       {ls.map((x) => <div key={x.id} className="hm-kk" draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", x.id)} onClick={() => setDetail(x.id)}><div className="hm-row" style={{ gap: 8 }}><Avatar name={x.name} /><div style={{ minWidth: 0 }}><div className="t" style={{ margin: 0 }}>{x.name}</div><div className="hm-mono">{x.ort}</div></div></div><div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 8 }}>{x.naechstes}</div></div>)}

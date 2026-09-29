@@ -9,8 +9,10 @@ const hmRel = (t) => { const h = Math.round((Date.now() - t) / 36e5); return h <
 const hmHeute = () => "2026-09-23";
 
 let hmToastFn = () => {};
-function Toast() { const [t, setT] = useState(""); const [on, setOn] = useState(false); useEffect(() => { hmToastFn = (x) => { setT(x); setOn(true); setTimeout(() => setOn(false), 2200); }; }, []); return <div className={"hm-toast" + (on ? " on" : "")}>{t}</div>; }
-const toast = (t) => hmToastFn(t);
+/* Hinweis unten. Mit rueck wird daraus "Rückgängig" für 6 Sekunden statt einer Nachfrage vorher. */
+let hmToastTimer = null;
+function Toast() { const [t, setT] = useState(""); const [on, setOn] = useState(false); const [rueck, setRueck] = useState(null); useEffect(() => { hmToastFn = (x, r) => { setT(x); setRueck(() => r || null); setOn(true); clearTimeout(hmToastTimer); hmToastTimer = setTimeout(() => { setOn(false); setRueck(null); }, r ? 6000 : 2200); }; }, []); return <div className={"hm-toast" + (on ? " on" : "") + (rueck ? " mit" : "")}>{t}{rueck && <button onClick={() => { rueck(); setOn(false); setRueck(null); }}>Rückgängig</button>}</div>; }
+const toast = (t, rueck) => hmToastFn(t, rueck);
 
 function Pill({ z }) { return <span className={"hm-pill z-" + z}><i></i>{HM_ZUSTAND[z] || z}</span>; }
 function Btn({ children, knob = "pfeil", ghost, paper, ...r }) { return <button className={"hm-btn" + (ghost ? " hm-ghost" : "") + (paper ? " hm-paper" : "")} {...r}>{children}{!ghost && <span className="k">{HM_ICO[knob] ? <Ico n={knob} /> : knob}</span>}</button>; }

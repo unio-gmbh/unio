@@ -112,7 +112,7 @@ function SchnittPlayer({ segs, clips, b, onChange, kompakt }) {
       <div className="hm-916-kopf"><span>{s ? s.rolle : ""}</span><span>{(bis).toFixed(1)} / {gesamt.toFixed(1)} s</span></div>
     </div>
     <div className="hm-row" style={{ gap: 8, marginTop: 10 }}>
-      <Btn onClick={() => setLaeuft(!laeuft)} knob={laeuft ? "❚❚" : "▶"}>{laeuft ? "Pause" : "Abspielen"}</Btn>
+      <Btn onClick={() => setLaeuft(!laeuft)} knob={laeuft ? (HM_ICO.pause ? "pause" : "x") : "play"}>{laeuft ? "Pause" : "Abspielen"}</Btn>
       <button className="hm-chip" onClick={() => { setI(0); setLaeuft(true); }}>Von vorn</button>
       <button className="hm-chip" onClick={() => setTon(!ton)}>{ton ? "Ton an" : "Ton aus"}</button>
     </div>
@@ -120,7 +120,7 @@ function SchnittPlayer({ segs, clips, b, onChange, kompakt }) {
       <div className="r" style={{ color: farbe[x.rolle] }}>{x.rolle}</div>
       <div className="c">{x.clip === "ende" ? "Endkarte" : ((clips.find((c) => c.id === x.clip) || {}).titel || x.clip)}</div>
       {x.text && <div className="tx">{x.text}</div>}
-      {onChange && <div className="ctl"><button onClick={(e) => { e.stopPropagation(); move(j, -1); }} aria-label="Nach vorne"><Ico n="zurueck" g={12} /></button><button onClick={(e) => { e.stopPropagation(); move(j, 1); }} aria-label="Nach hinten"><Ico n="weiter" g={12} /></button><button onClick={(e) => { e.stopPropagation(); weg(j); }}>×</button></div>}
+      {onChange && <div className="ctl"><button onClick={(e) => { e.stopPropagation(); move(j, -1); }} aria-label="Nach vorne"><Ico n="zurueck" g={12} /></button><button onClick={(e) => { e.stopPropagation(); move(j, 1); }} aria-label="Nach hinten"><Ico n="weiter" g={12} /></button><button onClick={(e) => { e.stopPropagation(); weg(j); }} aria-label="Entfernen"><Ico n="x" g={12} /></button></div>}
     </div>)}</div>}
   </div>;
 }

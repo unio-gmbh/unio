@@ -496,6 +496,7 @@ function hmAbgabeCheck(c, b, clips) {
   const termOk = !!c.termin && c.termin.slice(0, 10) >= hmProdHeute();
   P(termOk, !c.termin ? "Kein Termin gesetzt." : termOk ? `Termin ${hmProdTT(c.termin)} ${c.termin.slice(11, 16)}.` : "Termin liegt in der Vergangenheit.");
 
+  if (reel && segs) { const aktuell = c.render && window.hmReelSig && c.render.sig === hmReelSig(segs); P(!!aktuell, aktuell ? `Als MP4 gerendert, ${Math.round(c.render.dauer)} s.` : c.render ? "Schnitt geändert, bitte neu rendern." : "Noch nicht als MP4 gerendert."); }
   /* Energieausweis-Vorlage-Gesetz (EAVG 2012, § 3): Anzeigen für Verkauf oder Vermietung nennen HWB und fGEE, sonst bis 1.450 € Strafe */
   const objektPost = c.typ === "walkthrough" || !!c.objekt || (c.saeule === "beweise" && /\b(verkauf|miete|zu haben|verfügbar|m²|zimmer|preis|€)/i.test((c.caption || "") + " " + (c.titel || "")));
   /* Seit der EAVG-Novelle (01.07.2026): HWB, Endenergiebedarf und Energieklasse; bei älteren Ausweisen HWB und fGEE */
@@ -851,7 +852,7 @@ function hmSelbsttestProduktion() {
     skript: '"Favoriten in 60 Sekunden. Drei Ecken, die sich gerade ändern."\n"Erstens der Reumannplatz."\n"Ich bin Elif Demir und kenne jede Straße."\n"Welche Ecke fehlt? Schreib es mir."',
     caption: "Favoriten in 60 Sekunden: drei Ecken, die sich gerade ändern.\n\nWelche Ecke fehlt? Schreib es mir.\n\n#Favoriten #Immobilien #Wien" };
   const seed = window.HM_CLIPS_SEED || [];
-  T("Abgabe sauber", () => { const c = { ...basis, schnitt: hmAutoSchnitt(basis, seed) }; const r = hmAbgabeCheck(c, bDu, seed); return { ok: r.bereit, detail: r.punkte.filter((x) => !x.ok).map((x) => x.t).join(" ") || `${r.punkte.length} Punkte grün` }; });
+  T("Abgabe sauber", () => { const sch = hmAutoSchnitt(basis, seed); const c = { ...basis, schnitt: sch, render: { dauer: 15, sig: window.hmReelSig ? hmReelSig(sch) : "" } }; const r = hmAbgabeCheck(c, bDu, seed); return { ok: r.bereit, detail: r.punkte.filter((x) => !x.ok).map((x) => x.t).join(" ") || `${r.punkte.length} Punkte grün` }; });
   T("Abgabe mit Fehlern", () => {
     const segs = hmAutoSchnitt(basis, seed).map((s) => ({ ...s }));
     segs.forEach((s) => { if (/Elif Demir/.test(s.text)) s.text = "Ich bin Elif Demirr und kenne jede Straße."; if (/60 Sekunden/.test(s.text)) s.text = s.text.replace("60", "70"); });

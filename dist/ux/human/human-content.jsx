@@ -240,7 +240,7 @@ function InhaltListe({ liste, teamSicht, oeffne, alleMakler }) {
         {c.thumb ? <img className="bild" src={c.thumb} alt="" /> : <span className="bild" style={{ display: "grid", placeItems: "center", fontSize: 11, color: "var(--text-muted)" }}>{HM_TYPEN[c.typ]}</span>}
         <div className="m"><div className="t">{c.titel}</div><div className="u">{[HM_TYPEN[c.typ], c.termin ? `${hmDatum(c.termin)} ${hmZeit(c.termin)}` : "ohne Termin", alleMakler ? name(c.maklerId) : null, id === "arbeit" ? hmSpalte(c.zustand).name : null].filter(Boolean).join(" · ")}</div></div>
         <div className="r" onClick={(e) => id === "idee" && !teamSicht && e.stopPropagation()}>
-          {id === "idee" && !teamSicht ? <><button className="hm-klein-btn" onClick={() => setBeitrag(c.id, { zustand: "planung" }, "Idee gewählt", name(c.maklerId))}>Machen wir</button><button className="hm-klein-btn hell" onClick={() => setBeitrag(c.id, { zustand: "pausiert" }, "Idee verworfen", name(c.maklerId))}>Nein</button></> : id === "online" && c.kz ? <span className="hm-daten">{c.kz.reach.toLocaleString("de-AT")} erreicht</span> : null}
+          {id === "idee" && !teamSicht ? <><button className="hm-klein-btn" onClick={() => { setBeitrag(c.id, { zustand: "planung" }, "Idee gewählt", name(c.maklerId)); toast("Geht ins Skript", () => setBeitrag(c.id, { zustand: "idee" }, "Auswahl zurückgenommen", name(c.maklerId))); }}>Machen wir</button><button className="hm-klein-btn hell" onClick={() => { setBeitrag(c.id, { zustand: "pausiert" }, "Idee verworfen", name(c.maklerId)); toast("Idee verworfen", () => setBeitrag(c.id, { zustand: "idee" }, "Idee zurückgeholt", name(c.maklerId))); }}>Nein</button></> : id === "online" && c.kz ? <span className="hm-daten">{c.kz.reach.toLocaleString("de-AT")} erreicht</span> : null}
           <span className="hm-chev"><Ico n="weiter" /></span>
         </div>
       </div>)}</div>
@@ -267,11 +267,13 @@ function hmVerlaufPunkte(c) {
 
 function Vorschau({ c, b, clips }) {
   const [kanal, setKanal] = React.useState((c.kanaele || []).includes("instagram") ? "instagram" : "facebook");
+  const [mp4, setMp4] = React.useState(null);
+  React.useEffect(() => { let weg = false; if (c.render) hmBlobs.get("r:" + c.id).then((bl) => { if (bl && !weg) setMp4(URL.createObjectURL(bl)); }).catch(() => {}); return () => { weg = true; }; }, [c.id, c.render && c.render.datum]);
   const bilder = (c.clips || []).map((i) => clips.find((k) => k.id === i)).filter((k) => k && k.typ === "foto");
   return <div className="hm-stack" style={{ alignItems: "center", gap: 12 }}>
     <Tabs klein tabs={[["instagram", "Instagram"], ["facebook", "Facebook"]]} akt={kanal} set={setKanal} />
     <Handy kanal={kanal} b={b} caption={c.caption}>
-      {c.schnitt && c.schnitt.length ? <SchnittPlayer segs={c.schnitt} clips={clips} b={b} kompakt /> : bilder.length ? <div className="hm-karussell">{bilder.map((k) => <img key={k.id} src={k.src} alt="" />)}</div> : c.thumb ? <img src={c.thumb} alt="" style={{ width: "100%", aspectRatio: "4/5", objectFit: "cover", display: "block" }} /> : <div className="hm-leerbild">Vorschau erscheint mit dem Material</div>}
+      {mp4 ? <video src={mp4} controls playsInline style={{ width: "100%", aspectRatio: "9/16", display: "block", background: "#000" }} /> : c.schnitt && c.schnitt.length ? <SchnittPlayer segs={c.schnitt} clips={clips} b={b} kompakt /> : bilder.length ? <div className="hm-karussell">{bilder.map((k) => <img key={k.id} src={k.src} alt="" />)}</div> : c.thumb ? <img src={c.thumb} alt="" style={{ width: "100%", aspectRatio: "4/5", objectFit: "cover", display: "block" }} /> : <div className="hm-leerbild">Vorschau erscheint mit dem Material</div>}
     </Handy>
   </div>;
 }
@@ -423,6 +425,7 @@ function SchnittTab({ c, set, b, clips }) {
   const schneiden = () => { const q = clips.filter((k) => gewaehlt.includes(k.id)); set({ schnitt: hmAutoSchnitt(c, q.length ? q : clips) }, "automatisch geschnitten"); };
   return <div className="hm-stack">
     {c.typ === "reel" && c.schnitt && c.schnitt.length > 0 && <SchnittPlayer segs={c.schnitt} clips={clips} b={b} onChange={(segs) => set({ schnitt: segs })} />}
+    {c.typ === "reel" && c.schnitt && c.schnitt.length > 0 && <ReelExport c={c} b={b} clips={clips} set={set} />}
     <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">{c.typ === "reel" ? `Material · ${gewaehlt.length} gewählt` : `Bilder · Reihenfolge wie gewählt`}</div><div className="hm-row" style={{ gap: 8 }}>{c.typ === "reel" && <button className="hm-klein-btn hell" onClick={vorschlag}>Passendes wählen</button>}{c.typ === "reel" && <button className="hm-klein-btn" onClick={schneiden}>{c.schnitt ? "Neu schneiden" : "Aus dem Skript schneiden"}</button>}</div></div>
     <div className="hm-medien klein">{passend.map((k) => <button key={k.id} className={"hm-medium" + (gewaehlt.includes(k.id) ? " on" : "")} onClick={() => toggle(k.id)}><div className="bild">{k.typ === "video" ? <VideoBild src={hmVideoSrc(k.src)} t={k.von + 0.5} poster={k.poster} /> : <img src={k.src} alt="" />}{gewaehlt.includes(k.id) && <span className="nr">{c.typ === "reel" ? <Ico n="haken" g={12} /> : gewaehlt.indexOf(k.id) + 1}</span>}</div><div className="t">{k.titel}</div></button>)}</div>
     {c.typ === "reel" && <label className="hm-feld"><span>Für den Feinschnitt</span><textarea rows={2} value={c.briefing || ""} onChange={(e) => set({ briefing: e.target.value })} placeholder="Tempo, Musik, Einblendungen" /></label>}
