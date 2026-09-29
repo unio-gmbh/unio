@@ -830,7 +830,7 @@ window.addEventListener("paste", (e) => { const f = [...e.clipboardData.files]; 
 let tTimer;
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(tTimer); tTimer = setTimeout(() => el.classList.remove("on"), 2400); }
 
-/* Einbettung (UNIO HUMAN und andere UNIO-Werkzeuge): ?embed=1, optional &auto=1.
+/* Einbettung (Werkbank und andere UNIO-Werkzeuge): ?embed=1, optional &auto=1.
    Nachrichten nur von derselben Herkunft.
    Eingang: zs:bilder {dateien: File[]}, zs:holen {id}, zs:alle.
    Ausgang: zs:bereit, zs:stand {bilder}, zs:ergebnis {blob, original, w, h, meta}, zs:fertig.
