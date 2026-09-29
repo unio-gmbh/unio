@@ -45,7 +45,7 @@ Grad: **A** automatisch, **K** Werkzeug bereitet vor, Mensch entscheidet, **M** 
 
 | Schritt | Heute | Werkzeug | Was es löst | Technik | Grad | Stand |
 |---|---|---|---|---|---|---|
-| Agent Research und Lead Contact | Recherche von Hand, Liste bei Nikita | **Lead-Radar** | Liste einlesen (CSV aus Portalen oder von Hand), Dubletten zusammenführen, Punkte nach Aktivität, Region und Präsenz, erste Nachricht aus Vorlage | CSV im Browser, Regeln | K | geplant |
+| Agent Research und Lead Contact | Recherche von Hand, Liste bei Nikita | **Lead-Radar** | Liste einlesen (CSV aus Portalen oder von Hand), Dubletten zusammenführen, Punkte nach Aktivität, Region und Präsenz, erste Nachricht aus Vorlage | CSV im Browser, Regeln | K | Prototyp |
 | Kennenlerntermin, UNIO Vorstellung | Termin per Nachricht, Deck von Hand | **Termin-Planer** und **Vorstellung** | Freie Slots mit Puffer, Einladung als Kalenderdatei; Vorstellungsseite mit Name, Region und Marktzahlen des Maklers | ICS im Browser; Seite aus Vorlage | A | Prototyp (Termin) |
 | Follow ups | Erinnerung im Kopf | **Nachfass-Takt** | Tag 2, 7 und 14 nach Kontakt, Vorlage je Stufe, fällig auf Heute | Regeln | A | Prototyp |
 | Deep Dive | Gespräch | **Potenzial-Rechner** | Abo gegen Provision: wie viele zusätzliche Abschlüsse die Marke tragen; Lücken im heutigen Auftritt | Rechner | K | Prototyp |
@@ -94,7 +94,7 @@ Grad: **A** automatisch, **K** Werkzeug bereitet vor, Mensch entscheidet, **M** 
 | Content Ideas | **Ideen-Generator** | Säule × Format × Anlass (Saison, Markt, Objekte) × Hook-Muster; Säulenquoten; keine Wiederholung | Regeln; Claude optional | A | Prototyp |
 | Content Planning | **Skript-Prüfung** | Sprechzeit, Hook in drei Sekunden, Zahl oder Frage, Handlungsaufruf, Anrede | Regeln | A | Prototyp |
 | Content Production | **Teleprompter** | Skript am Handy im Sprechtempo, gespiegelt, Pause mit Leertaste; Shotlist abhaken | Browser | A | Prototyp |
-| Cut / Edit | **Rohschnitt** | Sätze aus dem Skript auf das Material legen, Untertitel, Endkarte; im Betrieb Stille entfernen, 9:16 mit Gesichtsverfolgung | Prototyp im Player; Betrieb FFmpeg serverseitig, face-api wie beim Zuschnitt | K | Prototyp |
+| Cut / Edit | **Reel-Renderer** | Schnitt aus dem Skript wird fertiges MP4 (1080 × 1920, H.264, AAC) mit Hook-Titel, Untertiteln, Serienname und Endkarte; offen: Stille entfernen, 9:16 mit Gesichtsverfolgung für Querformat | WebCodecs, mp4-muxer im Browser | A | Prototyp |
 | Delivery | **Abgabe-Check** | Untertitel gegen Skript, Namen und Zahlen, Länge, Format, Endkarte, Kanäle. Erst bei grün geht der Beitrag an den Makler | Regeln | A | Prototyp |
 | Feedback / Freigabe | **Abstimmung** | Passt so oder Etwas ändern, Schnellwahl, Frist, automatische Freigabe, jede Entscheidung protokolliert; dritte Runde kostenpflichtig angekündigt | Tool | A | Prototyp |
 | Posting Scheduled | **Posting-Planer** | Termin aus Regeln, Text-Prüfung (erste Zeile unter 100 Zeichen, 3 bis 5 Hashtags, ein Handlungsaufruf, keine Emojis), Export als CSV für Metricool; im Betrieb Meta Graph API | Regeln, CSV | A | Prototyp |
@@ -110,7 +110,7 @@ Grad: **A** automatisch, **K** Werkzeug bereitet vor, Mensch entscheidet, **M** 
 | Check Out | Shop | Kontingent zuerst, dann Preis | | A | Prototyp |
 | Special Requests, BO Chat Request | **Anfrage-Sortierer** | Nachricht wird Ticket mit Art, Owner und Frist | Regeln; Claude optional | A | Prototyp |
 | Agent Ticket @Board | Board in Produktion | | | A | Prototyp |
-| Alignment mit Zero-One | **Zero-One-Brücke** | Gleiches JSON-Format, Export und Import, im Betrieb Webhook | Server | K | geplant |
+| Alignment mit Zero-One | **Zero-One-Brücke** | Datenvertrag unio-human/1, Export und Import, im Betrieb Webhook | JSON, später Server | K | Prototyp |
 
 ### 2.7 Quer über alles
 

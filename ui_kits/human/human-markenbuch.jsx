@@ -54,6 +54,7 @@ function Markenbuch({ m, teamSicht }) {
       <div className="hm-kontext">{b.makler.name}{freigegeben ? `, freigegeben am ${hmFmtDate(st.am || HM_HEUTE)}` : st.status === "pruefung" ? ", Daniel prüft" : ", Entwurf"}{p.quelle === "claude" ? "" : ", aus deinen Antworten"}</div>
       <div className="hm-row hm-mb-aktion" style={{ gap: 14, marginTop: 12 }}>
         <button className="hm-link" onClick={drucken}>Als PDF sichern</button>
+        {welt && window.MaterialKnopf && <MaterialKnopf m={m} />}
         {teamSicht && <button className="hm-link" onClick={neuErzeugen}>Neu erzeugen</button>}
       </div>
     </div>
@@ -74,7 +75,7 @@ function Markenbuch({ m, teamSicht }) {
         </MbKapitel>
 
         <MbKapitel id="position" titel="Positionierung">
-          <p className="hm-mb-gross" style={{ fontFamily: hmFont(b.schrift.d) }}><MbText t={p.positionierung && p.positionierung.satz} /></p>
+          {(() => { const satz = (p.positionierung && p.positionierung.satz) || ""; const i = satz.search(/\.\s/); const kopf = i > 0 ? satz.slice(0, i + 1) : satz; const rest = i > 0 ? satz.slice(i + 2) : ""; return <><p className="hm-mb-gross" style={{ fontFamily: hmFont(b.schrift.d) }}><MbText t={kopf} /></p>{rest && !(p.positionierung.andersAls || p.positionierung.weil) && <p className="hm-sub" style={{ margin: 0, maxWidth: "62ch" }}>{rest}</p>}</>; })()}
           <div className="hm-mb-tabelle">{[["Für wen", "fuerWen"], ["Was", "was"], ["Anders als", "andersAls"], ["Weil", "weil"]].map(([t, k]) => <div key={k}><span>{t}</span><span><MbText t={p.positionierung && p.positionierung[k]} /></span></div>)}</div>
           {p.versprechen && <div className="hm-mb-zeile"><span>Versprechen</span><b>{p.versprechen}</b></div>}
           {p.rolle && <div className="hm-mb-zeile"><span>Rolle</span><b>{p.rolle.name}</b>{p.rolle.satz && <em>{p.rolle.satz}</em>}</div>}
@@ -111,14 +112,14 @@ function Markenbuch({ m, teamSicht }) {
         </MbKapitel>
 
         <MbKapitel id="visuell" titel="Erscheinung" unter={welt ? `${welt.name}. ${welt.idee}` : p.visuell && p.visuell.idee}>
-          {window.WeltWahl && (teamSicht || !freigegeben) && <WeltWahl mid={m.id} wert={welt && welt.id} set={(id) => hmMbSetzen(m.id, { welt: id })} />}
+          {window.WeltWahl && (teamSicht || !freigegeben) && <WeltWahl mid={m.id} wert={welt && welt.id} set={(id) => { const w = (window.HM_MARKENWELTEN || []).find((x) => x.id === id); hmMbSetzen(m.id, { welt: id }); if (w) { hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), schrift: w.schrift } })); hmStore.patch("website", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), look: w.websiteLook } })); } }} />}
           {welt && window.WeltTafel && <div className="hm-mb-flaeche"><WeltTafel welt={welt} b={bb} /></div>}
           {welt && window.WeltFeed && <div className="hm-mb-anwendungen">
-            <figure><WeltFeed welt={welt} b={bb} posts={(p.saeulen || []).flatMap((s) => (s.serie && s.serie.beispiele || []).map((x) => ({ ...x, saeule: s.name, serie: s.serie.name }))).slice(0, 9)} /><figcaption>Profil</figcaption></figure>
-            {window.WeltStory && <figure><WeltStory welt={welt} b={bb} text={p.botschaften ? p.botschaften.claim : b.claim} bild={b.portrait} /><figcaption>Story</figcaption></figure>}
-            {window.WeltKarte && <figure><WeltKarte welt={welt} b={bb} seite="vorn" /><WeltKarte welt={welt} b={bb} seite="hinten" /><figcaption>Visitenkarte</figcaption></figure>}
-            {window.WeltExpose && <figure><WeltExpose welt={welt} b={bb} objekt={window.hmWebObjekte ? hmWebObjekte()[0] : null} /><figcaption>Exposé</figcaption></figure>}
-            {window.WeltSignatur && <figure><WeltSignatur welt={welt} b={bb} /><figcaption>Signatur</figcaption></figure>}
+            <figure><div data-material="vorschau|profil|1080"><WeltFeed welt={welt} b={bb} posts={(p.saeulen || []).flatMap((s) => (s.serie && s.serie.beispiele || []).map((x) => ({ ...x, saeule: s.name, serie: s.serie.name }))).slice(0, 9).map((x, i) => ({ ...x, bild: i }))} /></div><figcaption>Profil</figcaption></figure>
+            {window.WeltStory && <figure><div data-material="stories|story-claim|1080|1920"><WeltStory welt={welt} b={bb} text={p.botschaften ? p.botschaften.claim : b.claim} bild={b.portrait} /></div><figcaption>Story</figcaption></figure>}
+            {window.WeltKarte && <figure><div data-material="print|visitenkarte-vorn|1004|650"><WeltKarte welt={welt} b={bb} seite="vorn" /></div><div data-material="print|visitenkarte-hinten|1004|650"><WeltKarte welt={welt} b={bb} seite="hinten" /></div><figcaption>Visitenkarte</figcaption></figure>}
+            {window.WeltExpose && <figure><div data-material="print|expose-titel|2480|3508"><WeltExpose welt={welt} b={bb} objekt={window.hmWebObjekte ? hmWebObjekte()[0] : null} /></div><figcaption>Exposé</figcaption></figure>}
+            {window.WeltSignatur && <figure><div data-material="signatur|signatur|1200"><WeltSignatur welt={welt} b={bb} /></div><figcaption>Signatur</figcaption></figure>}
           </div>}
           {p.visuell && p.visuell.bildsprache && <div className="hm-mb-zwei" style={{ marginTop: 18 }}><div><div className="l">Bildsprache</div>{(p.visuell.bildsprache.regeln || []).map((x) => <div key={x} className="hm-mb-wort">{x}</div>)}</div><div><div className="l">Nie im Bild</div>{(p.visuell.bildsprache.vermeiden || []).map((x) => <div key={x} className="hm-mb-wort nie">{x}</div>)}</div></div>}
         </MbKapitel>
@@ -132,7 +133,7 @@ function Markenbuch({ m, teamSicht }) {
               <p>{s.serie.idee}</p>
               <div className="hm-mb-tabelle">{s.serie.hookFormel && <div><span>Einstieg</span><span>{s.serie.hookFormel}</span></div>}{s.serie.rhythmus && <div><span>Rhythmus</span><span>{s.serie.rhythmus}</span></div>}{(s.formate || []).length > 0 && <div><span>Formate</span><span>{s.formate.map((f) => (window.HM_TYPEN && HM_TYPEN[f]) || (window.HM_FORMATE && HM_FORMATE[f] && HM_FORMATE[f].name) || f).join(", ")}</span></div>}</div>
               {(s.serie.ablauf || []).length > 0 && <ol className="hm-mb-ablauf">{s.serie.ablauf.map((x) => <li key={x}>{x}</li>)}</ol>}
-              <div className="hm-mb-beispiele">{(s.serie.beispiele || []).map((x) => <div key={x.titel}>{welt && window.WeltPost ? <WeltPost welt={welt} b={bb} art="serie" text={x.hook} unter={x.titel} serie={s.serie.name} breite={220} /> : null}<div className="t">{x.titel}</div><div className="u">{x.skizze}</div></div>)}</div>
+              <div className="hm-mb-beispiele">{(s.serie.beispiele || []).map((x, xi) => <div key={x.titel}>{welt && window.WeltPost ? <div data-material={`posts|${hmDateiname(s.serie.name || s.name)}-${xi + 1}|1080|1350`}><WeltPost welt={welt} b={bb} art="serie" text={x.hook} unter={x.titel} serie={{ name: s.serie.name, nr: xi + 1 }} nr={xi + 1} breite={220} /></div> : null}<div className="t">{x.titel}</div><div className="u">{x.skizze}</div></div>)}</div>
             </div>}
           </div>)}
         </MbKapitel>

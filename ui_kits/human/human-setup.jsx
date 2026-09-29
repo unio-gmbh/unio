@@ -60,7 +60,7 @@ async function hmSvgZuPng(svg, breite) {
   URL.revokeObjectURL(url);
   return new Promise((res) => c.toBlob(res, "image/png"));
 }
-const hmLaden = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+const hmLaden = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); const i = name.lastIndexOf("."); a.download = i > 0 ? hmDateiname(name.slice(0, i)) + name.slice(i) : hmDateiname(name); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
 
 /* ---------- Kontrast (WCAG 2.2) ---------- */
 function hmKontrastInfo(hex) {
@@ -74,7 +74,7 @@ async function hmBrandKit(m, stand) {
   const b = hmBrand(m.id);
   const JSZip = await hmJszip();
   const zip = new JSZip();
-  const slug = (b.vor + "-" + b.nach).toLowerCase().replace(/[^a-z0-9äöüß-]/g, "");
+  const slug = hmDateiname(b.vor + "-" + b.nach);
   for (const t of HM_LOGO_TYPEN) {
     stand && stand(`Logo ${t.name}`);
     for (const [v, farbe] of [["dunkel", "#0B0A09"], ["hell", "#F7F5F1"]]) {

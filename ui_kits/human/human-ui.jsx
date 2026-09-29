@@ -35,13 +35,25 @@ function hmBrand(maklerId) {
 }
 const hmFont = (f) => `"${f}", ui-serif, Georgia, serif`;
 
+/* Dateinamen nur in ASCII, damit ZIPs überall entpackbar sind (ä wird ae) */
+const hmDateiname = (s) => String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+/* Textbreite in der echten Schrift (Canvas), Fallback über die Zeichenzahl */
+const hmTextBreiteCache = {};
+function hmTextBreite(text, font, groesse) {
+  const k = text + font + groesse; if (hmTextBreiteCache[k]) return hmTextBreiteCache[k];
+  const g = (hmTextBreite.c || (hmTextBreite.c = document.createElement("canvas"))).getContext("2d");
+  g.font = `${groesse}px "${font}"`; const w = g.measureText(text).width - 1.5 * (text.length - 1);
+  const geladen = !document.fonts || document.fonts.check(`${groesse}px "${font}"`);
+  if (geladen) hmTextBreiteCache[k] = w;
+  return w || text.length * groesse * 0.52;
+}
 /* Logo als SVG, damit es exportierbar ist */
 function BrandLogo({ b, typ, farbe, grund, h = 44, invert }) {
   const t = typ || b.logo;
   const ink = invert ? "#F7F5F1" : (farbe || "#0B0A09");
   const f = b.schrift ? b.schrift.d : "Power Grotesk";
   if (t === "monogramm") return <svg height={h} viewBox="0 0 100 100" preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><circle cx="50" cy="50" r="47" fill="none" stroke={ink} strokeWidth="3" /><text x="50" y="62" textAnchor="middle" fontFamily={hmFont(f)} fontSize="38" fill={ink} letterSpacing="-1">{b.initialen}</text><circle cx="78" cy="26" r="6" fill={b.akzent} /></svg>;
-  const w = Math.max(160, (b.vor.length + b.nach.length) * 22 + 40);
+  const w = Math.max(120, Math.ceil(hmTextBreite(`${b.vor} ${b.nach}`, f, 42) + (t === "punkt" ? 22 : 8 + hmTextBreite(b.nach, f, 42) * 0.1)));
   if (t === "punkt") return <svg height={h} viewBox={`0 0 ${w} 60`} preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} {b.nach}</text><circle cx={w - 12} cy="38" r="6" fill={b.akzent} /></svg>;
   return <svg height={h} viewBox={`0 0 ${w} 60`} preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><text x="0" y="44" fontFamily={hmFont(f)} fontSize="42" fill={ink} letterSpacing="-1.5">{b.vor} <tspan fontWeight="700">{b.nach}</tspan></text></svg>;
 }
@@ -97,4 +109,4 @@ const hmZeit = (iso) => iso && iso.length > 10 ? iso.slice(11, 16) : "";
 const hmSpalte = (id) => HM_SPALTEN.find((s) => s.id === id) || HM_SPALTEN[0];
 function ZPunkt({ z }) { const s = hmSpalte(z); return <span className="hm-zpunkt"><i style={{ background: s.farbe }}></i>{s.name}</span>; }
 
-Object.assign(window, { KopierKnopf, Ico, HM_ICO, hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });
+Object.assign(window, { hmDateiname, KopierKnopf, Ico, HM_ICO, hmBrand, hmFont, BrandLogo, Sheet, Tabs, Kopf, Zeile, Haken, Avatar, Kopieren, Leer, Ring, Handy, hmDatum, hmZeit, hmSpalte, ZPunkt, HM_PORTRAIT });

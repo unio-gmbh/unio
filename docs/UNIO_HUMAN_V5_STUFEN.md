@@ -246,3 +246,35 @@ Vault-Regeln, die ab v5 gelten (aus "Feedback, Dos & Don'ts" und "Design-Masterr
 - **Eyebrows:** 18 Eyebrows entfernt. Datum und Kontext stehen als ruhige Zeile unter der Headline. "Als Nächstes" ist aus den dunklen Karten raus, die Handlung ist die Headline.
 - **Texte:** gekürzt, Kopf- und Hinweistexte im Schnitt halb so lang.
 - **Wording:** Freigabe-Karten auf Heute sagen "Passt so" wie die Abstimmung.
+
+## Stufe 8. Reel-Schnitt, Betrieb, Material
+
+**Reel-Renderer** (`human-reel.jsx`)
+- Aus dem Schnitt entsteht eine echte MP4-Datei, 1080 × 1920, 30 fps, H.264 und AAC. Der Schnitt kommt aus dem Skript: Hook zuerst, dann Aussagen und Bildwechsel, am Ende die Endkarte.
+- Technik: WebCodecs (VideoEncoder, AudioEncoder) mit mp4-muxer, Bild für Bild über gezieltes Spulen. Das ist deterministisch und läuft auch im Hintergrund-Tab.
+- Die Strategie steckt im Video:
+  - Der Hook steht als großer Titel im oberen Drittel, denn der erste Frame entscheidet.
+  - Der Serienname der Säule kommt aus der Markenplattform.
+  - Untertitel in der Markenschrift, das gesprochene Wort in der Akzentfarbe.
+  - Die Endkarte trägt Name, Claim und einen Handlungsaufruf in der Anrede der Marke.
+  - Originalton nur bei Talking-Head-Stellen, mit kurzen Blenden.
+- Das MP4 liegt in IndexedDB, erscheint in der Handy-Vorschau der Abstimmung und lässt sich laden.
+- Der Abgabe-Check verlangt ein aktuelles Rendering. Eine Signatur aus Clip, Start, Dauer und Text erkennt Änderungen am Schnitt.
+- **Test:** 7 Segmente ergeben ein 15,4-s-MP4 in 7 Sekunden. `afinfo` bestätigt AAC mit 48 kHz. Die Standbilder zeigen Untertitel mit Hervorhebung in Terrakotta und die Endkarte in Fraunces.
+
+**Betrieb** (`human-betrieb.jsx`)
+- **Lead-Radar:** Eine CSV-Liste wird eingelesen und bewertet nach Aktivität (Inserate), Region und Präsenzlücke (wenig Follower bei viel Geschäft ist der größte Hebel). Dubletten werden zusammengeführt, vorhandene Kontakte erkannt. Die Übernahme startet den Nachfass-Takt. Test: 7 Zeilen ergeben 6 Kontakte, 1 Dublette und 5 übernommen, alle mit fälliger erster Nachricht.
+- **Zero-One-Brücke:** Export und Import im Format `unio-human/1`, für alle Makler oder einen einzelnen. Gleiche IDs werden ersetzt.
+- **Selbsttest** unter Einstellungen: alle Prüfungen der Werkzeuge an einem Ort (Betrieb, Produktion, Shop, Plattform, Markenwelten). Gefundener Fehler: Die Impressum-Prüfung erkannte "e.U." nicht, weil die Wortgrenze nach dem Punkt nicht greift. Stand: 45 von 45 bestanden.
+
+**Material** (`human-material.jsx`)
+- Eigener Exporter nach dem Prinzip von html-to-image: Klon mit berechneten Stilen, Bilder als data-URL, Schriften als eingebettete Webfonts (Google Fonts, latin-Schnitte, und Power Grotesk), dann SVG foreignObject auf Canvas.
+- Das Materialpaket bündelt alle Vorlagen des Markenbuchs mit `data-material` als PNG in Druck- oder Social-Auflösung. Dazu kommen Logos als Vektor, das Porträt und die Plattform als JSON.
+- Test: Visitenkarte in 1004 px (85 mm bei 300 dpi) und Website-Kopf in 1080 px, die Schriften sind korrekt eingebettet.
+
+**Weitere Korrekturen**
+- Die Logo-Breite wird in der echten Schrift gemessen, der Punkt sitzt direkt am Namen.
+- Die Wahl der Markenwelt setzt Schrift und Website-Look.
+- Das Markenbuch speist die Website mit Claim, Story, Versprechen und Look.
+- Rückgängig statt Nachfrage bei Ideen.
+- Letzte Textzeichen-Icons im Schnitt-Player ersetzt.

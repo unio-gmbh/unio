@@ -141,14 +141,14 @@ function KapitelReveal({ kap, antworten: a, onWeiter, onUebersicht }) {
 /* ---------- Zwei Wege und Strategie ---------- */
 function Saeulen({ s, dark }) { return <div className="hm-bars">{Object.entries(s).sort((x, y) => y[1] - x[1]).map(([k, v]) => <div key={k} className="hm-bar"><span>{HM_SAEULEN[k].name}</span><div className="tr" style={dark ? { background: "rgba(247,245,241,.15)" } : {}}><i style={{ width: v + "%", background: dark ? "var(--signal)" : "" }}></i></div><span className="v">{v} %</span></div>)}</div>; }
 
-function WegKarte({ w, key_, on, onWahl, kompakt }) {
+function WegKarte({ w, key_, on, onWahl, kompakt, ohneKopf }) {
   return (
     <div className={"hm-weg" + (on ? " on" : "")}>
-      <div className="kopf"><div><div className="hm-mono">Weg {key_.toUpperCase()} · {w.rolle} · {w.archetyp.achse}</div><h3 className="hm-h name">{w.archetyp.name}</h3><div className="satz">{w.archetyp.satz}</div></div><div className="hm-sw">{w.palette.map((c, i) => <i key={i} style={{ background: c }}></i>)}</div></div>
-      <div className="hm-quote">{w.satz}</div>
-      <div className="hm-sec"><div className="hm-mono">Säulen</div><Saeulen s={w.saeulen} /></div>
-      <div className="hm-sec"><div className="hm-mono">Formate und Kanäle</div><div className="hm-tags">{w.formate.map((f) => <span key={f} className="hm-tag">{HM_FORMATE[f].name}</span>)}{w.kanaele.map((k) => <span key={k} className="hm-tag" style={{ background: "var(--signal-soft)" }}>{HM_KANAELE[k].name}</span>)}</div><div style={{ fontSize: 13, color: "var(--text-muted)" }}>{w.frequenz}</div></div>
-      {!kompakt && <div className="hm-sec"><div className="hm-mono">Drei von 30 Hooks</div><div className="hm-hooks">{w.hooks.slice(0, 3).map((h, i) => <div key={i}>{h}</div>)}</div></div>}
+      {!ohneKopf && <div className="kopf"><div><h3 className="hm-h name">{w.archetyp.name}</h3><div className="hm-kontext" style={{ fontSize: 14 }}>Weg {key_.toUpperCase()}, {w.rolle === "Verstärken" || /verst/i.test(w.rolle || "") ? "verstärkt, was du bist" : "setzt einen Kontrast"}</div></div></div>}
+      <div className="hm-weg-satz">{w.satz}</div>
+      <div className="hm-sec"><div className="hm-abschnitt-t">Säulen</div><Saeulen s={w.saeulen} /></div>
+      <div className="hm-sec"><div className="hm-abschnitt-t">Formate und Kanäle</div><div style={{ fontSize: 14, color: "var(--ink-2)" }}>{w.formate.map((f) => HM_FORMATE[f].name).join(", ")} auf {w.kanaele.map((k) => HM_KANAELE[k].name).join(", ")}. {w.frequenz}.</div></div>
+      {!kompakt && <div className="hm-sec"><div className="hm-abschnitt-t">So könnte es klingen</div><div className="hm-hooks">{w.hooks.slice(0, 3).map((h, i) => <div key={i}>{h}</div>)}</div></div>}
       <div className="hm-pf"><div><b>Passt, weil</b><ul>{w.passt.map((x, i) => <li key={i}>{x}</li>)}</ul></div><div><b>Fordert dich, weil</b><ul>{w.fordert.length ? w.fordert.map((x, i) => <li key={i}>{x}</li>) : <li>Wenig. Dieser Weg liegt nah an dem, was du heute schon bist.</li>}</ul></div></div>
       {onWahl && <Btn onClick={onWahl} style={{ alignSelf: "flex-start" }}>{on ? "Gewählt" : "Diesen Weg wählen"}</Btn>}
     </div>
@@ -168,9 +168,9 @@ function Strategie({ m, fb, st, go }) {
   if (!st.gewaehlt) return (
     <div>
       <h2 className="hm-h hm-h1">Zwei Wege für deine Marke.</h2>
-      <p className="hm-sub">Beide kommen aus deinen Antworten. Weg A verstärkt, was du heute schon bist. Weg B setzt einen Kontrast und fordert etwas mehr. Du wählst, Daniel prüft, im Gespräch schärfen wir.</p>
+      <p className="hm-sub">Beide kommen aus deinen Antworten. A verstärkt, was du bist, B setzt einen Kontrast. Du wählst, Daniel prüft.</p>
       <div className="hm-wege"><WegKarte w={st.wege.a} key_="a" onWahl={() => wahl("a")} /><WegKarte w={st.wege.b} key_="b" onWahl={() => wahl("b")} /></div>
-      <div className="hm-card" style={{ marginTop: 16 }}><div className="hm-mono">Wie gerechnet</div><div style={{ marginTop: 8, fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>Fünf Regler (Aaker-Dimensionen), deine Bildwahl, die Wohnwelten deiner Kunden, dein Ziel und dein Kamera-Komfort ergeben eine Rangliste von sechs Figuren. Weg A ist Platz eins, Weg B der beste Kandidat auf einer anderen Achse. Rangliste: {st.wege.scores.map((s) => `${s.name} ${s.score}`).join(" · ")}.</div></div>
+      <div className="hm-daten" style={{ marginTop: 16 }}>Aus fünf Reglern, Bildwahl, Wohnwelten, Ziel und Kamera-Komfort. Rangliste: {st.wege.scores.map((x) => `${x.name} ${x.score}`).join(", ")}.</div>
     </div>
   );
   const k = zeige || st.gewaehlt;
@@ -178,12 +178,12 @@ function Strategie({ m, fb, st, go }) {
   const andere = k === "a" ? "b" : "a";
   return (
     <div>
-      <div className="hm-row" style={{ justifyContent: "space-between" }}>
-        <div><div className="hm-mono">Etappe 03 · Strategie · Version {st.version} · {st.status === "aktiv" ? "Aktiv" : st.status === "geprueft" ? "Geprüft von Daniel" : "Entwurf, Prüfung offen"}</div><h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{w.archetyp.name}.</h2></div>
-        <div className="hm-seg"><button className={k === st.gewaehlt ? "on" : ""} onClick={() => setZeige(null)}>Dein Weg</button><button className={k !== st.gewaehlt ? "on" : ""} onClick={() => setZeige(andere)}>Weg {andere.toUpperCase()} ansehen</button></div>
+      <div className="hm-row" style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
+        <div><h2 className="hm-h hm-h1">{w.archetyp.name}</h2><div className="hm-kontext">{k === st.gewaehlt ? `Dein Weg, Version ${st.version || 1}, ${st.status === "aktiv" ? "aktiv" : st.status === "geprueft" ? "von Daniel geprüft" : "Prüfung durch Daniel offen"}` : "Der andere Weg"}</div></div>
+        <div className="hm-seg"><button className={k === st.gewaehlt ? "on" : ""} onClick={() => setZeige(null)}>Dein Weg</button><button className={k !== st.gewaehlt ? "on" : ""} onClick={() => setZeige(andere)}>Weg {andere.toUpperCase()}</button></div>
       </div>
-      {k !== st.gewaehlt && <div className="hm-card" style={{ marginTop: 16, display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}><span style={{ flex: 1 }}>Du siehst den nicht gewählten Weg. Wechseln geht bis zum Workshop jederzeit.</span><Btn ghost onClick={() => wahl(k)}>Zu diesem Weg wechseln</Btn></div>}
-      <StrategieReveal w={w} m={m} />
+      <div style={{ marginTop: 22, maxWidth: 760 }}><WegKarte w={w} key_={k} on={k === st.gewaehlt} ohneKopf onWahl={k !== st.gewaehlt ? () => wahl(k) : null} /></div>
+      {k === st.gewaehlt && <div className="hm-gruppe" style={{ marginTop: 18, maxWidth: 760 }}><Zeile titel="Ausgearbeitet im Markenbuch" unter="Positionierung, Story, Stimme, Serien, Konzepte und Erscheinung" onClick={() => go("markenbuch")} rechts={<Ico n="weiter" />} /></div>}
     </div>
   );
 }

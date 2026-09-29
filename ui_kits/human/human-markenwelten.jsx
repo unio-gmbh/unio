@@ -294,7 +294,7 @@ function hmWeltObjekte() {
     ["Wohnen bei Schönbrunn", "Hietzing · 1130", "€ 1.080.000", "104 m²", "3 Zi", "schoenbrunn.jpg"],
     ["Das Albrecht, Wohnen", "Wieden · 1040", "€ 720.000", "82 m²", "3 Zi", "albrechts-wohnen.jpg"],
     ["Maxingstraße", "Hietzing · 1130", "€ 890.000", "96 m²", "3 Zi", "maxingstrasse-zimmer.jpg"],
-  ].map(([t, loc, price, m2, zi, img]) => ({ t, loc, price, m2, zi, img: "/assets/img/" + img }));
+  ].map(([t, loc, price, m2, zi, img]) => ({ t, loc, price, m2, zi, img: "../../assets/img/" + img }));
 }
 /* Objekt aus Index, URL oder Objekt; Mittelpunkte aus Ortsangaben werden zu Kommas */
 function hmWeltObjekt(x, welt) {

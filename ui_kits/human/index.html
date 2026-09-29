@@ -705,6 +705,51 @@ img.hm-ava { object-position: 50% 12%; }
 @media (max-width: 1100px) { .hm-mb-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; } .hm-mb-nav { position: static; flex-direction: row; overflow-x: auto; } .hm-mb-nav button { white-space: nowrap; } .hm-mb-bogen, .hm-mb-wochen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .hm-mb-vier, .hm-mb-zwei { grid-template-columns: minmax(0, 1fr); } .hm-mb-tabelle > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } .hm-mb-bogen, .hm-mb-wochen { grid-template-columns: minmax(0, 1fr); } .hm-mb-regler > div { grid-template-columns: 80px 1fr 80px; } }
 .hm-toast.mit { display: flex; gap: 16px; align-items: center; } .hm-toast button { border: 0; background: none; color: var(--signal); font: inherit; font-weight: 500; padding: 0; cursor: pointer; pointer-events: auto; }
+/* ===== Markenwelten ===== */
+.hm-welt-svg { display: block; flex: none; }
+.hm-welt-karte-svg { box-shadow: 0 10px 28px -16px rgba(12,11,9,.35), 0 0 0 1px rgba(11,10,9,.06); }
+.hm-welt-expose-svg { box-shadow: 0 0 0 1px rgba(11,10,9,.08); }
+.hm-welt-feed-raster { display: grid; }
+.hm-welt-kopf { color: var(--ink); }
+.hm-welt-wahl { display: grid; gap: 20px; }
+.hm-welt-wahl-grund { max-width: 68ch; }
+.hm-welt-wahl-grund .t { font-size: 20px; color: var(--ink); letter-spacing: -.01em; }
+.hm-welt-wahl-grund p { margin: 6px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-3); }
+.hm-welt-wahl-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.hm-welt-wahl-karte { border: 0; text-align: left; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.hm-welt-wahl-karte.on { box-shadow: inset 0 0 0 2px var(--ink); }
+.hm-welt-wahl-karte:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.hm-welt-wahl-vorschau { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; min-width: 0; }
+.hm-welt-wahl-karten { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.hm-welt-wahl-karte .t { font-size: 17px; color: var(--ink); }
+.hm-welt-wahl-karte .empf { font-size: 13px; color: var(--ink); font-weight: 500; }
+.hm-welt-wahl-karte .s { font-size: 15px; line-height: 1.4; color: var(--ink-3); }
+.hm-welt-wahl-karte .m { font-size: 13px; line-height: 1.4; color: var(--text-muted); }
+.hm-welt-tafel { padding: 3em; display: grid; gap: 2.5em; }
+.hm-welt-tafel-kopf { display: grid; gap: 2em; align-items: end; }
+.hm-welt-tafel-name { font-size: 4.5em; line-height: .95; letter-spacing: -.02em; }
+.hm-welt-tafel-idee { font-size: 1.35em; line-height: 1.35; max-width: 36ch; }
+.hm-welt-tafel-raster { display: grid; gap: 2.5em 2em; }
+.hm-welt-tafel-feld { min-width: 0; }
+.hm-welt-tafel-feld h4 { font-size: 1em; font-weight: 600; margin: 0 0 .9em; padding-top: .8em; border-top: 1px solid var(--hm-welt-linie); }
+.hm-welt-tafel-feld p { font-size: .95em; line-height: 1.45; margin: .8em 0 0; max-width: 52ch; }
+.hm-welt-tafel-balken { display: flex; height: 3em; }
+.hm-welt-tafel-balken i { display: block; min-width: 4px; }
+.hm-welt-tafel-anteile { display: flex; font-size: .75em; margin-top: .4em; font-variant-numeric: tabular-nums; }
+.hm-welt-tafel-anteile span { min-width: 0; white-space: nowrap; overflow: hidden; }
+.hm-welt-tafel-farben { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .6em; margin-top: 1em; }
+.hm-welt-tafel-farben i { display: block; aspect-ratio: 1; box-shadow: inset 0 0 0 1px var(--hm-welt-linie); }
+.hm-welt-tafel-farben span { display: block; font-size: .75em; margin-top: .35em; }
+.hm-welt-tafel-farben .hex { opacity: .7; font-variant-numeric: tabular-nums; margin-top: 0; }
+.hm-welt-tafel-aa { font-size: 6em; line-height: 1; }
+.hm-welt-tafel-probe-d { font-size: 1.8em; line-height: 1.1; margin-top: .3em; }
+.hm-welt-tafel-proben { display: flex; gap: .8em; flex-wrap: wrap; }
+.hm-welt-tafel-listen { display: grid; grid-template-columns: repeat(auto-fit, minmax(12em, 1fr)); gap: 1.5em; margin-top: 1.2em; }
+.hm-welt-tafel-liste .k { font-size: .9em; font-weight: 600; }
+.hm-welt-tafel-liste ul { margin: .4em 0 0; padding: 0; list-style: none; }
+.hm-welt-tafel-liste li { font-size: .9em; line-height: 1.4; padding: .4em 0; border-bottom: 1px solid var(--hm-welt-linie); }
+.hm-welt-tafel-anwendung { display: flex; gap: 1.2em; align-items: flex-start; flex-wrap: wrap; }
+.hm-weg-satz { font-size: 22px; line-height: 1.35; letter-spacing: -.01em; color: var(--ink); text-wrap: balance; margin: 6px 0 4px; }
 @media (max-width: 700px) { .hm-portrait-kopf { grid-template-columns: 110px 1fr; gap: 14px; } .hm-sheet.voll { height: calc(100vh - 32px); } }
 </style>
 </head>
@@ -722,9 +767,12 @@ img.hm-ava { object-position: 50% 12%; }
 <script type="text/babel" src="human-setup.jsx"></script>
 <script type="text/babel" src="human-produktion.jsx"></script>
 <script type="text/babel" src="human-shop2.jsx"></script>
+<script type="text/babel" src="human-markenwelten.jsx"></script>
+<script type="text/babel" src="human-plattform.jsx"></script>
 <script type="text/babel" src="human-markenbuch.jsx"></script>
 <script type="text/babel" src="human-reel.jsx"></script>
 <script type="text/babel" src="human-betrieb.jsx"></script>
+<script type="text/babel" src="human-material.jsx"></script>
 <script type="text/babel" src="human-einrichtung.jsx"></script>
 <script type="text/babel" src="human-marke.jsx"></script>
 <script type="text/babel" src="human-medien.jsx"></script>

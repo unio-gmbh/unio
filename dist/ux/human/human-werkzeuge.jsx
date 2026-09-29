@@ -34,7 +34,7 @@ function hmIcs({ titel, iso, dauer = 60, ort = "", text = "" }) {
   const uid = (titel + iso).toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 60) + "@human.unio.at";
   const alarm = (t) => ["BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${esc(titel)}`, `TRIGGER:${t}`, "END:VALARM"];
   const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//UNIO//HUMAN//DE", ...tz, "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, `DTSTART;TZID=Europe/Vienna:${f(iso)}`, `DTEND;TZID=Europe/Vienna:${f(endIso)}`, `SUMMARY:${esc(titel)}`, `LOCATION:${esc(ort)}`, `DESCRIPTION:${esc(text)}`, ...alarm("-P1D"), ...alarm("-PT1H"), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = titel.toLowerCase().replace(/[^a-zäöüß0-9]+/g, "-") + ".ics"; a.click();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = hmDateiname(titel) + ".ics"; a.click();
 }
 function TerminWahl({ wahl, set, dauer, vorzug, hinweis, anzahl = 6 }) {
   const slots = React.useMemo(() => hmSlots({ dauer, vorzug, anzahl }), []);

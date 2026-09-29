@@ -98,6 +98,10 @@ function hmSelbsttestBetrieb() {
   t("Plan bis live", () => { const m = (hmStore.get("makler") || [])[0]; const p = hmPlan(m); return { ok: p.length === 11, detail: `${p.filter((x) => x.fertig).length} von 11 erledigt` }; });
   t("Impressum-Prüfung", () => { const p = hmImpressumCheck({ firma: "Test e.U.", adresse: "x", mail: "a@b.at", tel: "1", gisa: "12345678", behoerde: "Magistrat Wien", kammer: "WKO", haftpflicht: "ja" }); return { ok: p.every((x) => x.ok), detail: `${p.length} Punkte` }; });
   t("Kontrast", () => { const k = hmKontrastInfo("#1F3A5F"); return { ok: k.aufPapier > 9, detail: hmZahl(k.aufPapier) + " zu 1" }; });
+  t("Reel-Signatur erkennt geänderten Schnitt", () => { const a = [{ clip: "c1", von: 0.5, dauer: 2, text: "Hallo" }]; const b = [{ clip: "c1", von: 0.5, dauer: 2.4, text: "Hallo" }]; return { ok: hmReelSig(a) !== hmReelSig(b) && hmReelSig(a) === hmReelSig(JSON.parse(JSON.stringify(a))), detail: hmReelSig(a) }; });
+  t("Reel-Encoder verfügbar", () => ({ ok: !!window.VideoEncoder && !!window.AudioEncoder, detail: window.VideoEncoder ? "WebCodecs vorhanden" : "WebCodecs fehlt" }));
+  t("Sechs Markenwelten", () => ({ ok: (window.HM_MARKENWELTEN || []).length === 6 && HM_MARKENWELTEN.every((w) => HM_WEB_SCHRIFTEN[w.schrift] && w.websiteLook >= 1 && w.websiteLook <= 6), detail: (window.HM_MARKENWELTEN || []).map((w) => w.id).join(", ") }));
+  t("Markenwelt-Vorschlag", () => { const b = hmBrand("markus"); const a = ((hmStore.get("fragebogen") || {}).markus || {}).antworten || {}; const v = hmWeltVorschlag(b, a, b.aid); return { ok: !!(v && v.id), detail: v ? `${v.id}: ${(v.begruendung || [])[0] || ""}` : "" }; });
   t("Glossar", () => ({ ok: hmGlossar("Die Lieds für Mobilien", []) === "Die Leads für Immobilien", detail: hmGlossar("Die Lieds für Mobilien", []) }));
   return out;
 }

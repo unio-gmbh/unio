@@ -11,7 +11,7 @@ function Marke({ m, sub, setSub, go, teamSicht }) {
   const schritte = [["fragebogen", "Fragebogen", fb && fb.fertig], ["konzept", "Konzept", st && st.gewaehlt], ["design", "Design", b.fertig], ["markenbuch", "Markenbuch", mb.status === "freigegeben"], ["website", "Website", web.status === "live"]];
   const roh = sub === "material" || sub === "kit" ? "design" : sub;
   const s = roh || (fb && fb.fertig ? (b.fertig ? (mb.status === "freigegeben" ? "website" : "markenbuch") : st && st.gewaehlt ? "design" : "konzept") : "fragebogen");
-  const legacyGo = (x) => { if (x === "strategie") setSub("konzept"); else if (x === "fragebogen") setSub("fragebogen"); else go(x); };
+  const legacyGo = (x) => { if (x === "strategie") setSub("konzept"); else if (["fragebogen", "markenbuch", "design"].includes(x)) setSub(x); else go(x); };
   return (
     <div>
       <div className="hm-kette" style={{ marginTop: teamSicht ? 18 : 0 }}>{schritte.map(([id, t, ok], i) => <button key={id} className={(s === id ? "on " : "") + (ok ? "ok" : "")} onClick={() => setSub(id)}><i>{ok ? <Ico n="haken" g={12} /> : i + 1}</i>{t}</button>)}</div>
@@ -120,6 +120,9 @@ function hmWebFelder(m, b, web) {
   const v = web.felder || {};
   const jahre = { "Unter 2 Jahren": "1+", "2 bis 5 Jahre": "3+", "5 bis 10 Jahre": "5+", "Über 10 Jahre": "10+" }[fb.seit] || "";
   const F = (id, label, gruppe, auto, quelle, pflicht) => ({ id, label, gruppe, wert: v[id] != null ? v[id] : auto, auto, quelle, pflicht, eigen: v[id] != null });
+  /* Aus dem freigegebenen Markenbuch: Claim, Story, Versprechen, Belege */
+  const pl = window.hmMbPlattform && (hmStore.get("markenbuch") || {})[m.id] ? hmMbPlattform(m.id) : null;
+  const beleg = pl && (pl.beweise || []).map((x) => x.beleg).filter((x) => /\d/.test(x || "")).slice(0, 2).join(" · ");
   return [
     F("name", "Name", "UNIO", m.name, "Profil"),
     F("tel", "Telefon", "UNIO", (kd.visitenkarten || {}).tel || "", "Visitenkarte", true),
@@ -131,9 +134,9 @@ function hmWebFelder(m, b, web) {
     F("logo", "Logo und Wortmarke", "Marke", HM_LOGO_TYPEN.find((x) => x.id === b.logo).name, "Branding"),
     F("schrift", "Schrift", "Marke", b.schrift.name, "Branding"),
     F("akzent", "Akzentfarbe", "Marke", (HM_WEB_AKZENTE.find((x) => x.id === b.akzentId) || {}).name, "Branding"),
-    F("headline", "Headline", "Marke", b.claim, "Leitidee"),
-    F("bio", "Über mich", "Marke", b.w ? b.w.story.map((x) => x.text).slice(0, 2).join(" ") : "", "Brand Story"),
-    F("zitat", "Zitat", "Marke", b.w ? b.w.leitidee : "", "Haltung"),
+    F("headline", "Headline", "Marke", (pl && pl.botschaften && pl.botschaften.claim) || b.claim, pl ? "Markenbuch" : "Leitidee"),
+    F("bio", "Über mich", "Marke", (pl && pl.story && (pl.story.mittel || pl.story.kurz)) || (b.w ? b.w.story.map((x) => x.text).slice(0, 2).join(" ") : ""), pl ? "Markenbuch, Story" : "Brand Story"),
+    F("zitat", "Zitat", "Marke", (pl && (pl.versprechen || (pl.story && pl.story.haltung))) || (b.w ? b.w.leitidee : ""), pl ? "Markenbuch, Versprechen" : "Haltung"),
     F("stats", "Kennzahlen", "Marke", jahre ? `${jahre} Jahre am Markt · UNIO Netzwerk` : "UNIO Netzwerk", "Fragebogen"),
     F("referenzen", "Referenzen und Kundenstimmen", "Du", fb.kundensatz ? `"${fb.kundensatz}"` : "", "Du, mit Freigabe der Kunden", true),
     F("adresse", "Büroadresse", "Du", "Kärntner Straße 12, 1010 Wien (UNIO)", "Vorschlag"),
@@ -153,7 +156,8 @@ function Website({ m, setSub, teamSicht }) {
   useHm("website"); useHm("branding");
   const b = hmBrand(m.id);
   const web = (hmStore.get("website") || {})[m.id] || {};
-  const look = web.look || 1;
+  const weltLook = window.hmMbWelt ? (hmMbWelt(m.id, window.hmMbPlattform ? hmMbPlattform(m.id) : null) || {}).websiteLook : null;
+  const look = web.look || weltLook || 1;
   const felder = hmWebFelder(m, b, web);
   const [edit, setEdit] = React.useState(null);
   const set = (patch) => hmStore.patch("website", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), ...patch } }));
@@ -244,7 +248,7 @@ function StudioDownloads({ b }) {
   return <div className="hm-gruppe">
     <BrandKitKnopf m={b.makler} />
     {HM_LOGO_TYPEN.map((t) => <div key={t.id} className="hm-reihe"><div className="m"><div className="t">{t.name}{b.logo === t.id ? " · Hauptlogo" : ""}</div><div className="u">Vektor, Schrift in Pfade umgewandelt</div></div><div className="r"><button className="hm-klein-btn hell" onClick={() => laden(t.id, "svg")}>SVG</button><button className="hm-klein-btn hell" onClick={() => laden(t.id, "png")}>PNG</button></div></div>)}
-    {b.portrait && <div className="hm-reihe"><div className="m"><div className="t">Porträt</div><div className="u">PNG, freigestellt, Originalauflösung</div></div><div className="r"><a className="hm-klein-btn hell" style={{ textDecoration: "none" }} href={b.portrait} download={`${(b.vor + "-" + b.nach).toLowerCase()}-portrait.png`}>Laden</a></div></div>}
+    {b.portrait && <div className="hm-reihe"><div className="m"><div className="t">Porträt</div><div className="u">PNG, freigestellt, Originalauflösung</div></div><div className="r"><a className="hm-klein-btn hell" style={{ textDecoration: "none" }} href={b.portrait} download={`${hmDateiname(b.vor + "-" + b.nach)}-portrait.png`}>Laden</a></div></div>}
     <div className="hm-reihe"><div className="m"><div className="t">Farben</div><div className="u">Akzent {b.akzent} · Grund #F7F5F1 · Text #0B0A09</div></div><div className="r"><Kopieren text={b.akzent} /></div></div>
     <div className="hm-reihe"><div className="m"><div className="t">Schriften</div><div className="u">{b.schrift.d} und {b.schrift.t}, über Google Fonts</div></div></div>
   </div>;

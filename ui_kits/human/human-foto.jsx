@@ -105,7 +105,7 @@ function Portraits({ m, teamSicht, kompakt }) {
         <div className="hm-sub" style={{ margin: 0 }}>Website, Visitenkarte, Shop und Profilbild nutzen dieses Bild.</div>
         <div className="hm-daten">{aktiv.w} × {aktiv.h} px · PNG, freigestellt · {hmScoreText(aktiv.score)}</div>
         {aktiv.meta && aktiv.meta.hinweise && aktiv.meta.hinweise.length > 0 && <div className="hm-hinweis">{aktiv.meta.hinweise.join(", ")}. Ein neues Foto verbessert Website und Visitenkarte.</div>}
-        <div className="hm-row" style={{ gap: 14, marginTop: 4 }}><a className="hm-link" href={aktiv.url || HM_BLOB_URL["p:" + aktiv.id]} download={`${m.name.replace(/\s+/g, "-").toLowerCase()}-portrait.png`}>Herunterladen</a>{!aktiv.url && <button className="hm-link" onClick={() => nachbearbeiten(aktiv)}>Nachjustieren</button>}</div>
+        <div className="hm-row" style={{ gap: 14, marginTop: 4 }}><a className="hm-link" href={aktiv.url || HM_BLOB_URL["p:" + aktiv.id]} download={`${hmDateiname(m.name)}-portrait.png`}>Herunterladen</a>{!aktiv.url && <button className="hm-link" onClick={() => nachbearbeiten(aktiv)}>Nachjustieren</button>}</div>
       </div>
     </div>}
     {!kompakt && sortiert.length > 1 && <div>

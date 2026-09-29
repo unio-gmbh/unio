@@ -36,8 +36,11 @@ function hmReelUntertitel(g, text, anteil, b, W, H, font) {
     const breite = g.measureText(z.join(" ")).width; let x = (W - breite) / 2;
     z.forEach((w) => {
       const tw = g.measureText(w + " ").width;
-      g.lineWidth = 10; g.strokeStyle = "rgba(11,10,9,.55)"; g.lineJoin = "round"; g.strokeText(w, x, y);
-      g.fillStyle = k === jetzt ? b.akzent : "#F7F5F1"; g.fillText(w, x, y);
+      if (k === jetzt) {
+        /* gesprochenes Wort: Fläche in der Akzentfarbe, Schrift hell, lesbar bei jedem Akzent */
+        const ww = g.measureText(w).width; g.fillStyle = b.akzent; g.beginPath(); (g.roundRect ? g.roundRect(x - 10, y - 54, ww + 20, 70, 12) : g.rect(x - 10, y - 54, ww + 20, 70)); g.fill();
+        g.fillStyle = hmKontrast(b.akzent, "#F7F5F1") >= 3 ? "#F7F5F1" : "#0B0A09"; g.fillText(w, x, y);
+      } else { g.lineWidth = 10; g.strokeStyle = "rgba(11,10,9,.55)"; g.lineJoin = "round"; g.strokeText(w, x, y); g.fillStyle = "#F7F5F1"; g.fillText(w, x, y); }
       x += tw; k++;
     });
     y += lh;
@@ -98,7 +101,7 @@ async function hmReelRender({ c, segs, clips, b, stand }) {
       else { const im = bilder[k.src]; if (im && im.naturalWidth) hmReelCover(g, im, im.naturalWidth, im.naturalHeight, W, H, 1 + 0.08 * anteil); }
       if (s.clip !== "ende") {
         const verlauf = g.createLinearGradient(0, H * 0.55, 0, H); verlauf.addColorStop(0, "rgba(11,10,9,0)"); verlauf.addColorStop(1, "rgba(11,10,9,.45)"); g.fillStyle = verlauf; g.fillRect(0, H * 0.55, W, H * 0.45);
-        if (si === 0 && T.serie) { g.font = `500 34px "${b.schrift.t}", system-ui, sans-serif`; g.fillStyle = "#F7F5F1"; g.fillText(T.serie, 72, 150); g.fillStyle = b.akzent; g.fillRect(72, 170, 64, 5); }
+        if (si === 0 && T.serie) { g.font = `500 34px "${b.schrift.t}", system-ui, sans-serif`; const sw = g.measureText(T.serie).width; g.fillStyle = "#0B0A09"; g.fillRect(56, 112, sw + 40, 60); g.fillStyle = "#F7F5F1"; g.fillText(T.serie, 76, 154); g.fillStyle = b.akzent; g.fillRect(56, 172, sw + 40, 6); }
         if (s.text && s.rolle === "Hook") {
           /* Erster Eindruck: Hook groß im oberen Drittel, in der Display-Schrift, auf ruhiger Fläche */
           g.font = `400 88px "${b.schrift.d}", Georgia, serif`; const zeilen = hmReelUmbruch(g, s.text, W * 0.82);
@@ -162,7 +165,7 @@ function ReelExport({ c, b, clips, set }) {
   const veraltet = c.render && c.render.sig !== hmReelSig(c.schnitt);
   return <div className="hm-stack" style={{ gap: 10 }}>
     {stand ? <div className="hm-zs-lauf"><div className="hm-zs-balken"><i style={{ width: stand.p + "%" }}></i></div><span className="hm-daten">{stand.p} %</span><span>{stand.t === "Ton" ? "Ton wird gemischt" : "Bilder werden gerendert"}</span></div>
-      : <div className="hm-row" style={{ gap: 10, justifyContent: "space-between" }}><span className="hm-daten">{c.render ? `MP4 · ${Math.round(c.render.dauer)} s · ${(c.render.groesse / 1e6).toFixed(1)} MB · Ton ${c.render.ton}` : "Noch nicht gerendert"}</span><span className="hm-row" style={{ gap: 8 }}>{url && <a className="hm-klein-btn hell" style={{ textDecoration: "none" }} href={url} download={`${c.titel.toLowerCase().replace(/[^a-z0-9äöüß]+/g, "-")}.mp4`}>Laden</a>}<button className="hm-klein-btn" disabled={!(c.schnitt && c.schnitt.length)} onClick={los}>{c.render ? (veraltet ? "Neu rendern" : "Nochmal rendern") : "Als MP4 rendern"}</button></span></div>}
+      : <div className="hm-row" style={{ gap: 10, justifyContent: "space-between" }}><span className="hm-daten">{c.render ? `MP4 · ${Math.round(c.render.dauer)} s · ${(c.render.groesse / 1e6).toFixed(1)} MB · Ton ${c.render.ton}` : "Noch nicht gerendert"}</span><span className="hm-row" style={{ gap: 8 }}>{url && <a className="hm-klein-btn hell" style={{ textDecoration: "none" }} href={url} download={`${hmDateiname(c.titel)}.mp4`}>Laden</a>}<button className="hm-klein-btn" disabled={!(c.schnitt && c.schnitt.length)} onClick={los}>{c.render ? (veraltet ? "Neu rendern" : "Nochmal rendern") : "Als MP4 rendern"}</button></span></div>}
     {url && !stand && <video src={url} controls playsInline style={{ width: "100%", maxWidth: 280, aspectRatio: "9/16", borderRadius: 14, background: "#000" }} />}
   </div>;
 }
