@@ -278,3 +278,57 @@ Vault-Regeln, die ab v5 gelten (aus "Feedback, Dos & Don'ts" und "Design-Masterr
 - Das Markenbuch speist die Website mit Claim, Story, Versprechen und Look.
 - Rückgängig statt Nachfrage bei Ideen.
 - Letzte Textzeichen-Icons im Schnitt-Player ersetzt.
+
+## Stufe 9. Branding auf Agenturniveau
+
+**Ziel:** Das Ergebnis für den Makler soll so gut sein wie von einer High-End-Brand- und Social-Agentur: Markenoptik, Brand Story, Konzeptideen, ausgearbeitete Säulen. Datenvertrag `docs/HUMAN_MARKE_SCHEMA.md`, Qualitätsstandard mit Claude-Kette und Musterbeispiel `docs/UNIO_HUMAN_MARKENQUALITAET.md`.
+
+**Umgesetzt**
+- **Markenplattform** (`human-plattform.jsx`, Agent): Einsicht, Positionierung, Versprechen, Rolle, Werte als Verhalten, Persönlichkeit, Stimme mit Reglern, Regeln und Beispielen, Botschaften, Story in drei Längen, Belege, fünf Säulen als benannte Serien mit je drei Beispielen, drei Konzepte, 30-Tage-Plan und Bildsprache.
+  - Grundlage sind die eigenen Worte des Maklers. Fehlt etwas, steht dort eine ehrliche Lücke.
+  - Die Qualitätsprüfung bewertet Spezifität, Unterscheidbarkeit (Textähnlichkeit zu anderen Maklern), Glaubwürdigkeit, Konsistenz und Umsetzbarkeit. Floskeln zählen als harter Fehler.
+  - Versionen werden gespeichert. Im Betrieb schreibt die Claude-Kette (`api/human-marke.js`) die Texte, die Regeln sind der Fallback.
+- **Markenwelten** (`human-markenwelten.jsx`, Agent): sechs kuratierte Identitätssysteme, jedes mit Idee und wiedererkennbarem Zeichen.
+
+  | Welt | Zeichen |
+  |---|---|
+  | Weite | Fenster 3:4 |
+  | Feuilleton | Folio-Zeile |
+  | Grätzl | eigene Straßenlinie aus Name und Bezirk |
+  | Maßstab | Schriftfeld wie auf dem Bauplan |
+  | Abendlicht | Rundbogen |
+  | Kontrast | Kante im goldenen Schnitt |
+
+  Dazu gibt es Renderer für Post, Feed, Story, Karte, Exposé, Signatur und Tafel. Der Vorschlag folgt aus Figur, Bildpaaren und Zeichen, jeweils mit Begründung.
+- **Markenbuch** (`human-markenbuch.jsx`): neuer Schritt der Marke-Kette (Fragebogen, Konzept, Design, Markenbuch, Website).
+  - Zehn Kapitel mit Kapitelnavigation, PDF über die Druckansicht und Materialpaket.
+  - Das Team sieht die Qualitätsprüfung und gibt als Creative Director frei. Floskeln sperren die Freigabe.
+  - Die Wahl der Welt setzt Schrift und Website-Look. Das Markenbuch speist die Homepage mit Claim, Story, Versprechen und Look.
+- **Konzept:** ist jetzt die reine Entscheidung zwischen zwei Wegen. Die Ausarbeitung steht einmal, im Markenbuch.
+
+**Tests**
+
+| Test | Ergebnis |
+|---|---|
+| Plattform Markus | Claim "Zeit ist Teil des Preises.", Serien "Sievering in Zahlen", "Die Provision, ehrlich", "Noch nicht verkaufen", "Aus Döbling", "Fallakte Sievering", Konzepte "Der Grundbuch-Dienstag" und "Runder Tisch Sievering: Erben ohne Streit", Qualität 94 bis 95, keine Floskeln |
+| Unterscheidbarkeit | Markus zu Elif 5 % Textähnlichkeit |
+| Materialpaket | 27 Dateien in 2 s. Posts 1080 × 1350, Story 1080 × 1920, Karte 1004 × 650 (300 dpi), Exposé-Titel A4 mit 300 dpi, Schriften eingebettet |
+| Reel Markus | Serienname "Die Provision, ehrlich", Hook als Titel, Claim aus dem Markenbuch, Handlungsaufruf in Sie-Form |
+| Selbsttest | 84 von 84 (Betrieb, Produktion, Shop, Plattform, Markenwelten) |
+| Crawl | 38 Ansichten ohne Fehler und ohne Gedankenstriche |
+| Live | alle Dateien 200. API ohne Passwort 401, mit Passwort 503 mit Regel-Fallback, weil der Schlüssel fehlt |
+
+**Gefundene Fehler, behoben**
+- Welt-ID "grätzl" statt "graetzl" zwischen Plattform und Welten.
+- Folgennummer "01" auf allen Serienposts.
+- Doppelte Fotos im Feed.
+- Umlaute in ZIP-Dateinamen, unter macOS nicht entpackbar. Alle Exporte laufen jetzt über `hmDateiname`.
+- Story mit 1922 statt 1920 px, jetzt mit exakter Zielgröße.
+- Positionierung doppelt als Absatz und Tabelle.
+- Serienlabel und Wort-Hervorhebung im Reel ohne Kontrast.
+
+**Offene Entscheidungen**
+- Claude-Kette aktivieren: `ANTHROPIC_API_KEY` in Vercel setzen und `@anthropic-ai/sdk` in `package.json`. Die volle Kette braucht bis zu 300 s Laufzeit (Vercel Pro).
+- Lizenz der Freistell-Bibliothek im Zuschnitt (AGPL-3.0).
+- Higgsfield: Bildwelt über die API mit eigenem Schlüssel auf dem Server. Credits sind im verbundenen Konto vorhanden, die App kann das Konto aber nicht direkt nutzen.
+- Vor der Veröffentlichung mit Markus klären: Zahlen hinter den 600.000, "1902", die Spanne 6 bis 8 Abschlüsse in Sievering.
