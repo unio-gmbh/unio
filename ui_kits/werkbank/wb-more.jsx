@@ -315,7 +315,7 @@ function Freigaben({ m, posts, assets }) {
         <div key={p.id} className="hm-card" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div className="hm-row" style={{ justifyContent: "space-between" }}><span className="hm-mono">{HM_KANAELE[p.kanal].name} · {HM_FORMATE[p.format].name}</span><Pill z="freigabe" /></div>
           <div style={{ aspectRatio: p.format === "carousel" ? "1" : "9/16", maxHeight: 300, borderRadius: 14, background: "linear-gradient(160deg, var(--ink-3), var(--ink))", color: "var(--paper)", padding: 18, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}><div className="hm-mono" style={{ color: "var(--signal)" }}>{a ? `Version ${a.version}` : "Vorschau"}</div><div style={{ fontSize: 22, letterSpacing: "-.02em", lineHeight: 1.05 }}>{p.titel}</div></div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>Geplant für {hmFmtDate(p.termin)}. Ohne Rückmeldung automatisch freigegeben am {hmFmtDate(p.frist)}. Korrekturrunden: {p.korrekturen || 0} von 2{(p.korrekturen || 0) >= 2 ? ", weitere kostenpflichtig" : ""}.</div>
+          <div style={{ fontSize: 13, color: "var(--text-muted)" }}>Geplant für {hmFmtDate(p.termin)}. Erinnerung am {hmFmtDate(p.frist)}, ohne Freigabe geht nichts online. Korrekturrunden: {p.korrekturen || 0} von 2{(p.korrekturen || 0) >= 2 ? ", weitere kostenpflichtig" : ""}.</div>
           <div className="hm-row"><Btn onClick={() => act(p, "freigegeben")}>Freigeben</Btn><button className="hm-chip" onClick={() => act(p, "aenderung")}>Änderung wünschen</button></div>
         </div>); })}
     </div>

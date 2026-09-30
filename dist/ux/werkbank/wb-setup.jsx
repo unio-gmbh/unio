@@ -126,7 +126,7 @@ async function hmLogoFarbe(src) {
 }
 function LogoFarbe({ m, set }) {
   const br = (useHm("branding") || {})[m.id] || {};
-  const logo = (br.material || []).find((x) => x.art === "Logo" && x.vorschau);
+  const logo = (br.material || []).find((x) => (x.art === "Altes Logo" || x.art === "Logo") && x.vorschau);
   const [f, setF] = React.useState(null);
   React.useEffect(() => { if (logo) hmLogoFarbe(logo.vorschau).then(setF).catch(() => setF(null)); }, [logo && logo.id]);
   if (!logo || !f) return null;

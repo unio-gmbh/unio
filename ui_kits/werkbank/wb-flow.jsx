@@ -38,7 +38,7 @@ function Fragebogen({ m, fb, go }) {
     const beantwortet = Object.keys(antworten).length;
     return (
       <div>
-        <h2 className="hm-h hm-h1">{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel. Achtzehn Minuten."}</h2>
+        <h2 className="hm-h hm-h1">{done ? "Dein Fragebogen ist fertig." : "Fünf Kapitel, eine Vertiefung."}</h2>
         <p className="hm-sub">{done ? "Du kannst jede Antwort ändern. Deine Strategie rechnet dann neu. Kapitel 6 schreibt deine Geschichte, wann du willst." : "Es gibt keine falschen Antworten. Wir fragen nach dem, was du getan hast, nicht nach dem, was du über dich denkst. Am Ende jedes Kapitels siehst du, was wir daraus lesen. Unterbrechen geht jederzeit."}</p>
         <div className="hm-kap">
           {HM_KAPITEL.map((k, i) => { const f = fertig.includes(k.id); const n = k.fragen.filter((q) => antworten[q.id] != null).length; return (
@@ -79,7 +79,7 @@ function Fragebogen({ m, fb, go }) {
   return (
     <div className="hm-q">
       <div className="hm-row" style={{ justifyContent: "space-between" }}>
-        <div className="hm-mono">Kapitel {kap + 1} · {K.name}</div>
+        <div style={{ fontSize: 14, color: "var(--text-muted)" }}>Kapitel {kap + 1}, {K.name}</div>
         <div className="hm-dots">{K.fragen.map((f, i) => <i key={f.id} className={i === idx ? "on" : antworten[f.id] != null ? "done" : ""}></i>)}</div>
       </div>
       <h2 className="hm-h hm-h2">{q.frage}</h2>
@@ -107,11 +107,11 @@ function Frage({ q, val, set, freiVal, setFrei }) {
   if (q.typ === "slider") { const v = val == null ? 50 : val; return <div className="hm-slider"><div className="lab"><span style={{ opacity: v > 60 ? .45 : 1 }}>{q.links}</span><span style={{ opacity: v < 40 ? .45 : 1 }}>{q.rechts}</span></div><input type="range" min="0" max="100" value={v} onChange={(e) => set(+e.target.value)} /><div className="hm-mono" style={{ textAlign: "center", marginTop: 8 }}>{val == null ? "Regler bewegen" : v < 40 ? q.links : v > 60 ? q.rechts : "Dazwischen"}</div></div>; }
   if (q.typ === "skala") return <div><div className="hm-skala">{[1, 2, 3, 4, 5].map((n) => <button key={n} className={val === n ? "on" : ""} onClick={() => set(n)}>{n}</button>)}</div><div className="hm-row" style={{ justifyContent: "space-between", marginTop: 10, maxWidth: 392 }}><span className="hm-mono">{q.von}</span><span className="hm-mono">{q.bis}</span></div></div>;
   if (q.typ === "text") return q.lang ? <textarea className="hm-text" rows={4} style={{ fontSize: 19, lineHeight: 1.4, resize: "vertical" }} placeholder={q.platzhalter} value={val || ""} onChange={(e) => set(e.target.value)} autoFocus /> : <input className="hm-text" placeholder={q.platzhalter} value={val || ""} onChange={(e) => set(e.target.value)} autoFocus />;
-  if (q.typ === "sortieren") { const l = (val && val.length) ? val : q.optionen; const mv = (i, d) => { const n = [...l]; const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; set(n); }; return <div className="hm-sort">{l.map((k, i) => <div key={k} className="it"><span className="n">{String(i + 1).padStart(2, "0")}</span><span className="t">{HM_KANAELE[k].name}</span><button onClick={() => mv(i, -1)}>↑</button><button onClick={() => mv(i, 1)}>↓</button></div>)}</div>; }
+  if (q.typ === "sortieren") { const l = (val && val.length) ? val : q.optionen; const mv = (i, d) => { const n = [...l]; const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; set(n); }; return <div className="hm-sort">{l.map((k, i) => <div key={k} className="it"><span className="n">{String(i + 1).padStart(2, "0")}</span><span className="t">{HM_KANAELE[k].name}</span><button onClick={() => mv(i, -1)} aria-label="Nach oben"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 12.5V3.5M4 7.5l4-4 4 4" /></svg></button><button onClick={() => mv(i, 1)} aria-label="Nach unten"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 3.5v9M4 8.5l4 4 4-4" /></svg></button></div>)}</div>; }
   if (q.typ === "paare") { const v = val || {}; return <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{HM_BILDPAARE.map((p) => <div key={p.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>{["a", "b"].map((k) => <button key={k} className={"hm-karte" + (v[p.id] === k ? " on" : "")} onClick={() => set({ ...v, [p.id]: k })}><div className="img" style={{ background: p[k].f, height: 56 }}></div><div className="tx" style={{ padding: "10px 14px 12px" }}><div className="t" style={{ fontSize: 15 }}>{p[k].t}</div></div></button>)}</div>)}<div className="hm-mono">{Object.keys(v).length} von {HM_BILDPAARE.length}</div></div>; }
   if (q.typ === "karten") {
     const items = q.karten === "milieus" ? HM_MILIEUS.map((x) => ({ id: x.id, t: x.titel, s: x.bild, bg: x.farbe })) : q.karten === "archetypen" ? HM_ARCHETYPEN.map((x) => ({ id: x.id, t: x.name, s: x.satz, bg: x.palette[0], bg2: x.palette[2] })) : Object.entries(HM_FORMATE).map(([id, x]) => ({ id, t: x.name, s: `${x.was}. ${x.dauer}.`, bg: "#E7E2D8" }));
-    return <div className="hm-karten">{items.map((it) => { const on = (val || []).includes(it.id); return <button key={it.id} className={"hm-karte" + (on ? " on" : "")} onClick={() => toggleMulti(it.id, q.max)}><div className="img" style={{ background: it.bg2 ? `linear-gradient(135deg, ${it.bg} 60%, ${it.bg2})` : it.bg }}></div><div className="tx"><div className="t">{it.t}</div><div className="s">{it.s}</div></div></button>; })}</div>;
+    return <div className="hm-karten">{items.map((it) => { const on = (val || []).includes(it.id); return <button key={it.id} className={"hm-karte" + (on ? " on" : "")} onClick={() => toggleMulti(it.id, q.max)}><div className="img" style={{ background: it.bg, position: "relative", overflow: "hidden" }}>{it.bg2 && <i style={{ position: "absolute", right: 0, bottom: 0, width: "34%", height: "40%", background: it.bg2 }} />}</div><div className="tx"><div className="t">{it.t}</div><div className="s">{it.s}</div></div></button>; })}</div>;
   }
   return null;
 }

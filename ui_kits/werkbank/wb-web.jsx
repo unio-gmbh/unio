@@ -531,10 +531,10 @@ function hmWebBau(m, look, web, bib, felder, mini) {
   const karte = hmWebKarte(m.id, b, web, bib);
   return { F, karte, fokus: hmWebFokus(web), sig: JSON.stringify([look, F, karte, web.bilder, mini]) };
 }
-function useWebHtml(n, bau, mini) {
+function useWebHtml(n, bau, mini, animiert) {
   const [html, setHtml] = React.useState(null);
   const [fehler, setFehler] = React.useState(null);
-  React.useEffect(() => { let weg = false; const id = setTimeout(() => hmWebQuelle(n).then((q) => { if (!weg) { setHtml(hmWebHtml(q, n, bau.karte, { mini })); setFehler(null); } }).catch((e) => !weg && setFehler(e.message)), html ? 250 : 0); return () => { weg = true; clearTimeout(id); }; }, [n, bau.sig]);
+  React.useEffect(() => { let weg = false; const id = setTimeout(() => hmWebQuelle(n).then((q) => { if (!weg) { setHtml(hmWebHtml(q, n, bau.karte, { mini, animiert: !!animiert })); setFehler(null); } }).catch((e) => !weg && setFehler(e.message)), html ? 250 : 0); return () => { weg = true; clearTimeout(id); }; }, [n, bau.sig, !!animiert]);
   return [html, fehler];
 }
 
@@ -544,7 +544,9 @@ function GeraeteWahl({ geraet, setG }) {
 
 function WebVorschau({ m, t, look, geraet, setG, web, bib, felder, setAlle, pruef, setPruef }) {
   const bau = hmWebBau(m, look, web, bib, felder, false);
-  const [html, fehler] = useWebHtml(look, bau, false);
+  /* Bewegung: die Vorlage mit Scroll-Animation und weichem Scrollen (Lenis), zum Durchscrollen im Rahmen */
+  const [bewegt, setBewegt] = React.useState(false);
+  const [html, fehler] = useWebHtml(look, bau, false, bewegt);
   const g = HM_WEB_GERAETE.find((x) => x.id === geraet);
   const b = hmBrand(m.id);
   const oeffnen = async () => {
@@ -557,7 +559,7 @@ function WebVorschau({ m, t, look, geraet, setG, web, bib, felder, setAlle, prue
   const fixes = (pruef || []).filter((x) => x.art === "fix"), fehlerL = (pruef || []).filter((x) => x.art === "fehler");
   return <div>
     <div className="hm-web-leiste">
-      <GeraeteWahl geraet={geraet} setG={setG} />
+      <span className="hm-row" style={{ gap: 10 }}><GeraeteWahl geraet={geraet} setG={setG} /><div className="hm-seg klein" role="radiogroup" aria-label="Darstellung"><button role="radio" aria-checked={!bewegt} className={!bewegt ? "on" : ""} onClick={() => setBewegt(false)} title="Fertiger Zustand, ohne Animation">Standbild</button><button role="radio" aria-checked={bewegt} className={bewegt ? "on" : ""} onClick={() => setBewegt(true)} title="Mit Scroll-Animation, im Rahmen scrollen">Bewegung</button></div></span>
       <span className="hm-row" style={{ gap: 14 }}><button className="hm-link" onClick={() => setAlle(true)}>Alle Looks</button><button className="hm-link" onClick={oeffnen}>Groß öffnen</button><button className="hm-link" onClick={() => hmWebsitePaket(m, b, bau.F, look, t, bau.karte, bau.fokus).then(() => toast("Paket geladen")).catch((e) => { console.warn(e); toast("Paket konnte nicht erstellt werden"); })}>Paket</button></span>
     </div>
     {fehler ? <div className="hm-leer"><div className="t">Vorschau nicht erreichbar</div><div className="s">{fehler}</div></div>
@@ -566,7 +568,7 @@ function WebVorschau({ m, t, look, geraet, setG, web, bib, felder, setAlle, prue
       {pruef == null ? <span className="hm-daten">Wird geprüft</span> : fehlerL.length ? fehlerL.map((x) => <span key={x.t} className="nein"><Ico n="x" g={12} />{x.t}</span>) : <span className="ok"><Ico n="haken" g={12} />Geprüft: Namen passen, keine Platzhalter, alle Bilder da</span>}
       {(pruef || []).filter((x) => x.art === "hinweis").map((x) => <span key={x.t} className="hm-daten">{x.t}</span>)}
       {fixes.length > 0 && <span className="hm-daten">{fixes.length} automatisch eingepasst</span>}
-      <span className="hm-daten" style={{ marginLeft: "auto" }}>{g.w} px</span>
+      <span className="hm-daten" style={{ marginLeft: "auto" }}>{bewegt ? "Im Rahmen scrollen · " : ""}{g.w} px</span>
     </div>
   </div>;
 }

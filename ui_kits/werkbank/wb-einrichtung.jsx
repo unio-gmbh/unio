@@ -74,7 +74,7 @@ function EPlattform({ m, zu }) {
     ["Heute", "Oben steht immer genau eine Sache, die dich braucht. Alles andere läuft sichtbar im Hintergrund.", "../../assets/img/lens-analyse.jpg"],
     ["Marke", "Fragebogen, Konzept, Logo, Website. Alles, was dich erkennbar macht, an einem Ort.", "../../assets/img/pager-visuell.jpg"],
     ["Inhalte", "Jeden Monat wählst du Ideen, wir drehen und schneiden. Du siehst jeden Schritt.", "../../assets/img/pager-vermarktung.jpg"],
-    ["Freigaben", "Zwei Knöpfe: Freigeben oder Änderung. Nach fünf Tagen geben wir automatisch frei.", "../../assets/img/pager-expose.jpg"],
+    ["Freigaben", "Zwei Knöpfe: Freigeben oder Änderung. Ohne deine Freigabe geht nichts online.", "../../assets/img/pager-expose.jpg"],
   ];
   return <div className="hm-stack">
     <div className="hm-tour"><img src={S[i][2]} alt="" /><div className="hm-tour-t"><div className="hm-mono">{i + 1} von {S.length}</div><div className="hm-h hm-h2" style={{ marginTop: 6 }}>{S[i][0]}</div><p className="hm-sub">{S[i][1]}</p></div></div>

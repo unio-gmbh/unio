@@ -58,7 +58,6 @@ function Beitrag({ id, zurueck, teamSicht }) {
 function Phase1({ c, set, b, clips, teamSicht, weiter }) {
   const vorlagen = useHm("vorlagen") || [];
   const [check, setCheck] = React.useState(null);
-  const [score, setScore] = React.useState(null);
   const [kom, setKom] = React.useState("");
   const sz = hmSprechzeit(c.skript);
   return <div className="hm-stack">
@@ -81,10 +80,6 @@ function Phase1({ c, set, b, clips, teamSicht, weiter }) {
       <label className="hm-feld"><span>Drehtag</span><input type="date" value={c.drehtag || ""} onChange={(e) => set({ drehtag: e.target.value })} /></label>
       <label className="hm-feld"><span>Geplant für</span><input type="date" value={(c.termin || "").slice(0, 10)} onChange={(e) => set({ termin: e.target.value + "T18:00" })} /></label>
       <label className="hm-feld"><span>Vor der Kamera</span><input value={c.akteure || ""} placeholder={b.makler.name} onChange={(e) => set({ akteure: e.target.value })} /></label>
-    </div>
-    <div className="hm-card hm-score">
-      <div><div className="hm-h hm-h3">Wirkungs-Prognose</div><div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 3 }}>Aus Hook, Länge, Gesicht, Säule und dem, was bei dir bisher funktioniert. Regelbasiert, ohne KI-Aufruf.</div></div>
-      {score ? <div className="hm-row" style={{ gap: 14 }}><div className="wert">{score.score}</div><div className="hm-stack" style={{ gap: 2 }}>{score.faktoren.map((f) => <div key={f.t} style={{ fontSize: 12 }}>{f.t} <b>{f.p}</b></div>)}</div></div> : <Btn onClick={() => setScore(hmViralScore(c, clips))}>Berechnen</Btn>}
     </div>
     <div>
       <div className="hm-mono" style={{ marginBottom: 8 }}>Kommentare · {(c.kommentare || []).length}</div>
@@ -139,9 +134,9 @@ function Phase4({ c, set, b, teamSicht }) {
   const kontakte = ((hmStore.get("kontakte") || {})[c.maklerId] || []).filter((k) => k.freigabe);
   const frist = c.termin ? (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return d.toISOString().slice(0, 10); })() : "";
   return <div className="hm-stack">
-    {c.zustand === "freigabe" && !teamSicht && <div className="hm-stack" style={{ gap: 10 }}><div style={{ fontSize: 20, color: "var(--ink)", letterSpacing: "-.01em" }}>Passt das so?</div><div className="hm-row"><Btn onClick={() => set({ zustand: "freigegeben" }, "freigegeben")}>Freigeben</Btn><button className="hm-link" disabled={c.korrekturen >= 2 && !notiz} onClick={() => { set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, notizen: notiz ? [...(c.notizen || []), { von: b.makler.name, t: Date.now(), text: notiz }] : c.notizen }, "Änderung gewünscht"); setNotiz(""); }}>Änderung wünschen</button></div><div className="hm-mono">Ohne Rückmeldung automatisch freigegeben am {hmDatum(frist)}.</div></div>}
+    {c.zustand === "freigabe" && !teamSicht && <div className="hm-stack" style={{ gap: 10 }}><div style={{ fontSize: 20, color: "var(--ink)", letterSpacing: "-.01em" }}>Passt das so?</div><div className="hm-row"><Btn onClick={() => set({ zustand: "freigegeben" }, "freigegeben")}>Freigeben</Btn><button className="hm-link" disabled={c.korrekturen >= 2 && !notiz} onClick={() => { set({ zustand: "aenderung", korrekturen: (c.korrekturen || 0) + 1, notizen: notiz ? [...(c.notizen || []), { von: b.makler.name, t: Date.now(), text: notiz }] : c.notizen }, "Änderung gewünscht"); setNotiz(""); }}>Änderung wünschen</button></div><div className="hm-mono">Ohne deine Freigabe geht nichts online. Wir erinnern dich am {hmDatum(frist)}.</div></div>}
     {teamSicht && !["freigabe", "freigegeben", "online"].includes(c.zustand) && <div className="hm-stack" style={{ gap: 10 }}>{fehlt.length ? <div className="hm-note">Es fehlt noch: {fehlt.join(", ")}.</div> : <div className="hm-mono">Geht an {kontakte.map((k) => k.name).join(", ") || "die Freigabe-Verantwortlichen"}.</div>}<div className="hm-row"><Btn disabled={fehlt.length > 0} onClick={() => set({ zustand: "freigabe" }, "zur Freigabe gesendet")}>Zur Freigabe senden</Btn><button className="hm-link" onClick={() => setMail(!mail)}>{mail ? "Mail ausblenden" : "So sieht die Mail aus"}</button></div>{mail && <div className="hm-mailvorschau"><b>Zur Freigabe: {c.titel}</b><br /><br />Hallo {b.vor},<br />dein Beitrag ist fertig und geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} online. Ein Klick: freigeben oder Änderung wünschen.<br /><br />Dein UNIO Team</div>}</div>}
-    {c.zustand === "freigabe" && teamSicht && <div className="hm-mono">Wartet auf {b.makler.name}. Automatische Freigabe am {hmDatum(frist)}.</div>}
+    {c.zustand === "freigabe" && teamSicht && <div className="hm-mono">Wartet auf {b.makler.name}. Erinnerung am {hmDatum(frist)}, ohne Freigabe geht nichts online.</div>}
     {c.zustand === "freigegeben" && <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Geht am {hmDatum(c.termin)} um {hmZeit(c.termin)} online.</div>{teamSicht && <button className="hm-link" onClick={() => set({ zustand: "online", kz: { reach: 3200 + Math.round(Math.random() * 6000), saves: 30, sends: 40, likes: 220, kommentare: 12 } }, "veröffentlicht")}>Demo: jetzt veröffentlichen</button>}</div>}
     {c.zustand === "online" && c.kz && <div className="hm-wz" style={{ marginTop: 0 }}>{[["Erreicht", c.kz.reach], ["Gespeichert", c.kz.saves], ["Geteilt", c.kz.sends], ["Likes", c.kz.likes]].map(([t, v]) => <div key={t}><b style={{ fontSize: 22 }}>{v.toLocaleString("de-AT")}</b><span>{t}</span></div>)}</div>}
     <div>{(c.notizen || []).map((k, i) => <div key={i} className="hm-msg"><Avatar name={k.von} /><div><div className="w">{k.von} · {hmRel(k.t)}</div>{k.text}</div></div>)}<div className="hm-inp"><input value={notiz} onChange={(e) => setNotiz(e.target.value)} placeholder="Notiz zur Freigabe" onKeyDown={(e) => { if (e.key === "Enter" && notiz.trim()) { set({ notizen: [...(c.notizen || []), { von: teamSicht ? "Daniel Hayden" : b.makler.name, t: Date.now(), text: notiz }] }); setNotiz(""); } }} /></div></div>
@@ -320,7 +315,7 @@ function Abstimmung({ c, zurueck }) {
         <div className="hm-abst-block"><div className="hm-mono">Geht online</div><div className="v">{hmDatumLang(c.termin)}</div><div className="u">auf {hmKanalText(c.kanaele)}</div></div>
         <div className="hm-abst-block"><div className="hm-mono">Worum es geht</div><div className="v">{hook || c.titel}</div><div className="u">{HM_TYPEN[c.typ]} aus deiner Säule {HM_SAEULEN[c.saeule] ? HM_SAEULEN[c.saeule].name : ""}</div></div>
         {c.caption && <div className="hm-abst-block"><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Text zum Beitrag</div>{c.zustand === "freigabe" && <button className="hm-link" onClick={() => setCapEdit(!capEdit)}>{capEdit ? "Fertig" : "Selbst anpassen"}</button>}</div>{capEdit ? <textarea className="hm-skript" rows={5} value={c.caption} onChange={(e) => set({ caption: e.target.value })} /> : <div className="cap">{c.caption}</div>}</div>}
-        {c.zustand === "freigabe" && !aendern && <div className="hm-abst-aktion"><Btn onClick={() => { set({ zustand: "freigegeben", freigabe: { von: b.makler.name, zeit: new Date().toISOString() } }, "abgestimmt: passt so"); toast(`Eingeplant für ${hmDatumLang(c.termin)}`); }}>Passt so</Btn><button className="hm-link" onClick={() => setAendern(true)}>{kostet ? "Weitere Änderung" : "Etwas ändern"}</button><button className="hm-link" onClick={() => setKlein(true)}>Passt, mit Kleinigkeit</button><div className="hm-mono" style={{ width: "100%" }}>{frei > 0 ? `Noch ${frei} ${frei === 1 ? "Änderungswunsch" : "Änderungswünsche"} frei.` : "Beide Änderungswünsche sind verbraucht. Jede weitere Runde kostet 150 € je Stunde, wir nennen dir vorher den Aufwand."} Wenn du nichts sagst, geht der Beitrag am {hmDatum(frist)} so online.</div></div>}
+        {c.zustand === "freigabe" && !aendern && <div className="hm-abst-aktion"><Btn onClick={() => { set({ zustand: "freigegeben", freigabe: { von: b.makler.name, zeit: new Date().toISOString() } }, "abgestimmt: passt so"); toast(`Eingeplant für ${hmDatumLang(c.termin)}`); }}>Passt so</Btn><button className="hm-link" onClick={() => setAendern(true)}>{kostet ? "Weitere Änderung" : "Etwas ändern"}</button><button className="hm-link" onClick={() => setKlein(true)}>Passt, mit Kleinigkeit</button><div className="hm-mono" style={{ width: "100%" }}>{frei > 0 ? `Noch ${frei} ${frei === 1 ? "Änderungswunsch" : "Änderungswünsche"} frei.` : "Beide Änderungswünsche sind verbraucht. Jede weitere Runde kostet 150 € je Stunde, wir nennen dir vorher den Aufwand."} Ohne deine Freigabe geht der Beitrag nicht online. Wir erinnern dich am {hmDatum(frist)}.</div></div>}
         {klein && <div className="hm-abst-aktion"><textarea className="hm-skript" rows={2} autoFocus value={wunsch} onChange={(e) => setWunsch(e.target.value)} placeholder="Tippfehler, ein Wort, ein Bildausschnitt. Kostet keinen Änderungswunsch." /><div className="hm-row"><Btn disabled={!wunsch.trim()} onClick={() => { set({ zustand: "freigegeben", kleinigkeit: wunsch, freigabe: { von: b.makler.name, zeit: new Date().toISOString() }, kommentare: [...(c.kommentare || []), { von: b.makler.name, t: Date.now(), text: "Passt, mit Kleinigkeit: " + wunsch }] }, "abgestimmt mit Kleinigkeit"); setWunsch(""); setKlein(false); toast("Eingeplant. Das Team korrigiert die Kleinigkeit vorher."); }}>Passt so, mit dieser Kleinigkeit</Btn><button className="hm-link" onClick={() => setKlein(false)}>Abbrechen</button></div></div>}
         {aendern && <div className="hm-abst-aktion"><div className="hm-chips">{["Anderer Einstieg", "Kürzer", "Anderes Bild", "Text anpassen", "Anderer Termin"].map((x) => <button key={x} className="hm-chip" onClick={() => setWunsch((w) => (w ? w + ", " : "") + x)}>{x}</button>)}</div><textarea className="hm-skript" rows={3} autoFocus value={wunsch} onChange={(e) => setWunsch(e.target.value)} placeholder="Was soll anders sein? Ein Satz reicht." /><div className="hm-row"><Btn disabled={!wunsch.trim()} onClick={senden}>An das Team</Btn><button className="hm-link" onClick={() => setAendern(false)}>Abbrechen</button></div></div>}
         {c.zustand === "idee" && <div className="hm-abst-aktion"><Btn onClick={() => set({ zustand: "planung" }, "Idee gewählt")}>Machen wir</Btn><button className="hm-link" onClick={() => set({ zustand: "pausiert" }, "Idee verworfen")}>Lieber nicht</button></div>}
@@ -352,7 +347,6 @@ function Werkstatt({ c, zurueck }) {
     online: null, pausiert: ["Wieder aufnehmen", () => set({ zustand: "planung" }, "wieder aufgenommen"), false],
   }[c.zustand];
   const fehlt = [!c.caption && "Text", !c.termin && "Termin", !(c.kanaele || []).length && "Kanal", c.typ === "reel" && !(c.schnitt && c.schnitt.length) && "Schnitt"].filter(Boolean);
-  const score = hmViralScore(c, clips);
   return <div>
     <div className="hm-werk-kopf">
       <button className="hm-zurueck" onClick={zurueck}><Ico n="zurueck" />Zurück</button>
@@ -388,7 +382,6 @@ function Werkstatt({ c, zurueck }) {
           <label><span>Geht online</span><input type="datetime-local" value={(c.termin || "").slice(0, 16)} onChange={(e) => set({ termin: e.target.value })} /></label>
           {!c.termin && <div className="kan"><span>Vorschlag</span><div>{hmPostingSlots(b.makler, 2).map((x) => <button key={x.iso} title={x.grund} onClick={() => set({ termin: x.iso })}>{hmDatum(x.iso)} {x.iso.slice(11, 16)}</button>)}</div></div>}
           <div className="kan"><span>Kanäle</span><div>{[["instagram", "IG"], ["facebook", "FB"], ["linkedin", "LI"], ["tiktok", "TT"]].map(([k, t]) => <button key={k} className={(c.kanaele || []).includes(k) ? "on" : ""} title={HM_KANAELE[k].name} onClick={() => set({ kanaele: (c.kanaele || []).includes(k) ? c.kanaele.filter((x) => x !== k) : [...(c.kanaele || []), k] })}>{t}</button>)}</div></div>
-          <div><span>Prognose</span><b title={score.faktoren.map((f) => `${f.t} ${f.p}`).join(" · ")}>{score.score} von 100</b></div>
           <div><span>Änderungswünsche</span><b>{c.korrekturen || 0} von 2{c.kostenpflichtig ? ", weitere kostenpflichtig" : ""}</b></div>
         </div></div>
         {["schnitt", "aenderung", "freigabe"].includes(c.zustand) && <div><div className="hm-mono" style={{ margin: "4px 2px 8px" }}>Abgabe-Check · {abgabe.punkte.filter((x) => x.ok).length} von {abgabe.punkte.length}</div><AbgabeCheck c={c} /></div>}
@@ -441,10 +434,10 @@ function TextTab({ c, set, b }) {
   </div>;
 }
 
-/* Automatik beim Start: abgelaufene Abstimmungsfristen (Tag vor dem Termin) werden protokolliert freigegeben */
+/* Automatik beim Start: nichts geht ohne Freigabe online. Abgelaufene Fristen werden einmal erinnert, der Termin rutscht (Prozess v2, Etappe 2) */
 function hmAutomatik() {
-  const faellig = (hmStore.get("content") || []).filter((c) => c.zustand === "freigabe" && c.termin && (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return hmIsoLokal(d) < HM_HEUTE; })());
-  faellig.forEach((c) => setBeitrag(c.id, { zustand: "freigegeben", freigabe: { von: "Automatisch", zeit: new Date().toISOString(), auto: true } }, "automatisch freigegeben, Frist abgelaufen", "System"));
+  const faellig = (hmStore.get("content") || []).filter((c) => c.zustand === "freigabe" && c.termin && !c.erinnert && (() => { const d = new Date(c.termin); d.setDate(d.getDate() - 1); return hmIsoLokal(d) < HM_HEUTE; })());
+  faellig.forEach((c) => setBeitrag(c.id, { erinnert: HM_HEUTE }, "Frist abgelaufen, erinnert, Termin wird verschoben", "System"));
   return faellig.length;
 }
 Object.assign(window, { hmAutomatik, Abstimmung, Werkstatt, Gespraech, Verlauf, Vorschau, SkriptTab, SchnittTab, TextTab, hmDatumLang, InhaltListe, HM_LISTEN_GRUPPEN, Inhalte2, Board, Karte, Beitrag, InhalteKalender, FreigabenQ, Wirkung, Assistent, setBeitrag });

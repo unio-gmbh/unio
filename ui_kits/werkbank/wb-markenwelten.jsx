@@ -1048,15 +1048,15 @@ function hmWeltPostDaten(welt, b, p, i) {
   const hooks = (b.w && b.w.hooks && b.w.hooks.length) ? b.w.hooks : HM_WELT_HOOKS;
   const idx = i || 0;
   let bild = null;
-  if (p.bild != null && p.bild !== "" && !(b.portrait && p.bild === b.portrait)) bild = hmWeltObjekt(p.bild, w);
-  else if (art === "objekt") bild = hmWeltObjekt(0, w);
-  else if (art === "serie") bild = hmWeltObjekt(1, w);
+  /* Nur eigene Bilder: Zahlen im Muster verweisen auf Demo-Objekte aus fremden Bezirken und bleiben leer (Lückenkachel) */
+  if (p.bild != null && p.bild !== "" && typeof p.bild !== "number" && !(b.portrait && p.bild === b.portrait)) bild = hmWeltObjekt(p.bild, w);
+  if (!bild && (art === "objekt" || art === "serie")) bild = { t: "Objekt aus dem Bestand", loc: "[Lage]", img: null, luecke: true };
   const sr = p.serie;
   const serie = art === "serie" || sr ? { name: (typeof sr === "string" ? sr : sr && sr.name) || st.serie, nr: (sr && typeof sr === "object" && sr.nr) || p.folge || 1 } : null;
   const leer = (v) => v == null || v === "";
-  const text = !leer(p.text) ? p.text : !leer(p.hook) ? p.hook : art === "zahl" ? "3" : art === "zitat" ? (b.claim || "") : art === "objekt" ? (bild ? bild.t : "") : hooks[idx % hooks.length];
-  const unter = !leer(p.unter) ? p.unter : !leer(p.titel) && art !== "objekt" ? p.titel : art === "zahl" ? "Fehler, die ich bei fast jedem Verkauf sehe." : art === "zitat" ? hmWeltVoll(b) : art === "objekt" ? (bild ? bild.loc : "") : "";
-  return { ...p, art, text, unter, bild, serie, nr: p.nr != null ? p.nr : 24 - idx, portrait: !!p.portrait || (!!b.portrait && p.bild === b.portrait), spiegel: !!p.spiegel };
+  const text = !leer(p.text) ? p.text : !leer(p.hook) ? p.hook : art === "zahl" ? "[Zahl]" : art === "zitat" ? (b.claim || "") : art === "objekt" ? (bild ? bild.t : "Objekt aus dem Bestand") : hooks[idx % hooks.length];
+  const unter = !leer(p.unter) ? p.unter : !leer(p.titel) && art !== "objekt" ? p.titel : art === "zahl" ? "[Aussage mit Beleg]" : art === "zitat" ? hmWeltVoll(b) : art === "objekt" ? (bild ? bild.loc : "[Lage]") : "";
+  return { ...p, art, text, unter, bild, serie, nr: p.nr != null ? p.nr : idx + 1, luecke: (art === "objekt" && !bild) || (art === "zahl" && leer(p.text) && leer(p.hook)), portrait: !!p.portrait || (!!b.portrait && p.bild === b.portrait), spiegel: !!p.spiegel };
 }
 /* Feed: Muster der Welt, Inhalte ohne art (z. B. Serienbeispiele aus der Plattform) füllen die Schriftplätze */
 function hmWeltFeedPosts(welt, b, posts) {
@@ -1355,7 +1355,7 @@ function hmSelbsttestWelten() {
     }));
     return { ok: !f.length && n > 1000, detail: f.slice(0, 5).join(", ") || `${n} Elemente geprüft` };
   });
-  T("Feed abwechslungsreich", () => { const f = []; HM_MARKENWELTEN.forEach((w) => { const l = hmWeltFeedPosts(w, bT); const arten = new Set(l.map((p) => p.art)); const obj = l.filter((p) => p.art === "objekt"); if (l.length !== 9 || arten.size < 4 || obj.length < 3 || new Set(obj.map((p) => p.bild.img)).size !== obj.length) f.push(w.id); }); return { ok: !f.length, detail: f.join(", ") || "9 Posts, mindestens 4 Arten, keine doppelten Fotos" }; });
+  T("Feed abwechslungsreich", () => { const f = []; HM_MARKENWELTEN.forEach((w) => { const l = hmWeltFeedPosts(w, bT); const arten = new Set(l.map((p) => p.art)); const obj = l.filter((p) => p.art === "objekt"); if (l.length !== 9 || arten.size < 4 || obj.length < 3 || (() => { const eigen = obj.filter((p) => p.bild && !p.bild.luecke); return new Set(eigen.map((p) => p.bild.img)).size !== eigen.length; })() || obj.some((p) => p.bild && p.bild.luecke && p.bild.img)) f.push(w.id); }); return { ok: !f.length, detail: f.join(", ") || "9 Posts, mindestens 4 Arten, keine doppelten Fotos, ohne eigenes Objekt eine Lückenkachel statt Demo-Foto" }; });
   T("Feed nimmt Serienbeispiele ohne art auf", () => { const l = hmWeltFeedPosts("editorial", bT, [{ titel: "Folge 1", hook: "Warum Döbling anders tickt", serie: "Klartext" }, { titel: "Folge 2", hook: "Drei Zahlen zum Zinshaus", serie: "Klartext" }]); const t = l.map((p) => p.text); return { ok: t.includes("Warum Döbling anders tickt") && t.includes("Drei Zahlen zum Zinshaus") && l.some((p) => p.art === "objekt"), detail: l.map((p) => p.art).join(", ") }; });
   T("Vorschlag Entdecker, warm, Ort", () => { const v = hmWeltVorschlag(bT, { bildpaare: { bp1: "a", bp2: "a", bp3: "a", bp4: "a", bp5: "a", bp6: "a" }, assets: ["Ein Ort"] }, "entdecker"); return { ok: v.id === "graetzl" && v.begruendung.length >= 3, detail: v.id + ": " + v.begruendung.join(" ") }; });
   T("Vorschlag Kenner, kühl, Gegenstand", () => { const v = hmWeltVorschlag(bT, { bildpaare: { bp1: "b", bp2: "b", bp3: "b", bp4: "b", bp5: "b", bp6: "b" }, assets: ["Ein Gegenstand"] }, "kenner"); return { ok: v.id === "klar", detail: v.rangfolge.map((x) => x.id + " " + x.punkte).join(", ") }; });

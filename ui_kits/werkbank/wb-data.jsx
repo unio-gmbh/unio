@@ -167,7 +167,7 @@ const HM_KAPITEL = [
     { id: "fokus", typ: "slider", frage: "Was motiviert dich mehr?", links: "Neue Kunden und Reichweite gewinnen", rechts: "Bestand und Ruf absichern" },
     { id: "privat", typ: "mehrfach", frage: "Was darf öffentlich sichtbar sein?", hilfe: "Nicht wie viel Privates, sondern welches.", max: 8, optionen: HM_PRIVAT },
     { id: "tabus", typ: "mehrfach", frage: "Und was würdest du nie zeigen oder sagen?", max: 3, optionen: HM_TABUS, frei: "Weitere Grenzen" },
-    { id: "anrede", typ: "auswahl", frage: "Wie sprechen dich Kunden im Erstkontakt an, und was fühlt sich für dich natürlich an?", hilfe: "Auf Instagram wollen rund 80 Prozent geduzt werden, auf LinkedIn die Mehrheit gesiezt. Deine Art gewinnt bei Widerspruch.", optionen: ["Du, überall", "Sie, überall", "Sie mit Vornamen", "Du auf Instagram, Sie sonst"] },
+    { id: "anrede", typ: "auswahl", frage: "Wie sprechen dich Kunden im Erstkontakt an, und was fühlt sich für dich natürlich an?", hilfe: "Auf Instagram ist das Du üblich, auf LinkedIn eher das Sie. Deine Art gewinnt bei Widerspruch.", optionen: ["Du, überall", "Sie, überall", "Sie mit Vornamen", "Du auf Instagram, Sie sonst"] },
   ]},
   { id: "marke", name: "Deine Marke heute", intro: "Was schon da ist und was dich wiedererkennbar macht.", fragen: [
     { id: "bestand", typ: "mehrfach", frage: "Was existiert schon?", max: 9, optionen: HM_BESTAND },
@@ -207,7 +207,7 @@ function hmArchetypScores(a) {
     let score = 100 - dist / 2.2;
     if (a.archetyp && a.archetyp[0] === t.id) score += 18;
     const m = a.milieus || [];
-    if (t.achse === "Autorität" && (m.includes("kons") || m.includes("perf") || m.includes("fels"))) score += 6;
+    if (t.achse === "Autorität" && (m.includes("kons") || m.includes("perf"))) score += 6;
     if (t.achse === "Nähe" && (m.includes("mitte") || m.includes("nost") || m.includes("post"))) score += 6;
     if (t.achse === "Moderne" && (m.includes("exp") || m.includes("neo") || m.includes("perf"))) score += 6;
     if (a.ziel === "Investoren erreichen" && t.achse === "Autorität") score += 5;
@@ -287,8 +287,9 @@ function hmWeg(t, a, rolle, gegen) {
   if (!gegen && !promotion) passt.push("Du willst Bestand und Ruf sichern: dieser Weg bleibt nah an dem, wofür man dich schon kennt.");
   if (!passt.length) passt.push("Passt zu deinem Ziel: " + ziel.toLowerCase() + ".");
   const frequenz = zeit === HM_ZEIT[0] ? "3 Posts pro Woche, ein Drehtag pro Monat" : zeit === HM_ZEIT[3] ? "5 Posts pro Woche, zwei Drehtage pro Monat" : "3 bis 4 Posts pro Woche, ein Drehtag pro Monat";
-  const bp = a.bildpaare || {}; const warm = Object.values(bp).filter((v) => v === "a").length; const kuehl = Object.values(bp).filter((v) => v === "b").length;
-  const palette = warm > kuehl + 1 ? ["#F0EDE6", "#383429", "#B4633C"] : kuehl > warm + 1 ? ["#1B1A16", "#F7F5F1", "#FFAA09"] : t.palette;
+  /* Wärme kommt nur aus dem Lichtpaar (bp5: Abendlicht a, Tageslicht b), nicht aus jeder Antwort a */
+  const bp = a.bildpaare || {};
+  const palette = bp.bp5 === "a" ? ["#F0EDE6", "#383429", "#B4633C"] : bp.bp5 === "b" ? ["#1B1A16", "#F7F5F1", "#FFAA09"] : t.palette;
   const anredeRegel = a.anrede === "Sie, überall" ? "Sie auf allen Kanälen" : a.anrede === "Du, überall" ? "Du auf allen Kanälen, auf LinkedIn und Website neutraler Plural" : a.anrede === "Sie mit Vornamen" ? "Sie mit Vornamen, warm und respektvoll" : "Du auf Instagram und TikTok, Sie auf LinkedIn, Website und im Erstkontakt";
   const erfolge = a.erfolge || 3;
   const tonExtra = erfolge <= 2 ? ["Kompetenz indirekt zeigen: Kundenstimmen und Ablauf statt Eigenlob"] : erfolge >= 4 ? ["Eigene Ergebnisse dürfen vorkommen, höchstens jeder vierte Post"] : [];

@@ -11,6 +11,8 @@ function hmMbStand(mid) {
 function hmMbSetzen(mid, patch) { hmStore.patch("markenbuch", (a) => ({ ...(a || {}), [mid]: { ...((a || {})[mid] || { status: "entwurf" }), ...patch } })); }
 
 /* Plattform holen: gespeichert (falls die Plattform-Datei speichert) oder frisch erzeugt */
+/* Gate 2: mindestens 80 von 100, kein Kriterium unter 60, keine Floskel (Prozess v2, Etappe 2) */
+function hmMbBereit(q) { return !!q && q.gesamt >= 80 && !(q.klischees || []).length && !(q.kriterien || []).some((k) => k.wert < 60); }
 function hmMbPlattform(mid) {
   const gespeichert = (hmStore.get("plattformen") || {})[mid];
   const aus = gespeichert && (gespeichert.aktuell || (gespeichert.versionen && gespeichert.versionen[gespeichert.versionen.length - 1]) || (gespeichert.positionierung ? gespeichert : null));
@@ -60,8 +62,8 @@ function Markenbuch({ m, teamSicht }) {
     </div>
 
     {teamSicht && q && <div className={"hm-mb-gate" + (freigegeben ? " ok" : "")}>
-      <div className="hm-mb-gate-kopf"><div><b>{q.gesamt}</b><span>von 100</span></div><div className="hm-mb-gate-t">{freigegeben ? "Freigegeben" : q.gesamt >= 75 && !(q.klischees || []).length ? "Bereit zur Freigabe" : "Vor der Freigabe schärfen"}</div>
-        {!freigegeben ? <Btn disabled={(q.klischees || []).length > 0} onClick={() => { hmMbSetzen(m.id, { status: "freigegeben", am: HM_HEUTE, von: "Daniel Hayden" }); hmEvent(m.id, "marke", "Markenbuch freigegeben", "Daniel"); toast("Markenbuch freigegeben"); }}>Freigeben</Btn> : <button className="hm-link" onClick={() => hmMbSetzen(m.id, { status: "pruefung" })}>Wieder öffnen</button>}</div>
+      <div className="hm-mb-gate-kopf"><div><b>{q.gesamt}</b><span>von 100</span></div><div className="hm-mb-gate-t">{freigegeben ? "Freigegeben" : hmMbBereit(q) ? "Bereit zur Freigabe" : "Vor der Freigabe schärfen"}</div>
+        {!freigegeben ? <Btn disabled={!hmMbBereit(q)} onClick={() => { hmMbSetzen(m.id, { status: "freigegeben", am: HM_HEUTE, von: "Daniel Hayden" }); hmEvent(m.id, "marke", "Markenbuch freigegeben", "Daniel"); toast("Markenbuch freigegeben"); }}>Freigeben</Btn> : <button className="hm-link" onClick={() => hmMbSetzen(m.id, { status: "pruefung" })}>Wieder öffnen</button>}</div>
       <div className="hm-mb-kriterien">{(q.kriterien || []).map((k) => <div key={k.name}><div className="hm-row" style={{ justifyContent: "space-between" }}><span>{k.name}</span><span className="hm-daten">{k.wert}</span></div><div className="hm-mb-balken"><i style={{ width: k.wert + "%" }} className={k.wert < 60 ? "tief" : ""}></i></div>{k.hinweis && <div className="u">{k.hinweis}</div>}</div>)}</div>
       {(q.klischees || []).length > 0 && <div className="hm-hinweis">Floskeln entfernen: {q.klischees.join(", ")}.</div>}
       {q.aehnlichkeit != null && <div className="hm-daten">Ähnlichkeit zu anderen Maklern {q.aehnlichkeit} %</div>}
@@ -97,8 +99,8 @@ function Markenbuch({ m, teamSicht }) {
           {p.story && <>
             <blockquote className="hm-mb-zitat" style={{ fontFamily: hmFont(b.schrift.d) }}><MbText t={p.story.kurz} /></blockquote>
             <div className="hm-mb-bogen">{[["Herkunft", "herkunft"], ["Spannung", "spannung"], ["Wendepunkt", "wendepunkt"], ["Haltung", "haltung"], ["Versprechen", "versprechen"]].map(([t, k], i) => <div key={k}><span className="hm-daten">{i + 1}</span><div className="t">{t}</div><div className="u"><MbText t={p.story[k]} /></div></div>)}</div>
-            {p.story.mittel && <div className="hm-mb-absatz"><div className="l">50 Wörter</div><p>{p.story.mittel}</p><KopierKnopf text={p.story.mittel} /></div>}
-            {p.story.lang && <div className="hm-mb-absatz"><div className="l">Über mich, 150 Wörter</div><p>{p.story.lang}</p><KopierKnopf text={p.story.lang} /></div>}
+            {p.story.mittel && <div className="hm-mb-absatz"><div className="l">70 bis 100 Wörter</div><p>{p.story.mittel}</p><KopierKnopf text={p.story.mittel} /></div>}
+            {p.story.lang && <div className="hm-mb-absatz"><div className="l">Über mich, 160 bis 220 Wörter</div><p>{p.story.lang}</p><KopierKnopf text={p.story.lang} /></div>}
           </>}
         </MbKapitel>
 
@@ -150,4 +152,4 @@ function Markenbuch({ m, teamSicht }) {
   </div>;
 }
 
-Object.assign(window, { Markenbuch, hmMbPlattform, hmMbWelt, hmMbStand, hmMbSetzen, HM_MB_KAPITEL });
+Object.assign(window, { hmMbBereit, Markenbuch, hmMbPlattform, hmMbWelt, hmMbStand, hmMbSetzen, HM_MB_KAPITEL });

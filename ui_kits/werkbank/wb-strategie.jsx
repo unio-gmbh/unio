@@ -9,19 +9,19 @@ function hmLeitfaden(a, m) {
   const kan = a.kanaele || [];
   const maxKan = { "Bis 2 Stunden": 1, "2 bis 4 Stunden": 2, "4 bis 8 Stunden": 3 }[a.zeit] || 4;
   if (kan.length > maxKan) add("klaeren", "Kanäle", `Welche ${maxKan === 1 ? "eine Plattform" : maxKan + " Kanäle"} zuerst: ${kan.slice(0, maxKan).map((k) => ({ linkedin: "LinkedIn", instagram: "Instagram", facebook: "Facebook", tiktok: "TikTok", youtube: "YouTube" })[k] || k).join(" und ")}?`, `${a.zeit} im Monat tragen ${maxKan} ${maxKan === 1 ? "Kanal" : "Kanäle"}, genannt sind ${kan.length}.`);
-  if ((a.kamera || 3) <= 3 && (a.formate || []).some((f) => ["talking", "live", "qa"].includes(f))) add("klaeren", "Kamera", "Wie fühlt sich ein Skript mit Teleprompter an, und wer ist beim Dreh dabei?", `Kamera-Komfort ${a.kamera || 3} von 5, gewählt sind Talking Head oder Frage und Antwort.`);
+  if ((a.kamera || 3) <= 3 && (a.formate || []).some((f) => ["talking", "qa"].includes(f))) add("klaeren", "Kamera", "Wie fühlt sich ein Skript mit Teleprompter an, und wer ist beim Dreh dabei?", `Kamera-Komfort ${a.kamera || 3} von 5, gewählt sind Talking Head oder Frage und Antwort.`);
   if (a.sichtbar === "Lange nicht") add("klaeren", "Kamera", "Probedreh von fünf Minuten am Ende des Workshops?", "Letzter Auftritt vor Publikum ist lange her.");
   if ((a.erfolge || 3) <= 2) add("vertiefen", "Beweise", "Welche zwei Kunden würden in zwei Sätzen über die Zusammenarbeit sprechen?", `Über eigene Erfolge sprechen: ${a.erfolge} von 5. Kompetenz besser zeigen lassen als behaupten.`);
   if ((a.hindernis || []).includes("Provision")) add("vertiefen", "Wie ich arbeite", "Die Provision in einem Satz: was kostet es, was bekommt der Kunde?", "Die Provision hätte Kunden fast abgehalten. Das wird der Kern der Säule Wie ich arbeite.");
   if ((a.s5 || 50) >= 65 && (a.tabus || []).includes("Politik")) add("klaeren", "Grenzen", "Meinung zum Markt ja, Politik nein: wo genau liegt die Linie, etwa bei Mietrecht oder Widmung?", "Meinungsstark eingeschätzt, Politik ist tabu.");
   if (["6 bis 8", "9 bis 10"].includes(a.graetzl_anteil)) add("bestaetigen", "Grätzl", `${a.graetzl ? a.graetzl.split(",")[0] : "Das Grätzl"} als festes Format, einmal im Monat?`, `${a.graetzl_anteil} der letzten zehn Abschlüsse lagen dort.`);
-  if (sie && kan.some((k) => ["instagram", "tiktok"].includes(k))) add("klaeren", "Anrede", "Sie auch auf Instagram, konsequent in allen Texten?", "Sie überall gewählt, Instagram ist geplant. Etwa 80 Prozent erwarten dort das Du.");
+  if (sie && kan.some((k) => ["instagram", "tiktok"].includes(k))) add("klaeren", "Anrede", "Sie auch auf Instagram, konsequent in allen Texten?", "Sie überall gewählt, Instagram ist geplant, dort ist das Du üblich.");
   if (a.worte && a.ideal) add("vertiefen", "Positionierung", `Was muss passieren, damit aus "${a.worte}" in einem Jahr "${a.ideal}" wird?`, "Selbstbild heute und Ziel in zwölf Monaten.");
   if (!a.fremdbild) add("klaeren", "Fremdbild", "Drei Menschen, die kurz sagen, wofür sie dich empfehlen würden.", "Das Fremdbild fehlt. Es korrigiert den blinden Fleck.");
   const geschichte = [["aufgewachsen", "Herkunft"], ["wendepunkt", "Wendepunkt"], ["abgeraten", "Abgeraten"], ["belege", "Belege"], ["fehler", "Fehler"], ["kundensatz", "Kundenstimme"]].filter(([k]) => !a[k]).map((x) => x[1]);
   if (geschichte.length) add("vertiefen", "Geschichte", `Im Gespräch erfragen: ${geschichte.join(", ")}.`, "Aus diesen Antworten entsteht die Brand Story.");
   if (a.ziel) add("bestaetigen", "Ziel", `Ziel in zwölf Monaten: ${a.ziel}. Woran messen wir es im Quartals-Review?`, "Ein Ziel ohne Messgröße lässt sich nicht prüfen.");
-  if ((a.seite || 50) <= 35) add("bestaetigen", "Zielgruppe", "Eigentümer zuerst: Inhalte für Verkäufer, nicht für Käufer?", "Auf dem Regler klar bei den Eigentümern.");
+  if ((a.seite == null ? 50 : a.seite) <= 35) add("bestaetigen", "Zielgruppe", "Eigentümer zuerst: Inhalte für Verkäufer, nicht für Käufer?", "Auf dem Regler klar bei den Eigentümern.");
   return out;
 }
 const HM_LF_ART = { klaeren: "Klären", vertiefen: "Vertiefen", bestaetigen: "Bestätigen" };
