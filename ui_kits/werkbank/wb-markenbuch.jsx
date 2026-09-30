@@ -63,10 +63,11 @@ function Markenbuch({ m, teamSicht }) {
 
     {teamSicht && q && <div className={"hm-mb-gate" + (freigegeben ? " ok" : "")}>
       <div className="hm-mb-gate-kopf"><div><b>{q.gesamt}</b><span>von 100</span></div><div className="hm-mb-gate-t">{freigegeben ? "Freigegeben" : hmMbBereit(q) ? "Bereit zur Freigabe" : "Vor der Freigabe schärfen"}</div>
-        {!freigegeben ? <Btn disabled={!hmMbBereit(q)} onClick={() => { hmMbSetzen(m.id, { status: "freigegeben", am: HM_HEUTE, von: "Daniel Hayden" }); hmEvent(m.id, "marke", "Markenbuch freigegeben", "Daniel"); toast("Markenbuch freigegeben"); }}>Freigeben</Btn> : <button className="hm-link" onClick={() => hmMbSetzen(m.id, { status: "pruefung" })}>Wieder öffnen</button>}</div>
+        {!freigegeben ? <Btn disabled={!hmMbBereit(q)} onClick={() => { hmMbSetzen(m.id, { status: "freigegeben", am: HM_HEUTE, von: "Daniel Hayden" }); if (window.hmQuelleEinfrieren) hmQuelleEinfrieren(m.id, "Daniel Hayden", "Markenbuch freigegeben"); hmEvent(m.id, "marke", "Markenbuch freigegeben", "Daniel"); toast("Markenbuch freigegeben"); }}>Freigeben</Btn> : <button className="hm-link" onClick={() => hmMbSetzen(m.id, { status: "pruefung" })}>Wieder öffnen</button>}</div>
       <div className="hm-mb-kriterien">{(q.kriterien || []).map((k) => <div key={k.name}><div className="hm-row" style={{ justifyContent: "space-between" }}><span>{k.name}</span><span className="hm-daten">{k.wert}</span></div><div className="hm-mb-balken"><i style={{ width: k.wert + "%" }} className={k.wert < 60 ? "tief" : ""}></i></div>{k.hinweis && <div className="u">{k.hinweis}</div>}</div>)}</div>
       {(q.klischees || []).length > 0 && <div className="hm-hinweis">Floskeln entfernen: {q.klischees.join(", ")}.</div>}
       {q.aehnlichkeit != null && <div className="hm-daten">Ähnlichkeit zu anderen Maklern {q.aehnlichkeit} %</div>}
+      {window.QuelleStand && <QuelleStand m={m} />}
     </div>}
 
     <div className="hm-mb-layout">

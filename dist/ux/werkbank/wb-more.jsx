@@ -113,7 +113,7 @@ function hmSeedMore() {
     ],
   };
   const setups = {
-    markus: { branding: { variante: "Behalten und schärfen", farbwelt: "ink", status: "fertig" }, website: { look: "Klar", status: "in_arbeit", felder: { headline: "Der Markt wird lesbar.", region: "Döbling, Währing, Hietzing" } }, konten: { instagram: true, facebook: true, meta: false, unio: false, posting: false }, tour: { status: "fertig" }, drehtermine: ["d1", "d3"] },
+    markus: { branding: { variante: "Behalten und schärfen", farbwelt: "ink", status: "fertig" }, website: { look: "Klar", status: "in_arbeit", felder: { headline: "Rat vor Auftrag.", region: "Döbling, Währing, Hietzing" } }, konten: { instagram: true, facebook: true, meta: false, unio: false, posting: false }, tour: { status: "fertig" }, drehtermine: ["d1", "d3"] },
     elif: { branding: { variante: "Neu aufsetzen", farbwelt: "papier", status: "fertig" }, website: { look: "Warm", status: "fertig", felder: { headline: "Immobilien sind Menschen mit Adresse.", region: "Favoriten, Meidling, Liesing" } }, konten: { instagram: true, facebook: true, meta: true, unio: true, posting: true }, tour: { status: "fertig" }, drehtermine: ["d2"] },
     sara: { branding: { variante: null, farbwelt: null, status: "offen" }, website: { look: null, status: "offen", felder: {} }, konten: { instagram: false, facebook: false, meta: false, unio: false, posting: false }, tour: { status: "offen" }, drehtermine: [] },
   };

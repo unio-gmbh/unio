@@ -7,7 +7,7 @@
 <title>UNIO HUMAN</title>
 <link rel="stylesheet" href="/styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;600&family=Manrope:wght@400;600&family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hanken+Grotesk:wght@400;600&family=Manrope:wght@400;600&family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap">
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
@@ -861,35 +861,71 @@ img.hm-ava { object-position: 50% 12%; }
 .hm-bw-auto { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
 @media (max-width: 1100px) { .hm-wand { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hm-wand.mobil { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .hm-stil-knopf .v { font-size: 13px; } .hm-stil-logos, .hm-stil-gruende, .hm-stil-looks { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hm-wand { grid-template-columns: minmax(0, 1fr); } .hm-slot:first-child, .hm-slot:nth-child(2) { grid-column: auto; } .hm-geraete span { display: none; } }
+/* Logo-Werkstatt */
+.hm-lk-logo svg { height: 100%; width: auto; display: block; overflow: visible; }
+.hm-lk-split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; margin-top: 16px; align-items: start; }
+.hm-lk-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; transition: opacity .2s; }
+.hm-lk-k { background: var(--surface-raised); border-radius: 14px; box-shadow: inset 0 0 0 1px var(--hairline-dark); padding: 10px 12px 12px; display: grid; gap: 6px; }
+.hm-lk-k.on { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.hm-lk-k.gemerkt .bild { background: #EFE9DE; }
+.hm-lk-k .bild { height: 110px; border: 0; border-radius: 10px; background: #F5F1EA; display: grid; place-items: center; cursor: pointer; padding: 10px; overflow: hidden; color: #0B0A09; }
+.hm-lk-k .u { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-2); } .hm-lk-k .u span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-lk-k .a { display: flex; gap: 12px; font-size: 12px; }
+.hm-lk-seite { position: sticky; top: 12px; }
+.hm-lk-gross { height: 190px; border-radius: 16px; background: #F5F1EA; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--hairline-dark); color: #0B0A09; padding: 20px; }
+.hm-lk-einsatz { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.hm-lk-einsatz figure { margin: 0; display: grid; gap: 5px; } .hm-lk-einsatz figcaption { font-size: 12px; color: var(--text-muted); }
+.hm-lk-profil { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--hairline-dark); overflow: hidden; color: #0B0A09; }
+.hm-lk-karte { aspect-ratio: 85 / 55; border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 8px 20px -12px rgba(12,11,9,.35), inset 0 0 0 1px var(--hairline-dark); color: #0B0A09; }
+.hm-lk-karte .k { font-size: 10px; line-height: 1.3; color: #4A4640; }
+.hm-lk-kopf { grid-column: span 2; height: 46px; border-radius: 10px; background: #FFFFFF; box-shadow: inset 0 0 0 1px var(--hairline-dark); display: flex; align-items: center; gap: 16px; padding: 0 12px; font-size: 11px; color: #3B3833; }
+.hm-lk-kopf > .hm-lk-logo { margin-right: auto; color: #0B0A09; }
+.hm-lk-kopf i { font-style: normal; color: #fff; padding: 5px 10px; border-radius: 999px; }
+.hm-lk-post { aspect-ratio: 4 / 5; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; color: #F1EEE7; }
+.hm-lk-post .t { font-family: "Newsreader", Georgia, serif; font-size: 17px; line-height: 1.1; }
+.hm-lk-einsatz figure:nth-child(4) { grid-column: 2; grid-row: 1 / span 2; }
+.hm-lk-einsatz figure:nth-child(3) { grid-column: 1; }
+.hm-lk-merkliste { display: grid; gap: 6px; }
+.hm-lk-mk { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 0; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark); border-radius: 10px; padding: 10px 12px; cursor: pointer; color: #0B0A09; text-align: left; }
+.hm-lk-bewertung { margin-top: 18px; display: grid; gap: 14px; }
+.hm-lk-bw { display: grid; gap: 12px; padding: 14px; border-radius: 14px; background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--hairline-dark); }
+.hm-lk-bw .bild { height: 90px; border-radius: 10px; background: #F5F1EA; display: grid; place-items: center; color: #0B0A09; }
+.hm-lk-bw .fragen .hm-reihe { padding: 6px 0; }
+@media (max-width: 1100px) { .hm-lk-split { grid-template-columns: minmax(0, 1fr); } .hm-lk-seite { position: static; } }
+/* Eine Quelle */
+.hm-quelle { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--ink-2); align-items: baseline; }
+.hm-quelle .w { color: var(--signal-deep); }
 </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="/ux/werkbank/wb-data.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-store.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-os-data.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-more.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-flow.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-ui.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-foto.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-werkzeuge.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-strategie.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-setup.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-produktion.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-shop2.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-markenwelten.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-plattform.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-markenbuch.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-reel.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-betrieb.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-material.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-einrichtung.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-bildwelt.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-marke.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-web.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-medien.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-content.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-team.jsx?v=muoe9n7d"></script>
-<script type="text/babel" src="/ux/werkbank/wb-app.jsx?v=muoe9n7d"></script>
+<script type="text/babel" src="/ux/werkbank/wb-data.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-store.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-os-data.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-more.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-flow.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-ui.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-foto.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-werkzeuge.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-strategie.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-setup.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-produktion.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-shop2.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-markenwelten.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-plattform.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-markenbuch.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-logo.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-freigabe.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-reel.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-betrieb.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-material.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-einrichtung.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-bildwelt.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-marke.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-web.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-medien.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-content.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-team.jsx?v=muoess3b"></script>
+<script type="text/babel" src="/ux/werkbank/wb-app.jsx?v=muoess3b"></script>
 </body>
 </html>

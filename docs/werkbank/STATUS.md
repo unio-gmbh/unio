@@ -1,17 +1,17 @@
 # STATUS
 
-## Aktuelle Etappe: Branding-Qualität v2 (fertig, wartet auf Abnahme)
+## Aktuelle Etappe: Marke erzeugen v2, Teil 1 (fertig, wartet auf Abnahme)
 
-- [x] 1. Gedächtnis-Dateien: `FAHRPLAN.md`, `STATUS.md`, `ui_kits/werkbank/CLAUDE.md`
-- [x] 2. Bestandsaufnahme: `branding-v2/bestand/` (50 Fragen, Wirkung je Frage, Kette heute)
-- [x] 3. Recherche: acht Berichte unter `branding-v2/research/`
-- [x] 4. Zerlegung in 17 Teilschritte mit Datenverträgen: `branding-v2/00_ZERLEGUNG.md`, `branding-v2/schritte/`
-- [x] 5. Kontrolle je Schritt (keiner über 8,5, Mittel 6,6 bis 8,3) und Kettenprüfung (13 Befunde, korrigiert)
-- [x] 6. Synthese: `BRANDING_PROZESS_V2.md`, `FRAGEN_WIRKUNG.md`, `UMBAU_ETAPPEN.md`
-- [x] 7. Beweis: `branding-v2/beweis/` und Leinwand https://claude.ai/artifact/EuWPdxn2nYaDBnV59aDThQ (Bilder sind Platzhalter)
+- [x] 1. Vorschau flüssig: Lenis-Adresse repariert (lag auf 404), Lenis-Regeln gegen scroll-behavior smooth, Schalter Standbild oder Bewegung
+- [x] 2. Sofortreparaturen (Umbau-Etappe 2): Feed ohne Demo-Objekte und Fülltext, Gate 2 ab 80, keine automatische Freigabe, Wirkungsprognose aus, Auswertungsfehler, Eyebrow, Pfeilzeichen, Verläufe, eine Visitenkarte
+- [x] 3. Logo-Werkstatt nach Looka-Prinzip aus der Marke: `LOGO_UND_QUELLE.md`
+- [x] 4. Eine Quelle, Grundstufe: Einfrieren mit Prüfsumme, öffentliche Ausgaben lesen die Version, eine Anrede-Regel
+- [x] 5. Markus als Beispiel: Claim „Rat vor Auftrag.“, Rat-Amber, Chronik (Newsreader und Instrument Sans), Welt Weite, Maßstab-Wortmarke
+- [x] 6. Selbsttest 104 Prüfungen, Fehlergrenze je Bereich, Textsatz misst nur mit geladener Schrift
 
 ## Erledigt
 
+- 30.09.2026 Etappe Marke erzeugen v2, Teil 1 (Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen)
 - 30.09.2026 Etappe Branding-Qualität v2: Prozess in 17 Schritten, Fragebogen von 44 Pflicht-Screens auf 23 Fragen, Beweis für Markus mit zwölf Kacheln
 
 - 29.09.2026 Website-Baukasten, Bildwelt nur fürs Team mit Warteschlange, Makler-Zuschnitt höchstens 5 MB (Commit e1ef43d)
@@ -20,7 +20,9 @@
 
 ## Offen beim Owner
 
-- Entscheidungen C1 bis C9 in `branding-v2/BRANDING_PROZESS_V2.md` freigeben (Etappe 0 der Umbauliste).
+- C1 bis C9 freigegeben am 30.09.2026 (mit dem OK zur Etappe).
+- Logo-Werkstatt ansehen: Studio, Logo, „Logo-Werkstatt öffnen“ (Teamsicht).
+- Markenbeispiele liefern, die visuell gefallen und die nicht (siehe Chat vom 30.09.2026).
 - Beweis für Markus ansehen: trägt „Rat vor Auftrag“ mit der Ratlinie? Feedback zu Idee, Farbe, Schrift, Serien.
 - Für echte Bilder: Porträt-Termin am Tisch, Haustor und Stiegenhaus. Belege zu 11 Wochen, 2 Jahren, 8 Prozent.
 - Teamaufwand 62 bis 81 Stunden je Makler laut Prozess: passt das zum Preis?
@@ -35,6 +37,9 @@
 
 ## Lehren
 
+- CDN-Adressen prüfen: Lenis lag auf einer toten cdnjs-Adresse, alle Vorlagen scrollten dadurch ruckelig.
+- Canvas misst Text mit Ersatzschrift, solange die Webschrift lädt. Nur mit geladener Schrift messen und merken.
+- Ein Fehler in einem Bereich darf nie die ganze App leeren: Fehlergrenze um den Hauptbereich.
 - Agenten-Läufe knapp halten: eine Kontrollrunde reicht, Dokumente mit Längengrenze anfordern. Der erste Lauf hat das Wochenlimit geleert, die Schrittdokumente wurden 60 bis 110 KB lang.
 - Parallel geschriebene Fassungen widersprechen sich. Übergaben über feste Datenverträge sichern, Korrekturen als Ersetzungsliste statt als neue Fassung.
 - Ohne echte Fotos bleibt jeder Feed-Beweis eine Satzprobe. Shooting-Brief vor dem Feed einplanen.

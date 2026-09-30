@@ -24,6 +24,8 @@ const HM_WEB_GF = {
   "Space Grotesk": "Space+Grotesk:wght@300;400;500;600",
   "Manrope": "Manrope:wght@300;400;500;600",
   "Hanken Grotesk": "Hanken+Grotesk:wght@300;400;500;600",
+  "Newsreader": "Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400",
+  "Instrument Sans": "Instrument+Sans:wght@400;500;600",
 };
 const HM_WEB_LIMITS = { name: 40, region: 60, headline: 70, bio: 420, zitat: 160, stats: 60, referenzen: 220, adresse: 80, instagram: 40 };
 const HM_WEB_LANG = ["bio", "zitat", "referenzen"];
@@ -53,7 +55,10 @@ function hmWebTheme(mid, ov) {
   const welt = hmWebWelt(mid);
   const f = t.grundton === "welt" && welt && welt.farben ? welt.farben : null;
   const grund = f ? f.grund : t.grundton === "nacht" ? "#0B0A09" : "#EAE7DE";
-  return { ...t, akzent: ak.hex, akzentName: ak.name, schrift: HM_WEB_SCHRIFTEN[t.schriftId] || HM_WEB_SCHRIFTEN.editorial, welt, farben: f, grund, dunkel: t.grundton === "nacht" || (f ? hmWebLum(f.grund) < 0.25 : false), vor: b.vor, nach: b.nach, initialen: b.initialen };
+  const r = { ...t, akzent: ak.hex, akzentName: ak.name, schrift: HM_WEB_SCHRIFTEN[t.schriftId] || HM_WEB_SCHRIFTEN.editorial, welt, farben: f, grund, dunkel: t.grundton === "nacht" || (f ? hmWebLum(f.grund) < 0.25 : false), vor: b.vor, nach: b.nach, initialen: b.initialen };
+  /* Logo aus der Werkstatt: als SVG-Text in den Kopf, Farbe folgt der Tinte der Vorlage */
+  if (t.logo === "konzept" && b.logoKonzept && window.hmLkSvgText) { r.logoFont = b.logoKonzept.font; r.logoSvg = hmLkSvgText(b.logoKonzept, { ...b, akzent: hmWebAkzentText(r) }, { farbe: "currentColor" }).replace("<svg ", '<svg style="height:1.5em;width:auto;display:block;overflow:visible" '); }
+  return r;
 }
 /* Wie der Akzent auf diesem Grund als Text wirkt: passt er nicht, eine abgedunkelte oder aufgehellte Fassung */
 function hmWebAkzentText(t) {
@@ -81,13 +86,14 @@ function hmWebThemeAnwenden(doc, t) {
     st.textContent = [["Light", 300], ["Regular", 400], ["Medium", 500], ["Bold", 700]].map(([n, w]) => `@font-face{font-family:"Power Grotesk";font-weight:${w};font-display:swap;src:url(${hmAbs("/assets/fonts/PowerGrotesk-" + n + ".woff2")}) format("woff2")}`).join("");
     doc.head.appendChild(st);
   }
-  [s.d, s.t].filter((x) => HM_WEB_GF[x]).forEach((fam) => {
+  [s.d, s.t, t.logoFont].filter((x) => x && HM_WEB_GF[x]).forEach((fam) => {
     const id = "hm-f-" + fam.replace(/\W/g, "");
     if (doc.getElementById(id)) return;
     const l = doc.createElement("link"); l.id = id; l.rel = "stylesheet"; l.href = `https://fonts.googleapis.com/css2?family=${HM_WEB_GF[fam]}&display=swap`; doc.head.appendChild(l);
   });
   set("--fd", `"${s.d}", Georgia, serif`); set("--fb", `"${s.t}", system-ui, sans-serif`);
   doc.querySelectorAll(".brand").forEach((e) => {
+    if (t.logo === "konzept" && t.logoSvg) { e.innerHTML = t.logoSvg; return; }
     e.innerHTML = t.logo === "monogramm" ? `<span style="display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;border:1.5px solid currentColor;font-size:.8em">${t.initialen}</span>` : t.logo === "punkt" ? `${t.vor} ${t.nach}<span style="color:${hmWebAkzentText(t)}">.</span>` : `${t.vor} <b>${t.nach}</b>`;
   });
 }
@@ -366,8 +372,8 @@ function StilLeiste({ m, t, setVorschau, look, setLook, setAlle, teamSicht }) {
       </button>)}</div>
       <div className="hm-stil-fuss">Überschrift und Text als Paar. Alle frei lizenziert.</div>
     </StilKachel>
-    <StilKachel id="logo" offen={offen} setOffen={setOffen} titel="Logo" wert={(HM_LOGO_TYPEN.find((x) => x.id === t.logo) || {}).name} zeichen={<span className="hm-stil-logo"><BrandLogo b={{ ...bT, logo: t.logo }} typ={t.logo} h={t.logo === "monogramm" ? 22 : 12} /></span>}>
-      <div className="hm-stil-logos">{HM_LOGO_TYPEN.map((x) => <button key={x.id} className={t.logo === x.id ? "on" : ""} {...hov({ logo: x.id })} onClick={() => setBr({ logo: x.id })}><span className="bild"><BrandLogo b={{ ...bT, logo: x.id }} typ={x.id} h={x.id === "monogramm" ? 48 : 26} /></span><span className="t">{x.name}</span><span className="s">{x.satz}</span></button>)}</div>
+    <StilKachel id="logo" offen={offen} setOffen={setOffen} titel="Logo" wert={t.logo === "konzept" ? "Aus der Werkstatt" : (HM_LOGO_TYPEN.find((x) => x.id === t.logo) || {}).name} zeichen={<span className="hm-stil-logo"><BrandLogo b={{ ...bT, logo: t.logo }} typ={t.logo} h={t.logo === "monogramm" ? 22 : 12} /></span>}>
+      <div className="hm-stil-logos">{b.logoKonzept && <button className={t.logo === "konzept" ? "on" : ""} {...hov({ logo: "konzept" })} onClick={() => setBr({ logo: "konzept" })}><span className="bild"><BrandLogo b={{ ...bT, logo: "konzept", logoKonzept: b.logoKonzept }} typ="konzept" h={b.logoKonzept.art === "monogramm" ? 48 : 26} /></span><span className="t">Aus der Werkstatt</span><span className="s">{b.logoKonzept.font}</span></button>}{HM_LOGO_TYPEN.map((x) => <button key={x.id} className={t.logo === x.id ? "on" : ""} {...hov({ logo: x.id })} onClick={() => setBr({ logo: x.id })}><span className="bild"><BrandLogo b={{ ...bT, logo: x.id }} typ={x.id} h={x.id === "monogramm" ? 48 : 26} /></span><span className="t">{x.name}</span><span className="s">{x.satz}</span></button>)}</div>
     </StilKachel>
     <StilKachel id="grund" offen={offen} setOffen={setOffen} titel="Grundton" wert={(HM_WEB_GRUNDTOENE.find((x) => x.id === t.grundton) || {}).name} zeichen={<i className="hm-stil-dot" style={{ background: t.grund, boxShadow: "inset 0 0 0 1px rgba(11,10,9,.2)" }} />}>
       <div className="hm-stil-gruende">{HM_WEB_GRUNDTOENE.map((x) => { const tt = hmWebTheme(m.id, { akzentId: t.akzentId, grundton: x.id }); const deaktiv = x.id === "welt" && !tt.farben; return <button key={x.id} disabled={deaktiv} className={t.grundton === x.id ? "on" : ""} {...hov({ grundton: x.id })} onClick={() => setWeb({ grundton: x.id })}>
@@ -507,6 +513,7 @@ function Website({ m, setSub, teamSicht }) {
   return <div>
     <Kopf titel="Website" ueber={`${gefuellt} von ${felder.length} Angaben da`}
       rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {domain}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
+    {window.QuelleStand && <div style={{ margin: "-4px 0 12px" }}><QuelleStand m={m} kurz /></div>}
     <StilLeiste m={m} t={t} setVorschau={setVorschau} look={look} setLook={(n) => { set({ look: n }); setAlle(false); }} setAlle={setAlle} teamSicht={teamSicht} />
     {alle ? <WebWand m={m} t={t} geraet={geraet} setG={setG} look={look} web={web} bib={bib} felder={felder} waehle={(n) => { set({ look: n }); setAlle(false); }} zurueck={() => setAlle(false)} />
     : <div className="hm-web-split">
@@ -560,7 +567,7 @@ function WebVorschau({ m, t, look, geraet, setG, web, bib, felder, setAlle, prue
   return <div>
     <div className="hm-web-leiste">
       <span className="hm-row" style={{ gap: 10 }}><GeraeteWahl geraet={geraet} setG={setG} /><div className="hm-seg klein" role="radiogroup" aria-label="Darstellung"><button role="radio" aria-checked={!bewegt} className={!bewegt ? "on" : ""} onClick={() => setBewegt(false)} title="Fertiger Zustand, ohne Animation">Standbild</button><button role="radio" aria-checked={bewegt} className={bewegt ? "on" : ""} onClick={() => setBewegt(true)} title="Mit Scroll-Animation, im Rahmen scrollen">Bewegung</button></div></span>
-      <span className="hm-row" style={{ gap: 14 }}><button className="hm-link" onClick={() => setAlle(true)}>Alle Looks</button><button className="hm-link" onClick={oeffnen}>Groß öffnen</button><button className="hm-link" onClick={() => hmWebsitePaket(m, b, bau.F, look, t, bau.karte, bau.fokus).then(() => toast("Paket geladen")).catch((e) => { console.warn(e); toast("Paket konnte nicht erstellt werden"); })}>Paket</button></span>
+      <span className="hm-row" style={{ gap: 14 }}><button className="hm-link" onClick={() => setAlle(true)}>Alle Looks</button><button className="hm-link" onClick={oeffnen}>Groß öffnen</button><button className="hm-link" onClick={() => { const ueber = window.hmQuelleThemaUeber && hmQuelleThemaUeber(m.id); const bo = window.hmMarkeB ? hmMarkeB(m.id, "oeffentlich") : b; hmWebsitePaket(m, bo, bau.F, look, ueber ? hmWebTheme(m.id, ueber) : t, bau.karte, bau.fokus).then(() => toast(ueber ? "Paket mit der freigegebenen Version geladen" : "Paket geladen")).catch((e) => { console.warn(e); toast("Paket konnte nicht erstellt werden"); }); }}>Paket</button></span>
     </div>
     {fehler ? <div className="hm-leer"><div className="t">Vorschau nicht erreichbar</div><div className="s">{fehler}</div></div>
       : <WebRahmen n={look} geraet={geraet} html={html} theme={t} F={bau.F} karte={bau.karte} fokus={bau.fokus} onPruef={setPruef} maxHoehe={geraet === "desktop" ? 640 : 700} />}
@@ -634,7 +641,7 @@ function hmSelbsttestWeb() {
   const out = []; const t2 = (name, fn) => { try { const r = fn(); out.push({ name, ok: !!r.ok, detail: r.detail || "" }); } catch (e) { out.push({ name, ok: false, detail: e.message }); } };
   const mid = "markus";
   const t = hmWebTheme(mid);
-  t2("Theme aus kuratierten Listen", () => ({ ok: HM_WEB_AKZENTE.some((x) => x.hex === t.akzent) && !!HM_WEB_SCHRIFTEN[t.schriftId] && HM_LOGO_TYPEN.some((x) => x.id === t.logo), detail: `${t.akzentName}, ${t.schrift.name}, ${t.logo}, ${t.grundton}` }));
+  t2("Theme aus kuratierten Listen", () => ({ ok: HM_WEB_AKZENTE.some((x) => x.hex === t.akzent) && !!HM_WEB_SCHRIFTEN[t.schriftId] && (HM_LOGO_TYPEN.some((x) => x.id === t.logo) || (t.logo === "konzept" && !!hmBrand(mid).logoKonzept)), detail: `${t.akzentName}, ${t.schrift.name}, ${t.logo}, ${t.grundton}` }));
   t2("Akzent als Text lesbar", () => { const alle = HM_WEB_AKZENTE.map((a) => { const tt = { ...t, akzent: a.hex }; return [a.name, hmWebKontrast(hmWebAkzentText(tt), tt.grund)]; }); const schlecht = alle.filter(([, k]) => k < 3); return { ok: !schlecht.length, detail: schlecht.map((x) => x[0]).join(", ") || "alle ab 3 zu 1" }; });
   t2("Vorschau ohne Scroll-Animation", () => { const h = hmWebHtml('<html><head></head><body><script>var IMG = __HM_IMG__;</script></body></html>', 1, { hero: "a.png" }, {}); return { ok: h.includes("prefers-reduced-motion") && h.includes('"hero":"a.png"') && h.includes("<base href=") }; });
   t2("Bildfelder und Bibliothek", () => { const bib = hmBildBibliothek(mid); const k = hmWebKarte(mid, hmBrand(mid), { bilder: { life1: { ref: bib.find((x) => x.gruppe === "archiv").ref } } }, bib); return { ok: bib.length >= 20 && k.life1 === bib.find((x) => x.gruppe === "archiv").url && !!k.neubau && Object.keys(k).length >= 21, detail: `${bib.length} Bilder in der Bibliothek` }; });

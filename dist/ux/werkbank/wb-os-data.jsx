@@ -60,20 +60,21 @@ const HM_WEB_SCHRIFTEN = {
   zeitlos: { name: "Zeitlos", d: "DM Serif Display", t: "Manrope" },
   modern: { name: "Modern", d: "Space Grotesk", t: "Manrope" },
   unio: { name: "UNIO", d: "Power Grotesk", t: "Power Grotesk" },
+  chronik: { name: "Chronik", d: "Newsreader", t: "Instrument Sans" },
 };
 const HM_WEB_AKZENTE = [
   { id: "orange", name: "UNIO Orange", hex: "#FFAA09" }, { id: "loden", name: "Loden", hex: "#33503F" },
   { id: "bordeaux", name: "Bordeaux", hex: "#6E2A3C" }, { id: "nachtblau", name: "Nachtblau", hex: "#1F3A5F" },
   { id: "terrakotta", name: "Terrakotta", hex: "#B45B3E" }, { id: "aubergine", name: "Aubergine", hex: "#4A2E52" },
-  { id: "petrol", name: "Petrol", hex: "#1E4E4A" },
+  { id: "petrol", name: "Petrol", hex: "#1E4E4A" }, { id: "amber", name: "Rat-Amber", hex: "#B17834" },
 ];
 /* Empfehlung je Figur: zwei Schriftpaare, zwei Akzente */
 const HM_SCHRIFTPAARE = {
-  kenner: ["klassisch", "modern"], begleiter: ["editorial", "zeitlos"], gestalter: ["modern", "unio"],
+  kenner: ["chronik", "klassisch"], begleiter: ["editorial", "zeitlos"], gestalter: ["modern", "unio"],
   entdecker: ["editorial", "modern"], fels: ["zeitlos", "klassisch"], gastgeber: ["editorial", "unio"],
 };
 const HM_AKZENT_EMPF = {
-  kenner: ["nachtblau", "petrol"], begleiter: ["terrakotta", "loden"], gestalter: ["orange", "aubergine"],
+  kenner: ["amber", "nachtblau"], begleiter: ["terrakotta", "loden"], gestalter: ["orange", "aubergine"],
   entdecker: ["loden", "orange"], fels: ["bordeaux", "nachtblau"], gastgeber: ["terrakotta", "orange"],
 };
 const HM_LOOKS = [
@@ -260,7 +261,7 @@ function hmSeedOS() {
   const clips = HM_CLIPS_SEED.map((c) => ({ ...c, maklerId: "alle", genutzt: 0 }));
   const branding = {
     elif: { status: "freigegeben", logo: "punkt", schrift: "editorial", akzent: "terrakotta", claim: "Immobilien sind Menschen mit Adresse.", material: [] },
-    markus: { status: "freigegeben", logo: "wort", schrift: "klassisch", akzent: "nachtblau", claim: "Der Markt wird lesbar.", material: [] },
+    markus: { status: "freigegeben", logo: "konzept", logoKonzept: { id: "lk-markus-v2", art: "teilung", font: "Instrument Sans", gewicht: 500, versal: true, laufweite: 0, zeichen: null, lage: null, akzent: true }, schrift: "chronik", akzent: "amber", claim: "Rat vor Auftrag.", material: [] },
   };
   const einrichtung = {
     sara: { vertrag: "fertig", plattform: "offen", import: "offen", konten: "offen", foto: "offen", strategie: "offen", backoffice: "offen", visitenkarten: "offen", shop: "offen", tutorials: "offen" },

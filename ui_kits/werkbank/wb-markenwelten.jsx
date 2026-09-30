@@ -141,7 +141,7 @@ const HM_WELT_BILDPAARE = {
 const HM_WELT_ASSETS = { "Eine Farbe": ["warm", "kontrast"], "Ein Ort": ["graetzl", "editorial"], "Ein Satz": ["editorial", "kontrast"], "Ein Gegenstand": ["ruhig", "klar"], "Eine Geste": ["warm", "ruhig"], "Ein Kleidungsstück": ["kontrast", "ruhig"] };
 /* Verfügbare Schnitte der geladenen Schriften, damit nichts künstlich fett gerechnet wird */
 const HM_WELT_SCHNITTE = { "DM Serif Display": [400], "Playfair Display": [400, 700], "Fraunces": [400, 600], "Space Grotesk": [400, 600], "Power Grotesk": [300, 400, 500, 700], "Manrope": [400, 600], "Hanken Grotesk": [400, 600] };
-const HM_WELT_SERIF = ["DM Serif Display", "Playfair Display", "Fraunces"];
+const HM_WELT_SERIF = ["DM Serif Display", "Playfair Display", "Fraunces", "Newsreader"];
 const HM_WELT_FAKTOR = { "DM Serif Display": 0.5, "Playfair Display": 0.53, "Fraunces": 0.54, "Space Grotesk": 0.57, "Power Grotesk": 0.56, "Manrope": 0.57, "Hanken Grotesk": 0.54 };
 
 /* ---------- Grundfunktionen: Welt, Farbe, Schrift, Maß ---------- */
@@ -169,9 +169,10 @@ function hmWeltMisch(a, b, t) { const A = hmWeltRgb(a), B = hmWeltRgb(b); return
 /* Farbe so weit Richtung Schwarz oder Weiß schieben, bis der Kontrast zum Grund reicht */
 function hmWeltLesbar(fg, bg, ziel) {
   if (hmWeltKontrast(fg, bg) >= ziel) return fg;
-  const pol = hmWeltLum(bg) > 0.3 ? "#0B0A09" : "#FFFFFF";
-  for (let t = 0.1; t <= 1.001; t += 0.1) { const m = hmWeltMisch(fg, pol, t); if (hmWeltKontrast(m, bg) >= ziel) return m; }
-  return pol;
+  /* Beide Richtungen prüfen: bei mittelhellen Flächen (etwa Rat-Amber) erreicht nur Dunkel das Ziel */
+  const pole = ["#0B0A09", "#FFFFFF"].sort((x, y) => hmWeltKontrast(y, bg) - hmWeltKontrast(x, bg));
+  for (const pol of pole) for (let t = 0.1; t <= 1.001; t += 0.1) { const m = hmWeltMisch(fg, pol, t); if (hmWeltKontrast(m, bg) >= ziel) return m; }
+  return pole[0];
 }
 function hmWeltFarben(welt, b) {
   const w = hmWeltHol(welt); const f = w.farben;
@@ -223,7 +224,16 @@ function hmWeltMiss(text, font, size, weight, ls) {
     if (typeof document !== "undefined" && document.createElement) {
       if (!HM_WELT_MESS.ctx) HM_WELT_MESS.ctx = document.createElement("canvas").getContext("2d");
       const x = HM_WELT_MESS.ctx;
-      if (x) { x.font = `${weight || 400} ${size}px ${hmWeltFam(font)}`; w = x.measureText(text).width; }
+      if (x) {
+        x.font = `${weight || 400} ${size}px ${hmWeltFam(font)}`; w = x.measureText(text).width;
+        /* Schrift noch nicht geladen: der Canvas misst mit der Ersatzschrift. Dann mit Sicherheitszuschlag, nicht merken, Schrift nachladen und neu setzen */
+        const spec = `${weight || 400} 40px "${font}"`;
+        let da = true; try { da = !document.fonts || document.fonts.check(spec); } catch (e) { da = true; }
+        if (!da) {
+          if (!HM_WELT_MESS.geladen.has(spec)) { HM_WELT_MESS.geladen.add(spec); document.fonts.load(spec).then(() => { HM_WELT_MESS.cache.clear(); window.dispatchEvent(new Event("hm-schrift-geladen")); }).catch(() => {}); }
+          return Math.max(w, hmWeltSchaetz(text, font, size, weight || 400)) * 1.08 + Math.max(0, String(text).length - 1) * (ls || 0) * size;
+        }
+      }
     }
   } catch (e) { w = null; }
   if (w == null) w = hmWeltSchaetz(text, font, size, weight || 400);
@@ -376,6 +386,14 @@ function hmWName(c, o) {
   const b = c.b; const typ = o.typ || b.logo || "wort";
   const vor = b.vor || "", nach = b.nach || "";
   let size = o.size; const ls = -0.015;
+  /* Logo aus der Werkstatt: derselbe Entwurf wie überall, als eingebettetes SVG */
+  if (typ === "konzept" && b.logoKonzept && window.hmLkLayout) {
+    const L = hmLkLayout(b.logoKonzept, b); let h = size * 1.2 * (L.H / 80), w = L.W * h / L.H;
+    if (o.maxW && w > o.maxW) { h = h * o.maxW / w; w = o.maxW; }
+    const x0 = o.anchor === "end" ? o.x - w : o.anchor === "middle" ? o.x - w / 2 : o.x;
+    const inner = hmLkSvgText(b.logoKonzept, b, { farbe: o.fill }).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+    return <svg key={c.neu()} x={hmWR(x0)} y={hmWR(o.y - h * 0.78)} width={hmWR(w)} height={hmWR(h)} viewBox={`0 0 ${L.W} ${L.H}`} dangerouslySetInnerHTML={{ __html: inner }} />;
+  }
   if (typ === "monogramm") {
     const R = size * 0.95, cx = o.anchor === "end" ? o.x - R : o.anchor === "middle" ? o.x : o.x + R, cy = o.y - size * 0.36;
     return <g key={c.neu()}><circle cx={hmWR(cx)} cy={hmWR(cy)} r={hmWR(R)} fill="none" stroke={o.fill} strokeWidth={hmWR(Math.max(1.5, size * 0.06))} /><text x={hmWR(cx)} y={hmWR(cy + size * 0.33)} textAnchor="middle" fontFamily={hmWeltFam(c.fd)} fontSize={hmWR(size * 0.9)} fontWeight={c.wd} fill={o.fill}>{b.initialen || ""}</text><circle cx={hmWR(cx + R * 0.66)} cy={hmWR(cy - R * 0.66)} r={hmWR(R * 0.15)} fill={c.F.akzent} /></g>;
@@ -1072,7 +1090,10 @@ function hmWeltFeedPosts(welt, b, posts) {
 function hmWeltAlt(w, p) { return `${w.name}, ${p.art === "objekt" && p.bild ? p.bild.t : p.text}`; }
 
 /* ---------- Renderer (React-Komponenten) ---------- */
+/* Nach dem Laden einer Markenschrift neu setzen, damit Umbrüche mit der echten Schrift gemessen sind */
+function useHmSchrift() { const [, setV] = React.useState(0); React.useEffect(() => { const f = () => setV((v) => v + 1); window.addEventListener("hm-schrift-geladen", f); return () => window.removeEventListener("hm-schrift-geladen", f); }, []); }
 function WeltPost({ welt, b, art, text, unter, bild, serie, portrait, ton, spiegel, nr, breite = 360, format, daten }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid();
@@ -1082,6 +1103,7 @@ function WeltPost({ welt, b, art, text, unter, bild, serie, portrait, ton, spieg
   return <svg className="hm-welt-svg" width={breite} height={Math.round(breite * (eng ? 4 / 3 : 1.25))} viewBox={eng ? "33.75 0 1012.5 1350" : "0 0 1080 1350"} role="img" aria-label={hmWeltAlt(w, p)} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].post(c, p)}</svg>;
 }
 function WeltStory({ welt, b, text, bild, portrait, breite = 240 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid();
@@ -1092,6 +1114,7 @@ function WeltStory({ welt, b, text, bild, portrait, breite = 240 }) {
   return <svg className="hm-welt-svg" width={breite} height={Math.round(breite * 1920 / 1080)} viewBox="0 0 1080 1920" role="img" aria-label={`${w.name}, Story`} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].story(c, p)}</svg>;
 }
 function WeltFeed({ welt, b, posts, breite = 360, luecke, kopf }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   const liste = hmWeltFeedPosts(w, bb, posts);
   const g = luecke != null ? luecke : Math.max(1, Math.round(breite / 180));
@@ -1102,6 +1125,7 @@ function WeltFeed({ welt, b, posts, breite = 360, luecke, kopf }) {
   </div>;
 }
 function WeltProfilKopf({ welt, b, breite }) {
+  useHmSchrift();
   const F = hmWeltFarben(welt, b); const s = breite / 360; const sch = b.schrift || {};
   const handle = (hmWeltSlug(b.vor) + "." + hmWeltSlug(b.nach)).replace(/\.$/, "") + ".immo";
   return <div className="hm-welt-kopf" style={{ display: "flex", gap: 12 * s, alignItems: "center", padding: `${10 * s}px 0` }}>
@@ -1110,18 +1134,21 @@ function WeltProfilKopf({ welt, b, breite }) {
   </div>;
 }
 function WeltKarte({ welt, b, seite = "vorn", breite = 340 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid(); const c = hmWeltCtx(w, bb, 850, 550, uid);
   return <svg className="hm-welt-svg hm-welt-karte-svg" width={breite} height={Math.round(breite * 55 / 85)} viewBox="0 0 850 550" role="img" aria-label={`${w.name}, Visitenkarte ${seite}`} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].karte(c, { seite })}</svg>;
 }
 function WeltSignatur({ welt, b, breite = 520 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid(); const c = hmWeltCtx(w, bb, 1200, 300, uid);
   return <svg className="hm-welt-svg" width={breite} height={Math.round(breite / 4)} viewBox="0 0 1200 300" role="img" aria-label={`${w.name}, E-Mail-Signatur`} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].signatur(c)}</svg>;
 }
 function WeltExpose({ welt, b, objekt, breite = 420 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid(); const c = hmWeltCtx(w, bb, 2100, 2970, uid);
@@ -1129,12 +1156,14 @@ function WeltExpose({ welt, b, objekt, breite = 420 }) {
   return <svg className="hm-welt-svg hm-welt-expose-svg" width={breite} height={Math.round(breite * 297 / 210)} viewBox="0 0 2100 2970" role="img" aria-label={`${w.name}, Exposé ${o.t || ""}`} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].expose(c, o)}</svg>;
 }
 function WeltZeichen({ welt, b, breite = 300 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   useHmWeltSchriften(bb, w);
   const uid = useHmWeltUid(); const c = hmWeltCtx(w, bb, 600, 400, uid);
   return <svg className="hm-welt-svg" width={breite} height={Math.round(breite * 2 / 3)} viewBox="0 0 600 400" role="img" aria-label={`${w.name}, Zeichen: ${w.zeichen.name}`} xmlns="http://www.w3.org/2000/svg">{HM_WELT_ZEICHNER[w.id].zeichen(c)}</svg>;
 }
 function WeltProbe({ welt, b, bild, breite = 160 }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   const uid = useHmWeltUid(); const c = hmWeltCtx(w, bb, 600, 800, uid);
   const o = hmWeltObjekt(bild == null ? 0 : bild, w);
@@ -1155,6 +1184,7 @@ function useHmWeltBreite(ref, start, sel) {
 
 /* Übersicht der Welt: Idee, Zeichen, Farben mit Anteil, Schrift, Bildsprache, Anwendung, Raster */
 function WeltTafel({ welt, b, breite }) {
+  useHmSchrift();
   const w = hmWeltHol(welt); const bb = b || {};
   const box = React.useRef(null);
   const gemessen = useHmWeltBreite(box, breite || 1000);

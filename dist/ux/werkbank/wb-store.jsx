@@ -73,6 +73,26 @@ const HM_SEED_ANTWORTEN = {
   elif: { seit: "2 bis 5 Jahre", herkunft: "Quereinstieg aus dem Verkauf", immotypen: ["Erstbezug vom Bauträger", "Eigentumswohnung Neubau", "Doppelhaus und Reihenhaus", "Mietwohnung"], abschluesse: "Erstbezug Laxenburger Straße, 78 m², 389.000, junge Familie über Instagram. Reihenhaus Liesing, 120 m², 610.000, Empfehlung. Mietwohnung Meidling, 55 m², Bestandskundin.", gruende: ["Sympathie", "Schnelle Rückmeldung", "Kennt den Bezirk"], hindernis: ["Zweifel am Preis"], ausloeser: ["Familie wächst", "Umzug aus beruflichen Gründen"], milieus: ["mitte", "neo"], phasen: ["Erste Wohnung", "Familiengründung"], bezirke: ["1100 Favoriten", "1120 Meidling", "1230 Liesing"], seite: 65, gefuehl: ["Zuhause", "Entlastet"], s1: 55, s2: 85, s3: 70, s4: 65, s5: 40, archetyp: ["gastgeber"], worte: "herzlich, schnell, ehrlich", tabus: ["Luxus zeigen"], anrede: "Du auf Instagram, Sie sonst", sichtbar: "Diese Woche", graetzl: "Rund um den Reumannplatz, bis zur Quellenstraße", graetzl_anteil: "6 bis 8", unity: "Kinder von Zuwanderern, junge Eltern in Favoriten", bildpaare: { bp1: "a", bp2: "a", bp3: "a", bp4: "a", bp5: "a", bp6: "a" }, werte: ["Hilfsbereitschaft", "Selbstbestimmung"], ideal: "die, die Favoriten kennt und ehrlich bleibt", erfolge: 4, fokus: 25, privat: ["Sport und Hobby", "Wohnort und Grätzl", "Team und Büro", "Humor", "Fehler und Learnings"], cue: "Montag nach dem Team-Frühstück, 9:30", aufgewachsen: "Favoriten, Per-Albin-Hansson-Siedlung. Meine Mutter hat 20 Jahre auf eine Genossenschaftswohnung gewartet.", wendepunkt: "Nach dem ersten Jahr ohne Abschluss wollte ich zurück in den Verkauf. Ein Erstkäufer-Paar hat mir nach der Übergabe geschrieben, dass ich die Einzige war, die ihnen die Finanzierung erklärt hat.", fehler: "Ich habe einmal einen Kaufpreis zu hoch angesetzt, weil der Verkäufer es wollte. Seitdem zeige ich drei Vergleichspreise und sage Nein, wenn es nicht passt.", kundensatz: "Elif hat uns nie das Gefühl gegeben, zu wenig zu wissen.", bestand: ["Instagram", "TikTok", "Professionelle Fotos"], follower: "2.000 bis 10.000", behalten: "Neu aufsetzen", assets: ["Ein Ort", "Eine Geste"], vorbilder: "@grätzlgeschichten, weil nah", kamera: 5, zeit: "4 bis 8 Stunden", formate: ["talking", "spaziergang", "behind", "walkthrough"], kanaele: ["instagram", "tiktok", "facebook", "linkedin", "youtube"], ziel: "Bekannt im Bezirk werden", verfuegbar: ["Montag", "Mittwoch", "Nachmittag"] },
 };
 
+/* Migrationen für Browser, die schon Demo-Daten haben. Jede läuft einmal. */
+function hmMigrationen() {
+  const lauf = (flag, fn) => { try { if (localStorage.getItem(flag)) return; fn(); localStorage.setItem(flag, "1"); } catch (e) { console.warn("Migration", flag, e); } };
+  /* Prozess v2: Markus bekommt die Marke aus dem Beweis, der gesperrte Satz verschwindet */
+  lauf("unio_hm_mig_marke_v2", () => {
+    hmStore.patch("branding", (a) => { const x = { ...(a || {}) }; const m = x.markus || {}; if (!m.claim || m.claim === "Der Markt wird lesbar.") x.markus = { ...m, claim: "Rat vor Auftrag.", akzent: "amber", schrift: "chronik" }; return x; });
+    hmStore.patch("website", (a) => { const x = { ...(a || {}) }; const w = x.markus; if (w && w.felder && w.felder.headline === "Der Markt wird lesbar.") x.markus = { ...w, felder: { ...w.felder, headline: "Rat vor Auftrag." } }; return x; });
+    hmStore.patch("markenbuch", (a) => { const x = { ...(a || {}) }; if (!(x.markus || {}).welt) x.markus = { ...(x.markus || {}), welt: "ruhig" }; return x; });
+    hmStore.patch("plattformen", (a) => { const x = { ...(a || {}) }; if (x.markus && JSON.stringify(x.markus).includes("Zeit ist Teil des Preises.")) delete x.markus; return x; });
+  });
+  /* Prozess v2: Markus bekommt die Wortmarke in fester Teilung (Maßstab) aus dem Beweis */
+  lauf("unio_hm_mig_logo_v2", () => {
+    hmStore.patch("branding", (a) => { const x = { ...(a || {}) }; const m = x.markus || {}; if (!m.logoKonzept) x.markus = { ...m, logo: "konzept", logoKonzept: { id: "lk-markus-v2", art: "teilung", font: "Instrument Sans", gewicht: 500, versal: true, laufweite: 0, zeichen: null, lage: null, akzent: true } }; return x; });
+  });
+  /* Eine Quelle: bestehende Freigaben werden als Version 1.0 eingefroren */
+  lauf("unio_hm_mig_quelle_v1", () => {
+    const br = hmStore.get("branding") || {};
+    Object.entries(br).filter(([, x]) => x && x.status === "freigegeben").forEach(([mid]) => { if (window.hmQuelleEinfrieren && !((hmStore.get("marke2") || {})[mid] || {}).quelle) hmQuelleEinfrieren(mid, "Bestand", "Freigabe aus v1 übernommen"); });
+  });
+}
 function hmSeed() {
   if (localStorage.getItem(HM_SEED_FLAG)) return;
   /* Neuer Seed: alte Demo-Daten vollständig entfernen, auch Porträt-Blobs */
@@ -105,6 +125,7 @@ function hmSeed() {
   if (window.hmSeedMore) window.hmSeedMore();
   if (window.hmSeedOS) window.hmSeedOS();
   localStorage.setItem(HM_SEED_FLAG, "1");
+  ["unio_hm_mig_marke_v2", "unio_hm_mig_logo_v2", "unio_hm_mig_quelle_v1"].forEach((f) => localStorage.removeItem(f));
 }
 
 /* React-Hook: liest einen Key und rendert bei Änderung neu */

@@ -28,7 +28,7 @@ function hmBrand(maklerId) {
     akzent: (HM_WEB_AKZENTE.find((x) => x.id === akzentId) || HM_WEB_AKZENTE[0]).hex, akzentId,
     claim: br.claim || (w ? w.leitidee : "Deine Leitidee entsteht im Branding."),
     bio: w ? w.bio : "",
-    logo: br.logo || "wort",
+    logo: br.logo === "konzept" && !br.logoKonzept ? "wort" : (br.logo || "wort"), logoKonzept: br.logoKonzept || null,
     fertig: br.status === "freigegeben",
     portrait: (window.hmPortraitUrl && hmPortraitUrl(maklerId)) || HM_PORTRAIT[maklerId] || null,
   };
@@ -51,6 +51,7 @@ function hmTextBreite(text, font, groesse) {
 function BrandLogo({ b, typ, farbe, grund, h = 44, invert }) {
   const t = typ || b.logo;
   const ink = invert ? "#F7F5F1" : (farbe || "#0B0A09");
+  if (t === "konzept" && b.logoKonzept && window.LogoKonzept) return <LogoKonzept spec={b.logoKonzept} b={b} h={h} farbe={farbe} invert={invert} style={{ alignSelf: "flex-start", flex: "none" }} />;
   const f = b.schrift ? b.schrift.d : "Power Grotesk";
   if (t === "monogramm") return <svg height={h} viewBox="0 0 100 100" preserveAspectRatio="xMinYMid meet" style={{ display: "block", alignSelf: "flex-start", flex: "none" }}><circle cx="50" cy="50" r="47" fill="none" stroke={ink} strokeWidth="3" /><text x="50" y="62" textAnchor="middle" fontFamily={hmFont(f)} fontSize="38" fill={ink} letterSpacing="-1">{b.initialen}</text><circle cx="78" cy="26" r="6" fill={b.akzent} /></svg>;
   const w = Math.max(120, Math.ceil(hmTextBreite(`${b.vor} ${b.nach}`, f, 42) + (t === "punkt" ? 22 : 8 + hmTextBreite(b.nach, f, 42) * 0.1)));

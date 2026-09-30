@@ -71,18 +71,21 @@ function Studio({ m, setSub, teamSicht }) {
   const st = (useHm("strategien") || {})[m.id];
   const fb = ((useHm("fragebogen") || {})[m.id] || {}).antworten || {};
   const b = hmBrand(m.id);
+  const [werkstatt, setWerkstatt] = React.useState(false);
   if (!st || !st.gewaehlt) return <div className="hm-stack"><Leer titel="Erst den Weg wählen." text="Das Design entsteht aus deinem Konzept. Bis dahin kannst du schon hochladen, was du mitbringst." aktion={<Btn onClick={() => setSub("konzept")}>Zum Konzept</Btn>} /><div className="hm-studio-l"><MaterialKompakt m={m} /></div></div>;
   const w = st.wege[st.gewaehlt];
   const set = (patch) => hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), ...patch, status: patch.status || (((a || {})[m.id] || {}).status === "freigegeben" ? "geaendert" : "entwurf") } }));
   const empfS = HM_SCHRIFTPAARE[b.aid], empfA = HM_AKZENT_EMPF[b.aid];
   return <div>
     <Kopf titel="Branding" ueber={`Aus deinem Weg ${w.archetyp.name}`}
-      rechts={b.fertig ? <span className="hm-ez z-fertig">Freigegeben</span> : <Btn onClick={() => { set({ status: "freigegeben" }); hmEvent(m.id, "branding", "Branding freigegeben", teamSicht ? "Team" : m.name); toast("Branding freigegeben. Website und Visitenkarten sind vorbereitet."); }}>Branding freigeben</Btn>} />
+      rechts={b.fertig ? <span className="hm-ez z-fertig">Freigegeben</span> : <Btn onClick={() => { set({ status: "freigegeben" }); setTimeout(() => window.hmQuelleEinfrieren && hmQuelleEinfrieren(m.id, teamSicht ? "Team" : m.name, "Branding freigegeben"), 0); hmEvent(m.id, "branding", "Branding freigegeben", teamSicht ? "Team" : m.name); toast("Branding freigegeben. Website und Visitenkarten sind vorbereitet."); }}>Branding freigeben</Btn>} />
     <div className="hm-studio">
       <div className="hm-studio-l">
         <MaterialKompakt m={m} />
         <PortraitZeile m={m} teamSicht={teamSicht} />
-        <section><div className="hm-mono">Logo</div><div className="hm-optionen">{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div></section>
+        <section><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Logo</div>{teamSicht && <button className="hm-link" onClick={() => setWerkstatt(true)}>Logo-Werkstatt öffnen</button>}</div><div className="hm-optionen">{b.logoKonzept && <button className={"hm-option" + (b.logo === "konzept" ? " on" : "")} onClick={() => set({ logo: "konzept" })}><div className="bild"><BrandLogo b={b} typ="konzept" h={b.logoKonzept.art === "monogramm" ? 56 : 34} /></div><div className="t">Aus der Werkstatt</div><div className="s">{(HM_LK_ARTEN.find((x) => x.id === b.logoKonzept.art) || {}).name}, {b.logoKonzept.font}</div></button>}{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div>
+          {!teamSicht && window.LogoBewertung && <LogoBewertung m={m} />}
+          <Sheet offen={werkstatt} zu={() => setWerkstatt(false)} titel="Logo-Werkstatt" breit><LogoWerkstatt m={m} teamSicht={teamSicht} /></Sheet></section>
         <section><div className="hm-mono">Schrift · empfohlen für {w.archetyp.name}</div><div className="hm-optionen">{Object.entries(HM_WEB_SCHRIFTEN).sort((x, y) => (empfS.includes(y[0]) ? 1 : 0) - (empfS.includes(x[0]) ? 1 : 0)).map(([id, f]) => <button key={id} className={"hm-option" + (b.schriftId === id ? " on" : "")} onClick={() => set({ schrift: id })}><div className="bild" style={{ fontFamily: hmFont(f.d), fontSize: 30, color: "var(--ink)" }}>Aa</div><div className="t">{f.name}{empfS.includes(id) ? " · empfohlen" : ""}</div><div className="s">{f.d} und {f.t}</div></button>)}</div></section>
         <section><div className="hm-mono">Akzentfarbe</div><div className="hm-farben">{HM_WEB_AKZENTE.map((x) => <button key={x.id} className={b.akzentId === x.id ? "on" : ""} onClick={() => set({ akzent: x.id })} title={x.name}><i style={{ background: x.hex }}></i><span>{x.name}{empfA.includes(x.id) ? " ·" : ""}</span></button>)}</div>{(() => { const k = hmKontrastInfo(b.akzent); return <div className="hm-pruefliste" style={{ marginTop: 10, fontSize: 13 }}><div className={k.gross ? "ok" : "nein"}><Ico n={k.gross ? "haken" : "x"} />Auf hellem Grund {hmZahl(k.aufPapier)} zu 1, {k.text ? "auch für Text" : k.gross ? "für Überschriften und Flächen" : "nur für Flächen"}</div><div className={k.knopf ? "ok" : "nein"}><Ico n={k.knopf ? "haken" : "x"} />Weiß darauf {hmZahl(k.weissDrauf)} zu 1, {k.knopf ? "gut für Knöpfe" : "Knöpfe mit dunkler Schrift"}</div></div>; })()}
           <LogoFarbe m={m} set={set} /></section>
@@ -124,7 +127,7 @@ function hmWebFelder(m, b, web) {
     F("region", "Region", "UNIO", (fb.bezirke || []).map((x) => x.replace(/^\d{4}\s/, "")).slice(0, 3).join(", ") || m.region.replace(/^\d{4}\s/, ""), "Fragebogen"),
     F("objekte", "Objekte", "UNIO", "6 aktuelle aus deinem Bestand", "Objekte im Dashboard"),
     F("instagram", "Instagram", "UNIO", e.konten === "fertig" ? "@" + (b.vor + "." + b.nach).toLowerCase() + ".immo" : "", "Konten"),
-    F("logo", "Logo und Wortmarke", "Marke", HM_LOGO_TYPEN.find((x) => x.id === b.logo).name, "Branding"),
+    F("logo", "Logo und Wortmarke", "Marke", (b.logo === "konzept" ? { name: "Aus der Logo-Werkstatt" } : HM_LOGO_TYPEN.find((x) => x.id === b.logo) || HM_LOGO_TYPEN[0]).name, "Branding"),
     F("schrift", "Schrift", "Marke", b.schrift.name, "Branding"),
     F("akzent", "Akzentfarbe", "Marke", (HM_WEB_AKZENTE.find((x) => x.id === b.akzentId) || {}).name, "Branding"),
     F("headline", "Headline", "Marke", (pl && pl.botschaften && pl.botschaften.claim) || b.claim, pl ? "Markenbuch" : "Leitidee"),

@@ -430,7 +430,7 @@ function TextTab({ c, set, b }) {
     <div className="hm-row" style={{ justifyContent: "space-between" }}><span className="hm-daten">{(c.caption || "").length} Zeichen</span><button className="hm-klein-btn hell" onClick={() => set({ caption: hmCaption(c, b.br, b.w) })}>Aus Skript und Marke</button></div>
     <textarea className="hm-skript gross" rows={8} value={c.caption || ""} onChange={(e) => set({ caption: e.target.value })} placeholder="Die erste Zeile entscheidet. Danach eine Frage, dann Hashtags." />
     {c.caption && <div className="hm-pruefliste" style={{ fontSize: 13 }}>{hmCaptionCheck(c.caption, b.w, c.titel, (c.kanaele || [])[0]).map((x) => <div key={x.t} className={x.ok ? "ok" : "nein"}><Ico n={x.ok ? "haken" : "x"} />{x.t}</div>)}</div>}
-    <div className="hm-mono">Anrede und Ton aus der Marke von {b.vor}: {b.w ? b.w.anredeRegel : "noch offen"}.</div>
+    <div className="hm-mono">Anrede und Ton aus der Marke von {b.vor}: {window.hmAnredeRegel ? hmAnredeRegel(b.makler.id) : (b.w ? b.w.anredeRegel : "noch offen")}.</div>
   </div>;
 }
 

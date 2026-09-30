@@ -69,7 +69,8 @@ async function hmAlsPng(el, breite, familien, hoehe) {
 
 /* Materialpaket: sucht die Vorlagen im Markenbuch (data-material) und packt sie als PNG, dazu Signatur als HTML */
 async function hmMaterialPaket(m, stand) {
-  const b = hmBrand(m.id);
+  /* Öffentliche Ausgabe: die freigegebene Version der Marke, falls vorhanden */
+  const b = window.hmMarkeB ? hmMarkeB(m.id, "oeffentlich") : hmBrand(m.id);
   const JSZip = await hmJszip(); const zip = new JSZip();
   const slug = hmDateiname(b.vor + "-" + b.nach);
   const fam = [b.schrift.d, b.schrift.t];
@@ -81,7 +82,8 @@ async function hmMaterialPaket(m, stand) {
     if (ordner === "signatur") zip.file(`signatur/${slug}-signatur.html`, `<!doctype html><meta charset="utf-8">${(el.firstElementChild || el).outerHTML}`);
   }
   stand && stand("Logos");
-  if (window.hmLogoSvg) for (const t of HM_LOGO_TYPEN) zip.file(`logo/${slug}-${t.id}.svg`, await hmLogoSvg(b, t.id));
+  if (b.logo === "konzept" && b.logoKonzept && window.hmLkSvgPfade) { try { zip.file(`logo/${slug}-logo.svg`, await hmLkSvgPfade(b.logoKonzept, b)); zip.file(`logo/${slug}-logo-hell.svg`, await hmLkSvgPfade(b.logoKonzept, b, { invert: true })); } catch (e) { zip.file(`logo/${slug}-logo.svg`, hmLkSvgText(b.logoKonzept, b)); } }
+  else if (window.hmLogoSvg) for (const t of HM_LOGO_TYPEN) zip.file(`logo/${slug}-${t.id}.svg`, await hmLogoSvg(b, t.id));
   if (b.portrait) zip.file(`portrait/${slug}-portrait.png`, await (await fetch(b.portrait)).blob());
   const p = window.hmMbPlattform ? hmMbPlattform(m.id) : null;
   if (p) zip.file("markenplattform.json", JSON.stringify(p, null, 2));

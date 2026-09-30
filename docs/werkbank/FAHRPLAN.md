@@ -23,7 +23,8 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 | Website-Baukasten | Stil-Leiste, alle Looks live, Bildfelder, Mobilansicht | erledigt |
 | Bildwelt-Automatik | Bilder erscheinen ohne Kopieren | Upstash Redis in Vercel verbinden, `WB_WORKER_TOKEN` setzen |
 | **Branding-Qualität v2** (fertig, Abnahme offen) | Prozess v2 in 17 Schritten, Frage-Wirkungs-Tabelle, Beweis für Markus mit zwölf Kacheln | Beweis ansehen, C1 bis C9 freigeben |
-| Umbau Markenprozess v2 | Werkbank folgt dem neuen Prozess, in elf Etappen laut `branding-v2/UMBAU_ETAPPEN.md`, zuerst Sofortreparaturen und eine eingefrorene Markenquelle | Freigabe der Umbauliste |
+| **Marke erzeugen v2, Teil 1** (fertig, Abnahme offen) | Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen, Markus als v2-Beispiel | Werkstatt ansehen, Markenbeispiele liefern |
+| Umbau Markenprozess v2, Rest | Werkbank folgt dem neuen Prozess, in elf Etappen laut `branding-v2/UMBAU_ETAPPEN.md`, zuerst Sofortreparaturen und eine eingefrorene Markenquelle | Freigabe der Umbauliste |
 
 ## Geparkt
 
@@ -35,3 +36,5 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 - Server-Datenhaltung (Supabase EU) statt Browser-Speicher, Rollen serverseitig.
 - Farbvorschlag aus Porträt oder altem Logo.
 - Helle und dunkle Sektionsthemen je Website-Abschnitt.
+- Animiertes Logo für Reels (wie Brandmark).
+- Fragebogen v2 mit 23 Fragen (Umbau-Etappe 4).

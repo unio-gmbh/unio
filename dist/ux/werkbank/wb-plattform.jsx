@@ -212,7 +212,7 @@ const HM_PF_FIGUR = {
     andersAls: (c) => c.warten ? "Vermittler, die vom Abschluss leben und darum immer zum Verkauf raten" : "Makler, die mit Versprechen statt mit Zahlen arbeiten",
     haltung: (c) => c.warten ? "Ein Haus verkauft man einmal. Die Entscheidung davor verdient mehr Zeit als das Inserat." : "Wer den Markt versteht, entscheidet ruhiger. Darum kommt die Erklärung vor dem Verkauf.",
     versprechen: (c) => c.an("website", `Sie wissen, was ${HM_PF_ART.Ihr[c.obj0.g]} ${c.obj0.typ} wert ist und ob sich der Verkauf jetzt lohnt, bevor Sie unterschreiben.`, `Du weißt, was ${HM_PF_ART.dein[c.obj0.g]} ${c.obj0.typ} wert ist und ob sich der Verkauf jetzt lohnt, bevor du unterschreibst.`),
-    claims: (c) => [c.warten && "Zeit ist Teil des Preises.", c.kern && `${c.kern} in Zahlen.`, "Der Markt wird lesbar.", "Erst verstehen. Dann verkaufen."],
+    claims: (c) => [c.warten && "Rat vor Auftrag.", c.kern && `${c.kern} in Zahlen.`, "Der Markt wird lesbar.", "Erst verstehen. Dann verkaufen."],
     signatur: (c) => /Grundbuch/i.test(c.cue.text) && c.cue.tag ? `Der Grundbuch-${c.cue.tag}` : "Die Zahl der Woche",
     signaturIdee: (c) => /Grundbuch/i.test(c.cue.text) ? `Jeden ${c.cue.tag} nach dem ${c.cue.anker || "Grundbuch-Termin"}: eine Eintragung aus ${c.kern || c.o0}, anonymisiert, und was sie über den Markt sagt. 60 Sekunden, immer im selben Bildausschnitt, Schlusssatz „${c.claim}“` : `Jede Woche eine Zahl aus ${c.kern || c.o0} und was sie für ${c.cepWer} bedeutet. Immer am selben Tag, im selben Bildausschnitt, mit dem Schlusssatz „${c.claim}“`,
     vermeiden: ["Schnäppchen", "Hammerpreis", "jetzt zuschlagen", "garantiert"],
@@ -371,7 +371,8 @@ function hmPfKontext(q) {
   c.sieK0 = hmPfAnrede(a, w, c.k0) === "Sie";
   const claims = c.figur.claims(c).filter(Boolean);
   const markeClaim = hmPfS(c.branding.claim);
-  c.claim = claims[0] || markeClaim || "Der Markt wird lesbar.";
+  /* Der freigegebene Claim aus dem Branding hat Vorrang, Satzbausteine der Figur sind nur Alternativen (Prozess v2, C5) */
+  c.claim = markeClaim || claims[0] || "Der Markt wird lesbar.";
   c.claimAlt = [...new Set([...claims.slice(1), markeClaim].filter((x) => x && x !== c.claim))].slice(0, 3);
   return c;
 }
@@ -1222,7 +1223,7 @@ function hmSelbsttestPlattform() {
   const makler = { markus: { id: "markus", name: "Markus Leitner", region: "1190 Döbling" }, elif: { id: "elif", name: "Elif Demir", region: "1100 Favoriten" }, sara: { id: "sara", name: "Sara Novak", region: "1070 Neubau" } };
   const mtM = [{ id: "t1", maklerId: "markus", datum: "2026-09-11T10:00", zitate: [], transkript: "Daniel: Was sagen Kunden nach dem Abschluss über Sie?\nMarkus: Dass sie sich nie gedrängt gefühlt haben." }];
   const pE = hmPlattform("elif", { makler: makler.elif, antworten: seed.elif, meetings: [], branding: {}, ohneQualitaet: true });
-  const pM = hmPlattform("markus", { makler: makler.markus, antworten: seed.markus, meetings: mtM, branding: { claim: "Der Markt wird lesbar.", akzent: "nachtblau" }, andere: [{ id: "elif", p: pE }] });
+  const pM = hmPlattform("markus", { makler: makler.markus, antworten: seed.markus, meetings: mtM, branding: { claim: "Rat vor Auftrag.", akzent: "amber" }, andere: [{ id: "elif", p: pE }] });
   const pS = hmPlattform("sara", { makler: makler.sara, antworten: {}, meetings: [], branding: {}, andere: [{ id: "markus", p: pM }] });
   const pE2 = hmPlattform("elif", { makler: makler.elif, antworten: seed.elif, meetings: [], branding: {}, andere: [{ id: "markus", p: pM }] });
   const alleText = (p) => hmPfAlleTexte(p).map((x) => x.text).join("\n");

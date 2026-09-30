@@ -40,6 +40,16 @@ function Befehle({ rolle, nav, go, oeffne, oeffneMakler }) {
   </div>;
 }
 
+/* Ein Fehler in einem Bereich leert nie die ganze Werkbank: der Bereich zeigt einen Hinweis, Navigation bleibt */
+class Fehlergrenze extends React.Component {
+  constructor(p) { super(p); this.state = { fehler: null }; }
+  static getDerivedStateFromError(fehler) { return { fehler }; }
+  componentDidCatch(fehler, info) { console.error("Bereich", fehler, info && info.componentStack); }
+  render() {
+    if (!this.state.fehler) return this.props.children;
+    return <div className="hm-leer"><div className="t">Dieser Bereich konnte nicht geladen werden.</div><div className="s">{String(this.state.fehler.message || this.state.fehler)}</div><button className="hm-chip" onClick={() => this.setState({ fehler: null })}>Erneut versuchen</button></div>;
+  }
+}
 function App() {
   const p = new URLSearchParams(location.search);
   const [rolle, setRolle] = useState(p.get("rolle") === "team" ? "team" : "makler");
@@ -86,6 +96,7 @@ function App() {
           <div className="hm-who">{rolle === "makler" ? <div className="hm-row" style={{ gap: 10 }}><Avatar name={m.name} bild={hmBrand(m.id).portrait} /><div>{m.name}<br />{m.abo}</div></div> : <>Team UNIO<br />Daniel, Florian, Ahmet, Nikita</>}</div>
         </nav>
         <main className="hm-main">
+          <Fehlergrenze key={[rolle, screen, sub, tm, bereich, beitrag].join("|")}>
           {beitrag ? <Beitrag key={beitrag} id={beitrag} zurueck={() => setBeitragId(null)} teamSicht={rolle === "team"} /> : rolle === "makler" ? (
             screen === "heute" ? <MaklerHeute m={m} go={go} oeffne={oeffne} /> :
             screen === "einrichtung" ? <div><button className="hm-zurueck" onClick={() => go("heute")}><Ico n="zurueck" />Heute</button><Einrichtung m={m} go={go} /></div> :
@@ -103,6 +114,7 @@ function App() {
             screen === "empfehlungen" ? <TeamHeute go={go} oeffne={oeffne} oeffneMakler={oeffneMakler} /> :
             screen === "einstellungen" ? <Einstellungen /> : null
           )}
+          </Fehlergrenze>
         </main>
       </div>
       <Assistent m={rolle === "makler" ? m : teamM || null} />
@@ -114,5 +126,6 @@ function App() {
 }
 
 hmSeed();
+hmMigrationen();
 hmAutomatik();
 hmPortraitsLaden().finally(() => ReactDOM.createRoot(document.getElementById("root")).render(<App />));
