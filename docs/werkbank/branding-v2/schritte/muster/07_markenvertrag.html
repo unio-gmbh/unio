@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muster Markenvertrag</title>
+<link rel="stylesheet" href="../../../../../tokens/fonts.css">
+<style>
+/* Muster zu 07_positionierung.md, Abschnitt 3.4 und 3.8. Werkbank-Typografie, nicht die
+   künftige Markenschrift des Maklers: Er beurteilt Worte, nicht Form (G4).
+   Nur UNIO-Grundpalette, keine Akzentfarbe, keine Verläufe, keine Schatten außer der Haarlinie.
+   Ziffern in Daten und Beleg-Zeilen in JetBrains Mono, weil Power Grotesk keine Tabellenziffern hat
+   (wie muster/01_ihr-stand.html). */
+:root {
+  --paper: #F7F5F1; --paper-2: #F0EDE6; --paper-3: #E7E2D8;
+  --ink: #0B0A09; --ink-2: #1B1A16; --ink-3: #383429;
+  --muted: rgba(27, 26, 22, 0.6); --hair: rgba(11, 10, 9, 0.14);
+  --grot: "Power Grotesk", "Helvetica Neue", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #D9D4CA; color: var(--ink-2); font-family: var(--grot); -webkit-font-smoothing: antialiased; }
+.board { display: flex; flex-wrap: wrap; gap: 56px 48px; padding: 64px; align-items: flex-start; }
+.stueck { display: flex; flex-direction: column; gap: 14px; }
+.notiz { font-size: 14px; line-height: 1.45; color: var(--ink-3); max-width: 390px; }
+.notiz b { font-weight: 500; color: var(--ink); }
+
+/* Telefon: 390 breit, Rand 24, eine Spalte, ganze Seite ohne Beschnitt */
+.tel { width: 390px; background: var(--paper); border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--hair); }
+.tel .innen { padding: 0 24px 40px; }
+h1 { font-weight: 400; letter-spacing: -0.03em; color: var(--ink); margin: 0; }
+.tel h1 { font-size: 40px; line-height: 1.02; margin-top: 44px; }
+.lead { font-size: 17px; line-height: 1.5; color: var(--ink-2); margin: 18px 0 0; }
+.luecke { margin-top: 28px; padding: 16px 0 16px 16px; box-shadow: inset 1px 0 0 var(--ink); font-size: 17px; line-height: 1.45; color: var(--muted); }
+.luecke .m { font-family: var(--mono); font-size: 12.5px; display: block; margin-top: 6px; }
+
+/* Teil: die zwei großen Überschriften teilen die Seite in Wahrheit und Richtung */
+.teil { margin-top: 48px; padding-top: 18px; border-top: 1.5px solid var(--ink); }
+.teil h2 { font-weight: 400; font-size: 28px; line-height: 1.08; letter-spacing: -0.02em; color: var(--ink); margin: 0; }
+.teil .zu { font-size: 15px; line-height: 1.4; color: var(--muted); margin-top: 8px; }
+h3 { font-weight: 500; font-size: 17px; line-height: 1.3; color: var(--ink); margin: 34px 0 0; }
+.satz { font-size: 27px; line-height: 1.16; letter-spacing: -0.02em; color: var(--ink); margin: 12px 0 0; text-wrap: pretty; }
+.zeilen { margin: 18px 0 0; border-top: 1px solid var(--hair); }
+.zeile { padding: 13px 0 12px; border-bottom: 1px solid var(--hair); font-size: 16px; line-height: 1.45; }
+.zeile .k { display: block; font-size: 14px; color: var(--muted); margin-bottom: 3px; }
+p.t { font-size: 16px; line-height: 1.5; margin: 8px 0 0; }
+.gross { font-size: 21px; line-height: 1.28; letter-spacing: -0.01em; color: var(--ink); margin: 10px 0 0; }
+.attr { margin: 12px 0 0; border-top: 1px solid var(--hair); }
+.attr div { padding: 12px 0 11px; border-bottom: 1px solid var(--hair); font-size: 16px; line-height: 1.45; }
+.attr b { font-weight: 500; color: var(--ink); }
+.attr .nicht { color: var(--muted); }
+.eigen { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: rgba(11, 10, 9, 0.5); }
+sup { font-family: var(--mono); font-size: 10px; line-height: 0; margin-left: 1px; color: var(--ink-3); }
+.rand { font-size: 13px; line-height: 1.4; color: var(--muted); margin-top: 6px; }
+.rand .n { font-family: var(--mono); font-size: 11px; margin-right: 6px; color: var(--ink-3); }
+.beleg { padding: 12px 0 11px; border-bottom: 1px solid var(--hair); }
+.beleg .w { font-size: 16px; line-height: 1.4; color: var(--ink); }
+.beleg .s { font-size: 14px; line-height: 1.4; color: var(--muted); margin-top: 3px; }
+.wahl { display: flex; gap: 8px; margin-top: 10px; }
+.wahl span { font-size: 14px; padding: 7px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hair); color: var(--ink-2); }
+.karte { margin-top: 12px; }
+.frage { margin-top: 48px; padding-top: 22px; border-top: 1.5px solid var(--ink); }
+.frage .f { font-size: 27px; line-height: 1.12; letter-spacing: -0.02em; color: var(--ink); }
+.frage .zu { font-size: 15px; line-height: 1.45; color: var(--muted); margin-top: 10px; }
+.knopf { display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 22px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 16px; margin-top: 20px; }
+.link { display: block; text-align: center; font-size: 15px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; margin-top: 16px; }
+.quellen { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.quellen div { font-size: 13px; line-height: 1.5; color: var(--muted); }
+.quellen .n { font-family: var(--mono); font-size: 11px; margin-right: 8px; color: var(--ink-3); }
+
+/* Abschluss nach dem Klick */
+.stand { margin-top: 44px; font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+.knopf.zweit { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair); }
+.unter { font-size: 14px; color: var(--muted); margin-top: 10px; text-align: center; }
+
+/* A4, 794 x 1123 bei 96 dpi, Rand 56, zwei Spalten: Text und Randnotiz */
+.a4 { width: 794px; height: 1123px; zoom: .74; background: #FDFCFA; box-shadow: 0 0 0 1.4px var(--hair); padding: 56px 56px 48px; display: grid; grid-template-columns: 1fr 176px; column-gap: 32px; grid-auto-rows: min-content; position: relative; }
+.a4 .kopf { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+.a4 .kopf .name { font-size: 15px; color: var(--ink); }
+.a4 .kopf .v { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.a4 .satz { grid-column: 1 / 2; font-size: 30px; line-height: 1.12; margin-top: 26px; }
+.a4 .r { font-size: 10.5px; line-height: 1.4; color: var(--muted); }
+.a4 .r .n { font-family: var(--mono); font-size: 9.5px; margin-right: 5px; color: var(--ink-3); }
+.a4 h2 { grid-column: 1 / -1; font-weight: 400; font-size: 19px; letter-spacing: -0.01em; color: var(--ink); margin: 22px 0 0; padding-top: 8px; border-top: 1.2px solid var(--ink); }
+.a4 .blk { grid-column: 1 / 2; font-size: 11.5px; line-height: 1.45; margin-top: 9px; color: var(--ink-2); }
+.a4 .blk b { font-weight: 500; color: var(--ink); }
+.a4 .blk .nicht { color: var(--muted); }
+.a4 .rblk { grid-column: 2 / 3; margin-top: 9px; }
+.a4 .fuss { position: absolute; left: 56px; right: 56px; bottom: 36px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9.5px; color: var(--ink-3); border-top: 1px solid var(--hair); padding-top: 8px; }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- 1. Wort-Link vor der Bestätigung, Telefon, ganze Seite -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="innen">
+        <h1>Ihr Markenvertrag</h1>
+        <p class="lead">Eine Seite, etwa fünf Minuten. Oben steht, was heute stimmt, unten, woran Sie sich in zwölf Monaten messen lassen. Im Reveal am <span style="font-family:var(--mono);font-size:15px">5. November</span> messen wir jeden Entwurf daran.</p>
+
+        <div class="luecke">Hier steht Ihr Satz aus dem Richtungstermin, woran Sie Ihre Richtung erkannt haben.<span class="m">kommt aus richtung.zitatMakler</span></div>
+
+        <div class="teil">
+          <h2>Was heute stimmt</h2>
+          <div class="zu">Stimmt hier etwas nicht, sagen Sie es uns.</div>
+        </div>
+
+        <h3>Wofür Sie stehen</h3>
+        <p class="satz">Für Erbengemeinschaften und Anleger mit Zinshaus oder Altbau in Döbling, Währing und Hietzing ist Markus Leitner der Makler, der vor dem Auftrag rechnet, ob Verkaufen oder Warten mehr einbringt.</p>
+        <div class="zeilen">
+          <div class="zeile"><span class="k">Anders als</span>Auftritte in Ihren Bezirken, die das nächste Objekt und seine Rendite zeigen und die Frage davor offen lassen.</div>
+          <div class="zeile"><span class="k">Belegt</span>Einer Erbengemeinschaft haben Sie geraten, <span class="eigen">zwei Jahre zu warten, statt unter Druck zu verkaufen</span><sup>1</sup>. Die Erben <span class="eigen">kamen mit 600.000 mehr zurück</span><sup>1</sup>. Wo nichts für das Warten sprach, ging es schnell: ein Zinshaus in Döbling, verkauft in 11 Wochen.
+            <div class="rand"><span class="n">1</span>Ihr Fragebogen, Frage zum Abraten</div></div>
+          <div class="zeile"><span class="k">Nicht für</span>Eigentümer, die nur den schnellsten Abschluss wollen. Käufer auf Wohnungssuche. Neubau.</div>
+        </div>
+
+        <h3>Ihr Versprechen</h3>
+        <p class="gross">Sie sehen die Rechnung für Verkaufen jetzt und für Warten, bevor Sie einen Auftrag unterschreiben.</p>
+
+        <h3>Woran man Sie erkennt</h3>
+        <div class="attr">
+          <div><b>Genau.</b> Jede Zahl mit Ort, Zeitraum und Beleg. <span class="nicht">Heißt nicht: belehrend.</span></div>
+          <div><b>Ruhig.</b> Nur Fristen, die im Fall wirklich stehen. Ihre Kunden haben <span class="eigen">sich nie gedrängt gefühlt</span><sup>2</sup>. <span class="nicht">Heißt nicht: zögerlich.</span>
+            <div class="rand"><span class="n">2</span>Ihr Gespräch mit uns am 11. September</div></div>
+          <div><b>Offen gerechnet.</b> Die Rechnung hinter Ihrem Rat liegt auf dem Tisch. <span class="nicht">Heißt nicht: moralisierend.</span></div>
+          <div><b>Nachgeschaut.</b> Preise aus Eintragungen und eigenen Fällen, fester Termin dienstags im Grundbuch. <span class="nicht">Heißt nicht: Marktbericht ohne Ihren Rat.</span></div>
+          <div><b>Der Zeitpunkt.</b> Elf Wochen oder zwei Jahre, je nachdem, was die Rechnung sagt. <span class="nicht">Heißt nicht: Hinhalten.</span></div>
+        </div>
+
+        <h3>Wie Sie handeln</h3>
+        <div class="attr">
+          <div><b>Rechnung vor Provision.</b> Nie ein Verkaufsrat, den die eigene Rechnung nicht trägt.</div>
+          <div><b>Nachschauen statt schätzen.</b> Nie eine Erstschätzung über dem, was Eintragungen und eigene Fälle hergeben.</div>
+          <div><b>Fälle ohne Wiedererkennung.</b> Nie ein Fall, an dem Nachbarn ein Haus oder eine Familie erkennen.</div>
+        </div>
+
+        <h3>Was falsch wäre</h3>
+        <p class="t">Erfundene Fristen. Rendite-Superlative. Uhren und Sanduhren als Bild für Zeit. Handschlag, Schlüssel, Familie im Bild. Politik. Warten ohne Rechnung.</p>
+
+        <h3>Wie Sie klingen</h3>
+        <p class="t">Genau, ruhig, verlässlich. Sie, überall. Die Zahl vor dem Adjektiv, die Rechnung vor der Meinung.</p>
+
+        <h3>Wo Sie stehen</h3>
+        <svg class="karte" width="342" height="210" viewBox="0 0 342 210" role="img" aria-label="Karte mit sechs anonymen Auftritten und Ihrer Lage">
+          <line x1="171" y1="14" x2="171" y2="186" stroke="#0B0A09" stroke-opacity=".22" stroke-width="1"/>
+          <line x1="8" y1="100" x2="334" y2="100" stroke="#0B0A09" stroke-opacity=".22" stroke-width="1"/>
+          <text x="8" y="94" font-family="Power Grotesk, sans-serif" font-size="12" fill="#1B1A16" fill-opacity=".6">nahbar</text>
+          <text x="334" y="94" text-anchor="end" font-family="Power Grotesk, sans-serif" font-size="12" fill="#1B1A16" fill-opacity=".6">distanziert</text>
+          <text x="177" y="22" font-family="Power Grotesk, sans-serif" font-size="12" fill="#1B1A16" fill-opacity=".6">zeitgenössisch</text>
+          <text x="177" y="198" font-family="Power Grotesk, sans-serif" font-size="12" fill="#1B1A16" fill-opacity=".6">klassisch</text>
+          <g fill="none" stroke="#383429" stroke-width="1.5">
+            <circle cx="262" cy="148" r="5"/><circle cx="284" cy="132" r="5"/><circle cx="246" cy="164" r="5"/>
+            <circle cx="298" cy="156" r="5"/><circle cx="214" cy="60" r="5"/><circle cx="238" cy="126" r="5"/>
+          </g>
+          <circle cx="118" cy="146" r="6.5" fill="#0B0A09"/>
+          <text x="130" y="150" font-family="Power Grotesk, sans-serif" font-size="13" fill="#0B0A09">Sie</text>
+        </svg>
+        <p class="t" style="margin-top:6px">Klassisch in der Form, näher am Rat als am Objekt. Die Punkte sind Auftritte in Ihren Bezirken, ohne Namen.</p>
+
+        <h3>Ihre Belege</h3>
+        <div class="zeilen">
+          <div class="beleg"><div class="w">600.000 mehr nach zwei Jahren</div><div class="s">Ihre Angabe. Vor der Veröffentlichung brauchen wir Ausgangswert, Verkaufspreis und das Einverständnis der Erben.</div>
+            <div class="wahl"><span>Öffentlich nach Prüfung</span><span>Nur intern</span></div></div>
+          <div class="beleg"><div class="w">Zinshaus in Döbling, 11 Wochen</div><div class="s">Ihre Angabe. Kaufvertrag und Einverständnis folgen. Den Preis nennen wir öffentlich nicht, damit niemand das Haus erkennt.</div>
+            <div class="wahl"><span>Öffentlich nach Prüfung</span><span>Nur intern</span></div></div>
+          <div class="beleg"><div class="w">8 Prozent über der Erstschätzung, Währing</div><div class="s">Ihre Angabe.</div></div>
+          <div class="beleg"><div class="w">14 Abschlüsse 2025</div><div class="s">Ihre Angabe. Wir zählen im Bestand nach.</div></div>
+        </div>
+        <div class="rand">Ohne Antwort bleibt eine Zahl intern.</div>
+
+        <div class="teil">
+          <h2>Woran Sie sich in zwölf Monaten messen lassen</h2>
+          <div class="zu">Das ist Ziel, nicht Stand. Hier fragen wir, ob Sie daran gemessen werden wollen.</div>
+        </div>
+
+        <h3>Ihre Rolle</h3>
+        <p class="gross"><span class="eigen">Der Zinshaus-Mann, dem Notare vertrauen</span><sup>3</sup>.</p>
+        <p class="t">Bisher kam ein Verkauf über ein Notariat. In zwölf Monaten zählen wir, wie viele Anfragen diesen Weg nehmen.</p>
+        <div class="rand"><span class="n">3</span>Ihr Fragebogen</div>
+
+        <h3>Ihr Erfolg</h3>
+        <p class="t">Anfragen von Anlegern aus Döbling, Währing und Hietzing, je Quartal. Den Ausgangswert erheben wir zum Start.</p>
+
+        <div class="frage">
+          <div class="f">Stimmt das, und wollen Sie daran gemessen werden?</div>
+          <div class="zu">Der erste Teil soll heute stimmen. Am zweiten lassen Sie sich in zwölf Monaten messen.</div>
+          <div class="knopf">Stimmt. Daran lasse ich mich messen.</div>
+          <a class="link">Einen Satz dazuschreiben</a>
+        </div>
+
+        <div class="quellen">
+          <div><span class="n">1</span>Ihr Fragebogen, Frage zum Abraten</div>
+          <div><span class="n">2</span>Ihr Gespräch mit uns am 11. September</div>
+          <div><span class="n">3</span>Ihr Fragebogen</div>
+        </div>
+      </div>
+    </div>
+    <div class="notiz"><b>Wort-Link vor der Bestätigung, Telefon, ganze Seite.</b> 390 breit, Rand 24. Titel 40/41, Positionierungssatz 27/31, Versprechen und Rolle 21/27, Fließtext 16/24, Randnotiz 13/18. Zwei Teile mit je einer Linie in voller Stärke: Wahrheit oben, Richtung unten, die Frage nimmt beide auf. Eigene Worte unterstrichen mit Ziffer, die Quelle direkt unter dem Absatz. Karte: Anordnung der Punkte nur zur Ansicht, für Markus ist sie eine Lücke (workshop.karte). Der Einstiegssatz ist sichtbar als Lücke gesetzt; solange er fehlt, lässt sich der Link nicht senden (R9).</div>
+  </div>
+
+  <!-- 2. Abschluss nach dem Klick, Telefon -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="innen">
+        <div class="stand">Version 1, bestätigt am [Datum]</div>
+        <h1 style="margin-top:14px">Ab jetzt ist diese Seite Ihr Maßstab.</h1>
+        <p class="lead">Im Reveal am <span style="font-family:var(--mono);font-size:15px">5. November</span> fragen wir nicht, ob es gefällt, sondern ob es diesen Vertrag trifft. Jede Änderung wird eine neue Version, und Sie bestätigen sie wieder.</p>
+        <div class="zeilen" style="margin-top:28px">
+          <div class="zeile"><span class="k">Ihr Satz</span>Für Erbengemeinschaften und Anleger mit Zinshaus oder Altbau in Döbling, Währing und Hietzing ist Markus Leitner der Makler, der vor dem Auftrag rechnet, ob Verkaufen oder Warten mehr einbringt.</div>
+          <div class="zeile"><span class="k">Woran man Sie erkennt</span>Genau, Ruhig, Offen gerechnet, Nachgeschaut, Der Zeitpunkt</div>
+        </div>
+        <div class="knopf">Weiter zu Ihrer Stimme</div>
+        <div class="unter">Zwei kurze Aufgaben, etwa vier Minuten. Jetzt oder später.</div>
+        <div class="knopf zweit" style="margin-top:14px">Druckfassung öffnen</div>
+      </div>
+    </div>
+    <div class="notiz"><b>Abschluss, Telefon.</b> Das Ende ist gestaltet: Version und Datum in Mono, ein Satz zum Maßstab, danach die Aufgaben aus Schritt 8 im selben Link. Keine Konfetti-Geste, kein Häkchen-Symbol.</div>
+  </div>
+
+  <!-- 3. Druckfassung A4 nach der Bestätigung -->
+  <div class="stueck">
+    <div class="a4">
+      <div class="kopf"><span class="name">Markenvertrag Markus Leitner</span><span class="v">Version 1, bestätigt am [Datum]</span></div>
+
+      <p class="satz">Für Erbengemeinschaften und Anleger mit Zinshaus oder Altbau in Döbling, Währing und Hietzing ist Markus Leitner der Makler, der vor dem Auftrag rechnet, ob Verkaufen oder Warten mehr einbringt.</p>
+      <div class="rblk" style="margin-top:30px"><div class="r">Eigene Worte sind unterstrichen. Die Ziffer nennt die Quelle.</div></div>
+
+      <h2>Was heute stimmt</h2>
+      <div class="blk"><b>Anders als</b> Auftritte in Ihren Bezirken, die das nächste Objekt und seine Rendite zeigen und die Frage davor offen lassen.<br><b>Belegt</b> Einer Erbengemeinschaft haben Sie geraten, <span class="eigen">zwei Jahre zu warten, statt unter Druck zu verkaufen</span><sup>1</sup>. Die Erben <span class="eigen">kamen mit 600.000 mehr zurück</span><sup>1</sup>. Wo nichts für das Warten sprach, ging es schnell: ein Zinshaus in Döbling, verkauft in 11 Wochen.<br><b>Nicht für</b> Eigentümer, die nur den schnellsten Abschluss wollen. Käufer auf Wohnungssuche. Neubau.</div>
+      <div class="rblk"><div class="r"><span class="n">1</span>Ihr Fragebogen, Frage zum Abraten</div></div>
+
+      <div class="blk"><b>Ihr Versprechen</b> Sie sehen die Rechnung für Verkaufen jetzt und für Warten, bevor Sie einen Auftrag unterschreiben.</div>
+      <div class="rblk"></div>
+
+      <div class="blk"><b>Genau.</b> Jede Zahl mit Ort, Zeitraum und Beleg. <span class="nicht">Heißt nicht: belehrend.</span><br><b>Ruhig.</b> Nur Fristen, die im Fall wirklich stehen. Ihre Kunden haben <span class="eigen">sich nie gedrängt gefühlt</span><sup>2</sup>. <span class="nicht">Heißt nicht: zögerlich.</span><br><b>Offen gerechnet.</b> Die Rechnung hinter Ihrem Rat liegt auf dem Tisch. <span class="nicht">Heißt nicht: moralisierend.</span><br><b>Nachgeschaut.</b> Preise aus Eintragungen und eigenen Fällen, fester Termin dienstags im Grundbuch. <span class="nicht">Heißt nicht: Marktbericht ohne Ihren Rat.</span><br><b>Der Zeitpunkt.</b> Elf Wochen oder zwei Jahre, je nachdem, was die Rechnung sagt. <span class="nicht">Heißt nicht: Hinhalten.</span></div>
+      <div class="rblk"><div class="r"><span class="n">2</span>Ihr Gespräch mit uns am 11. September</div></div>
+
+      <div class="blk"><b>Rechnung vor Provision.</b> Nie ein Verkaufsrat, den die eigene Rechnung nicht trägt.<br><b>Nachschauen statt schätzen.</b> Nie eine Erstschätzung über dem, was Eintragungen und eigene Fälle hergeben.<br><b>Fälle ohne Wiedererkennung.</b> Nie ein Fall, an dem Nachbarn ein Haus oder eine Familie erkennen.</div>
+      <div class="rblk"></div>
+
+      <div class="blk"><b>Was falsch wäre</b> Erfundene Fristen. Rendite-Superlative. Uhren und Sanduhren als Bild für Zeit. Handschlag, Schlüssel, Familie im Bild. Politik. Warten ohne Rechnung.<br><b>Wie Sie klingen</b> Genau, ruhig, verlässlich. Sie, überall. Die Zahl vor dem Adjektiv, die Rechnung vor der Meinung.</div>
+      <div class="rblk">
+        <div class="r">Wo Sie stehen: klassisch in der Form, näher am Rat als am Objekt. Die Karte steht im Markenbuch.</div>
+      </div>
+
+      <div class="blk"><b>Ihre Belege</b> 600.000 mehr nach zwei Jahren, Zinshaus in Döbling in 11 Wochen, 8 Prozent über der Erstschätzung in Währing, 14 Abschlüsse 2025. Alle vier sind Ihre Angabe; öffentlich erst mit Unterlage und Einverständnis.</div>
+      <div class="rblk"><div class="r">Preise einzelner Häuser nennen wir öffentlich nicht.</div></div>
+
+      <h2>Woran Sie sich in zwölf Monaten messen lassen</h2>
+      <div class="blk"><b>Ihre Rolle</b> <span class="eigen">Der Zinshaus-Mann, dem Notare vertrauen</span><sup>3</sup>. Bisher kam ein Verkauf über ein Notariat. In zwölf Monaten zählen wir, wie viele Anfragen diesen Weg nehmen.<br><b>Ihr Erfolg</b> Anfragen von Anlegern aus Döbling, Währing und Hietzing, je Quartal. Ausgangswert zum Start.</div>
+      <div class="rblk"><div class="r"><span class="n">3</span>Ihr Fragebogen</div></div>
+
+      <div class="fuss"><span>Prüfsumme [aus hmVertragEingefroren]</span><span>UNIO Werkbank</span></div>
+    </div>
+    <div class="notiz"><b>Druckfassung A4 nach der Bestätigung.</b> Zweispaltig: Text links, Randnotiz rechts auf 176, damit die Quelle neben der Zeile steht und nicht darüber. Positionierungssatz 30/34, Text 11,5/16,7, Randnotiz 10,5/14,7. Kopf und Fuß in Mono für Version und Prüfsumme. Auf 74 Prozent verkleinert dargestellt.</div>
+  </div>
+
+</div>
+</body>
+</html>

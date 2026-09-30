@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anwendungsleiste Leitner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+/* Muster zu 10_system.md 3.6. Werte aus den Tokens der Empfehlung (Grundton hell). Schriften sind Platzhalter, keine Entscheidung. */
+:root {
+  --h-grund: #F5F1EA; --h-flaeche: #EAE6DD; --h-text: #191714; --h-linie: #AFAAA3; --h-akzent: #B17834;
+  --d-grund: #141210; --d-flaeche: #22201D; --d-text: #F1EEE7; --d-linie: #4A4743; --d-akzent: #D29754;
+  --werkbank: #D9D4CA; --notiz: #4A4743;
+  --display: "Newsreader", Georgia, serif; --grot: "Instrument Sans", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--werkbank); color: var(--h-text); font-family: var(--grot); -webkit-font-smoothing: antialiased; }
+main { max-width: 1240px; margin: 0 auto; padding: 56px 16px 72px; }
+h1 { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.1; margin: 0 0 8px; letter-spacing: -0.01em; }
+.lead { font-size: 15px; line-height: 1.5; max-width: 640px; margin: 0 0 44px; color: var(--notiz); }
+.leiste { display: flex; flex-wrap: wrap; gap: 40px 32px; align-items: flex-start; }
+figure { margin: 0; }
+figcaption { font-size: 13px; line-height: 1.45; color: var(--notiz); max-width: 330px; margin-top: 12px; }
+figcaption b { font-weight: 500; color: var(--h-text); }
+/* Wortmarke: jede Letter auf gleicher Dickte, optisch zentriert */
+.wm { font-family: var(--display); font-weight: 400; font-variation-settings: "opsz" 36; display: inline-flex; line-height: 1; white-space: nowrap; }
+.wm span { display: inline-block; width: 0.7em; text-align: center; }
+.wm.stapel { flex-direction: column; }
+.wm.stapel > div { display: flex; }
+/* Kachel in Originalmaßen 1080 x 1350, skaliert */
+.k-rahmen { width: 324px; height: 405px; overflow: hidden; }
+.k { width: 1080px; height: 1350px; position: relative; transform: scale(0.3); transform-origin: 0 0; }
+.hell { background: var(--h-grund); color: var(--h-text); --akz: var(--h-akzent); }
+.dunkel { background: var(--d-grund); color: var(--d-text); --akz: var(--d-akzent); }
+.kern { position: absolute; left: 119px; right: 119px; font-family: var(--display); font-size: 104px; line-height: 1.04; letter-spacing: -0.012em; font-variation-settings: "opsz" 72; }
+.kz { position: absolute; left: 119px; font-family: var(--display); font-size: 220px; line-height: 0.95; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; font-variation-settings: "opsz" 72; }
+.kz small { font-family: var(--grot); font-size: 92px; letter-spacing: 0; margin-left: 22px; }
+.fl { position: absolute; left: 119px; right: 119px; font-size: 48px; line-height: 1.32; font-variant-numeric: tabular-nums; }
+/* Zeitmaß: Linie auf y 1231, Nullstelle x 119, Strich 8 px, Endstriche 48 px */
+.zm { position: absolute; left: 119px; top: 1231px; height: 8px; background: var(--akz); }
+.zm::before, .zm::after { content: ""; position: absolute; width: 8px; height: 48px; top: -20px; background: var(--akz); }
+.zm::before { left: 0; } .zm::after { right: 0; }
+.zm.punkt { width: 8px; background: transparent; } .zm.punkt::after { display: none; }
+.etikett, .folio { position: absolute; top: 1150px; font-size: 32px; line-height: 1.2; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.etikett { left: 119px; } .folio { right: 119px; text-align: right; }
+.luecke { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px; font-size: 32px; line-height: 1.35; }
+.hell .luecke { background: var(--h-flaeche); } .dunkel .luecke { background: var(--d-flaeche); }
+/* Profilkopf im Telefon */
+.tel { width: 360px; background: var(--h-grund); border-radius: 28px; padding: 28px 0 0; overflow: hidden; box-shadow: 0 0 0 1px rgba(25,23,20,0.12); }
+.kopf { display: flex; gap: 18px; align-items: center; padding: 0 20px; }
+.kreis { width: 84px; height: 84px; border-radius: 50%; background: var(--h-flaeche); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9.5px; line-height: 1.3; padding: 10px; flex: none; }
+.bio { padding: 14px 20px 18px; font-size: 13px; line-height: 1.45; }
+.raster { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.raster .fenster { aspect-ratio: 3 / 4; overflow: hidden; position: relative; }
+.raster .fenster .k { transform: scale(0.1176); position: absolute; left: -4px; top: 0; }
+/* Karte 85 x 55 mm, 4 px je mm */
+.karte { width: 340px; height: 220px; position: relative; box-shadow: 0 1px 0 rgba(25,23,20,0.18); }
+.karte .zm { top: 190px; left: 20px; height: 2px; }
+.karte .zm::before { width: 2px; height: 12px; top: -5px; }
+.karte .etikett { top: 164px; left: 20px; font-size: 10.5px; }
+.kontakt { position: absolute; left: 20px; bottom: 20px; font-size: 10.5px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+/* Schild 3:2 */
+.schild { width: 450px; height: 300px; position: relative; }
+.schild .zm { top: 262px; left: 27px; height: 3px; }
+.schild .zm::before { width: 3px; height: 18px; top: -7.5px; }
+.schild .etikett { top: 226px; left: 27px; font-size: 14px; }
+@media (max-width: 720px) { h1 { font-size: 28px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Anwendungsleiste, Empfehlung Papier</h1>
+  <p class="lead">Markus Leitner, Beispiel aus 10_system.md 3.6. Idee aus Schritt 9: Neben jedem Preis steht seine Zeit. Das Zeitmaß trägt als einziges Element den Akzent. Porträt und Objektfotos erscheinen als Lückenfläche, weil Rechte und Einwilligung offen sind. Schriften sind Platzhalter.</p>
+
+  <div class="leiste">
+    <figure>
+      <div class="tel">
+        <div class="kopf">
+          <div class="kreis">Porträt fehlt, Termin über Schritt 11</div>
+          <div class="wm" data-wm="Markus Leitner" style="font-size:17px"></div>
+        </div>
+        <div class="bio">Immobilien in Döbling, Währing und Hietzing</div>
+        <div class="raster" id="raster"></div>
+      </div>
+      <figcaption><b>Profilkopf.</b> Profilkreis als Lückenfläche, nie das Monogramm. Das Raster zeigt die Kacheln im 3:4-Fenster, das Zeitmaß bleibt als Linie lesbar.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="k-rahmen" id="k1"></div>
+      <figcaption><b>Beleg, Grundton hell.</b> Kennzahl nach Millionenregel, Zeitmaß als Spanne, 11 Wochen ergeben 420 von 842 px. Zahlen sind Selbstauskunft, Unterlage offen.</figcaption>
+    </figure>
+    <figure>
+      <div class="k-rahmen" id="k2"></div>
+      <figcaption><b>Claim, Gegenton dunkel.</b> Zeitmaß als Punkt mit seinem festen Termin. Akzent auf dunklem Grund 7,38:1.</figcaption>
+    </figure>
+    <figure>
+      <div class="k-rahmen" id="k3"></div>
+      <figcaption><b>Gesicht, Grundton hell.</b> Bildfeld als Lückenfläche statt Ersatzbild. Zeitmaß auf dem Grund, nie auf der Fläche.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="karte hell">
+        <div class="wm" data-wm="Markus Leitner" style="position:absolute;left:20px;top:22px;font-size:15px"></div>
+        <div class="etikett">Seit (Lücke)</div>
+        <div class="zm punkt"></div>
+      </div>
+      <figcaption><b>Karte vorn.</b> Wortmarke liegend, Zeitmaß als Punkt. Das Etikett wartet auf vorab.fakten.seit.</figcaption>
+    </figure>
+    <figure>
+      <div class="karte hell">
+        <div class="wm stapel" data-stapel="Markus|Leitner" style="position:absolute;left:20px;top:22px;font-size:15px"></div>
+        <div class="kontakt">Telefon aus der Einrichtung<br>E-Mail aus der Einrichtung<br>Grundbuch-Termin dienstags, 11 Uhr</div>
+      </div>
+      <figcaption><b>Karte hinten.</b> Gestapelte Wortmarke, die Letter stehen in Spalten. Kontaktwerte kommen aus der Einrichtung, nie ins Repo.</figcaption>
+    </figure>
+    <figure>
+      <div class="schild hell">
+        <div class="wm" data-wm="Markus Leitner" style="position:absolute;left:27px;top:30px;font-size:34px"></div>
+        <div style="position:absolute;left:27px;top:96px;font-size:16px;line-height:1.4">Anfragen über die Nummer aus der Einrichtung</div>
+        <div class="etikett">Stand 14.10.2026</div>
+        <div class="zm punkt"></div>
+      </div>
+      <figcaption><b>Schild.</b> Startwert 3:2, Rand 6 Prozent. Maß der UNIO-Schilder ist eine Lücke.</figcaption>
+    </figure>
+  </div>
+</main>
+<script>
+function wm(t){ return t.split("").map(function(c){ return "<span>" + (c === " " ? "&nbsp;" : c) + "</span>"; }).join(""); }
+document.querySelectorAll("[data-wm]").forEach(function(el){ el.innerHTML = wm(el.dataset.wm); });
+document.querySelectorAll("[data-stapel]").forEach(function(el){ el.innerHTML = el.dataset.stapel.split("|").map(function(z){ return "<div>" + wm(z) + "</div>"; }).join(""); });
+var kacheln = [
+  '<div class="k hell"><div class="kz" style="top:560px">4,2<small>Mio. €</small></div>' +
+  '<div class="fl" style="top:820px">Zinshaus in Sievering, verkauft.</div>' +
+  '<div class="etikett">11 Wochen</div><div class="folio">Sievering in Zahlen 01</div><div class="zm" style="width:420px"></div></div>',
+  '<div class="k dunkel"><div class="kern" style="top:170px">Zeit ist Teil des Preises.</div>' +
+  '<div class="etikett">Dienstags, 11 Uhr</div><div class="folio">Noch nicht verkaufen 01</div><div class="zm punkt"></div></div>',
+  '<div class="k hell"><div class="luecke" style="left:0;top:0;width:1080px;height:1080px">Porträt fehlt. Rechte offen, Termin über Schritt 11.</div>' +
+  '<div class="etikett">Stand 14.10.2026</div><div class="zm punkt"></div></div>'
+];
+["k1","k2","k3"].forEach(function(id, i){ document.getElementById(id).innerHTML = kacheln[i]; });
+document.getElementById("raster").innerHTML = kacheln.map(function(k){ return '<div class="fenster">' + k + '</div>'; }).join("");
+</script>
+</body>
+</html>

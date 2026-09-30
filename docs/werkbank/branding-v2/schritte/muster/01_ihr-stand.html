@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muster Ihr Stand</title>
+<link rel="stylesheet" href="../../../../../tokens/fonts.css">
+<style>
+/* Muster zu 01_auftakt.md, Abschnitt 3.4. Nur UNIO-Grundpalette, keine Akzentfarbe.
+   Power Grotesk hat keine Tabellenziffern (GSUB ohne tnum, Ziffer 1 schmaler als 0),
+   darum stehen Daten und Minuten in der Datenschrift JetBrains Mono. */
+:root {
+  --paper: #F7F5F1; --paper-2: #F0EDE6; --paper-3: #E7E2D8;
+  --ink: #0B0A09; --ink-2: #1B1A16; --ink-3: #383429;
+  --muted: rgba(27, 26, 22, 0.6); --hair: rgba(11, 10, 9, 0.14);
+  --grot: "Power Grotesk", "Helvetica Neue", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #D9D4CA; color: var(--ink-2); font-family: var(--grot); -webkit-font-smoothing: antialiased; }
+.board { display: flex; flex-wrap: wrap; gap: 56px 48px; padding: 64px; align-items: flex-start; }
+.stueck { display: flex; flex-direction: column; gap: 14px; }
+.notiz { font-family: var(--grot); font-size: 14px; line-height: 1.45; color: var(--ink-3); max-width: 390px; }
+.notiz b { font-weight: 500; color: var(--ink); }
+
+/* Telefon: 390 breit, 24 Rand, eine Spalte */
+.tel { width: 390px; background: var(--paper); border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--hair); }
+.tel .innen { padding: 0 24px 40px; }
+.leiste { display: flex; gap: 20px; padding: 18px 24px 0; font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--hair); }
+.leiste span { padding-bottom: 14px; }
+.leiste span.an { color: var(--ink); box-shadow: inset 0 -1.5px 0 var(--ink); }
+
+h1 { font-weight: 400; letter-spacing: -0.03em; color: var(--ink); margin: 0; text-wrap: balance; }
+.tel h1 { font-size: 40px; line-height: 1.02; margin-top: 40px; }
+.quelle { font-size: 14px; line-height: 1.4; color: var(--muted); margin-top: 10px; }
+.lead { font-size: 18px; line-height: 1.5; color: var(--ink-2); margin: 28px 0 0; max-width: 34em; }
+
+.fakten { list-style: none; margin: 36px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.fakten li { padding: 18px 0 16px; border-bottom: 1px solid var(--hair); }
+.fakten .wert { font-size: 22px; line-height: 1.25; letter-spacing: -0.01em; color: var(--ink); }
+.fakten .quelle { margin-top: 6px; }
+
+h2 { font-weight: 400; font-size: 26px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); margin: 44px 0 0; }
+.offen { list-style: none; margin: 16px 0 0; padding: 0; }
+.offen li { font-size: 16px; line-height: 1.45; padding: 12px 0; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+.offen li a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; font-size: 15px; }
+
+.arbeit { font-size: 15px; line-height: 1.45; color: var(--ink-3); margin-top: 32px; }
+.knopf { display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 16px; margin-top: 20px; }
+.knopf.zweit { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair); }
+.unter { font-size: 14px; color: var(--muted); margin-top: 10px; }
+
+/* Ablauf: Datum in fester Breite */
+.zeit { list-style: none; margin: 32px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.zeit li { display: grid; grid-template-columns: 88px 1fr auto; gap: 12px; padding: 13px 0 12px; border-bottom: 1px solid var(--hair); }
+.zeit .d { font-family: var(--mono); font-size: 13px; line-height: 1.55; color: var(--ink); font-variant-numeric: tabular-nums; }
+.zeit .t { font-size: 16px; line-height: 1.35; color: var(--ink); }
+.zeit .s { font-size: 14px; line-height: 1.4; color: var(--muted); margin-top: 2px; }
+.zeit .m { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink-3); text-align: right; white-space: nowrap; }
+.zeit li.vorbei .t, .zeit li.vorbei .d { color: var(--muted); }
+.zeit li.jetzt { box-shadow: inset 2px 0 0 var(--ink); padding-left: 10px; margin-left: -12px; }
+.summe { font-size: 16px; line-height: 1.45; color: var(--ink-2); margin-top: 22px; }
+.summe b { font-weight: 400; color: var(--ink); }
+
+/* Einwilligungen */
+.einw { list-style: none; margin: 32px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.einw li { padding: 18px 0 18px; border-bottom: 1px solid var(--hair); }
+.einw .n { font-size: 19px; line-height: 1.25; letter-spacing: -0.01em; color: var(--ink); }
+.einw .w { font-size: 15px; line-height: 1.45; color: var(--ink-2); margin-top: 6px; }
+.einw .f { font-size: 15px; line-height: 1.45; color: var(--muted); margin-top: 4px; }
+.einw .st { font-size: 15px; line-height: 1.45; color: var(--ink); margin-top: 12px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.einw .st a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.einw .spaeter .st { color: var(--muted); margin-top: 6px; }
+.drei { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.drei span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(11,10,9,.32); font-size: 16px; color: var(--ink); }
+.daten { margin: 44px 0 0; padding: 0; list-style: none; }
+.daten li { font-size: 15px; line-height: 1.5; color: var(--ink-2); padding: 10px 0; border-bottom: 1px solid var(--hair); }
+
+/* Rechner: 1440 breit, 12 Spalten, 80 Rand, dargestellt mit zoom */
+.pc { width: 1440px; zoom: .62; background: var(--paper); border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 1.6px var(--hair); }
+.pc .leiste { padding: 26px 80px 0; font-size: 16px; gap: 28px; }
+.pc .leiste span { padding-bottom: 18px; }
+.pc .raster { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; padding: 0 80px 96px; }
+.pc h1 { grid-column: 1 / span 8; grid-row: 1; font-size: 88px; line-height: .98; margin-top: 96px; }
+.pc .kopfquelle { grid-column: 9 / span 4; grid-row: 1; align-self: end; font-size: 16px; margin: 0 0 12px; }
+.pc .lead { grid-column: 1 / span 6; font-size: 20px; margin-top: 40px; }
+.pc .fakten { grid-column: 1 / span 12; margin-top: 64px; }
+.pc .fakten li { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; align-items: baseline; padding: 26px 0 24px; }
+.pc .fakten .wert { grid-column: 1 / span 8; font-size: 34px; letter-spacing: -0.02em; }
+.pc .fakten .quelle { grid-column: 9 / span 4; margin: 0; font-size: 16px; }
+.pc .links { grid-column: 1 / span 7; }
+.pc .rechts { grid-column: 9 / span 4; padding-top: 72px; }
+.pc .rechts .knopf { margin-top: 0; }
+.pc .rechts .arbeit { margin-top: 28px; font-size: 16px; color: var(--muted); }
+.pc .rechts .unter { font-size: 16px; }
+.pc h2 { font-size: 30px; margin-top: 72px; }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- 1. Ihr Stand, Markus heute, Telefon -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span>Einwilligungen</span><span class="an">Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Sievering, zwischen Sieveringer Straße und Agnesgasse.</h1>
+        <div class="quelle">Ihr Grätzl, aus Ihren Angaben vom September</div>
+        <p class="lead">So haben wir Ihre Angaben gelesen. Im Fragebogen bestätigen oder ändern Sie jede Zeile. Erst danach arbeiten wir damit.</p>
+        <ul class="fakten">
+          <li><div class="wert">Döbling, Währing, Hietzing</div><div class="quelle">Bezirke in Ihrer Reihenfolge, aus Ihren Angaben</div></li>
+          <li><div class="wert">Zinshaus, Anlegerwohnung, Eigentumswohnung Altbau, Denkmalschutz und Sanierung</div><div class="quelle">Objektarten, aus Ihren Angaben</div></li>
+          <li><div class="wert">5 bis 10 Jahre</div><div class="quelle">Ihre Erfahrung, aus Ihren Angaben. Das Jahr fragen wir nach.</div></li>
+          <li><div class="wert">Website, LinkedIn, Instagram</div><div class="quelle">Ihre Kanäle heute, aus Ihren Angaben</div></li>
+        </ul>
+        <h2>Was uns noch fehlt</h2>
+        <ul class="offen">
+          <li><span>Ihr Logo als Datei, am besten vom Gestalter</span><a>Hochladen</a></li>
+          <li><span>Ihre verkauften Objekte, damit wir rechnen statt schätzen</span><a>Übernehmen</a></li>
+        </ul>
+        <div class="arbeit">Gelesen aus Ihren Angaben vom September und einem Porträt vom Foto-Termin.</div>
+        <div class="knopf">Fragebogen beginnen</div>
+        <div class="unter">21 Minuten: Fragebogen 15, Fremdbild-Link 2, Bildwahl 4. Sie können jederzeit unterbrechen.</div>
+      </div>
+    </div>
+    <div class="notiz"><b>Ihr Stand, Markus heute, Telefon.</b> Zustand teilweise: keine Import-Daten, alles Selbstauskunft aus v1. 390 breit, Rand 24. Titel 40/41, Wert 22/27,5, Fließtext 18/27, Quelle 14/19,6. Die Quelle steht unter dem Wert, nie darüber. Die Minuten unter dem Knopf kommen aus hmAuftragDauer, dieselben 21 wie in Ablauf.</div>
+  </div>
+
+  <!-- 2. Ablauf, Markus, Telefon -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span class="an">Ablauf</span><span>Einwilligungen</span><span>Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Dienstag, 24.&nbsp;November.</h1>
+        <p class="lead">Geplant als Ihr Live-Tag in Sievering. Fest wird er mit Ihrer Rückmeldung nach dem Reveal. Bis zum Rückblick im Januar sind es acht Termine mit uns und fünf kurze Aufgaben im Link.</p>
+        <div class="summe">Ihre Zeit insgesamt: <b>etwa 11 Std. 25 Min.</b>, davon etwa 3 Std. 30 Min. am Drehtag. Die Zeiten sind unsere Schätzung, wir messen und korrigieren sie.</div>
+        <ul class="zeit">
+          <li class="vorbei"><div class="d">Mo 05.10.</div><div><div class="t">Auftakt-Gespräch</div><div class="s">Danach Logo und Fotos hochladen, 5 Min.</div></div><div class="m">30 Min.</div></li>
+          <li class="jetzt"><div class="d">Mi 07.10.</div><div><div class="t">Fragebogen und Bildwahl</div><div class="s">Im Link, bis Freitag</div></div><div class="m">21 Min.</div></li>
+          <li><div class="d">Di 13.10.</div><div><div class="t">Workshop</div><div class="s">Ihre Fälle aus Döbling, in Ihren Worten</div></div><div class="m">110 Min.</div></li>
+          <li><div class="d">Di 20.10.</div><div><div class="t">Richtungstermin</div><div class="s">Zwei Richtungen, Sie wählen</div></div><div class="m">20 Min.</div></li>
+          <li><div class="d">Do 22.10.</div><div><div class="t">Markenvertrag und Stimme</div><div class="s">Im Link</div></div><div class="m">9 Min.</div></li>
+          <li><div class="d">Do 29.10.</div><div><div class="t">Porträt-Termin</div><div class="s">Vorgemerkt, weil ein Porträt für den Feed nicht reicht</div></div><div class="m">75 Min.</div></li>
+          <li><div class="d">Do 05.11.</div><div><div class="t">Reveal</div><div class="s">Wir zeigen Ihre Marke</div></div><div class="m">60 Min.</div></li>
+          <li><div class="d">Fr 06.11.</div><div><div class="t">Ihre Rückmeldung</div><div class="s">Im Link, nach einer Nacht</div></div><div class="m">15 Min.</div></li>
+          <li><div class="d">Di 10.11.</div><div><div class="t">Freigabe</div><div class="s">Im Link</div></div><div class="m">8 Min.</div></li>
+          <li><div class="d">Do 12.11.</div><div><div class="t">Drehtag</div><div class="s">Vorgemerkt. Dauer geschätzt, genau nach dem Fotobrief</div></div><div class="m">3 Std. 30 Min.</div></li>
+          <li><div class="d">Do 19.11.</div><div><div class="t">Übergabe</div></div><div class="m">45 Min.</div></li>
+          <li><div class="d">Fr 20.11.</div><div><div class="t">Vorschau für Ihr Umfeld</div></div><div class="m">15 Min.</div></li>
+          <li><div class="d">Di 24.11.</div><div><div class="t">Live-Tag</div><div class="s">Braucht Ihre Rückmeldung eine größere Änderung, wird es Di 01.12.</div></div><div class="m">30 Min.</div></li>
+          <li><div class="d">Do 07.01.27</div><div><div class="t">Rückblick</div><div class="s">Die ersten 30 Tage in Zahlen</div></div><div class="m">30 Min.</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="notiz"><b>Ablauf, Markus, Telefon.</b> Vierzehn Momente, jeder mit Datum und Dauer. Daten und Minuten in JetBrains Mono 13 und 12,5, weil Power Grotesk keine Tabellenziffern hat. Die Summe steht vor der Liste, in Power Grotesk, weil sie im Satz steht. Der Live-Tag heißt schon in der Einleitung geplant. Der laufende Moment trägt eine Linie links, keine Farbe.</div>
+  </div>
+
+  <!-- 3. Ihr Stand, Markus heute, Rechner -->
+  <div class="stueck">
+    <div class="pc">
+      <div class="leiste"><span>Ablauf</span><span>Einwilligungen</span><span class="an">Ihr Stand</span></div>
+      <div class="raster">
+        <h1>Sievering, zwischen Sieveringer Straße und Agnesgasse.</h1>
+        <div class="quelle kopfquelle">Ihr Grätzl, aus Ihren Angaben vom September</div>
+        <p class="lead">So haben wir Ihre Angaben gelesen. Im Fragebogen bestätigen oder ändern Sie jede Zeile. Erst danach arbeiten wir damit.</p>
+        <ul class="fakten">
+          <li><div class="wert">Döbling, Währing, Hietzing</div><div class="quelle">Bezirke in Ihrer Reihenfolge, aus Ihren Angaben</div></li>
+          <li><div class="wert">Zinshaus, Anlegerwohnung, Eigentumswohnung Altbau, Denkmalschutz und Sanierung</div><div class="quelle">Objektarten, aus Ihren Angaben</div></li>
+          <li><div class="wert">5 bis 10 Jahre</div><div class="quelle">Ihre Erfahrung, aus Ihren Angaben. Das Jahr fragen wir nach.</div></li>
+          <li><div class="wert">Website, LinkedIn, Instagram</div><div class="quelle">Ihre Kanäle heute, aus Ihren Angaben</div></li>
+        </ul>
+        <div class="links">
+          <h2>Was uns noch fehlt</h2>
+          <ul class="offen">
+            <li><span>Ihr Logo als Datei, am besten vom Gestalter</span><a>Hochladen</a></li>
+            <li><span>Ihre verkauften Objekte, damit wir rechnen statt schätzen</span><a>Übernehmen</a></li>
+          </ul>
+        </div>
+        <div class="rechts">
+          <div class="knopf">Fragebogen beginnen</div>
+          <div class="unter">21 Minuten: Fragebogen 15, Fremdbild-Link 2, Bildwahl 4. Sie können jederzeit unterbrechen.</div>
+          <div class="arbeit">Gelesen aus Ihren Angaben vom September und einem Porträt vom Foto-Termin.</div>
+        </div>
+      </div>
+    </div>
+    <div class="notiz" style="max-width: 900px"><b>Ihr Stand, Markus heute, Rechner.</b> 1440 breit, 12 Spalten, Rand 80, Spaltenabstand 24, hier auf 62 Prozent verkleinert. Titel 88/86 über acht Spalten, seine Quelle in Spalte 9 bis 12 auf der letzten Titelzeile. Einleitung 20/30 über sechs Spalten (rund 60 Zeichen), Wert 34 über acht Spalten, Quelle 16 in Spalte 9 bis 12 auf der Grundlinie des Werts. Links steht, was ihm gehört: seine Werte, seine offenen Aufgaben. Rechts steht, was von uns kommt: jede Quelle und am Ende der Start. Der Knopf schließt die Quellenspalte ab, weil nach dem Prüfen der Herkunft der Fragebogen der nächste Schritt ist.</div>
+  </div>
+
+  <!-- 4. Zustand voll -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span>Einwilligungen</span><span class="an">Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Sievering, zwischen Sieveringer Straße und Agnesgasse.</h1>
+        <div class="quelle">Ihr Grätzl, aus 14 Objekten in 5 Straßen, von Ihnen im Fragebogen zu bestätigen</div>
+        <p class="lead">So haben wir Ihren Bestand, Ihre Konten und Ihre Website gelesen. Im Fragebogen bestätigen oder ändern Sie jede Zeile.</p>
+        <ul class="fakten">
+          <li><div class="wert">Döbling, Währing, Hietzing</div><div class="quelle">Bezirke nach verkauften Objekten seit Oktober 2024: 11, 6 und 2</div></li>
+          <li><div class="wert">Zinshaus, Anlegerwohnung, Eigentumswohnung Altbau, Denkmalschutz und Sanierung</div><div class="quelle">Objektarten, aus 31 Objekten Ihres Bestands</div></li>
+          <li><div class="wert">Seit 2016</div><div class="quelle">Laut Ihrer Website, Seite Über mich</div></li>
+          <li><div class="wert">Website, LinkedIn, Instagram</div><div class="quelle">Aus Ihren verbundenen Konten</div></li>
+        </ul>
+        <div class="arbeit">Gelesen aus 31 Objekten, 3 Konten und Ihrer Website.</div>
+        <div class="knopf">Fragebogen beginnen</div>
+      </div>
+    </div>
+    <div class="notiz"><b>Zustand voll, mit Import, Beispielzahlen.</b> Die Zahlen 14, 5, 11, 6, 2, 31, 3 und das Jahr 2016 zeigen nur die Mechanik und sind keine Werte über Markus: Im Seed liegt kein Import. Im Betrieb ist jede Zahl eine Zählung aus vorab.kennzahlen oder vorab.fakten[].n, gesetzt in Power Grotesk wie jede Zahl im Satz.</div>
+  </div>
+
+  <!-- 5. Zustand ohne Bestand -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span>Einwilligungen</span><span class="an">Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Noch kein Bestand übernommen.</h1>
+        <p class="lead">Wir schätzen nichts, um diese Seite zu füllen. Deshalb fragt der Fragebogen drei Dinge mehr als sonst:</p>
+        <ul class="fakten">
+          <li><div class="wert">In welchen Bezirken Sie arbeiten</div><div class="quelle">sonst gerechnet aus Ihren Objekten</div></li>
+          <li><div class="wert">Welche Objektarten Sie vermitteln</div><div class="quelle">sonst gelesen aus Ihrem Bestand</div></li>
+          <li><div class="wert">Ihre letzten drei Abschlüsse</div><div class="quelle">sonst aus Ihrem Bestand vorbereitet</div></li>
+        </ul>
+        <div class="arbeit">Bestand später übernehmen? Das geht jederzeit, gemeinsam in 20 Minuten.</div>
+        <div class="knopf">Fragebogen beginnen</div>
+      </div>
+    </div>
+    <div class="notiz"><b>Zustand ohne Bestand.</b> Die Zahl im Satz ("drei Dinge") zählt die Einträge in `vorab.luecken` mit Zielschritt 2. Die Liste zeigt genau diese Einträge, in derselben Reihenfolge wie im Fragebogen.</div>
+  </div>
+
+  <!-- 6. Zustand noch nicht fertig -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span>Einwilligungen</span><span class="an">Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Ihr Stand kommt am Mittwoch, 7.&nbsp;Oktober.</h1>
+        <p class="lead">Wir lesen gerade Ihre Angaben und prüfen jede Zeile, bevor Sie sie sehen. Sie bekommen eine Nachricht.</p>
+        <h2>Beim Import fehlt etwas</h2>
+        <ul class="offen">
+          <li><span>Bei 6 Objekten fehlt der Status verkauft oder aktiv</span><a>Ansehen</a></li>
+        </ul>
+        <div class="knopf zweit">Gemeinsam übernehmen, 20 Minuten</div>
+      </div>
+    </div>
+    <div class="notiz"><b>Zustand noch nicht fertig und Fehler.</b> Vor der Abzeichnung zeigt der Link nur das Datum. Meldet die Import-Prüfung fehlende Felder, steht darunter genau diese Lücke mit einer Handlung. Die Zahl 6 ist ein Beispiel für die Mechanik, kein Wert über Markus.</div>
+  </div>
+
+  <!-- 7. Einwilligungen, im Gespräch, Telefon -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span class="an">Einwilligungen</span><span>Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Sechs Fragen zu Ihren Daten. Zwei davon heute.</h1>
+        <p class="lead">Die anderen stellen wir, wenn sie anstehen. Nichts ist vorausgewählt. Jede Antwort können Sie später ändern.</p>
+        <ul class="einw">
+          <li>
+            <div class="n">Ihr öffentlicher Auftritt</div>
+            <div class="w">Wir lesen Ihre Website, Ihr Google-Profil, Ihre Instagram-Bio und Ihre eigenen Inserate, damit Sie im Fragebogen bestätigen statt eintragen.</div>
+            <div class="f">Wenn nicht: Wir lesen nur Ihren Bestand und Ihre Konten, den Rest tragen Sie im Fragebogen selbst ein.</div>
+            <div class="st"><span>Offen bis Dienstag, 6. Oktober, 18 Uhr</span></div>
+            <div class="drei"><span>Ja</span><span>Nein</span><span>Später</span></div>
+          </li>
+          <li>
+            <div class="n">Aufnahme im Workshop</div>
+            <div class="w">Wir nehmen das Gespräch auf und übertragen es auf dem Rechner des Teams in Text. Aufgenommen wird nur, wenn alle Anwesenden zu Beginn zustimmen.</div>
+            <div class="f">Wenn nicht: Wir schreiben mit und lesen Ihnen wichtige Sätze zur Bestätigung vor.</div>
+            <div class="st"><span>Offen bis zum Workshop am 13. Oktober</span></div>
+            <div class="drei"><span>Ja</span><span>Nein</span><span>Später</span></div>
+          </li>
+          <li class="spaeter"><div class="n">Fremdbild-Link</div><div class="st"><span>Kommt mit dem Fragebogen am 7. Oktober</span></div></li>
+          <li class="spaeter"><div class="n">Ihre Objektfotos zeigen</div><div class="st"><span>Fragen wir nach dem Richtungstermin, bis 27. Oktober</span></div></li>
+          <li class="spaeter"><div class="n">Aufnahme beim Reveal</div><div class="st"><span>Fragen wir mit der Einladung, bis 3. November</span></div></li>
+          <li class="spaeter"><div class="n">Gespräch am Drehtag aufnehmen</div><div class="st"><span>Fragen wir mit der Einladung, bis 12. November</span></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="notiz"><b>Einwilligungen, im Gespräch, Telefon.</b> Der Makler entscheidet am eigenen Telefon, das Team hat die Bildschirmfreigabe beendet. Drei Knöpfe gleicher Größe und gleicher Kontur, keiner gefüllt, keiner vorgewählt. Über den Knöpfen die echte Frist: Zweck 1 wartet einen Werktag, danach liest das Dossier nur Bestand und Konten. Die vier späteren Zwecke stehen schon da, mit dem Tag, an dem wir fragen.</div>
+  </div>
+
+  <!-- 8. Einwilligungen nach der Entscheidung, mit Datenblock -->
+  <div class="stueck">
+    <div class="tel">
+      <div class="leiste"><span>Ablauf</span><span class="an">Einwilligungen</span><span>Ihr Stand</span></div>
+      <div class="innen">
+        <h1>Sechs Fragen zu Ihren Daten. Zwei beantwortet.</h1>
+        <ul class="einw">
+          <li>
+            <div class="n">Ihr öffentlicher Auftritt</div>
+            <div class="st"><span>Ja, seit 5. Oktober</span><a>Ändern</a></div>
+          </li>
+          <li>
+            <div class="n">Aufnahme im Workshop</div>
+            <div class="st"><span>Nein, seit 5. Oktober</span><a>Ändern</a></div>
+            <div class="f">Wir schreiben im Workshop mit und lesen Ihnen wichtige Sätze zur Bestätigung vor.</div>
+          </li>
+          <li class="spaeter"><div class="n">Fremdbild-Link</div><div class="st"><span>Kommt mit dem Fragebogen am 7. Oktober</span></div></li>
+          <li class="spaeter"><div class="n">Ihre Objektfotos zeigen</div><div class="st"><span>Fragen wir nach dem Richtungstermin, bis 27. Oktober</span></div></li>
+          <li class="spaeter"><div class="n">Aufnahme beim Reveal</div><div class="st"><span>Fragen wir mit der Einladung, bis 3. November</span></div></li>
+          <li class="spaeter"><div class="n">Gespräch am Drehtag aufnehmen</div><div class="st"><span>Fragen wir mit der Einladung, bis 12. November</span></div></li>
+        </ul>
+        <h2>Was mit Ihren Daten passiert</h2>
+        <ul class="daten">
+          <li>Wir lesen Ihren Bestand ohne Kontakte und nur die Quellen, zu denen Sie Ja gesagt haben.</li>
+          <li>Alles liegt in der geschützten Werkbank von UNIO. Sie brauchen kein Konto bei einem fremden Werkzeug.</li>
+          <li>An Claude, das Sprachmodell, mit dem wir arbeiten, gehen freigegebene Texte und gerundete Eckdaten Ihrer Abschlüsse. Nie Adressen, Kontakte oder Bilder.</li>
+          <li>Sehen können es Sie und das Team, das Ihre Marke baut. Wer mitentscheidet, bekommt die Einladungen von Ihnen weitergeleitet, wir speichern keine Kontaktdaten dieser Person.</li>
+          <li>Screenshots Ihres heutigen Auftritts löschen wir nach dem Rückblick im Januar. Wann wir Aufnahmen löschen, steht hier, sobald es festgelegt ist.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notiz"><b>Nach der Entscheidung, Beispiel der Mechanik.</b> Ja und Nein sind Beispiele, keine Entscheidungen von Markus: Der Seed kennt keine. Jede Zeile zeigt die Antwort mit Datum und einen Link zum Ändern. Beim Nein steht der Folgesatz weiter sichtbar, damit klar bleibt, was jetzt anders läuft. Der Block über die Daten steht dort, wo er entscheidet, in fünf Sätzen.</div>
+  </div>
+
+</div>
+</body>
+</html>
