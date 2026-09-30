@@ -8,6 +8,7 @@
 - [x] 4. Eine Quelle, Grundstufe: Einfrieren mit Prüfsumme, öffentliche Ausgaben lesen die Version, eine Anrede-Regel
 - [x] 5. Markus als Beispiel: Claim „Rat vor Auftrag.“, Rat-Amber, Chronik (Newsreader und Instrument Sans), Welt Weite, Maßstab-Wortmarke
 - [x] 6. Selbsttest 104 Prüfungen, Fehlergrenze je Bereich, Textsatz misst nur mit geladener Schrift
+- [x] Nachtrag: Bilder der Vorschau auf Vorlagengröße (Porträt 1300 px hoch, Titel 1600, sonst 1000, WebP). Bewegung gemessen: höchstens 9,4 ms je Bild, auch Look 1 mit Porträt-Maske
 
 ## Erledigt
 
@@ -37,6 +38,7 @@
 
 ## Lehren
 
+- Vorlagen sind für 940-px-WebP gebaut. Fotos vor dem Einsetzen auf diese Größe bringen, sonst ruckelt die Scroll-Animation.
 - CDN-Adressen prüfen: Lenis lag auf einer toten cdnjs-Adresse, alle Vorlagen scrollten dadurch ruckelig.
 - Canvas misst Text mit Ersatzschrift, solange die Webschrift lädt. Nur mit geladener Schrift messen und merken.
 - Ein Fehler in einem Bereich darf nie die ganze App leeren: Fehlergrenze um den Hauptbereich.

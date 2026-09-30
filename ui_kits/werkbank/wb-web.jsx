@@ -186,7 +186,47 @@ function hmWebKarte(mid, b, web, bib) {
   ["ref_penthouse", "ref_altbau", "ref_anlage", "ref_villa", "ref_vorsorge"].forEach((key, i) => { k[key] = obj[(i + 3) % obj.length].img; });
   for (let i = 1; i <= 6; i++) k["life" + i] = url("life" + i) || archiv[i - 1];
   k.hero = url("portrait") || (b.portrait ? hmAbs(b.portrait) : hmWebPlatzhalter(b));
+  k._obj = obj.map((o) => o.img);
   return k;
+}
+
+/* Bilder auf die Größe der Vorlage bringen: die Showcases sind für 940 px (WebP, rund 50 KB) und ein Porträt von 635 x 1300 px gebaut.
+   Große Fotos (bis 8 MB, 4000 px) bremsen die Scroll-Animation und die Porträt-Maske. Ergebnis wird je Sitzung gemerkt. */
+const HM_WEB_KLEIN = new Map();
+function hmWebZiel(key) { return key === "hero" ? { h: 1300 } : key === "neubau" ? { w: 1600 } : { w: 1000 }; }
+function hmWebBildKlein(url, ziel) {
+  if (!url || typeof url !== "string" || url.startsWith("data:image/svg")) return Promise.resolve(url);
+  const k = url + "|" + (ziel.w || "") + "x" + (ziel.h || "");
+  if (HM_WEB_KLEIN.has(k)) return HM_WEB_KLEIN.get(k);
+  const p = (async () => {
+    const img = new Image(); img.decoding = "async"; img.src = url; await img.decode();
+    const nw = img.naturalWidth, nh = img.naturalHeight; if (!nw || !nh) return url;
+    const f = Math.min(1, ziel.w ? ziel.w / nw : ziel.h / nh);
+    const w = Math.max(1, Math.round(nw * f)), h = Math.max(1, Math.round(nh * f));
+    const c = document.createElement("canvas"); c.width = w; c.height = h; const g = c.getContext("2d");
+    g.drawImage(img, 0, 0, w, h);
+    let alpha = false;
+    if (/\.png|image\/png|^blob:|webp/i.test(url)) { try { const t = document.createElement("canvas"); t.width = 32; t.height = 32; const tg = t.getContext("2d"); tg.drawImage(img, 0, 0, 32, 32); const d = tg.getImageData(0, 0, 32, 32).data; for (let i = 3; i < d.length; i += 4) if (d[i] < 250) { alpha = true; break; } } catch (e) { alpha = false; } }
+    let blob = await new Promise((r) => c.toBlob(r, "image/webp", 0.82));
+    if (!blob || blob.type !== "image/webp") blob = await new Promise((r) => c.toBlob(r, alpha ? "image/png" : "image/jpeg", 0.85));
+    if (!blob) return url;
+    return URL.createObjectURL(blob);
+  })().catch(() => url);
+  HM_WEB_KLEIN.set(k, p);
+  return p;
+}
+async function hmWebKarteKlein(karte) {
+  const out = {};
+  await Promise.all(Object.entries(karte || {}).map(async ([key, u]) => {
+    out[key] = Array.isArray(u) ? await Promise.all(u.map((x) => hmWebBildKlein(x, { w: 1000 }))) : await hmWebBildKlein(u, hmWebZiel(key));
+  }));
+  return out;
+}
+/* Baudaten mit verkleinerten Bildern. Solange neu gerechnet wird, bleibt der letzte Stand stehen */
+function useBauKlein(bau) {
+  const [k, setK] = React.useState(null);
+  React.useEffect(() => { let weg = false; hmWebKarteKlein(bau.karte).then((x) => { if (!weg) setK({ sig: bau.sig, karte: x }); }); return () => { weg = true; }; }, [bau.sig]);
+  return k ? { ...bau, karte: k.karte, sig: k.sig } : null;
 }
 /* Ohne Porträt: Monogramm auf Markenfläche statt Loch im Hero. Die Prüfung meldet es als Hinweis */
 function hmWebPlatzhalter(b) {
@@ -204,7 +244,7 @@ function hmWebInhalt(doc, F, t, karte, fokus) {
   const html = doc.documentElement;
   const region = (F.region || "Wien").split(",")[0].trim();
   const mail = F.mail || "", tel = F.tel || "", ig = F.instagram || "";
-  const objekte = hmWebObjekte();
+  const objekte = hmWebObjekte().map((o, i) => (karte && Array.isArray(karte._obj) && karte._obj[i] ? { ...o, img: karte._obj[i] } : o));
   const handle = (ig || "").replace("@", "");
   const paare = [["Immobilien mit Strategie, Sichtbarkeit und persönlicher Begleitung.", F.headline], ["Immobilien, persönlich verkauft.", F.headline], ["Für mich ist eine Immobilie kein Objekt, sondern ein Lebensraum.", F.zitat], ["marcus@example.at", mail], ["@marcus.weiss.immo", ig], ["marcus.weiss.immo", handle], ["+43 (0)1 000 00 00", tel], ["Marcus", t.vor], ["Weiss", t.nach], ["· Wien", "· " + region], ["Wien )", region + " )"]];
   const w = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
@@ -541,7 +581,7 @@ function hmWebBau(m, look, web, bib, felder, mini) {
 function useWebHtml(n, bau, mini, animiert) {
   const [html, setHtml] = React.useState(null);
   const [fehler, setFehler] = React.useState(null);
-  React.useEffect(() => { let weg = false; const id = setTimeout(() => hmWebQuelle(n).then((q) => { if (!weg) { setHtml(hmWebHtml(q, n, bau.karte, { mini, animiert: !!animiert })); setFehler(null); } }).catch((e) => !weg && setFehler(e.message)), html ? 250 : 0); return () => { weg = true; clearTimeout(id); }; }, [n, bau.sig, !!animiert]);
+  React.useEffect(() => { if (!bau) return; let weg = false; const id = setTimeout(() => hmWebQuelle(n).then((q) => { if (!weg) { setHtml(hmWebHtml(q, n, bau.karte, { mini, animiert: !!animiert })); setFehler(null); } }).catch((e) => !weg && setFehler(e.message)), html ? 250 : 0); return () => { weg = true; clearTimeout(id); }; }, [n, bau && bau.sig, !!animiert]);
   return [html, fehler];
 }
 
@@ -550,10 +590,10 @@ function GeraeteWahl({ geraet, setG }) {
 }
 
 function WebVorschau({ m, t, look, geraet, setG, web, bib, felder, setAlle, pruef, setPruef }) {
-  const bau = hmWebBau(m, look, web, bib, felder, false);
+  const bau = useBauKlein(hmWebBau(m, look, web, bib, felder, false)) || { F: {}, karte: {}, fokus: {}, sig: "", leer: true };
   /* Bewegung: die Vorlage mit Scroll-Animation und weichem Scrollen (Lenis), zum Durchscrollen im Rahmen */
   const [bewegt, setBewegt] = React.useState(false);
-  const [html, fehler] = useWebHtml(look, bau, false, bewegt);
+  const [html, fehler] = useWebHtml(look, bau.leer ? null : bau, false, bewegt);
   const g = HM_WEB_GERAETE.find((x) => x.id === geraet);
   const b = hmBrand(m.id);
   const oeffnen = async () => {
@@ -585,8 +625,8 @@ function WandKachel({ m, n, t, geraet, web, bib, felder, aktiv, waehle }) {
   const ref = React.useRef(null);
   const [sicht, setSicht] = React.useState(false);
   React.useEffect(() => { const el = ref.current; if (!el) return; const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setSicht(true)), { rootMargin: "200px" }); io.observe(el); return () => io.disconnect(); }, []);
-  const bau = hmWebBau(m, n, web, bib, felder, true);
-  const [html] = useWebHtml(n, bau, true);
+  const bau = useBauKlein(hmWebBau(m, n, web, bib, felder, true)) || { F: {}, karte: {}, fokus: {}, sig: "", leer: true };
+  const [html] = useWebHtml(n, bau.leer ? null : bau, true);
   const [pr, setPr] = React.useState(null);
   const l = HM_LOOKS.find((x) => x.n === n);
   return <button ref={ref} className={"hm-wand-k" + (aktiv ? " on" : "")} onClick={() => waehle(n)}>
@@ -611,6 +651,7 @@ async function hmWebsitePaket(m, b, F, look, t, karte, fokus) {
   const basis = location.pathname.startsWith("/ux/") ? location.origin + "/" : "https://www.unio.at/";
   const neu = {}; const umbenannt = {}; let i = 0;
   for (const [k, u] of Object.entries(karte)) {
+    if (typeof u !== "string") continue;
     if (!u) { neu[k] = ""; continue; }
     if (umbenannt[u]) { neu[k] = umbenannt[u]; continue; }
     try { const bl = await (await fetch(u)).blob(); const ext = (bl.type.split("/")[1] || "jpg").replace("jpeg", "jpg").replace("svg+xml", "svg").replace(/;.*$/, ""); const p = `bilder/${String(++i).padStart(2, "0")}-${k}.${ext}`; zip.file(p, bl); neu[k] = umbenannt[u] = p; } catch (e) { neu[k] = u; }
