@@ -19,7 +19,7 @@ function MaklerHeute({ m, go, oeffne }) {
   /* Eine Sache, die nur hier steht: Meilensteine der Marke. Freigaben und Einrichtung haben eigene Abschnitte. */
   let next = null;
   if (st.vertrag !== "fertig") next = ["Vertrag unterschreiben", "Drei Minuten, danach geht es los.", () => setEin("vertrag")];
-  else if (!fb || !fb.fertig) next = ["Fragebogen beantworten", "Rund 18 Minuten. Daraus entstehen zwei Wege für deine Marke.", () => go("marke", { sub: "fragebogen" })];
+  else if (!fb || !fb.fertig) next = ["Fragebogen beantworten", `Etwa ${window.hmStandLinkDauer ? hmStandLinkDauer().min : 21} Minuten, gerne in Teilen. Neben jeder Frage steht, wofür wir sie brauchen.`, () => go("marke", { sub: "fragebogen" })];
   else if (strat && !strat.gewaehlt) next = ["Deinen Weg wählen", "Zwei Strategien liegen bereit.", () => go("marke", { sub: "konzept" })];
   else if (strat && strat.gewaehlt && !b.fertig) next = ["Branding freigeben", "Logo, Schrift und Farbe sind vorbereitet.", () => go("marke", { sub: "design" })];
   else if (!freigaben.length && ideen.length) next = [`${ideen.length} Ideen für Oktober`, "Wähle, was wir drehen.", () => go("inhalte")];
@@ -27,6 +27,7 @@ function MaklerHeute({ m, go, oeffne }) {
   return <div>
     <Kopf ueber={datum} titel={`Guten Morgen, ${m.name.split(" ")[0]}.`} />
     {next && <button className="hm-weiter gross" onClick={next[2]}><div><div style={{ fontSize: 26, letterSpacing: "-.02em" }}>{next[0]}</div><div style={{ color: "var(--text-inverse-muted)", marginTop: 4, fontSize: 15 }}>{next[1]}</div></div><span className="k"><Ico n="pfeil" /></span></button>}
+    {window.StandKarte && <StandKarte m={m} oeffne={() => go("stand")} />}
     <PlanBisLive m={m} kurz />
     {portraitWahl && <><div className="hm-sek">Dein Porträt vom Foto-Termin<button onClick={() => hmPortraitWaehlen(m.id, P.aktiv, "makler")}>Vorschlag passt</button></div>
       <div className="hm-portraits wahl">{portraitWahl.map((e) => <figure key={e.id} className={e.id === P.aktiv ? "on" : ""}><button className="hm-portrait-bild" onClick={() => { hmPortraitWaehlen(m.id, e.id, "makler"); toast("Porträt gewählt. Website und Visitenkarte übernehmen es."); }}><img src={e.url || HM_BLOB_URL["p:" + e.id]} alt="" />{e.id === P.aktiv && <span className="hm-portrait-haken"><Ico n="haken" /></span>}</button><figcaption><span>{e.id === P.aktiv ? "Unser Vorschlag" : hmScoreText(e.score)}</span></figcaption></figure>)}</div></>}
@@ -184,7 +185,7 @@ function Arbeitsbereich({ m, sub, setSub, oeffne, zurueck, bereich, setBereich }
   const t = bereich || "ueberblick";
   return <div>
     <button className="hm-zurueck" onClick={zurueck}><Ico n="zurueck" />Makler</button>
-    <div className="hm-row" style={{ gap: 14, margin: "10px 0 18px" }}><Avatar name={m.name} gross bild={b.portrait} /><div><div className="hm-h hm-h2">{m.name}</div><div className="hm-mono">{m.region} · {m.abo} · {m.tag > 30 ? `Monat ${Math.floor(m.tag / 30)}` : `Tag ${m.tag}`}</div></div></div>
+    <div className="hm-row" style={{ gap: 14, margin: "10px 0 18px", flexWrap: "wrap" }}><Avatar name={m.name} gross bild={b.portrait} /><div><div className="hm-h hm-h2">{m.name}</div><div className="hm-mono">{m.region} · {m.abo} · {m.tag > 30 ? `Monat ${Math.floor(m.tag / 30)}` : `Tag ${m.tag}`}</div></div><span style={{ flex: 1 }} /><KopierKnopf text={`${location.origin}${location.pathname}?ansicht=stand&makler=${m.id}`} label="Stand-Link kopieren" /><KopierKnopf text={`${location.origin}${location.pathname}?ansicht=fragebogen&makler=${m.id}`} label="Fragebogen-Link kopieren" /></div>
     <Tabs tabs={tabs} akt={t} set={(x) => { setBereich(x); setSub(null); }} />
     <div style={{ marginTop: 8 }}>
       {t === "ueberblick" && <Ueberblick m={m} setBereich={setBereich} oeffne={oeffne} />}

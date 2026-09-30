@@ -554,7 +554,8 @@ function Website({ m, setSub, teamSicht }) {
     <Kopf titel="Website" ueber={`${gefuellt} von ${felder.length} Angaben da`}
       rechts={status === "live" ? <span className="hm-ez z-fertig">Live auf {domain}</span> : status === "pruefung" ? (teamSicht ? <Btn onClick={() => { set({ status: "live" }); hmEvent(m.id, "website", "Website live geschaltet", "Daniel"); toast("Live"); }}>Live schalten</Btn> : <span className="hm-ez z-wartet_team">In Prüfung bei Daniel</span>) : <Btn disabled={pflichtOffen.length > 0} onClick={() => { set({ status: "pruefung" }); hmEvent(m.id, "website", "Website zur Prüfung gesendet", m.name); toast("An Daniel zur Prüfung"); }}>{pflichtOffen.length ? `Noch ${pflichtOffen.length} Pflichtfelder` : "Zur Prüfung senden"}</Btn>} />
     {window.QuelleStand && <div style={{ margin: "-4px 0 12px" }}><QuelleStand m={m} kurz /></div>}
-    <StilLeiste m={m} t={t} setVorschau={setVorschau} look={look} setLook={(n) => { set({ look: n }); setAlle(false); }} setAlle={setAlle} teamSicht={teamSicht} />
+    {!teamSicht && <p className="hm-sub" style={{ margin: "0 0 14px", fontSize: 14 }}>Schrift, Farbe, Logo und Look kommen aus Ihrer freigegebenen Marke. Ihre Angaben pflegen Sie links, die Vorschau zeigt jede Änderung.</p>}
+    {teamSicht && <StilLeiste m={m} t={t} setVorschau={setVorschau} look={look} setLook={(n) => { set({ look: n }); setAlle(false); }} setAlle={setAlle} teamSicht={teamSicht} />}
     {alle ? <WebWand m={m} t={t} geraet={geraet} setG={setG} look={look} web={web} bib={bib} felder={felder} waehle={(n) => { set({ look: n }); setAlle(false); }} zurueck={() => setAlle(false)} />
     : <div className="hm-web-split">
       <div className="hm-web-felder">

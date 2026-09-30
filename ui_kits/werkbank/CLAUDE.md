@@ -28,8 +28,11 @@ Keine Zugangsdaten in Dateien (das Repo ist öffentlich). Schlüssel nur in Verc
 
 - Skripte teilen einen globalen Scope: Funktionen und Konstanten mit Präfix `hm`, Komponenten groß, Export über `Object.assign(window, ...)`.
 - Kein `import()` im Babel-Code, stattdessen Script-Tag oder `new Function("u","return import(u)")`.
-- Datenverträge: `docs/werkbank/MARKE_SCHEMA.md`, `BILDWELT_BRUECKE.md`, `WEBSITE_BAUKASTEN.md`.
+- Datenverträge: `docs/werkbank/MARKE_SCHEMA.md`, `BILDWELT_BRUECKE.md`, `WEBSITE_BAUKASTEN.md`, `erlebnis/ERLEBNIS_UND_ERGEBNIS.md`.
+- Neue Module bringen ihr CSS selbst mit (`<style id="stil-...">` am Dateianfang), nicht in `index.html`.
+- Makler-Links ohne Menü: `?ansicht=stand|fragebogen|rueckmeldung|reveal|fremdbild&makler=ID`. Den Makler dort immer siezen, Herr oder Frau nie raten.
+- Jede Minutenangabe für den Makler kommt aus `HM_STAND_DAUER` (`wb-stand.jsx`), Einwilligungen nur über `hmEinwilligung` (gilt nur mit Datum).
 
 ## Fahrplan (kurz)
 
-Aktuell: Branding-Qualität v2. Danach: Umbau Markenprozess v2. Details in `docs/werkbank/FAHRPLAN.md`.
+Zuletzt: Erlebnis und Ergebnis (Ihr Stand, Fragebogen v2, Feed, Reveal, Logo-Werkstatt v2). Danach: Umbau Markenprozess v2, Rest. Details in `docs/werkbank/FAHRPLAN.md`.

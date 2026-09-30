@@ -1159,6 +1159,8 @@ async function hmPlattformClaude(mid, opt) {
     return p;
   };
   if (typeof fetch !== "function") return rueckfall("kein Netz");
+  /* Prozess v2, Einwilligung 7: ohne Ja kein Claude-Aufruf, alles im Regelpfad */
+  if (typeof window !== "undefined" && window.hmEinwilligung && hmEinwilligung(mid, 7) !== "ja") return rueckfall("keine Einwilligung zur KI-Verarbeitung");
   let ctrl = null, timer = null;
   try { ctrl = new AbortController(); timer = setTimeout(() => ctrl.abort(), opt.timeoutMs || 290000); } catch (e) { ctrl = null; }
   try {

@@ -1,17 +1,19 @@
 # STATUS
 
-## Aktuelle Etappe: Marke erzeugen v2, Teil 1 (fertig, wartet auf Abnahme)
+## Aktuelle Etappe: Erlebnis und Ergebnis (fertig, wartet auf Abnahme)
 
-- [x] 1. Vorschau flüssig: Lenis-Adresse repariert (lag auf 404), Lenis-Regeln gegen scroll-behavior smooth, Schalter Standbild oder Bewegung
-- [x] 2. Sofortreparaturen (Umbau-Etappe 2): Feed ohne Demo-Objekte und Fülltext, Gate 2 ab 80, keine automatische Freigabe, Wirkungsprognose aus, Auswertungsfehler, Eyebrow, Pfeilzeichen, Verläufe, eine Visitenkarte
-- [x] 3. Logo-Werkstatt nach Looka-Prinzip aus der Marke: `LOGO_UND_QUELLE.md`
-- [x] 4. Eine Quelle, Grundstufe: Einfrieren mit Prüfsumme, öffentliche Ausgaben lesen die Version, eine Anrede-Regel
-- [x] 5. Markus als Beispiel: Claim „Rat vor Auftrag.“, Rat-Amber, Chronik (Newsreader und Instrument Sans), Welt Weite, Maßstab-Wortmarke
-- [x] 6. Selbsttest 104 Prüfungen, Fehlergrenze je Bereich, Textsatz misst nur mit geladener Schrift
-- [x] Nachtrag: Bilder der Vorschau auf Vorlagengröße (Porträt 1300 px hoch, Titel 1600, sonst 1000, WebP). Bewegung gemessen: höchstens 9,4 ms je Bild, auch Look 1 mit Porträt-Maske
+- [x] 1. Ihr Stand für den Makler: vierzehn Momente mit Werktagen und Feiertagen, eine Dauer-Quelle, acht Einwilligungen mit Frist, Datum und Fassung
+- [x] 2. Fragebogen v2: 23 Fragen, nur Fakten vorbelegt, frühere Worte als Zitat, eine Nachfrage, Fremdbild-Link und Antwortseite
+- [x] 3. Bildwahl: Probepaar, vier Fotopaare, Schriftprobe, altes Logo, Tippen wählt, Pfeiltasten, Seite je Makler zufällig
+- [x] 4. Feed-Vorschlag im Profilkopf mit Wochenregler, Beitragsdetail und Gegenentwurf (Markenbuch, Kapitel Feed)
+- [x] 5. Reveal in zehn Akten mit Presenter-Fenster, Rückmeldung am Folgetag
+- [x] 6. Makler-Pfad aufgeräumt: er urteilt, das Team wählt Schrift, Farbe und Logo
+- [x] 7. Logo-Werkstatt v2 nach Brandmark (Stichworte, Prüfstand, Fassungen, Favicons, Paket), Selbsttest 192 von 192
+- Details: `erlebnis/ERLEBNIS_UND_ERGEBNIS.md`
 
 ## Erledigt
 
+- 01.10.2026 Etappe Erlebnis und Ergebnis (Ihr Stand, Fragebogen v2, Bildwahl, Feed, Reveal, Logo-Werkstatt v2)
 - 30.09.2026 Etappe Marke erzeugen v2, Teil 1 (Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen)
 - 30.09.2026 Etappe Branding-Qualität v2: Prozess in 17 Schritten, Fragebogen von 44 Pflicht-Screens auf 23 Fragen, Beweis für Markus mit zwölf Kacheln
 
@@ -21,6 +23,9 @@
 
 ## Offen beim Owner
 
+- Ansehen: `?ansicht=stand&makler=markus`, `?ansicht=fragebogen&makler=elif`, Markenbuch von Markus (Kapitel Feed, Reveal starten, Presenter öffnen).
+- Entscheiden: Soll die ganze Werkbank den Makler siezen? Die Links siezen schon.
+- Paarsatz fotografieren lassen (Licht, Ortsbild, Stimmung, Ausschnitt), bis dahin zählen die Wahlen nicht.
 - C1 bis C9 freigegeben am 30.09.2026 (mit dem OK zur Etappe).
 - Logo-Werkstatt ansehen: Studio, Logo, „Logo-Werkstatt öffnen“ (Teamsicht).
 - Markenbeispiele liefern, die visuell gefallen und die nicht (siehe Chat vom 30.09.2026).
@@ -38,6 +43,8 @@
 
 ## Lehren
 
+- Prüfer-Agenten gegen die Schrittdokumente lesen lassen: sie finden Abweichungen (Dauern, Fristen, vorbelegte Haltungen), die im Browser nicht auffallen.
+- Einwilligungen nie als Standardwert im Code, nur als Eintrag mit Datum. Sonst gilt still ein Ja.
 - Vorlagen sind für 940-px-WebP gebaut. Fotos vor dem Einsetzen auf diese Größe bringen, sonst ruckelt die Scroll-Animation.
 - CDN-Adressen prüfen: Lenis lag auf einer toten cdnjs-Adresse, alle Vorlagen scrollten dadurch ruckelig.
 - Canvas misst Text mit Ersatzschrift, solange die Webschrift lädt. Nur mit geladener Schrift messen und merken.

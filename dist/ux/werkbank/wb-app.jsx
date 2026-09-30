@@ -72,6 +72,15 @@ function App() {
   const oeffneMakler = (id, ber, s) => { setRolle("team"); setScreen("makler"); setTm(id); setBereich(ber || "ueberblick"); setSub(s || null); setBeitragId(null); window.scrollTo({ top: 0 }); };
   if (!m) return null;
   /* Abstimmung per Link: nur der Beitrag, ohne Menü, für den Makler unterwegs */
+  /* Eigene Links für den Makler, ohne Menü: Stand, Fragebogen, Rückmeldung; Reveal für die Präsentation */
+  const ansicht = p.get("ansicht");
+  if (["stand", "fragebogen", "rueckmeldung", "reveal", "fremdbild"].includes(ansicht)) {
+    const zu = (z) => { location.search = `?ansicht=${z}&makler=${m.id}`; };
+    if (ansicht === "reveal" && window.RevealBuehne) return <div className="hm-app"><RevealBuehne m={m} presenter={p.get("presenter") === "1"} onClose={() => { try { window.close(); } catch (e) {} }} /><Toast /></div>;
+    return <div className="hm-app hm-link-ansicht"><header className="hm-top"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO" /></header><main className="hm-main hm-link-main">
+      <Fehlergrenze key={ansicht}>{ansicht === "stand" ? <IhrStand m={m} allein oeffne={zu} /> : ansicht === "fragebogen" ? <Fragebogen2 m={m} allein fertigZiel={() => zu("stand")} /> : ansicht === "rueckmeldung" && window.Rueckmeldung ? <Rueckmeldung m={m} allein /> : ansicht === "fremdbild" && window.Fremdbild ? <Fremdbild m={m} /> : <Leer titel="Diese Ansicht ist gleich verfügbar." text="Bitte die Seite neu laden." />}</Fehlergrenze>
+    </main><Toast /></div>;
+  }
   if (p.get("ansicht") === "link" && beitrag) return <div className="hm-app hm-link-ansicht"><header className="hm-top"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO" /></header><main className="hm-main" style={{ margin: "0 auto" }}><Abstimmung c={(content.find((c) => c.id === beitrag)) || content[0]} zurueck={() => { location.search = `?rolle=makler&makler=${mid}&screen=inhalte`; }} /></main><Toast /></div>;
   const st = ein[m.id] || {};
   const einOffen = HM_EINRICHTUNG.filter((e) => st[e.id] !== "fertig").length;
@@ -99,6 +108,8 @@ function App() {
           <Fehlergrenze key={[rolle, screen, sub, tm, bereich, beitrag].join("|")}>
           {beitrag ? <Beitrag key={beitrag} id={beitrag} zurueck={() => setBeitragId(null)} teamSicht={rolle === "team"} /> : rolle === "makler" ? (
             screen === "heute" ? <MaklerHeute m={m} go={go} oeffne={oeffne} /> :
+            screen === "stand" ? <div><button className="hm-zurueck" onClick={() => go("heute")}><Ico n="zurueck" />Heute</button><IhrStand m={m} oeffne={(z) => z === "fragebogen" ? go("marke", { sub: "fragebogen" }) : go(z)} /></div> :
+            screen === "rueckmeldung" && window.Rueckmeldung ? <div><button className="hm-zurueck" onClick={() => go("heute")}><Ico n="zurueck" />Heute</button><Rueckmeldung m={m} /></div> :
             screen === "einrichtung" ? <div><button className="hm-zurueck" onClick={() => go("heute")}><Ico n="zurueck" />Heute</button><Einrichtung m={m} go={go} /></div> :
             screen === "marke" ? <Marke m={m} sub={sub} setSub={setSub} go={go} /> :
             screen === "inhalte" ? <Inhalte2 m={m} sub={sub} setSub={setSub} oeffne={oeffne} /> :

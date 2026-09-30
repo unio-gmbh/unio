@@ -1,6 +1,6 @@
 # Fahrplan Werkbank
 
-Stand 29.09.2026. Eine Seite. Owner: Daniel. Ausführlich: `ROADMAP.md`, Protokoll: `V5_STUFEN.md`, Stand: `STATUS.md`.
+Stand 01.10.2026. Eine Seite. Owner: Daniel. Ausführlich: `ROADMAP.md`, Protokoll: `V5_STUFEN.md`, Stand: `STATUS.md`.
 
 ## Vision
 
@@ -24,6 +24,7 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 | Bildwelt-Automatik | Bilder erscheinen ohne Kopieren | Upstash Redis in Vercel verbinden, `WB_WORKER_TOKEN` setzen |
 | **Branding-Qualität v2** (fertig, Abnahme offen) | Prozess v2 in 17 Schritten, Frage-Wirkungs-Tabelle, Beweis für Markus mit zwölf Kacheln | Beweis ansehen, C1 bis C9 freigeben |
 | **Marke erzeugen v2, Teil 1** (fertig, Abnahme offen) | Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen, Markus als v2-Beispiel | Werkstatt ansehen, Markenbeispiele liefern |
+| **Erlebnis und Ergebnis** (fertig, Abnahme offen) | Ihr Stand, Fragebogen v2 mit Bildwahl, Feed-Vorschlag, Reveal mit Presenter, Logo-Werkstatt v2 | Links ansehen, Anrede entscheiden, Paarsatz fotografieren |
 | Umbau Markenprozess v2, Rest | Werkbank folgt dem neuen Prozess, in elf Etappen laut `branding-v2/UMBAU_ETAPPEN.md`, zuerst Sofortreparaturen und eine eingefrorene Markenquelle | Freigabe der Umbauliste |
 
 ## Geparkt
@@ -37,4 +38,4 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 - Farbvorschlag aus Porträt oder altem Logo.
 - Helle und dunkle Sektionsthemen je Website-Abschnitt.
 - Animiertes Logo für Reels (wie Brandmark).
-- Fragebogen v2 mit 23 Fragen (Umbau-Etappe 4).
+- Territorien statt Archetyp-Wegen (Schritt 6), damit Akt 4 im Reveal echte Richtungen zeigt.

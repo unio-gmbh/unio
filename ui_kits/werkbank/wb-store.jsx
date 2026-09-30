@@ -74,6 +74,13 @@ const HM_SEED_ANTWORTEN = {
 };
 
 /* Migrationen für Browser, die schon Demo-Daten haben. Jede läuft einmal. */
+/* Einwilligungen der Demo-Makler: echte Einträge mit Datum und Fassung, nichts gilt ohne Eintrag (01_auftakt 3.2) */
+const HM_SEED_EINW = { markus: { datum: "2026-09-10T10:20:00", werte: { 7: "ja", 1: "ja", 8: "nein", 3: "ja", 2: "ja", 4: "ja", 5: "nein", 6: "spaeter" } }, elif: { datum: "2026-06-01T10:20:00", werte: { 7: "ja", 1: "ja", 8: "nein", 3: "ja", 2: "ja", 4: "ja", 5: "ja", 6: "ja" } } };
+function hmSeedAuftrag(alt) {
+  const x = { ...(alt || {}) };
+  Object.entries(HM_SEED_EINW).forEach(([mid, s]) => { const m = { ...(x[mid] || {}) }; const l = { ...(m.einwilligungen || {}) }; Object.entries(s.werte).forEach(([n, wert]) => { if (!l[n] || !l[n].datum) l[n] = { wert, datum: s.datum, fassung: "demo", wer: "Seed" }; }); m.einwilligungen = l; x[mid] = m; });
+  return x;
+}
 function hmMigrationen() {
   const lauf = (flag, fn) => { try { if (localStorage.getItem(flag)) return; fn(); localStorage.setItem(flag, "1"); } catch (e) { console.warn("Migration", flag, e); } };
   /* Prozess v2: Markus bekommt die Marke aus dem Beweis, der gesperrte Satz verschwindet */
@@ -87,6 +94,8 @@ function hmMigrationen() {
   lauf("unio_hm_mig_logo_v2", () => {
     hmStore.patch("branding", (a) => { const x = { ...(a || {}) }; const m = x.markus || {}; if (!m.logoKonzept) x.markus = { ...m, logo: "konzept", logoKonzept: { id: "lk-markus-v2", art: "teilung", font: "Instrument Sans", gewicht: 500, versal: true, laufweite: 0, zeichen: null, lage: null, akzent: true } }; return x; });
   });
+  /* Einwilligungen gelten nur mit Datum: Demo-Werte als echte Einträge */
+  lauf("unio_hm_mig_einw_v1", () => { hmStore.patch("auftrag", hmSeedAuftrag); });
   /* Eine Quelle: bestehende Freigaben werden als Version 1.0 eingefroren */
   lauf("unio_hm_mig_quelle_v1", () => {
     const br = hmStore.get("branding") || {};
@@ -113,6 +122,7 @@ function hmSeed() {
   }
   hmStore.put("fragebogen", antworten);
   hmStore.put("strategien", strategien);
+  hmStore.put("auftrag", hmSeedAuftrag(null));
   hmStore.put("events", [
     { id: "e1", t: Date.now() - 3600e3 * 5, maklerId: "markus", typ: "schritt", text: "Rohschnitt Reel 1 hochgeladen", akteur: "Ahmet" },
     { id: "e2", t: Date.now() - 3600e3 * 26, maklerId: "sara", typ: "schritt", text: "Zugang aktiviert", akteur: "System" },

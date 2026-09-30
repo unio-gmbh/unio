@@ -2,7 +2,7 @@
    Liest `plattform` (docs/werkbank/MARKE_SCHEMA.md) und die gewählte Markenwelt. Team sieht zusätzlich die Qualitätsprüfung
    und gibt als Creative Director frei (Gate 2). */
 
-const HM_MB_KAPITEL = [["einsicht", "Einsicht"], ["position", "Positionierung"], ["werte", "Werte"], ["stimme", "Stimme"], ["story", "Story"], ["botschaften", "Botschaften"], ["visuell", "Erscheinung"], ["saeulen", "Säulen"], ["konzepte", "Konzepte"], ["start", "Erste 30 Tage"]];
+const HM_MB_KAPITEL = [["einsicht", "Einsicht"], ["position", "Positionierung"], ["werte", "Werte"], ["stimme", "Stimme"], ["story", "Story"], ["botschaften", "Botschaften"], ["visuell", "Erscheinung"], ["saeulen", "Säulen"], ["feed", "Feed"], ["konzepte", "Konzepte"], ["start", "Erste 30 Tage"]];
 
 function hmMbStand(mid) {
   const alle = hmStore.get("markenbuch") || {};
@@ -68,6 +68,12 @@ function Markenbuch({ m, teamSicht }) {
       {(q.klischees || []).length > 0 && <div className="hm-hinweis">Floskeln entfernen: {q.klischees.join(", ")}.</div>}
       {q.aehnlichkeit != null && <div className="hm-daten">Ähnlichkeit zu anderen Maklern {q.aehnlichkeit} %</div>}
       {window.QuelleStand && <QuelleStand m={m} />}
+    </div>}
+
+    {teamSicht && window.RevealKnopf && <div className="hm-mb-reveal">
+      <h3 className="hm-h hm-h2">Reveal und Rückmeldung</h3>
+      <Fehlergrenze><RevealKnopf m={m} teamSicht /></Fehlergrenze>
+      {window.RueckmeldungStand && <Fehlergrenze><RueckmeldungStand m={m} /></Fehlergrenze>}
     </div>}
 
     <div className="hm-mb-layout">
@@ -140,6 +146,10 @@ function Markenbuch({ m, teamSicht }) {
             </div>}
           </div>)}
         </MbKapitel>
+
+        {window.FeedAbschnitt && <MbKapitel id="feed" titel="Feed">
+          <Fehlergrenze><FeedAbschnitt m={m} teamSicht={teamSicht} /></Fehlergrenze>
+        </MbKapitel>}
 
         <MbKapitel id="konzepte" titel="Konzepte">
           <div className="hm-mb-konzepte">{(p.konzepte || []).map((k) => <div key={k.name}><div className="hm-mb-serie-name" style={{ fontFamily: hmFont(b.schrift.d) }}>{k.name}</div><p>{k.idee}</p>{k.warum && <div className="u">Warum: {k.warum}</div>}{(k.umsetzung || []).length > 0 && <ol className="hm-mb-ablauf">{k.umsetzung.map((x) => <li key={x}>{x}</li>)}</ol>}{k.kanal && <div className="hm-daten">{k.kanal}</div>}</div>)}</div>

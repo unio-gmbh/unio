@@ -16,6 +16,14 @@ Vorbild ist das Prinzip von Looka und Brandmark: Vorlieben über Beispiele, viel
 
 Ein Entwurf ist eine Spezifikation `{ id, art, font, gewicht, versal, laufweite, zeichen, lage, akzent }`. `hmLkLayout` macht daraus Bauteile, `hmLkSvgText` gibt sie als SVG mit Text aus (Vorschau, Website), `hmLkSvgPfade` mit Pfaden (Export).
 
+## Logo-Werkstatt v2 (01.10.2026, nach Brandmark)
+
+Analyse: `erlebnis/BRANDMARK_ANALYSE.md`. Übernommen: Stichworte als Chips, die neue Runden lenken; Prüfstand mit Faustregeln (lesbar klein, Strichstärke, Zellen der Dickte); Fassungen hell, dunkel, einfarbig; Favicon-Reihe 16 bis 180 px; Paket mit 19 Dateien und einer Anwendungsseite ohne externe Adressen; Herkunftszeile unter jedem Entwurf. Nicht übernommen: Symbolkatalog, freie Farbwahl, generative Symbole.
+
+- Neue Bauteile: `LogoStichworte`, `LogoFeineditor`, `LogoPruefstand`, `LogoFassungen`, `LogoAnwendungen`, `hmLkPaket`.
+- Ablage zusätzlich: `logos[mid].stichworte = { aus, eigen }`, `logos[mid].zuletzt` (höchstens acht Entwürfe).
+- Grenzen 85 und 70 Prozent im Prüfstand sind Setzungen des Teams.
+
 ## Eine Quelle (Grundstufe)
 
 - Die Freigabe (Markenbuch durch Daniel, Branding im Studio) friert die Marke als Version mit SHA-256-Prüfsumme ein: Claim, Akzent, Schrift, Logo, Markenwelt, Anrede je Kanal, Versprechen, Positionierung.
