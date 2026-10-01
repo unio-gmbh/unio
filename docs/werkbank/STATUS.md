@@ -1,13 +1,14 @@
 # STATUS
 
-## Aktuelle Etappe: Markt und Bewegung (fertig, lokal committet, wartet auf Sichtprüfung vor dem Push)
+## Aktuelle Etappe: Markensystem (fertig, gepusht)
 
-- [x] 1. Recherche mit vier Agenten: 65 Maklermarken weltweit und in Wien (Personen und Häuser, Wohnen, Luxus, Projektvertrieb, Gewerbe), je Marke Screenshot (nur lokal unter `_research/`, nicht im Repo) und Attribute nach Schema
-- [x] 2. Katalog `branding-v2/research/MAKLER_BRANDS.md` (Tabellen je Nische mit Beleg und Quelle, Muster aus allen vier Läufen) und Datendatei `wb-brands-daten.jsx` (nur Attribute und Sätze, keine fremden Logos)
-- [x] 3. Werkstatt, Reiter „Markt“: Landkarte der Nische (Antiqua bis Grotesk, Wortmarke bis Zeichen), Muster, Klischees, die nächsten Referenzen zum Entwurf mit Gründen; Prüfzeile „Abstand zum Markt“ im Prüfstand; Nische aus den Objektarten, Team kann sie setzen
-- [x] 4. Werkstatt, Reiter „Bewegung“ (Brandmark F4): Zeichnen, Aufdecken, Akzent zuletzt, Schleife, Reel-Outro, Export als animiertes SVG und WebM
-- [x] 5. Selbsttest 220 in 16 Gruppen grün, Konsole leer
-- Details: `erlebnis/ERLEBNIS_UND_ERGEBNIS.md`, Abschnitt „Markt und Bewegung“, und `LOGO_UND_QUELLE.md`
+- [x] 1. Google Fonts als Grundlage: Katalog mit 1230 lateinischen Familien (`wb-fonts-katalog.jsx`), Schriftpool je Makler (`wb-fonts.jsx`), Reiter „Schriften“ mit gerechneter Eignung (Gewichte, Lesbarkeit, Verbreitung, Abstand zum Markt der Nische), „In den Pool“
+- [x] 2. Acht Markenrichtungen aus der Recherche (`wb-richtungen.jsx`): Verlag, Instanz, Rat, Grätzl, Signatur, System, Haus und Zahl, Stille. Je Richtung Haltung, Gegenbild zum Markt, Schriften, Logoarten, Zeichen, Akzente, Welt, Bild, Verbote
+- [x] 3. Empfehlung mit Begründung aus Fragebogen und Markt (Markus: Rat mit 14 Punkten, Elif: Grätzl mit 12); Richtung steuert Pool, Arten und Zeichenfolge der Entwürfe, gespeichert in `logos[mid].richtung`
+- [x] 4. Selbsttest 243 in 18 Gruppen grün
+- Details: `LOGO_UND_QUELLE.md`, Abschnitte „Schriftpool“ und „Markt und Bewegung“
+
+## Vorherige Etappen: Markt und Bewegung, Marke sichtbar (gepusht mit dieser Etappe)
 
 ## Vorherige Etappe: Marke sichtbar (lokal committet, Sichtprüfung offen)
 
@@ -15,6 +16,7 @@
 
 ## Erledigt
 
+- 01.10.2026 Etappe Markensystem (Google-Fonts-Katalog, Schriftpool, acht Markenrichtungen mit Empfehlung), gepusht zusammen mit Marke sichtbar und Markt und Bewegung
 - 01.10.2026 Etappe Markt und Bewegung (Recherche 65 Marken, Reiter Markt und Bewegung in der Werkstatt), lokal committet
 - 01.10.2026 Etappe Marke sichtbar (Logos, Logo-Erlebnis, Markenbuch-Neusatz, Instagram-Feed im Telefon), lokal committet
 - 01.10.2026 Etappe Erlebnis und Ergebnis (Ihr Stand, Fragebogen v2, Bildwahl, Feed, Reveal, Logo-Werkstatt v2)
@@ -28,7 +30,7 @@
 ## Offen beim Owner
 
 - Katalog `MAKLER_BRANDS.md` überfliegen: fehlen Marken, die du als Vorbild oder Gegenbild siehst? Dann als Sätze liefern, nicht als Dateien.
-- Sichtprüfung vor dem Push: Markenbuch (Team und Makler), Marke, Design als Makler (Logo-Erlebnis), Feed im Markenbuch. Danach „push“ sagen.
+- Live testen: Studio, Design, „Logo-Werkstatt öffnen“, Reiter Entwürfe (Richtungen), Schriften, Markt, Bewegung.
 - Markus: Hauptlogo ist jetzt Ratstrich in Newsreader statt Maßstab-Wortmarke. Passt das?
 - Feed-Regel: acht Porträts in zwölf Kacheln (E3) oder weniger? Heute acht in drei Schnitten.
 - Ansehen: `?ansicht=stand&makler=markus`, `?ansicht=fragebogen&makler=elif`, Markenbuch von Markus (Kapitel Feed, Reveal starten, Presenter öffnen).

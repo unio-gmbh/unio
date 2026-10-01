@@ -24,6 +24,13 @@ Analyse: `erlebnis/BRANDMARK_ANALYSE.md`. Übernommen: Stichworte als Chips, die
 - Ablage zusätzlich: `logos[mid].stichworte = { aus, eigen }`, `logos[mid].zuletzt` (höchstens acht Entwürfe).
 - Grenzen 85 und 70 Prozent im Prüfstand sind Setzungen des Teams.
 
+## Schriftpool auf Grundlage aller Google Fonts (01.10.2026)
+
+- `wb-fonts-katalog.jsx`: 1230 Familien aus `fonts.google.com/metadata/fonts` (latein als Hauptschrift, ohne Noto) mit Kategorie, Gewichten, Strichstärke, Breite, Rang und variabler Achse. Erzeugt per Skript aus der Metadaten-Datei, nicht von Hand.
+- `wb-fonts.jsx`: `hmLkPool(mid, { richtung })` ist der Pool der Werkstatt: kuratierte acht, vom Team ergänzte (`logos[mid].schriften`), oder die Schriften der gewählten Markenrichtung plus die Schriften der Marke. `hmFontsEignung` rechnet 0 bis 100 mit Sätzen (Gewichte, Schreibschrift, Display, Festbreite, Verbreitung, Strichstärke, Abstand zum Markt der Nische). `hmFontsLaden` lädt über die Google-Fonts-CSS, der Export nimmt weiter Fontsource-Dateien (`hmFontDatei`).
+- Werkstatt, Reiter „Schriften“: Pool als Chips mit Herkunft, Suche über den Katalog mit Kategorie, Treffer in der eigenen Schrift mit dem Namen des Maklers, Begründung und Punkten, „In den Pool“. Stammstärke unbekannter Schriften startet aus der Katalog-Strichstärke (`hmLkStammSofort`).
+- Markenrichtungen (`wb-richtungen.jsx`): acht Haltungen aus der Recherche mit Gegenbild zum Markt, Schriften, Logoarten, Zeichen, Akzentfamilie, Markenwelt, Bildsprache, Verboten. `hmRichtungEmpfehlung(mid)` begründet mit Zahlen aus Fragebogen und Markt, `hmRichtungParameter` übersetzt in Generator-Parameter. In der Werkstatt als Chips über den Entwürfen, gespeichert in `logos[mid].richtung`.
+
 ## Markt und Bewegung (01.10.2026)
 
 - **Markt** (`wb-brands.jsx`, Daten `wb-brands-daten.jsx` aus `branding-v2/research/MAKLER_BRANDS.md`): 65 Referenzmarken in vier Nischen, nur als Attribute (Logoart, Schriftklasse, Versalien, Laufweite, Zeichenmotiv, Grundton, Klischees, Stärke). Die Werkstatt zeigt je Nische die Landkarte (x Antiqua bis Grotesk, y Wortmarke bis Zeichen), die Muster, die Klischees und die fünf nächsten Referenzen zum Entwurf mit Gründen. Der Prüfstand bekommt die Zeile „Abstand zum Markt“ (ab 70 Prozent Übereinstimmung grenzwertig). Nische aus den Objektarten (`hmBrandNische`), Team setzt sie in `logos[mid].nische`.

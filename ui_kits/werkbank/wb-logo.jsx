@@ -334,15 +334,19 @@ function hmLkHatZeichen(spec) { return !!(spec && spec.zeichen && spec.zeichen !
 /* ---------- Entwürfe ---------- */
 function hmLkKonzepte(mid, opt) {
   const o = opt || {}; const k = hmLkKontext(mid, o.stichworte); const b = k.b;
-  const r = hmLkZufall(mid + "|" + (o.runde || 0) + "|" + (o.basis ? o.basis.id : "") + "|" + (o.richtungen || []).join(",") + (o.achse ? "|" + o.achse : ""));
+  /* Schriftpool: kuratiert, vom Team ergänzt oder aus der Markenrichtung (wb-fonts.jsx); Richtung setzt Arten und Zeichenfolge */
+  const SCHR = window.hmLkPool ? hmLkPool(mid, { richtung: o.richtung }) : HM_LK_SCHRIFTEN; k.pool = SCHR;
+  let RP = null; if (o.richtung && window.hmRichtungParameter) { try { RP = hmRichtungParameter(o.richtung, mid); } catch (e) { RP = null; } }
+  if (RP && Array.isArray(RP.zeichen) && RP.zeichen.length) k.zeichen = [...RP.zeichen.filter((z) => HM_LK_ZEICHEN_NAME[z]), ...k.zeichen.filter((z) => !RP.zeichen.includes(z))];
+  const r = hmLkZufall(mid + "|" + (o.runde || 0) + "|" + (o.basis ? o.basis.id : "") + "|" + (o.richtungen || []).join(",") + (o.achse ? "|" + o.achse : "") + (o.richtung ? "|" + o.richtung : ""));
   if (o.basis && o.achse) return hmLkGeschwister(hmLkKlemmen(o.basis), o.achse, k).slice(0, 6);
   const wahl = (l) => l[Math.floor(r() * l.length)];
-  const markeD = HM_LK_SCHRIFTEN.find((x) => b.schrift && x.f === b.schrift.d), markeT = HM_LK_SCHRIFTEN.find((x) => b.schrift && x.f === b.schrift.t);
+  const markeD = SCHR.find((x) => b.schrift && x.f === b.schrift.d), markeT = SCHR.find((x) => b.schrift && x.f === b.schrift.t);
   const richt = HM_LK_RICHTUNGEN.filter((x) => (o.richtungen || []).includes(x.id));
-  const arten = richt.length ? [...new Set(richt.flatMap((x) => x.arten))] : HM_LK_STANDARD_ARTEN;
+  const arten = richt.length ? [...new Set(richt.flatMap((x) => x.arten))] : (RP && Array.isArray(RP.arten) && RP.arten.length ? RP.arten.filter((x) => HM_LK_ARTEN.some((y) => y.id === x)) : HM_LK_STANDARD_ARTEN);
   const klasse = richt.map((x) => x.k).filter(Boolean);
-  const pool = HM_LK_SCHRIFTEN.filter((x) => !klasse.length || klasse.includes(x.k));
-  const schrift = () => { const z = r(); return z < 0.45 && markeD && pool.includes(markeD) ? markeD : z < 0.65 && markeT && pool.includes(markeT) ? markeT : wahl(pool.length ? pool : HM_LK_SCHRIFTEN); };
+  const pool = SCHR.filter((x) => !klasse.length || klasse.includes(x.k));
+  const schrift = () => { const z = r(); return z < 0.45 && markeD && pool.includes(markeD) ? markeD : z < 0.65 && markeT && pool.includes(markeT) ? markeT : wahl(pool.length ? pool : SCHR); };
   const n = Math.min(18, o.anzahl || 18); const out = [];
   let zNr = 0, dickteNr = 0;
   const ideeZeichen = k.zeichen.includes("ratlinie") ? "ratlinie" : k.zeichen[0];
@@ -351,8 +355,8 @@ function hmLkKonzepte(mid, opt) {
   for (let i = 0; i < n; i++) {
     let art, s, zeichen = null, lage = null;
     if (o.basis) {
-      art = o.basis.art; const gleiche = HM_LK_SCHRIFTEN.filter((x) => x.k === (HM_LK_SCHRIFTEN.find((y) => y.f === o.basis.font) || {}).k);
-      s = i === 0 ? HM_LK_SCHRIFTEN.find((x) => x.f === o.basis.font) || wahl(gleiche) : wahl(gleiche.length ? gleiche : HM_LK_SCHRIFTEN);
+      art = o.basis.art; const gleiche = SCHR.filter((x) => x.k === (SCHR.find((y) => y.f === o.basis.font) || {}).k);
+      s = i === 0 ? SCHR.find((x) => x.f === o.basis.font) || wahl(gleiche) : wahl(gleiche.length ? gleiche : SCHR);
       if (art === "zeichen") zeichen = o.basis.zeichen && i < n / 2 ? o.basis.zeichen : wahl(k.zeichen);
       if (art === "dickte") zeichen = o.basis.zeichen || null;
     } else {
@@ -396,9 +400,9 @@ function hmLkGeschwister(basis, achse, k) {
   const standardLw = { satz: 0, punkt: 0, gesperrt: 0.18, gestapelt: 0.02, monogramm: 0.02, zeichen: 0.01, teilung: 0, dickte: 0 };
   const hatZ = (basis.art === "zeichen" || basis.art === "dickte") && !!basis.zeichen;
   if (achse === "schrift") {
-    const b = k.b; const klasse = (HM_LK_SCHRIFTEN.find((x) => x.f === basis.font) || {}).k;
+    const b = k.b; const P = k.pool || HM_LK_SCHRIFTEN; const klasse = (P.find((x) => x.f === basis.font) || {}).k;
     const rang = (x) => (b.schrift && (x.f === b.schrift.d || x.f === b.schrift.t) ? 0 : x.k === klasse ? 1 : 2);
-    HM_LK_SCHRIFTEN.filter((x) => x.f !== basis.font).sort((x, y) => rang(x) - rang(y)).forEach((x) => add({ font: x.f, gewicht: basis.gewicht }));
+    P.filter((x) => x.f !== basis.font).sort((x, y) => rang(x) - rang(y)).forEach((x) => add({ font: x.f, gewicht: basis.gewicht }));
   } else if (achse === "anordnung") {
     if (hatZ) {
       ["links", "oben", "unten", "rechts"].filter((l) => l !== basis.lage).forEach((l) => add({ lage: l }));
@@ -466,7 +470,9 @@ function hmLkName(b, spec) { const n = `${b.vor} ${b.nach}`.trim(); return spec.
 const HM_LK_STAMM = {}, HM_LK_VERSAL = {}, HM_LK_STAMM_P = {};
 function hmLkStammSofort(font, gewicht) {
   const k = font + "|" + gewicht; if (HM_LK_STAMM[k]) return HM_LK_STAMM[k];
-  return (HM_LK_STAMM_START[font] || 0.085) * (1 + ((gewicht || 400) - 400) / 400 * 0.55);
+  const g = !HM_LK_STAMM_START[font] && window.hmGfont ? hmGfont(font) : null;
+  const start = HM_LK_STAMM_START[font] || (g && g.dicke != null ? 0.04 + 0.009 * g.dicke : 0.085);
+  return start * (1 + ((gewicht || 400) - 400) / 400 * 0.55);
 }
 function hmLkVersalSofort(font, gewicht) { return HM_LK_VERSAL[font + "|" + gewicht] || HM_LK_VERSAL_START[font] || 0.7; }
 /* Stammstärke aus dem Glyph "l": waagrechter Schnitt auf halber Höhe, Abstand der ersten beiden Kanten */
@@ -1262,10 +1268,13 @@ function LogoWerkstatt({ m, teamSicht }) {
   const [fokus, setFokus] = React.useState(null);
   const [ausgang, setAusgang] = React.useState(null);
   const [achse, setAchse] = React.useState(null);
+  const [richtung, setRichtung] = React.useState(st.richtung || null);
+  const fp = window.useFontsPool ? useFontsPool(m.id, { richtung }) : { pool: [], version: 0 };
   const stwKey = JSON.stringify(st.stichworte || {});
-  const konzepte = React.useMemo(() => hmLkKonzepte(m.id, { runde, richtungen, basis }), [m.id, runde, richtungen.join(","), basis && basis.id, b.akzentId, b.schriftId, stwKey]);
+  const konzepte = React.useMemo(() => hmLkKonzepte(m.id, { runde, richtungen, basis, richtung }), [m.id, runde, richtungen.join(","), basis && basis.id, b.akzentId, b.schriftId, stwKey, richtung, fp.pool.map((x) => x.f).join("|")]);
   const aktiv = fokus || konzepte[0];
-  const geschwister = React.useMemo(() => (achse && aktiv ? hmLkKonzepte(m.id, { basis: aktiv, achse }) : []), [m.id, achse, aktiv && aktiv.id, stwKey]);
+  const geschwister = React.useMemo(() => (achse && aktiv ? hmLkKonzepte(m.id, { basis: aktiv, achse, richtung }) : []), [m.id, achse, aktiv && aktiv.id, stwKey, richtung]);
+  const richtungSetzen = (id) => { const neu = richtung === id ? null : id; setRichtung(neu); setBasis(null); setFokus(null); set({ richtung: neu }); };
   const vorschlaege = React.useMemo(() => hmLkVorschlaege(m.id), [m.id, stwKey, b.schriftId]);
   const zuletzt = (st.zuletzt || []).filter((x) => x && x.art && x.id);
   useLkStamm([...konzepte, aktiv, ...geschwister, ...vorschlaege]);
@@ -1292,8 +1301,9 @@ function LogoWerkstatt({ m, teamSicht }) {
   return <div className="hm-lk2">
     <p className="hm-sub" style={{ marginTop: 0 }}>Entwürfe aus Name, Schrift und Idee der Marke. Zeichen nur aus den Stichworten der Marke, keine Symbole aus dem Katalog. Farben aus dem Branding.</p>
     <LogoStichworte mid={m.id} teamSicht={teamSicht} />
-    <Tabs tabs={[["entwuerfe", "Entwürfe"], ["fein", "Feinschliff"], ["regeln", "Faustregeln"], ["markt", "Markt"], ["bewegung", "Bewegung"], ["fassungen", "Fassungen"], ["anwendungen", "Anwendungen"]]} akt={tab} set={setTab} />
+    <Tabs tabs={[["entwuerfe", "Entwürfe"], ["schriften", "Schriften"], ["fein", "Feinschliff"], ["regeln", "Faustregeln"], ["markt", "Markt"], ["bewegung", "Bewegung"], ["fassungen", "Fassungen"], ["anwendungen", "Anwendungen"]]} akt={tab} set={setTab} />
     {tab === "entwuerfe" && <>
+      {window.RichtungWahl && <RichtungWahl mid={m.id} akt={richtung} set={richtungSetzen} teamSicht={teamSicht} />}
       <div className="hm-lk2-kopfzeile">
         <div className="hm-chips" role="group" aria-label="Richtung">{HM_LK_RICHTUNGEN.map((r) => <button key={r.id} type="button" className={"hm-chip" + (richtungen.includes(r.id) ? " on" : "")} aria-pressed={richtungen.includes(r.id)} onClick={() => { setBasis(null); setFokus(null); setRichtungen((l) => l.includes(r.id) ? l.filter((x) => x !== r.id) : [...l, r.id]); }}>{r.name}</button>)}</div>
         <div className="rechts">
@@ -1338,6 +1348,7 @@ function LogoWerkstatt({ m, teamSicht }) {
       <LkBuehne spec={aktiv} b={b} />
       <LogoPruefstand spec={aktiv} b={b} mid={m.id} teamSicht={teamSicht} />
     </>}
+    {tab === "schriften" && window.SchriftPool && <SchriftPool mid={m.id} teamSicht={teamSicht} richtung={richtung} />}
     {tab === "markt" && aktiv && window.BrandReferenzen && <>
       <LkBuehne spec={aktiv} b={b} />
       <BrandReferenzen mid={m.id} spec={aktiv} b={b} teamSicht={teamSicht} />
@@ -1377,7 +1388,7 @@ function hmSelbsttestLogo() {
   const gleich = (x, y) => (x == null && y == null) || x === y || (typeof x === "number" && typeof y === "number" && Math.abs(x - y) < 1e-9);
   /* Bestehende sechs */
   t("18 Entwürfe über alle Arten", () => { const arten = new Set(l.map((x) => x.art)); return { ok: l.length >= 16 && arten.size >= 6, detail: `${l.length} Entwürfe, ${arten.size} Arten` }; });
-  t("Schriften nur aus dem Pool", () => ({ ok: l.every((x) => HM_LK_SCHRIFTEN.some((s) => s.f === x.font)) }));
+  t("Schriften nur aus dem Pool", () => { const P = window.hmLkPool ? hmLkPool(mid) : HM_LK_SCHRIFTEN; return { ok: l.every((x) => P.some((s) => s.f === x.font)) }; });
   t("Zeichen aus Idee und Welt", () => { const z = hmLkKontext(mid).zeichen; return { ok: z.length >= 1 && l.filter((x) => x.art === "zeichen").every((x) => z.includes(x.zeichen)), detail: z.join(", ") }; });
   t("Layout ohne NaN", () => { const bad = l.filter((s) => { const L = hmLkLayout(s, b, mess); return !isFinite(L.W) || !isFinite(L.H) || /NaN|undefined/.test(hmLkSvgText(s, b)); }); return { ok: !bad.length, detail: bad.map((x) => x.art).join(", ") }; });
   t("Mehr davon bleibt in der Art", () => { const v = hmLkKonzepte(mid, { basis: l[0] }); return { ok: v.length >= 8 && v.every((x) => x.art === l[0].art), detail: l[0].art }; });

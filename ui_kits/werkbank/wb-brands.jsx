@@ -41,7 +41,7 @@ function hmBrandKlischees(nische) {
 function hmBrandSpecAttribute(spec0) {
   const spec = window.hmLkKlemmen ? hmLkKlemmen(spec0 || {}) : (spec0 || {});
   const S = (window.HM_LK_SCHRIFTEN || []).find((x) => x.f === spec.font) || {};
-  const klasse = S.k === "serif" ? (/Display|Playfair/.test(spec.font || "") ? "serif_display" : "antiqua") : (/Space|Manrope/.test(spec.font || "") ? "geometrisch" : "grotesk");
+  const klasse = window.hmGfontKlasse ? hmGfontKlasse(spec.font || "") : (S.k === "serif" ? (/Display|Playfair/.test(spec.font || "") ? "serif_display" : "antiqua") : (/Space|Manrope/.test(spec.font || "") ? "geometrisch" : "grotesk"));
   const art = spec.art === "monogramm" ? "monogramm" : spec.art === "zeichen" ? "zeichen_und_name" : spec.art === "gestapelt" ? "gestapelt" : "wortmarke";
   const motiv = spec.art === "monogramm" ? "initialen" : !spec.zeichen ? "keins" : /ratlinie|ratstrich|zeitmass|graetzl|kante/.test(spec.zeichen) ? "linie" : /fenster|schriftfeld|bogen/.test(spec.zeichen) ? "abstrakt" : /folio/.test(spec.zeichen) ? "punkt" : "sonstiges";
   return { schriftklasse: klasse, art, zeichenMotiv: motiv, versal: !!spec.versal, laufweite: spec.laufweite > 0.12 ? "gesperrt" : spec.laufweite < 0 ? "eng" : "normal", akzentfarbe: !!spec.akzent };

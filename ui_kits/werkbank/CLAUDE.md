@@ -36,4 +36,4 @@ Keine Zugangsdaten in Dateien (das Repo ist öffentlich). Schlüssel nur in Verc
 
 ## Fahrplan (kurz)
 
-Zuletzt: Marke sichtbar (Logos, Logo-Erlebnis, Markenbuch-Neusatz, Feed im Telefon), davor Erlebnis und Ergebnis. Danach: Umbau Markenprozess v2, Rest. Details in `docs/werkbank/FAHRPLAN.md`.
+Zuletzt: Markensystem (Google-Fonts-Katalog, Schriftpool, acht Markenrichtungen), davor Markt und Bewegung, Marke sichtbar, Erlebnis und Ergebnis. Danach: Umbau Markenprozess v2, Rest. Details in `docs/werkbank/FAHRPLAN.md`.
