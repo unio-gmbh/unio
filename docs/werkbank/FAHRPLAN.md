@@ -26,6 +26,7 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 | **Marke erzeugen v2, Teil 1** (fertig, Abnahme offen) | Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen, Markus als v2-Beispiel | Werkstatt ansehen, Markenbeispiele liefern |
 | **Erlebnis und Ergebnis** (fertig, Abnahme offen) | Ihr Stand, Fragebogen v2 mit Bildwahl, Feed-Vorschlag, Reveal mit Presenter, Logo-Werkstatt v2 | Links ansehen, Anrede entscheiden, Paarsatz fotografieren |
 | **Marke sichtbar** (fertig, Sichtprüfung offen) | Logos, Logo-Erlebnis für den Makler, Markenbuch editorial, Feed im Telefon | ansehen, push freigeben, Logo-Wahl für Markus bestätigen |
+| **Markt und Bewegung** (fertig, Sichtprüfung offen) | 65 Referenzmarken als Landkarte und Prüfzeile in der Werkstatt, bewegte Marke für Reels | Katalog überfliegen, push freigeben |
 | Umbau Markenprozess v2, Rest | Werkbank folgt dem neuen Prozess, in elf Etappen laut `branding-v2/UMBAU_ETAPPEN.md`, zuerst Sofortreparaturen und eine eingefrorene Markenquelle | Freigabe der Umbauliste |
 
 ## Geparkt
@@ -38,5 +39,4 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 - Server-Datenhaltung (Supabase EU) statt Browser-Speicher, Rollen serverseitig.
 - Farbvorschlag aus Porträt oder altem Logo.
 - Helle und dunkle Sektionsthemen je Website-Abschnitt.
-- Animiertes Logo für Reels (wie Brandmark).
 - Territorien statt Archetyp-Wegen (Schritt 6), damit Akt 4 im Reveal echte Richtungen zeigt.

@@ -108,7 +108,7 @@ function hmSelbsttestBetrieb() {
 function Selbsttest() {
   const [lauf, setLauf] = React.useState(null);
   const los = () => {
-    const gruppen = [["Betrieb", hmSelbsttestBetrieb], ["Produktion", window.hmSelbsttestProduktion], ["Shop", window.hmSelbsttestShop], ["Plattform", window.hmSelbsttestPlattform], ["Markenwelten", window.hmSelbsttestWelten], ["Bildwelt", window.hmSelbsttestBildwelt], ["Website", window.hmSelbsttestWeb], ["Logo", window.hmSelbsttestLogo], ["Freigabe", window.hmSelbsttestFreigabe], ["Stand", window.hmSelbsttestStand], ["Fragebogen v2", window.hmSelbsttestFragen2], ["Feed", window.hmSelbsttestFeed2], ["Reveal", window.hmSelbsttestReveal], ["Logo-Erlebnis", window.hmSelbsttestLogoErlebnis]].filter(([, f]) => typeof f === "function");
+    const gruppen = [["Betrieb", hmSelbsttestBetrieb], ["Produktion", window.hmSelbsttestProduktion], ["Shop", window.hmSelbsttestShop], ["Plattform", window.hmSelbsttestPlattform], ["Markenwelten", window.hmSelbsttestWelten], ["Bildwelt", window.hmSelbsttestBildwelt], ["Website", window.hmSelbsttestWeb], ["Logo", window.hmSelbsttestLogo], ["Freigabe", window.hmSelbsttestFreigabe], ["Stand", window.hmSelbsttestStand], ["Fragebogen v2", window.hmSelbsttestFragen2], ["Feed", window.hmSelbsttestFeed2], ["Reveal", window.hmSelbsttestReveal], ["Logo-Erlebnis", window.hmSelbsttestLogoErlebnis], ["Marktreferenzen", window.hmSelbsttestBrands], ["Bewegte Marke", window.hmSelbsttestLogoBewegt]].filter(([, f]) => typeof f === "function");
     setLauf(gruppen.map(([name, f]) => { try { return [name, f()]; } catch (e) { return [name, [{ name: "Aufruf", ok: false, detail: e.message }]]; } }));
   };
   React.useEffect(los, []);

@@ -1,20 +1,21 @@
 # STATUS
 
-## Aktuelle Etappe: Marke sichtbar (fertig, lokal committet, wartet auf Sichtprüfung vor dem Push)
+## Aktuelle Etappe: Markt und Bewegung (fertig, lokal committet, wartet auf Sichtprüfung vor dem Push)
 
-- [x] 1. Logos erzeugt: Markus Zeichen und Name mit Ratstrich in Newsreader, Elif Grätzl-Linie in Fraunces, Sara drei Entwürfe zum Urteilen (Migration `unio_hm_mig_logo_v3`)
-- [x] 2. Logo-Erlebnis für den Makler (`wb-logo-erlebnis.jsx`): Bühne, Herkunft, Zutaten, Einsatz, hell und dunkel, Urteil an drei Fragen; Link `?ansicht=logo&makler=ID`
-- [x] 3. Logo-Werkstatt im Studio sichtbar: Logo groß, Hauptknopf „Logo-Werkstatt öffnen“ (Teamsicht)
-- [x] 4. Markenbuch neu gesetzt: Titelblatt, Kapitel 01 bis 11, Haarlinien statt Boxen, Team-Panel eingeklappt, Kaufpreise für den Makler ausgeblendet, Druck, Mobil; CSS im Modul
-- [x] 5. Feed als echtes Instagram-Profil im Telefon: Chrome, Ring, Zahlen, Highlights, Raster 3:4, Kacheln mit drei Schnitten, Beitragsansicht, Wochenleiste außen
-- [x] 6. Du-Formen in Markenwelten und Plattform-Texten neutralisiert, Claim-Rückfall ohne Du
-- [x] 7. Selbsttest 203 von 203 grün (14 Gruppen), Konsole leer, kein horizontaler Scroll bei 390
-- Details: `erlebnis/ERLEBNIS_UND_ERGEBNIS.md`, Abschnitt „Marke sichtbar“, und `LOGO_UND_QUELLE.md`
+- [x] 1. Recherche mit vier Agenten: 65 Maklermarken weltweit und in Wien (Personen und Häuser, Wohnen, Luxus, Projektvertrieb, Gewerbe), je Marke Screenshot (nur lokal unter `_research/`, nicht im Repo) und Attribute nach Schema
+- [x] 2. Katalog `branding-v2/research/MAKLER_BRANDS.md` (Tabellen je Nische mit Beleg und Quelle, Muster aus allen vier Läufen) und Datendatei `wb-brands-daten.jsx` (nur Attribute und Sätze, keine fremden Logos)
+- [x] 3. Werkstatt, Reiter „Markt“: Landkarte der Nische (Antiqua bis Grotesk, Wortmarke bis Zeichen), Muster, Klischees, die nächsten Referenzen zum Entwurf mit Gründen; Prüfzeile „Abstand zum Markt“ im Prüfstand; Nische aus den Objektarten, Team kann sie setzen
+- [x] 4. Werkstatt, Reiter „Bewegung“ (Brandmark F4): Zeichnen, Aufdecken, Akzent zuletzt, Schleife, Reel-Outro, Export als animiertes SVG und WebM
+- [x] 5. Selbsttest 220 in 16 Gruppen grün, Konsole leer
+- Details: `erlebnis/ERLEBNIS_UND_ERGEBNIS.md`, Abschnitt „Markt und Bewegung“, und `LOGO_UND_QUELLE.md`
+
+## Vorherige Etappe: Marke sichtbar (lokal committet, Sichtprüfung offen)
 
 ## Vorherige Etappe: Erlebnis und Ergebnis (live seit 01.10.2026, Commit 9d56ba1)
 
 ## Erledigt
 
+- 01.10.2026 Etappe Markt und Bewegung (Recherche 65 Marken, Reiter Markt und Bewegung in der Werkstatt), lokal committet
 - 01.10.2026 Etappe Marke sichtbar (Logos, Logo-Erlebnis, Markenbuch-Neusatz, Instagram-Feed im Telefon), lokal committet
 - 01.10.2026 Etappe Erlebnis und Ergebnis (Ihr Stand, Fragebogen v2, Bildwahl, Feed, Reveal, Logo-Werkstatt v2)
 - 30.09.2026 Etappe Marke erzeugen v2, Teil 1 (Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen)
@@ -26,6 +27,7 @@
 
 ## Offen beim Owner
 
+- Katalog `MAKLER_BRANDS.md` überfliegen: fehlen Marken, die du als Vorbild oder Gegenbild siehst? Dann als Sätze liefern, nicht als Dateien.
 - Sichtprüfung vor dem Push: Markenbuch (Team und Makler), Marke, Design als Makler (Logo-Erlebnis), Feed im Markenbuch. Danach „push“ sagen.
 - Markus: Hauptlogo ist jetzt Ratstrich in Newsreader statt Maßstab-Wortmarke. Passt das?
 - Feed-Regel: acht Porträts in zwölf Kacheln (E3) oder weniger? Heute acht in drei Schnitten.
@@ -49,6 +51,8 @@
 
 ## Lehren
 
+- Headless Chrome braucht einen Desktop-User-Agent, sonst blocken Cloudflare-Seiten. Screenshots fremder Marken nur lokal (`_research/`, gitignored), ins Repo nur Attribute.
+- Agenten, die parallel in einen Ordner schreiben, brauchen eigene Chrome-Profile, sonst verschwinden Screenshots.
 - Prüfer-Agenten gegen die Schrittdokumente lesen lassen: sie finden Abweichungen (Dauern, Fristen, vorbelegte Haltungen), die im Browser nicht auffallen.
 - Einwilligungen nie als Standardwert im Code, nur als Eintrag mit Datum. Sonst gilt still ein Ja.
 - Vorlagen sind für 940-px-WebP gebaut. Fotos vor dem Einsetzen auf diese Größe bringen, sonst ruckelt die Scroll-Animation.

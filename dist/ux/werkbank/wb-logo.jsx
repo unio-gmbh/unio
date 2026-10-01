@@ -850,6 +850,10 @@ function hmLkPruefen(spec0, b, o) {
       satz: st === "ok" ? "Kein Logo eines anderen Maklers kommt in Umriss und Aufbau nahe. Verglichen wird mit Ihrem Namen in beiden Entwürfen, als Umriss in 32 mal 32 Punkten."
         : opt.teamSicht ? `Am nächsten liegt das Logo von ${n.name}. ${st === "nein" ? "Zu nah: Anordnung oder Zeichen ändern." : "Nah, aber unterscheidbar. Im selben Bezirk lieber eine andere Anordnung."}` : HM_LK_SAETZE.kohorteMakler });
   }
+  /* Abstand zum Markt: Attribute des Entwurfs gegen die Referenzen der Nische (wb-brands.jsx) */
+  if (window.hmBrandAbstandSatz && opt.mid) {
+    try { const mk = hmBrandAbstandSatz(spec, opt.mid); out.push({ name: "Abstand zum Markt", wert: mk.wert, satz: opt.teamSicht || !mk.nah ? mk.satz : HM_LK_SAETZE.kohorteMakler, stufe: mk.nah ? "grenzwertig" : "ok" }); } catch (e) { /* ohne Referenzen keine Zeile */ }
+  }
   const nicht = [];
   if (spec.art === "punkt") nicht.push("Punkt nach dem Namen");
   if (spec.art === "gesperrt" && spec.akzent) nicht.push("kurze Linie unter dem Namen");
@@ -1288,7 +1292,7 @@ function LogoWerkstatt({ m, teamSicht }) {
   return <div className="hm-lk2">
     <p className="hm-sub" style={{ marginTop: 0 }}>Entwürfe aus Name, Schrift und Idee der Marke. Zeichen nur aus den Stichworten der Marke, keine Symbole aus dem Katalog. Farben aus dem Branding.</p>
     <LogoStichworte mid={m.id} teamSicht={teamSicht} />
-    <Tabs tabs={[["entwuerfe", "Entwürfe"], ["fein", "Feinschliff"], ["regeln", "Faustregeln"], ["fassungen", "Fassungen"], ["anwendungen", "Anwendungen"]]} akt={tab} set={setTab} />
+    <Tabs tabs={[["entwuerfe", "Entwürfe"], ["fein", "Feinschliff"], ["regeln", "Faustregeln"], ["markt", "Markt"], ["bewegung", "Bewegung"], ["fassungen", "Fassungen"], ["anwendungen", "Anwendungen"]]} akt={tab} set={setTab} />
     {tab === "entwuerfe" && <>
       <div className="hm-lk2-kopfzeile">
         <div className="hm-chips" role="group" aria-label="Richtung">{HM_LK_RICHTUNGEN.map((r) => <button key={r.id} type="button" className={"hm-chip" + (richtungen.includes(r.id) ? " on" : "")} aria-pressed={richtungen.includes(r.id)} onClick={() => { setBasis(null); setFokus(null); setRichtungen((l) => l.includes(r.id) ? l.filter((x) => x !== r.id) : [...l, r.id]); }}>{r.name}</button>)}</div>
@@ -1334,6 +1338,11 @@ function LogoWerkstatt({ m, teamSicht }) {
       <LkBuehne spec={aktiv} b={b} />
       <LogoPruefstand spec={aktiv} b={b} mid={m.id} teamSicht={teamSicht} />
     </>}
+    {tab === "markt" && aktiv && window.BrandReferenzen && <>
+      <LkBuehne spec={aktiv} b={b} />
+      <BrandReferenzen mid={m.id} spec={aktiv} b={b} teamSicht={teamSicht} />
+    </>}
+    {tab === "bewegung" && aktiv && window.LogoBewegt && <LogoBewegt spec={aktiv} b={b} />}
     {tab === "fassungen" && aktiv && <LogoFassungen spec={aktiv} b={b} />}
     {tab === "anwendungen" && aktiv && <LogoAnwendungen spec={aktiv} b={b} m={m} />}
   </div>;

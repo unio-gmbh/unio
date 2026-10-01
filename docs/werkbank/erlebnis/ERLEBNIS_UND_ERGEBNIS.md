@@ -42,6 +42,10 @@ Drei Bau-Agenten parallel, danach Zusammenbau und Sichtprüfung.
 
 Selbsttest: 203 von 203 in 14 Gruppen. Alte `.hm-mb-*`-Regeln aus `index.html` entfernt.
 
+## Markt und Bewegung (01.10.2026)
+
+Vier Recherche-Agenten parallel (Personenmarken weltweit, Häuser Wohnen und Luxus, Projektvertrieb und Gewerbe, Wien und DACH), 65 Marken nach einem Schema, Screenshots nur lokal. Befunde, die der Generator jetzt nutzt: kein großes Haus trägt Haus, Dach oder Schlüssel im Logo; Luxus entsteht über Antiqua, Versalien und Weißraum, nicht über Gold; der Wiener Durchschnitt ist Grotesk in Versalien mit Bankblau oder Gold auf Dunkel und Stephansdom als Bild; frei bleibt in Wien eine Marke, die Haus, Grätzl und Zahl zum Zeichen macht. Eingebaut als Reiter „Markt“ und Prüfzeile „Abstand zum Markt“, dazu der Reiter „Bewegung“ nach Brandmark F4.
+
 ## Bewusst offen
 
 - Markus: Hauptlogo ist jetzt der Ratstrich in Newsreader. Die Maßstab-Wortmarke aus dem Beweis bleibt in der Werkstatt wählbar.

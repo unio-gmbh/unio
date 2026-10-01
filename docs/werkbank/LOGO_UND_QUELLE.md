@@ -24,6 +24,12 @@ Analyse: `erlebnis/BRANDMARK_ANALYSE.md`. Übernommen: Stichworte als Chips, die
 - Ablage zusätzlich: `logos[mid].stichworte = { aus, eigen }`, `logos[mid].zuletzt` (höchstens acht Entwürfe).
 - Grenzen 85 und 70 Prozent im Prüfstand sind Setzungen des Teams.
 
+## Markt und Bewegung (01.10.2026)
+
+- **Markt** (`wb-brands.jsx`, Daten `wb-brands-daten.jsx` aus `branding-v2/research/MAKLER_BRANDS.md`): 65 Referenzmarken in vier Nischen, nur als Attribute (Logoart, Schriftklasse, Versalien, Laufweite, Zeichenmotiv, Grundton, Klischees, Stärke). Die Werkstatt zeigt je Nische die Landkarte (x Antiqua bis Grotesk, y Wortmarke bis Zeichen), die Muster, die Klischees und die fünf nächsten Referenzen zum Entwurf mit Gründen. Der Prüfstand bekommt die Zeile „Abstand zum Markt“ (ab 70 Prozent Übereinstimmung grenzwertig). Nische aus den Objektarten (`hmBrandNische`), Team setzt sie in `logos[mid].nische`.
+- **Bewegung** (`wb-logo-bewegt.jsx`, Brandmark F4): drei Bewegungen in 1,6 Sekunden (Zeichnen über pathLength, Aufdecken über clipPath, Akzent zuletzt), Schleife, Vorschau auf Papier und im Reel-Outro, Export als animiertes SVG (CSS im SVG, reduced-motion zeigt das Endbild) und WebM über MediaRecorder.
+- Datenerzeugung: `scratchpad/brands_daten.py` liest `_research/makler-brands/*.json`, entfernt Dubletten (Wien zuerst) und schreibt Datendatei und Katalog. Screenshots bleiben lokal.
+
 ## Logo-Erlebnis für den Makler (01.10.2026)
 
 Code: `ui_kits/werkbank/wb-logo-erlebnis.jsx`, Komponente `LogoErlebnis({ m, teamSicht, allein })`. Sichtbar unter Marke, Design (Makler-Sicht) und als eigener Link `?ansicht=logo&makler=ID`.
