@@ -175,7 +175,7 @@ function hmSelbsttestFonts() {
   t("Schreibschrift verliert Punkte, Begründung als Satz", () => { const g = G.find((r) => r[1] === "hand"); if (!g) return { ok: true, detail: "keine Schreibschrift" }; const e = hmFontsEignung(hmGfont(g[0]), null); return { ok: e.punkte < 50 && e.saetze.some((s) => /Schreibschrift/.test(s)) }; });
   t("Schriftklasse für den Markt aus dem Katalog", () => ({ ok: hmGfontKlasse("Newsreader") === "antiqua" && hmGfontKlasse("Instrument Sans") === "grotesk" && ["antiqua", "serif_display", "grotesk", "geometrisch", "script", "slab"].includes(hmGfontKlasse("Cormorant Garamond")) }));
   t("Suche findet nach Namen und Kategorie", () => { const l = hmFontsSuche("corm", "", null, 10); return { ok: l.length >= 1 && l.every((x) => /corm/i.test(x.g.f)), detail: l.map((x) => x.g.f).join(", ") }; });
-  t("Texte ohne Ausrufezeichen und Gedankenstriche", () => { const s = Object.values(HM_FONTS_KAT).join(" ") + String(SchriftPool); return { ok: !/[–—]/.test(s) && !/[^!]![^=]/.test(s.replace(/!\w|!\(|!\[|!\./g, "")) }; });
+  t("Texte ohne Ausrufezeichen und Gedankenstriche", () => { const s = Object.values(HM_FONTS_KAT).join(" ") + String(SchriftPool); return { ok: !/[\u2013\u2014]/.test(s) && !/[^!]![^=]/.test(s.replace(/!\w|!\(|!\[|!\./g, "")) }; });
   return out;
 }
 
