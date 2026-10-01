@@ -28,14 +28,15 @@ function Marke({ m, sub, setSub, go, teamSicht }) {
 }
 
 /* Material kompakt im Design: was der Makler mitbringt */
-function MaterialKompakt({ m }) {
+function MaterialKompakt({ m, teamSicht }) {
   const br = (useHm("branding") || {})[m.id] || {};
   const liste = br.material || [];
   const [offen, setOffen] = React.useState(false);
+  const titel = teamSicht ? "Was du mitbringst" : "Was Sie mitbringen";
   return <section>
-    <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Was du mitbringst · {liste.length}</div><button className="hm-link" onClick={() => setOffen(true)}>{liste.length ? "Verwalten" : "Hochladen"}</button></div>
-    {liste.length ? <div className="hm-thumbs">{liste.slice(0, 8).map((x) => x.vorschau ? <img key={x.id} src={x.vorschau} alt={x.name} title={`${x.art}: ${x.name}`} /> : null)}</div> : <div className="hm-mono">Altes Logo, Fotos, Objekte, Inspiration. Fließt in Farben, Bildwelt und die Frage ein, ob ein Logo geschärft oder ersetzt wird.</div>}
-    <Sheet offen={offen} zu={() => setOffen(false)} titel="Was du mitbringst" breit><Material m={m} /></Sheet>
+    <div className="hm-row" style={{ justifyContent: "space-between" }}>{teamSicht ? <div className="hm-mono">{titel} · {liste.length}</div> : <h2 className="hm-h" style={{ fontSize: 20, letterSpacing: "-.01em" }}>{titel}</h2>}<button className="hm-link" onClick={() => setOffen(true)}>{liste.length ? "Verwalten" : "Hochladen"}</button></div>
+    {liste.length ? <div className="hm-thumbs">{liste.slice(0, 8).map((x) => x.vorschau ? <img key={x.id} src={x.vorschau} alt={x.name} title={`${x.art}: ${x.name}`} /> : null)}</div> : <div className={teamSicht ? "hm-mono" : "hm-sub"} style={teamSicht ? undefined : { fontSize: 14, marginTop: 0 }}>Altes Logo, Fotos, Objekte, Inspiration. Fließt in Farben, Bildwelt und die Frage ein, ob ein Logo geschärft oder ersetzt wird.</div>}
+    <Sheet offen={offen} zu={() => setOffen(false)} titel={titel} breit><Material m={m} /></Sheet>
   </section>;
 }
 
@@ -73,20 +74,23 @@ function Studio({ m, setSub, teamSicht }) {
   const fb = ((useHm("fragebogen") || {})[m.id] || {}).antworten || {};
   const b = hmBrand(m.id);
   const [werkstatt, setWerkstatt] = React.useState(false);
-  if (!st || !st.gewaehlt) return <div className="hm-stack"><Leer titel="Erst den Weg wählen." text="Das Design entsteht aus deinem Konzept. Bis dahin kannst du schon hochladen, was du mitbringst." aktion={<Btn onClick={() => setSub("konzept")}>Zum Konzept</Btn>} /><div className="hm-studio-l"><MaterialKompakt m={m} /></div></div>;
+  if (!st || !st.gewaehlt) return <div className="hm-stack"><Leer titel="Erst den Weg wählen." text={teamSicht ? "Das Design entsteht aus deinem Konzept. Bis dahin kannst du schon hochladen, was du mitbringst." : "Das Design entsteht aus Ihrem Konzept. Bis dahin können Sie schon hochladen, was Sie mitbringen."} aktion={<Btn onClick={() => setSub("konzept")}>Zum Konzept</Btn>} /><div className="hm-studio-l"><MaterialKompakt m={m} teamSicht={teamSicht} /></div></div>;
   const w = st.wege[st.gewaehlt];
   const set = (patch) => hmStore.patch("branding", (a) => ({ ...(a || {}), [m.id]: { ...((a || {})[m.id] || {}), ...patch, status: patch.status || (((a || {})[m.id] || {}).status === "freigegeben" ? "geaendert" : "entwurf") } }));
   const empfS = HM_SCHRIFTPAARE[b.aid], empfA = HM_AKZENT_EMPF[b.aid];
   return <div>
-    <Kopf titel="Branding" ueber={`Aus deinem Weg ${w.archetyp.name}`}
+    <Kopf titel="Branding" ueber={teamSicht ? `Aus deinem Weg ${w.archetyp.name}` : `Aus Ihrem Weg ${w.archetyp.name}`}
       rechts={b.fertig ? <span className="hm-ez z-fertig">Freigegeben</span> : !teamSicht ? <span className="hm-ez z-in_arbeit">Beim Team</span> : <Btn onClick={() => { set({ status: "freigegeben" }); setTimeout(() => window.hmQuelleEinfrieren && hmQuelleEinfrieren(m.id, teamSicht ? "Team" : m.name, "Branding freigegeben"), 0); hmEvent(m.id, "branding", "Branding freigegeben", teamSicht ? "Team" : m.name); toast("Branding freigegeben. Website und Visitenkarten sind vorbereitet."); }}>Branding freigeben</Btn>} />
-    <div className="hm-studio">
+    <div className={"hm-studio" + (teamSicht || b.fertig ? "" : " allein")}>
       <div className="hm-studio-l">
-        <MaterialKompakt m={m} />
+        <MaterialKompakt m={m} teamSicht={teamSicht} />
         <PortraitZeile m={m} teamSicht={teamSicht} />
         {teamSicht ? <>
-        <section><div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Logo</div>{teamSicht && <button className="hm-link" onClick={() => setWerkstatt(true)}>Logo-Werkstatt öffnen</button>}</div><div className="hm-optionen">{b.logoKonzept && <button className={"hm-option" + (b.logo === "konzept" ? " on" : "")} onClick={() => set({ logo: "konzept" })}><div className="bild"><BrandLogo b={b} typ="konzept" h={b.logoKonzept.art === "monogramm" ? 56 : 34} /></div><div className="t">Aus der Werkstatt</div><div className="s">{(HM_LK_ARTEN.find((x) => x.id === b.logoKonzept.art) || {}).name}, {b.logoKonzept.font}</div></button>}{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div>
-          {!teamSicht && window.LogoBewertung && <LogoBewertung m={m} />}
+        <section><div className="hm-mono">Logo</div>
+          {/* Das aktuelle Logo groß auf Papier, darunter der Weg in die Werkstatt als richtiger Knopf */}
+          <div style={{ background: "#F5F1EA", color: "#0B0A09", borderRadius: 16, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", minHeight: 140, display: "grid", placeItems: "center", padding: "36px 28px", overflow: "hidden" }}><BrandLogo b={b} h={b.logo === "monogramm" || (b.logo === "konzept" && b.logoKonzept && b.logoKonzept.art === "monogramm") ? 72 : 56} /></div>
+          <div className="hm-row" style={{ gap: 14, alignItems: "center", flexWrap: "wrap" }}><Btn onClick={() => setWerkstatt(true)}>Logo-Werkstatt öffnen</Btn><span className="hm-sub" style={{ margin: 0, fontSize: 13 }}>Entwürfe aus Name, Schrift und Idee. Bis zu drei für den Makler merken.</span></div>
+          <div className="hm-optionen">{b.logoKonzept && <button className={"hm-option" + (b.logo === "konzept" ? " on" : "")} onClick={() => set({ logo: "konzept" })}><div className="bild"><BrandLogo b={b} typ="konzept" h={b.logoKonzept.art === "monogramm" ? 56 : 34} /></div><div className="t">Aus der Werkstatt</div><div className="s">{(HM_LK_ARTEN.find((x) => x.id === b.logoKonzept.art) || {}).name}, {b.logoKonzept.font}</div></button>}{HM_LOGO_TYPEN.map((t) => <button key={t.id} className={"hm-option" + (b.logo === t.id ? " on" : "")} onClick={() => set({ logo: t.id })}><div className="bild" data-logo={t.id}><BrandLogo b={b} typ={t.id} h={t.id === "monogramm" ? 56 : 34} /></div><div className="t">{t.name}</div><div className="s">{t.satz}</div></button>)}</div>
           <Sheet offen={werkstatt} zu={() => setWerkstatt(false)} titel="Logo-Werkstatt" breit><LogoWerkstatt m={m} teamSicht={teamSicht} /></Sheet></section>
         <section><div className="hm-mono">Schrift · empfohlen für {w.archetyp.name}</div><div className="hm-optionen">{Object.entries(HM_WEB_SCHRIFTEN).sort((x, y) => (empfS.includes(y[0]) ? 1 : 0) - (empfS.includes(x[0]) ? 1 : 0)).map(([id, f]) => <button key={id} className={"hm-option" + (b.schriftId === id ? " on" : "")} onClick={() => set({ schrift: id })}><div className="bild" style={{ fontFamily: hmFont(f.d), fontSize: 30, color: "var(--ink)" }}>Aa</div><div className="t">{f.name}{empfS.includes(id) ? " · empfohlen" : ""}</div><div className="s">{f.d} und {f.t}</div></button>)}</div></section>
         <section><div className="hm-mono">Akzentfarbe</div><div className="hm-farben">{HM_WEB_AKZENTE.map((x) => <button key={x.id} className={b.akzentId === x.id ? "on" : ""} onClick={() => set({ akzent: x.id })} title={x.name}><i style={{ background: x.hex }}></i><span>{x.name}{empfA.includes(x.id) ? " ·" : ""}</span></button>)}</div>{(() => { const k = hmKontrastInfo(b.akzent); return <div className="hm-pruefliste" style={{ marginTop: 10, fontSize: 13 }}><div className={k.gross ? "ok" : "nein"}><Ico n={k.gross ? "haken" : "x"} />Auf hellem Grund {hmZahl(k.aufPapier)} zu 1, {k.text ? "auch für Text" : k.gross ? "für Überschriften und Flächen" : "nur für Flächen"}</div><div className={k.knopf ? "ok" : "nein"}><Ico n={k.knopf ? "haken" : "x"} />Weiß darauf {hmZahl(k.weissDrauf)} zu 1, {k.knopf ? "gut für Knöpfe" : "Knöpfe mit dunkler Schrift"}</div></div>; })()}
@@ -95,7 +99,7 @@ function Studio({ m, setSub, teamSicht }) {
         </> : <MarkeLesen m={m} b={b} />}
         {teamSicht ? <BildweltBruecke m={m} teamSicht={teamSicht} /> : <BildweltGalerie m={m} />}
       </div>
-      <div className="hm-studio-r">
+      {teamSicht ? <div className="hm-studio-r">
         <div className="hm-mono">So sieht es aus</div>
         <div className="hm-mock-web" style={{ fontFamily: hmFont(b.schrift.t) }}><div className="hm-row" style={{ justifyContent: "space-between" }}><BrandLogo b={b} h={20} /><span style={{ background: b.akzent, color: "#fff", borderRadius: 999, padding: "5px 12px", fontSize: 11 }}>Erstgespräch</span></div><div style={{ fontFamily: hmFont(b.schrift.d), fontSize: 28, lineHeight: 1.02, letterSpacing: "-.02em", marginTop: 26, maxWidth: "15ch", color: "#0B0A09" }}>{b.claim}</div><div style={{ fontSize: 12, color: "#383429", marginTop: 10, maxWidth: "40ch" }}>{w.satz}</div></div>
         {(() => { const wk = window.WeltKarte && window.hmMbWelt ? hmMbWelt(m.id, window.hmMbPlattform ? hmMbPlattform(m.id) : null) : null; /* eine Karte in der ganzen Werkbank: die der Markenwelt */ return wk ? <div className="hm-vk-paar klein"><WeltKarte welt={wk} b={b} breite={240} /><WeltKarte welt={wk} b={b} seite="hinten" breite={240} /></div> : <div className="hm-vk-paar klein"><Visitenkarte b={b} tel="+43 1 000 00 00" mail={(((hmStore.get("kontakte") || {})[m.id] || [])[0] || {}).mail || ""} /><Visitenkarte b={b} seite="hinten" /></div>; })()}
@@ -105,7 +109,7 @@ function Studio({ m, setSub, teamSicht }) {
         </div>
         <StudioDownloads b={b} />
         <div className="hm-mock-sig"><BrandLogo b={b} h={16} /><div style={{ fontSize: 11, color: "#383429", marginTop: 6, fontFamily: hmFont(b.schrift.t) }}>{b.makler.name} · UNIO Partner<br />{b.claim}</div></div>
-      </div>
+      </div> : b.fertig ? <div className="hm-studio-r"><h2 className="hm-h hm-h3" style={{ margin: 0 }}>Ihre Dateien</h2><StudioDownloads b={b} /></div> : null}
     </div>
   </div>;
 }
@@ -175,16 +179,17 @@ function BrandKit({ m, setSub }) {
 /* Makler: die Marke als fertiges Ergebnis, ohne Konfigurator (Prozess v2, C5). Urteil am Markenvertrag, Gestaltung beim Team */
 function MarkeLesen({ m, b }) {
   const ak = HM_WEB_AKZENTE.find((x) => x.id === b.akzentId) || {};
-  return <section className="hm-marke-lesen">
-    <div className="hm-mono">Ihre Marke</div>
-    <div className="logo"><BrandLogo b={b} h={b.logo === "monogramm" ? 64 : 40} /></div>
-    <div className="hm-gruppe">
-      <div className="hm-reihe"><div className="m"><div className="u">Leitidee</div><div className="t" style={{ fontFamily: hmFont(b.schrift.d), fontSize: 20, whiteSpace: "normal" }}>{b.claim}</div></div></div>
-      <div className="hm-reihe"><div className="m"><div className="u">Schrift</div><div className="t" style={{ whiteSpace: "normal" }}>{b.schrift.name}: {b.schrift.d}{b.schrift.t !== b.schrift.d ? ` und ${b.schrift.t}` : ""}</div></div></div>
-      <div className="hm-reihe"><i style={{ width: 22, height: 22, borderRadius: 999, background: b.akzent, flex: "none" }} /><div className="m"><div className="u">Akzent</div><div className="t">{ak.name || b.akzent}</div></div></div>
+  return <section className="hm-marke-lesen" style={{ display: "grid", gap: 40 }}>
+    {window.LogoErlebnis ? <LogoErlebnis m={m} teamSicht={false} /> : <div className="logo"><BrandLogo b={b} h={b.logo === "monogramm" ? 64 : 40} /></div>}
+    <div>
+      <h2 className="hm-h" style={{ fontSize: 24, letterSpacing: "-.015em", marginBottom: 18 }}>Ihre Marke</h2>
+      <div className="hm-gruppe">
+        <div className="hm-reihe"><div className="m"><div className="u">Leitidee</div><div className="t" style={{ fontFamily: hmFont(b.schrift.d), fontSize: 20, whiteSpace: "normal" }}>{b.claim}</div></div></div>
+        <div className="hm-reihe"><div className="m"><div className="u">Schrift</div><div className="t" style={{ whiteSpace: "normal" }}>{b.schrift.name}: {b.schrift.d}{b.schrift.t !== b.schrift.d ? ` und ${b.schrift.t}` : ""}</div></div></div>
+        <div className="hm-reihe"><i style={{ width: 22, height: 22, borderRadius: 999, background: b.akzent, flex: "none" }} /><div className="m"><div className="u">Akzent</div><div className="t">{ak.name || b.akzent}</div></div></div>
+      </div>
+      <p className="hm-sub" style={{ fontSize: 14, marginTop: 10 }}>{b.fertig ? "Freigegeben. Änderungen wünschen Sie in Ihrer Rückmeldung am Markenvertrag." : "Ihr UNIO-Team gestaltet gerade. In der Präsentation sehen Sie alles im Einsatz."}</p>
     </div>
-    <p className="hm-sub" style={{ fontSize: 14, marginTop: 10 }}>{b.fertig ? "Freigegeben. Änderungen wünschen Sie in Ihrer Rückmeldung am Markenvertrag." : "Ihr UNIO-Team gestaltet gerade. In der Präsentation sehen Sie alles im Einsatz."}</p>
-    {window.LogoBewertung && <LogoBewertung m={m} />}
   </section>;
 }
 function PortraitZeile({ m, teamSicht }) {
@@ -193,7 +198,7 @@ function PortraitZeile({ m, teamSicht }) {
   const [offen, setOffen] = React.useState(false);
   return <section>
     <div className="hm-row" style={{ justifyContent: "space-between" }}><div className="hm-mono">Porträt</div><button className="hm-link" onClick={() => setOffen(true)}>{b.portrait ? "Ändern" : "Hochladen"}</button></div>
-    <div className="hm-row" style={{ gap: 14 }}>{b.portrait ? <img className="hm-portrait-mini" src={b.portrait} alt="" /> : <Avatar name={m.name} gross />}<div className="hm-sub" style={{ margin: 0, fontSize: 14 }}>{b.portrait ? "Freigestellt nach der UNIO-Guideline. Website, Visitenkarte und Shop nutzen es." : "Bis ein Porträt da ist, steht dein Monogramm."}</div></div>
+    <div className="hm-row" style={{ gap: 14 }}>{b.portrait ? <img className="hm-portrait-mini" src={b.portrait} alt="" /> : <Avatar name={m.name} gross />}<div className="hm-sub" style={{ margin: 0, fontSize: 14 }}>{b.portrait ? "Freigestellt nach der UNIO-Guideline. Website, Visitenkarte und Shop nutzen es." : teamSicht ? "Bis ein Porträt da ist, steht dein Monogramm." : "Bis ein Porträt da ist, steht Ihr Monogramm."}</div></div>
     <Sheet offen={offen} zu={() => setOffen(false)} titel="Porträt" breit><Portraits m={m} teamSicht={teamSicht} /></Sheet>
   </section>;
 }

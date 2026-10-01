@@ -74,11 +74,11 @@ function App() {
   /* Abstimmung per Link: nur der Beitrag, ohne Menü, für den Makler unterwegs */
   /* Eigene Links für den Makler, ohne Menü: Stand, Fragebogen, Rückmeldung; Reveal für die Präsentation */
   const ansicht = p.get("ansicht");
-  if (["stand", "fragebogen", "rueckmeldung", "reveal", "fremdbild"].includes(ansicht)) {
+  if (["stand", "fragebogen", "rueckmeldung", "reveal", "fremdbild", "logo"].includes(ansicht)) {
     const zu = (z) => { location.search = `?ansicht=${z}&makler=${m.id}`; };
     if (ansicht === "reveal" && window.RevealBuehne) return <div className="hm-app"><RevealBuehne m={m} presenter={p.get("presenter") === "1"} onClose={() => { try { window.close(); } catch (e) {} }} /><Toast /></div>;
     return <div className="hm-app hm-link-ansicht"><header className="hm-top"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO" /></header><main className="hm-main hm-link-main">
-      <Fehlergrenze key={ansicht}>{ansicht === "stand" ? <IhrStand m={m} allein oeffne={zu} /> : ansicht === "fragebogen" ? <Fragebogen2 m={m} allein fertigZiel={() => zu("stand")} /> : ansicht === "rueckmeldung" && window.Rueckmeldung ? <Rueckmeldung m={m} allein /> : ansicht === "fremdbild" && window.Fremdbild ? <Fremdbild m={m} /> : <Leer titel="Diese Ansicht ist gleich verfügbar." text="Bitte die Seite neu laden." />}</Fehlergrenze>
+      <Fehlergrenze key={ansicht}>{ansicht === "stand" ? <IhrStand m={m} allein oeffne={zu} /> : ansicht === "fragebogen" ? <Fragebogen2 m={m} allein fertigZiel={() => zu("stand")} /> : ansicht === "rueckmeldung" && window.Rueckmeldung ? <Rueckmeldung m={m} allein /> : ansicht === "fremdbild" && window.Fremdbild ? <Fremdbild m={m} /> : ansicht === "logo" && window.LogoErlebnis ? <LogoErlebnis m={m} allein /> : <Leer titel="Diese Ansicht ist gleich verfügbar." text="Bitte die Seite neu laden." />}</Fehlergrenze>
     </main><Toast /></div>;
   }
   if (p.get("ansicht") === "link" && beitrag) return <div className="hm-app hm-link-ansicht"><header className="hm-top"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO" /></header><main className="hm-main" style={{ margin: "0 auto" }}><Abstimmung c={(content.find((c) => c.id === beitrag)) || content[0]} zurueck={() => { location.search = `?rolle=makler&makler=${mid}&screen=inhalte`; }} /></main><Toast /></div>;

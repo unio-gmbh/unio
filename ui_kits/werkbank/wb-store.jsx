@@ -81,6 +81,32 @@ function hmSeedAuftrag(alt) {
   Object.entries(HM_SEED_EINW).forEach(([mid, s]) => { const m = { ...(x[mid] || {}) }; const l = { ...(m.einwilligungen || {}) }; Object.entries(s.werte).forEach(([n, wert]) => { if (!l[n] || !l[n].datum) l[n] = { wert, datum: s.datum, fassung: "demo", wer: "Seed" }; }); m.einwilligungen = l; x[mid] = m; });
   return x;
 }
+/* Logos aus der Werkstatt (01.10.2026): Hauptlogo und bis zu drei gemerkte Entwürfe je Demo-Makler. Specs sind Ergebnisse von hmLkKonzepte, id ist der Hash der Spec */
+const HM_SEED_LOGOS = {
+  markus: {
+    haupt: { id: "lk0r74r41", art: "zeichen", font: "Newsreader", gewicht: 400, versal: false, laufweite: 0.02, zeichen: "ratstrich", lage: "links", akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: { typ: "idee", zeichen: "ratstrich", wort: "Rat" } },
+    merk: [
+      { id: "lk0r74r41", art: "zeichen", font: "Newsreader", gewicht: 400, versal: false, laufweite: 0.02, zeichen: "ratstrich", lage: "links", akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: { typ: "idee", zeichen: "ratstrich", wort: "Rat" } },
+      { id: "lkla3hjt0", art: "dickte", font: "Newsreader", gewicht: 400, versal: false, laufweite: 0, zeichen: "ratlinie", lage: "links", akzent: true, verhaeltnis: 1, zelle: 0.684, staerke: 1, minLinie: 0, herkunft: { typ: "idee", zeichen: "ratlinie", wort: "Rat" } },
+      { id: "lkxlqe7y9", art: "gesperrt", font: "Newsreader", gewicht: 400, versal: true, laufweite: 0.217, zeichen: null, lage: null, akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: null },
+    ],
+  },
+  elif: {
+    haupt: { id: "lk2k03n0m", art: "zeichen", font: "Fraunces", gewicht: 600, versal: false, laufweite: 0.02, zeichen: "graetzl", lage: "oben", akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: { typ: "welt", welt: "Grätzl", zeichen: "graetzl" } },
+    merk: [
+      { id: "lk2k03n0m", art: "zeichen", font: "Fraunces", gewicht: 600, versal: false, laufweite: 0.02, zeichen: "graetzl", lage: "oben", akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: { typ: "welt", welt: "Grätzl", zeichen: "graetzl" } },
+      { id: "lkh58t8as", art: "gestapelt", font: "Fraunces", gewicht: 400, versal: false, laufweite: 0.02, zeichen: null, lage: null, akzent: false, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: null },
+      { id: "lkevf7837", art: "dickte", font: "Fraunces", gewicht: 600, versal: true, laufweite: 0, zeichen: "graetzl", lage: "links", akzent: true, verhaeltnis: 1, zelle: 0.817, staerke: 1, minLinie: 0, herkunft: { typ: "welt", welt: "Grätzl", zeichen: "graetzl" } },
+    ],
+  },
+  sara: {
+    merk: [
+      { id: "lkli06cvy", art: "zeichen", font: "Newsreader", gewicht: 500, versal: false, laufweite: 0.02, zeichen: "folio", lage: "unten", akzent: true, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: { typ: "welt", welt: "Feuilleton", zeichen: "folio" } },
+      { id: "lk9acrax2", art: "gesperrt", font: "Newsreader", gewicht: 500, versal: true, laufweite: 0.179, zeichen: null, lage: null, akzent: false, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: null },
+      { id: "lk3v2033n", art: "gestapelt", font: "Newsreader", gewicht: 400, versal: false, laufweite: 0.02, zeichen: null, lage: null, akzent: false, verhaeltnis: 1, zelle: 0.8, staerke: 1, minLinie: 0, herkunft: null },
+    ],
+  },
+};
 function hmMigrationen() {
   const lauf = (flag, fn) => { try { if (localStorage.getItem(flag)) return; fn(); localStorage.setItem(flag, "1"); } catch (e) { console.warn("Migration", flag, e); } };
   /* Prozess v2: Markus bekommt die Marke aus dem Beweis, der gesperrte Satz verschwindet */
@@ -100,6 +126,14 @@ function hmMigrationen() {
   lauf("unio_hm_mig_quelle_v1", () => {
     const br = hmStore.get("branding") || {};
     Object.entries(br).filter(([, x]) => x && x.status === "freigegeben").forEach(([mid]) => { if (window.hmQuelleEinfrieren && !((hmStore.get("marke2") || {})[mid] || {}).quelle) hmQuelleEinfrieren(mid, "Bestand", "Freigabe aus v1 übernommen"); });
+  });
+  /* Logos aus der Werkstatt: Hauptlogo je Makler und gemerkte Entwürfe für das Urteil des Maklers */
+  lauf("unio_hm_mig_logo_v3", () => {
+    Object.entries(HM_SEED_LOGOS).forEach(([mid, L]) => {
+      if (L.haupt) hmStore.patch("branding", (a) => ({ ...(a || {}), [mid]: { ...((a || {})[mid] || {}), logo: "konzept", logoKonzept: L.haupt } }));
+      hmStore.patch("logos", (a) => { const x = { ...((a || {})[mid] || {}) }; if (!(x.merk || []).length) x.merk = L.merk; return { ...(a || {}), [mid]: x }; });
+      if (L.haupt && window.hmQuelleEinfrieren && ((hmStore.get("marke2") || {})[mid] || {}).quelle) hmQuelleEinfrieren(mid, "Team", "Logo aus der Werkstatt");
+    });
   });
 }
 function hmSeed() {

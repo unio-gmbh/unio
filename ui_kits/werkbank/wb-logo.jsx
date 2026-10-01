@@ -1418,4 +1418,6 @@ Object.assign(window, {
   HM_LK_WORT_ZEICHEN, HM_LK_GRENZEN, HM_LK_FASSUNGEN, HM_LK_STAMM_START, hmLkStil, hmLkStichworte, hmLkKlemmen, hmLkFassung, hmLkStamm, hmLkRaster, hmLkHash, hmLkPruefen, hmLkKohorte,
   hmLkFavicon, hmLkPaketListe, hmLkPaket, LogoFeineditor, LogoPruefstand, LogoFassungen, LogoAnwendungen,
   hmLkHerkunftText, hmLkFormen, hmLkDatei, hmLkAnwendungHtml, LogoStichworte,
+  /* für das Logo-Erlebnis (wb-logo-erlebnis.jsx) */
+  useLkSchriften, useLkStamm, HM_LK_KRITERIEN, HM_LK_ZEICHEN_NAME, hmLkHatZeichen, hmLkQuelleText, hmLkHoehe,
 });

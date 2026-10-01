@@ -386,7 +386,7 @@ function hmPfWegPhrase3(h) { return { "Aus der Familie": "aus einer Familie, in 
 
 /* ---------- 5. Bausteine der Plattform ---------- */
 function hmPfEinsicht(c) {
-  if (c.leer) return { zielgruppe: hmPfLuecke("für wen du arbeitest, als Bild statt als Zielgruppe."), spannung: hmPfLuecke("was deine Kunden vor der Entscheidung umtreibt."), konvention: hmPfLuecke("wie Makler in deiner Gegend heute auftreten."), weisseStelle: hmPfLuecke("die Stelle, die niemand besetzt.") };
+  if (c.leer) return { zielgruppe: hmPfLuecke("für wen Sie arbeiten, als Bild statt als Zielgruppe."), spannung: hmPfLuecke("was Ihre Kunden vor der Entscheidung umtreibt."), konvention: hmPfLuecke("wie Makler in Ihrer Gegend heute auftreten."), weisseStelle: hmPfLuecke("die Stelle, die niemand besetzt.") };
   const objPhrase = c.eigentuemer && c.obj.length ? `, die ${HM_PF_ART.einen[c.obj0.g]} ${c.obj0.typ}${c.obj[1] ? ` oder ${HM_PF_ART.einen[c.obj[1].g]} ${c.obj[1].typ}` : ""} besitzen` : c.kaeufer ? `, die ${c.phasen.includes("Erste Wohnung") ? "zum ersten Mal " : ""}kaufen` : "";
   const milieu = c.milieus.length ? ` Wohnwelten: ${hmPfListe(c.milieus.map((m) => m.titel))}.` : "";
   const unity = c.unity.length ? ` ${c.fem ? "Eine" : "Einer"} von ihnen ist ${c.vor} selbst: ${hmPfListe(c.unity)}.` : "";
@@ -402,7 +402,7 @@ function hmPfEinsicht(c) {
   else if (c.kundensatz) weiss = `Kaum ein Makler in ${c.o0} wird von Kunden so beschrieben: „${hmPfOhnePunkt(c.kundensatz)}.“ Genau diese Stelle ist frei.`;
   else if (["6 bis 8", "9 bis 10"].includes(c.anteil) && c.kern) weiss = `Niemand ist ${c.inK} so dicht dran: ${c.anteil} der letzten zehn Abschlüsse lagen dort.`;
   else if (c.unity.length) weiss = `Kaum ein Makler in ${c.o0} ist selbst ${c.fem ? "eine" : "einer"} von ihnen: ${hmPfListe(c.unity)}.`;
-  else weiss = hmPfLuecke("die Stelle im Markt, die niemand besetzt. Im Gespräch suchen wir sie in deinen Abschlüssen.");
+  else weiss = hmPfLuecke("die Stelle im Markt, die niemand besetzt. Im Gespräch suchen wir sie in Ihren Abschlüssen.");
   return {
     zielgruppe: `${hmPfGross(c.cepWer)} in ${c.ortText}${objPhrase}.${milieu}${unity}`,
     spannung: `${c.cep0.spannung}${c.hindernis[0] && HM_PF_HINDERNIS[c.hindernis[0]] ? " " + HM_PF_HINDERNIS[c.hindernis[0]].satz : ""}`,
@@ -419,7 +419,7 @@ function hmPfWeil(c) {
   return hmPfLuecke("ein Beleg, den ein skeptischer Verkäufer prüfen kann.");
 }
 function hmPfPositionierung(c) {
-  if (c.leer) return { satz: hmPfLuecke("die Positionierung, sobald der Fragebogen beantwortet ist."), fuerWen: hmPfLuecke("für wen."), was: hmPfLuecke("was du tust."), andersAls: hmPfLuecke("wogegen du dich absetzt."), weil: hmPfLuecke("warum man es dir glaubt.") };
+  if (c.leer) return { satz: hmPfLuecke("die Positionierung, sobald der Fragebogen beantwortet ist."), fuerWen: hmPfLuecke("für wen."), was: hmPfLuecke("was Sie tun."), andersAls: hmPfLuecke("wovon Sie sich absetzen."), weil: hmPfLuecke("warum man es Ihnen glaubt.") };
   const objPhrase = c.eigentuemer && c.obj.length ? ` mit ${HM_PF_ART.ein[c.obj0.g] === "eine" ? "einer" : "einem"} ${c.obj0.typ}${c.obj[1] ? ` oder ${HM_PF_ART.ein[c.obj[1].g] === "eine" ? "einer" : "einem"} ${c.obj[1].typ}` : ""}` : "";
   const fuerWen = `${c.cepWer} in ${c.ortText}${objPhrase}`;
   const was = c.figur.was(c), andersAls = c.figur.andersAls(c), weil = hmPfWeil(c);
@@ -441,7 +441,7 @@ function hmPfPersoenlichkeit(c) {
   }
   return woerter.slice(0, 4).map((wo) => {
     const d = HM_PF_WORT[wo.toLowerCase()];
-    return { wort: wo, heisst: d ? d[0] + (abgeleitet ? " Aus deinen Reglern abgeleitet, im Workshop mit Kundenstimmen prüfen." : "") : "So beschreiben dich Kunden heute. Der Ton bleibt nah an diesem Wort.", heisstNicht: d ? d[1] : "Eine Pose für die Kamera." };
+    return { wort: wo, heisst: d ? d[0] + (abgeleitet ? " Aus den Reglern abgeleitet, im Workshop mit Kundenstimmen prüfen." : "") : "So beschreiben Kunden die Arbeit heute. Der Ton bleibt nah an diesem Wort.", heisstNicht: d ? d[1] : "Eine Pose für die Kamera." };
   });
 }
 function hmPfRegler(a) {
@@ -458,7 +458,7 @@ function hmPfStimme(c, bausteine) {
     ...(c.w && c.w.archetyp && c.w.archetyp.ton ? c.w.archetyp.ton.slice(0, 2).map((t) => hmPfPunkt(hmPfGross(t))) : []),
     c.erfolge <= 2 ? "Kompetenz indirekt zeigen: Ablauf, Zahlen und Kundenstimmen statt Eigenlob." : c.erfolge >= 4 ? "Eigene Ergebnisse dürfen vorkommen, höchstens in jedem vierten Beitrag." : "Ergebnisse immer mit Zahl, Ort und Zeitraum.",
     c.tabus.length ? `Nie Thema: ${hmPfListe(c.tabus)}.` : "Grenzen werden im Workshop festgelegt.",
-    c.worte.length ? `Klingt wie heute (${hmPfListe(c.worte)})${c.ideal ? `, wächst in Richtung „${c.ideal}“` : ""}. Das Ziel ist Richtung, nicht Stimme.` : hmPfLuecke("die drei Wörter, mit denen Kunden dich heute beschreiben."),
+    c.worte.length ? `Klingt wie heute (${hmPfListe(c.worte)})${c.ideal ? `, wächst in Richtung „${c.ideal}“` : ""}. Das Ziel ist Richtung, nicht Stimme.` : hmPfLuecke("die drei Wörter, mit denen Kunden Sie heute beschreiben."),
     "Keine Ausrufezeichen, keine Emojis, keine Gedankenstriche.",
   ];
   if (!regeln.some((r) => /Zahlen mit Quelle/.test(r))) regeln.push("Zahlen immer mit Quelle, Ort und Zeitraum.");
@@ -621,7 +621,7 @@ function hmPfSerieBeweise(c) {
   const name = ["kenner", "fels"].includes(c.aid) ? `Fallakte ${k}` : c.aid === "gestalter" ? "Vorher, nachher, verkauft" : c.aid === "entdecker" ? `Verkauft ${c.inK}` : "Schlüsselmoment";
   return {
     name,
-    idee: `Ein abgeschlossener Fall aus ${c.ortText} pro Folge, erzählt als Ablauf statt als Erfolgsmeldung: Ausgangslage, Entscheidung, Dauer, Ergebnis.${leise ? " Weil du ungern über Erfolge sprichst, erzählt der Ablauf, nicht das Lob." : ""}`,
+    idee: `Ein abgeschlossener Fall aus ${c.ortText} pro Folge, erzählt als Ablauf statt als Erfolgsmeldung: Ausgangslage, Entscheidung, Dauer, Ergebnis.${leise ? " Weil Eigenlob nicht zur Stimme passt, erzählt der Ablauf, nicht das Lob." : ""}`,
     ablauf: ["Einen Fall wählen, dessen Ablauf für andere lehrreich ist.", "Freigabe des Kunden einholen oder vollständig anonymisieren.", "Sechs Kacheln oder 45 Sekunden: Ausgangslage, Entscheidung, Dauer, Ergebnis, was es gezeigt hat, eine Frage.", "Energiekennzahlen nennen, wenn das Objekt gezeigt wird (EAVG)."],
     hookFormel: "[Objekt], [Zahl]. So lief es.",
     beispiele: b.slice(0, 3),

@@ -28,12 +28,12 @@ const HM_MARKENWELTEN = [
   },
   {
     id: "editorial", name: "Feuilleton",
-    idee: "Jeder Beitrag ist eine Seite aus deinem eigenen Stadtmagazin über Wohnen in Wien.",
+    idee: "Jeder Beitrag ist eine Seite aus dem eigenen Stadtmagazin über Wohnen in Wien.",
     passtZu: ["kenner", "entdecker", "gestalter"],
     schrift: "klassisch",
     farben: { grund: "#F4F1EA", text: "#1A1916", flaeche: "#E7E1D4", linie: "#1A1916" },
     proportion: { grund: 66, text: 26, akzent: 8 },
-    zeichen: { name: "Die Folio-Zeile", satz: "Unten auf jeder Seite eine Zeile wie in einer Zeitschrift: dein Name als Titel, die Rubrik, die laufende Nummer. Die Nummer zählt jeden Beitrag weiter, so wird der Feed zur Ausgabe." },
+    zeichen: { name: "Die Folio-Zeile", satz: "Unten auf jeder Seite eine Zeile wie in einer Zeitschrift: der Name als Titel, die Rubrik, die laufende Nummer. Die Nummer zählt jeden Beitrag weiter, so wird der Feed zur Ausgabe." },
     bildsprache: {
       regeln: ["Reportage statt Inszenierung: echte Situationen, vorhandenes Licht.", "Jedes Bild bekommt eine Bildunterschrift mit Ort.", "Mutige Ausschnitte: Hände, Material, eine Ecke des Raums."],
       motive: ["Details wie Türklinke, Parkett, Stuck", "Die Straße vor dem Haus", "Porträt im Gespräch, halbnah", "Grundriss als ganze Seite"],
@@ -44,12 +44,12 @@ const HM_MARKENWELTEN = [
   },
   {
     id: "graetzl", name: "Grätzl",
-    idee: "Die Marke ist der Stadtplan deines Viertels: Straße für Straße, Ecke für Ecke.",
+    idee: "Die Marke ist der Stadtplan des eigenen Viertels: Straße für Straße, Ecke für Ecke.",
     passtZu: ["entdecker", "gastgeber", "begleiter"],
     schrift: "modern",
     farben: { grund: "#F2EFE7", text: "#1C1F1A", flaeche: "#DFE3D6", linie: "#1C1F1A" },
     proportion: { grund: 64, text: 22, akzent: 14 },
-    zeichen: { name: "Die Grätzl-Linie", satz: "Ein Straßenzug als eine durchgehende Linie in der Akzentfarbe, aus deinem Namen und deinem Bezirk errechnet und damit nur deine. Sie endet in einem Punkt: dort, wo das Objekt liegt oder du gerade bist." },
+    zeichen: { name: "Die Grätzl-Linie", satz: "Ein Straßenzug als eine durchgehende Linie in der Akzentfarbe, aus Name und Bezirk errechnet und damit einmalig. Sie endet in einem Punkt: dort, wo das Objekt liegt oder wo Sie gerade sind." },
     bildsprache: {
       regeln: ["Immer ein erkennbarer Ort: Ecke, Fassade, Straßenschild.", "Aus der Fußgängerperspektive, Menschen dürfen durchs Bild gehen.", "Tageslicht, das Wetter darf man sehen."],
       motive: ["Kreuzungen und Straßenecken", "Märkte, Lokale, Parks im Grätzl", "Hauseingänge mit Hausnummer", "Du im Gehen, auf dem Weg zur Besichtigung"],
@@ -137,7 +137,7 @@ const HM_WELT_BILDPAARE = {
   warm: { bp1: "a", bp2: "a", bp3: "a", bp4: "a", bp5: "a", bp6: "a" },
   kontrast: { bp1: "a", bp2: "b", bp3: "b", bp4: "b" },
 };
-/* Antwort "Was könnte dein wiedererkennbares Zeichen werden?" (HM_ASSETS), erste Welt zählt mehr */
+/* Antwort "Was könnte das wiedererkennbare Zeichen werden?" (HM_ASSETS), erste Welt zählt mehr */
 const HM_WELT_ASSETS = { "Eine Farbe": ["warm", "kontrast"], "Ein Ort": ["graetzl", "editorial"], "Ein Satz": ["editorial", "kontrast"], "Ein Gegenstand": ["ruhig", "klar"], "Eine Geste": ["warm", "ruhig"], "Ein Kleidungsstück": ["kontrast", "ruhig"] };
 /* Verfügbare Schnitte der geladenen Schriften, damit nichts künstlich fett gerechnet wird */
 const HM_WELT_SCHNITTE = { "DM Serif Display": [400], "Playfair Display": [400, 700], "Fraunces": [400, 600], "Space Grotesk": [400, 600], "Power Grotesk": [300, 400, 500, 700], "Manrope": [400, 600], "Hanken Grotesk": [400, 600] };
@@ -1210,12 +1210,12 @@ function WeltTafel({ welt, b, breite }) {
         <div className="hm-welt-tafel-balken">{rollen.map(([n, f, pz]) => <i key={n} style={{ flex: `${pz} 1 0`, background: f }} title={`${n} ${pz} Prozent`} />)}</div>
         <div className="hm-welt-tafel-anteile">{rollen.map(([n, , pz]) => <span key={n} style={{ flex: `${pz} 1 0` }}>{n} {pz} %</span>)}</div>
         <div className="hm-welt-tafel-farben">{kfarben.map(([n, f]) => <div key={n}><i style={{ background: f }} /><span>{n}</span><span className="hex">{f.toUpperCase()}</span></div>)}</div>
-        <p>Akzent aus deinem Branding. Auf dem Grund {hmWeltKontrast(F.akzent, F.grund).toLocaleString("de-AT", { maximumFractionDigits: 1 })} zu 1, als Schrift darauf {hmWeltKontrast(F.aufAkzent, F.akzent).toLocaleString("de-AT", { maximumFractionDigits: 1 })} zu 1.</p>
+        <p>Akzent aus dem Branding. Auf dem Grund {hmWeltKontrast(F.akzent, F.grund).toLocaleString("de-AT", { maximumFractionDigits: 1 })} zu 1, als Schrift darauf {hmWeltKontrast(F.aufAkzent, F.akzent).toLocaleString("de-AT", { maximumFractionDigits: 1 })} zu 1.</p>
       </section>
       <section className="hm-welt-tafel-feld"><h4>Schrift: {sch.name || w.schrift}</h4>
         <div className="hm-welt-tafel-aa" style={{ fontFamily: hmWeltFam(sch.d), fontWeight: hmWeltSchnitt(sch.d, st.dGewicht) }}>Aa</div>
         <div className="hm-welt-tafel-probe-d" style={{ fontFamily: hmWeltFam(sch.d), fontWeight: hmWeltSchnitt(sch.d, st.dGewicht), letterSpacing: st.ls + "em" }}>{bb.claim || w.idee}</div>
-        <p>{sch.d} für Headlines, Zahlen und Zitate. {sch.t} für Text und Daten, zum Beispiel € 1.290.000, 128 m², 4 Zimmer.</p>
+        <p>{sch.d} für Headlines, Zahlen und Zitate. {sch.t} für Text und Daten, zum Beispiel 128 m², 4 Zimmer.</p>
       </section>
       <section className="hm-welt-tafel-feld hm-welt-tafel-breit" style={{ gridColumn: spalten > 1 ? "span " + Math.min(2, spalten) : undefined }}><h4>Bildsprache</h4>
         <div className="hm-welt-tafel-proben">{[0, 1, 2].map((i) => <WeltProbe key={i} welt={w} b={bb} bild={i} breite={Math.floor(Math.min(feldB * 0.62, (feldB * Math.min(2, spalten) - 4 * s) / 3))} />)}</div>
@@ -1258,9 +1258,9 @@ function hmWeltVorschlag(b, antworten, archetypId) {
   const arch = (typeof HM_ARCHETYPEN !== "undefined" ? HM_ARCHETYPEN : []).find((x) => x.id === aid);
   const archName = arch ? arch.name : aid;
   const g = [];
-  g.push(best.archetyp ? `Passt zu deiner Figur ${archName}.` : `${archName} ist nicht die erste Figur dieser Welt, den Ausschlag geben deine Antworten.`);
-  if (!n) g.push("Die Bildpaare fehlen noch, deshalb folgt die Welt vor allem deiner Figur.");
-  else g.push(`${warm} von ${n} Bildpaaren warm, ${kuehl} kühl: deine Bildwelt ist ${warm > kuehl ? "eher warm" : kuehl > warm ? "eher kühl" : "ausgewogen"}.` + (n < 3 ? ` Bei ${n === 1 ? "einem Paar" : n + " Paaren"} ist das eine erste Annahme.` : ""));
+  g.push(best.archetyp ? `Passt zur Figur ${archName}.` : `${archName} ist nicht die erste Figur dieser Welt, den Ausschlag geben die Antworten.`);
+  if (!n) g.push("Die Bildpaare fehlen noch, deshalb folgt die Welt vor allem der Figur.");
+  else g.push(`${warm} von ${n} Bildpaaren warm, ${kuehl} kühl: die Bildwelt ist ${warm > kuehl ? "eher warm" : kuehl > warm ? "eher kühl" : "ausgewogen"}.` + (n < 3 ? ` Bei ${n === 1 ? "einem Paar" : n + " Paaren"} ist das eine erste Annahme.` : ""));
   if (best.treffer) g.push(`${best.treffer === 1 ? "Ein Bildpaar trifft" : best.treffer + " Bildpaare treffen"} die Bildsprache von ${w.name} genau.`);
   if (best.assets.length) g.push(`Du hast ${best.assets.map((x) => "„" + x + "“").join(" und ")} als mögliches Zeichen genannt. ${w.zeichen.name} macht daraus ein festes Element.`);
   const look = (typeof HM_LOOKS !== "undefined" ? HM_LOOKS : []).find((l) => l.n === w.websiteLook);
@@ -1280,14 +1280,14 @@ function WeltWahl({ mid, wert, set }) {
   const archetypen = (typeof HM_ARCHETYPEN !== "undefined" ? HM_ARCHETYPEN : []);
   const reihe = [v.id, ...HM_MARKENWELTEN.map((w) => w.id).filter((id) => id !== v.id)];
   return <div className="hm-welt-wahl" ref={box}>
-    <div className="hm-welt-wahl-grund"><div className="t">Vorschlag für dich: {v.welt.name}</div>{v.begruendung.map((x, i) => <p key={i}>{x}</p>)}</div>
+    <div className="hm-welt-wahl-grund"><div className="t">Vorschlag: {v.welt.name}</div>{v.begruendung.map((x, i) => <p key={i}>{x}</p>)}</div>
     <div className="hm-welt-wahl-raster">{reihe.map((id) => {
       const w = hmWeltHol(id); const b = hmWeltMarke(w, bRoh); const an = wert === id;
       const passt = w.passtZu.map((x) => (archetypen.find((a) => a.id === x) || { name: x }).name).join(", ");
       return <button key={id} type="button" className={"hm-welt-wahl-karte" + (an ? " on" : "")} aria-pressed={an} onClick={() => set && set(id)}>
         <div className="hm-welt-wahl-vorschau"><WeltFeed welt={w} b={b} breite={fw} /><div className="hm-welt-wahl-karten"><WeltKarte welt={w} b={b} breite={kw} /><WeltKarte welt={w} b={b} seite="hinten" breite={kw} /></div></div>
         <div className="t">{w.name}{an ? ", gewählt" : ""}</div>
-        {id === v.id ? <div className="empf">Empfehlung aus deinem Fragebogen</div> : null}
+        {id === v.id ? <div className="empf">Empfehlung aus dem Fragebogen</div> : null}
         <div className="s">{w.idee}</div>
         <div className="m">{w.zeichen.name}. Schrift {(typeof HM_WEB_SCHRIFTEN !== "undefined" && HM_WEB_SCHRIFTEN[w.schrift] || {}).name || w.schrift}, Website-Look {w.websiteLook}.</div>
         <div className="m">Passt zu {passt}.</div>

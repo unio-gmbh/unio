@@ -28,7 +28,25 @@ Stand 01.10.2026. Etappe nach „Marke erzeugen v2, Teil 1“. Gebaut mit einem 
 
 Stand 10, Fragebogen 11, Feed 29, Reveal 25, Logo 19, Freigabe 4, übrige Gruppen 94. Alle grün am 01.10.2026.
 
+## Marke sichtbar (01.10.2026, Folge-Etappe)
+
+Drei Bau-Agenten parallel, danach Zusammenbau und Sichtprüfung.
+
+| Was | Datei | Kern |
+|---|---|---|
+| Logos je Demo-Makler | `wb-store.jsx` (`HM_SEED_LOGOS`, Migration `unio_hm_mig_logo_v3`) | Hauptlogo und bis zu drei gemerkte Entwürfe, aus `hmLkKonzepte` gewählt |
+| Logo-Erlebnis für den Makler | `wb-logo-erlebnis.jsx` | Bühne, Herkunft, Zutaten, Einsatz, hell und dunkel, Urteil an drei Fragen, Link `?ansicht=logo` |
+| Studio | `wb-marke.jsx` | Logo groß, Hauptknopf zur Werkstatt, Makler-Sicht ohne doppelte rechte Spalte, Sie-Form |
+| Markenbuch | `wb-markenbuch.jsx` | Titelblatt, nummerierte Kapitel, Haarlinien, Team-Panel eingeklappt, `hmMbOhnePreis`, Druck, CSS im Modul |
+| Feed | `wb-feed2.jsx` | Telefonrahmen, Instagram-Chrome, drei Porträt-Schnitte, Zahl- und Textkacheln, Beitrag im Telefon, Wochenleiste außen |
+
+Selbsttest: 203 von 203 in 14 Gruppen. Alte `.hm-mb-*`-Regeln aus `index.html` entfernt.
+
 ## Bewusst offen
+
+- Markus: Hauptlogo ist jetzt der Ratstrich in Newsreader. Die Maßstab-Wortmarke aus dem Beweis bleibt in der Werkstatt wählbar.
+- Feed zeigt acht Porträts in zwölf Kacheln (Pflichtregel E3), in drei Schnitten. Weniger Porträts brauchen eine Regeländerung.
+- Außerhalb der Link-Ansichten und des Markenbuchs duzt die Werkbank den Makler noch (Heute, Inhalte, Einrichtung).
 
 - „Einfügen“ eines Screenshots bei „Nicht ich“: heute Link, Text oder Satz, keine Bildablage.
 - Fremdbild-Antworten liegen wie alles andere im Browser-Speicher, bis die Server-Datenhaltung kommt.

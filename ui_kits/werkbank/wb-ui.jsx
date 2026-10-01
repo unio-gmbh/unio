@@ -26,7 +26,7 @@ function hmBrand(maklerId) {
     vor, nach: rest.join(" "), initialen: (vor[0] || "") + ((rest.join(" ")[0]) || ""),
     schrift: HM_WEB_SCHRIFTEN[schriftId], schriftId,
     akzent: (HM_WEB_AKZENTE.find((x) => x.id === akzentId) || HM_WEB_AKZENTE[0]).hex, akzentId,
-    claim: br.claim || (w ? w.leitidee : "Deine Leitidee entsteht im Branding."),
+    claim: br.claim || (w ? w.leitidee : "Die Leitidee entsteht im Branding."),
     bio: w ? w.bio : "",
     logo: br.logo === "konzept" && !br.logoKonzept ? "wort" : (br.logo || "wort"), logoKonzept: br.logoKonzept || null,
     fertig: br.status === "freigegeben",

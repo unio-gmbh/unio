@@ -4,7 +4,11 @@
    FEED_FINAL 5 und 6, docs/werkbank/erlebnis/CHEF_BRIEFS.md Kapitel 1.
    Quelle der Inhalte in fester Reihenfolge: marke2[mid].feed.kacheln (zwölf Einträge, unverändert), sonst Regelpfad aus
    hmMbPlattform(mid). Nie HM_WELT_HOOKS, nie hmWeltFeedPosts, nie die Vorgaben aus hmWeltPostDaten: die Daten für WeltPost
-   baut dieses Modul selbst. Liest plattformen, marke2, branding, portraits, auftrag. Schreibt nichts in hmStore. */
+   baut dieses Modul selbst. Liest plattformen, marke2, branding, portraits, auftrag. Schreibt nichts in hmStore.
+   Darstellung (Stand 01.10.2026): das Profil steht in einem Geräterahmen mit Statusleiste und neutralem Instagram-Chrome
+   (Kontoname, Zahlen, Bio, Highlights, Reiter, Raster 3:4 mit 2 px Lücke). Kacheln wechseln die Form (hmFd2Form): Porträt nah und
+   halbnah zeichnet hmFd2Zeichnen selbst mit den Farben und Schriften der Welt, weit bleibt die Hook-Kachel der Welt, Zahl mit großer
+   Ziffer, Text in Papier oder Nacht, Objekt als Bild oder ruhige Fläche. Der Beitrag öffnet als Post im Gerät, Team-Hinweise darunter. */
 
 /* ---------- CSS, einmalig ---------- */
 function hmFeed2Stil() {
@@ -12,91 +16,139 @@ function hmFeed2Stil() {
   const s = document.createElement("style");
   s.id = "stil-feed2";
   s.textContent = `
-.hm-fd2-vergleich, .hm-fd2-spalte, .hm-fd2-beitrag, .hm-fd2-abschnitt { --fd2-leise: rgba(27, 26, 22, .74); }
+.hm-fd2-vergleich, .hm-fd2-geraet, .hm-fd2-beitrag, .hm-fd2-abschnitt { --fd2-leise: rgba(27, 26, 22, .74); }
 .hm-fd2-abschnitt { display: block; min-width: 0; }
 .hm-fd2-absatz { font-size: 16px; line-height: 24px; max-width: 60ch; margin: 8px 0 20px; color: var(--ink); }
-.hm-fd2-vergleich { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.hm-fd2-modus, .hm-fd2-wochen { display: grid; border: 1px solid var(--hairline-dark); border-radius: 12px; overflow: hidden; background: var(--surface-raised); align-self: flex-start; max-width: 100%; }
+.hm-fd2-vergleich { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.hm-fd2-modus, .hm-fd2-wochen { display: grid; gap: 6px; align-self: flex-start; max-width: 100%; }
 .hm-fd2-modus { grid-template-columns: repeat(3, auto); }
-.hm-fd2-wochen { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.hm-fd2-modus button, .hm-fd2-wochen button { appearance: none; border: 0; border-left: 1px solid var(--hairline-dark); background: transparent; color: var(--ink); font: inherit; font-size: 14px; line-height: 20px; padding: 9px 16px; cursor: pointer; text-align: left; }
-.hm-fd2-modus button:first-child, .hm-fd2-wochen button:first-child { border-left: 0; }
-.hm-fd2-modus button.on, .hm-fd2-wochen button.on { background: var(--ink); color: var(--paper); }
-.hm-fd2-wochen button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; min-width: 0; }
+.hm-fd2-wochen { grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 560px; }
+.hm-fd2-modus button, .hm-fd2-wochen button { appearance: none; border: 1px solid var(--hairline-dark); border-radius: 12px; background: var(--surface-raised); color: var(--ink); font: inherit; font-size: 14px; line-height: 20px; padding: 8px 14px; cursor: pointer; text-align: left; min-width: 0; }
+.hm-fd2-modus button.on, .hm-fd2-wochen button.on { box-shadow: inset 0 0 0 2px var(--ink); border-color: var(--ink); }
+.hm-fd2-wochen button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; }
 .hm-fd2-wochen .d { font-size: 12px; line-height: 16px; color: var(--fd2-leise); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.hm-fd2-wochen button.on .d { color: var(--paper); }
+.hm-fd2-wochensatz { margin: -6px 0 0; font-size: 15px; line-height: 22px; color: var(--ink); max-width: 60ch; }
 .hm-fd2-achse { margin: 0; font-size: 15px; line-height: 22px; max-width: 60ch; color: var(--ink); }
 .hm-fd2-hinweis { margin: 0; font-size: 14px; line-height: 20px; color: var(--ink); border-left: 2px solid var(--ink); padding-left: 10px; max-width: 60ch; }
 .hm-fd2-profile { display: flex; flex-direction: column; align-items: center; gap: 28px; min-width: 0; }
-.hm-fd2-profile.neben { flex-direction: row; justify-content: center; align-items: flex-start; gap: 24px; }
+.hm-fd2-profile.neben { flex-direction: row; justify-content: center; align-items: flex-start; gap: 28px; }
 .hm-fd2-rahmen { margin: 0; display: flex; flex-direction: column; gap: 10px; width: 100%; min-width: 0; }
-.hm-fd2-rahmen figcaption { font-size: 14px; line-height: 20px; color: var(--ink); }
-.hm-fd2-spalte { width: 100%; margin: 0 auto; background: var(--paper-2); color: var(--ink); padding-bottom: 14px; min-width: 0; }
-.hm-fd2-kopf { padding: 14px 12px 14px; }
-.hm-fd2-konto { font-size: 15px; line-height: 20px; font-weight: 600; overflow-wrap: anywhere; }
-.hm-fd2-leise { color: var(--fd2-leise); font-weight: 400; }
-.hm-fd2-oben { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
-.hm-fd2-bild { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex: none; background: var(--surface-raised); border: 1px solid var(--hairline-dark); }
-.hm-fd2-bild img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
-.hm-fd2-bild.luecke { display: grid; place-items: center; text-align: center; padding: 6px; font-size: 12px; line-height: 14px; color: var(--fd2-leise); }
-.hm-fd2-wer { min-width: 0; }
-.hm-fd2-name { font-size: 15px; line-height: 20px; font-weight: 600; }
-.hm-fd2-zeile { font-size: 13px; line-height: 18px; color: var(--fd2-leise); }
-.hm-fd2-bio { font-size: 14px; line-height: 20px; margin-top: 10px; overflow-wrap: anywhere; }
-.hm-fd2-hls { display: flex; gap: 14px; margin-top: 16px; }
-.hm-fd2-hl { appearance: none; border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 6px; width: 72px; cursor: pointer; }
+.hm-fd2-rahmen figcaption { font-size: 14px; line-height: 20px; color: var(--ink); text-align: center; }
+
+/* Gerät: Rahmen 10 px, Ecken 44 px, Bildschirm neutral wie die App selbst */
+.hm-fd2-geraet { width: 100%; margin: 0 auto; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.hm-fd2-phone { background: #15140F; border-radius: 44px; padding: 10px; box-shadow: 0 24px 60px -30px rgba(12, 11, 9, .55), inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.hm-fd2-phone .hm-fd2-screen { border-radius: 34px; }
+.hm-fd2-screen { --ig-ink: #141414; --ig-leise: #737373; --ig-linie: #E6E6E6; --ig-grund: #FFFFFF; background: var(--ig-grund); color: var(--ig-ink); overflow: hidden; position: relative; min-width: 0; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.hm-fd2-status { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 6px 22px 0; font-size: 15px; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; position: relative; }
+.hm-fd2-status .insel { position: absolute; left: 50%; top: 8px; width: 96px; height: 26px; margin-left: -48px; border-radius: 13px; background: #15140F; }
+.hm-fd2-status .rechts { display: flex; align-items: center; gap: 6px; }
+.hm-fd2-status svg { display: block; }
+.hm-fd2-nav { height: 44px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; padding: 0 8px; }
+.hm-fd2-nav .mitte { text-align: center; font-size: 16px; line-height: 20px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-fd2-nav .mitte.leise, .hm-fd2-leise { color: var(--ig-leise); font-weight: 400; }
+.hm-fd2-nav .ico { display: grid; place-items: center; width: 44px; height: 44px; color: var(--ig-ink); }
+.hm-fd2-kopf { padding: 4px 16px 0; }
+.hm-fd2-oben { display: grid; grid-template-columns: 90px minmax(0, 1fr); align-items: center; gap: 12px; }
+.hm-fd2-bild { width: 90px; height: 90px; border-radius: 50%; padding: 4px; box-sizing: border-box; position: relative; }
+.hm-fd2-bild.ring { background: conic-gradient(var(--fd2-akzent, #33503F) 0 100%); }
+.hm-fd2-bild .innen { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #F0EEE9; box-shadow: 0 0 0 3px var(--ig-grund); display: grid; place-items: center; text-align: center; font-size: 11px; line-height: 13px; color: var(--ig-leise); padding: 0; }
+.hm-fd2-bild .innen.luecke { padding: 8px; }
+.hm-fd2-bild img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 14%; display: block; }
+.hm-fd2-zahlen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; gap: 4px; }
+.hm-fd2-zahlen .n { font-size: 16px; line-height: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hm-fd2-zahlen .n.leise { color: var(--ig-leise); font-weight: 400; font-size: 14px; }
+.hm-fd2-zahlen .l { font-size: 13px; line-height: 18px; color: var(--ig-ink); }
+.hm-fd2-wer { margin-top: 12px; min-width: 0; }
+.hm-fd2-name { font-size: 14px; line-height: 18px; font-weight: 600; overflow-wrap: anywhere; }
+.hm-fd2-zeile { font-size: 14px; line-height: 18px; color: var(--ig-leise); }
+.hm-fd2-bio { font-size: 14px; line-height: 18px; margin-top: 2px; overflow-wrap: anywhere; }
+.hm-fd2-tasten { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.hm-fd2-tasten span { display: block; text-align: center; font-size: 14px; line-height: 32px; font-weight: 600; border-radius: 8px; background: #EFEFEF; color: var(--ig-ink); }
+.hm-fd2-tasten span.voll { background: var(--ig-ink); color: #FFFFFF; }
+.hm-fd2-hls { display: flex; gap: 14px; margin-top: 18px; padding: 0 16px; overflow: hidden; }
+.hm-fd2-hl { appearance: none; border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--ig-ink); display: flex; flex-direction: column; align-items: center; gap: 6px; width: 68px; flex: none; cursor: pointer; }
 .hm-fd2-hl:disabled { cursor: default; }
-.hm-fd2-hl-kreis { display: block; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; position: relative; background: var(--surface-raised); border: 1px solid var(--hairline-dark); }
+.hm-fd2-hl-kreis { display: block; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; position: relative; background: #F0EEE9; box-shadow: inset 0 0 0 1px var(--ig-linie); }
+.hm-fd2-hl-kreis::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 3px var(--ig-grund), inset 0 0 0 4px var(--ig-linie); pointer-events: none; }
 .hm-fd2-hl-bild { position: absolute; left: 0; top: 0; }
 .hm-fd2-hl-bild svg { display: block; }
-.hm-fd2-hl-name { font-size: 12px; line-height: 16px; max-width: 72px; text-align: center; overflow-wrap: anywhere; }
+.hm-fd2-hl-name { font-size: 12px; line-height: 16px; max-width: 68px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-fd2-reiter { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px; border-top: 1px solid var(--ig-linie); }
+.hm-fd2-reiter span { display: grid; place-items: center; height: 44px; color: var(--ig-leise); position: relative; }
+.hm-fd2-reiter span.on { color: var(--ig-ink); }
+.hm-fd2-reiter span.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ig-ink); }
 .hm-fd2-raster { display: flex; flex-direction: column; }
 .hm-fd2-reihe { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; }
-.hm-fd2-reihe.neu { animation: hmFd2Ein 240ms cubic-bezier(.2, .7, .2, 1) both; }
-@keyframes hmFd2Ein { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.hm-fd2-reihe.neu { animation: hmFd2Ein 240ms ease-out both; }
+@keyframes hmFd2Ein { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .hm-fd2-reihe.neu { animation: none; } }
-.hm-fd2-kachel { appearance: none; border: 0; padding: 0; margin: 0; display: block; position: relative; overflow: hidden; background: var(--surface-raised); cursor: pointer; }
+.hm-fd2-kachel { appearance: none; border: 0; padding: 0; margin: 0; display: block; position: relative; overflow: hidden; background: #F0EEE9; cursor: pointer; }
 .hm-fd2-kachel svg { display: block; }
-.hm-fd2-pin { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface-raised); color: var(--ink); display: grid; place-items: center; pointer-events: none; }
-.hm-fd2-kachel:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; box-shadow: inset 0 0 0 4px var(--paper); }
-.hm-fd2-hl:focus-visible, .hm-fd2-modus button:focus-visible, .hm-fd2-wochen button:focus-visible, .hm-fd2-blaettern button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; position: relative; z-index: 1; }
-.hm-fd2-beitrag { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.hm-fd2-pin { position: absolute; top: 6px; right: 6px; width: 16px; height: 16px; color: #FFFFFF; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .55)); display: grid; place-items: center; pointer-events: none; }
+.hm-fd2-pin.hell { color: #141414; filter: none; }
+.hm-fd2-kachel:focus-visible { outline: 2px solid var(--ig-ink); outline-offset: -2px; box-shadow: inset 0 0 0 4px #FFFFFF; }
+.hm-fd2-hl:focus-visible, .hm-fd2-modus button:focus-visible, .hm-fd2-wochen button:focus-visible, .hm-fd2-blaettern button:focus-visible, .hm-fd2-mehr:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; position: relative; z-index: 1; }
+.hm-fd2-heim { height: 24px; display: grid; place-items: center; }
+.hm-fd2-heim span { width: 120px; height: 5px; border-radius: 3px; background: var(--ig-ink); opacity: .9; }
+
+/* Beitrag: Post im Gerät, Hinweise daneben oder darunter */
+.hm-fd2-beitrag { display: grid; grid-template-columns: minmax(0, 390px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.hm-fd2-post { padding-bottom: 6px; }
+.hm-fd2-postkopf { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+.hm-fd2-postkopf .avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #F0EEE9; flex: none; box-shadow: 0 0 0 1px var(--ig-linie); }
+.hm-fd2-postkopf .avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 14%; display: block; }
+.hm-fd2-postkopf .k { font-size: 14px; line-height: 18px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.hm-fd2-postkopf .ico { color: var(--ig-ink); display: grid; place-items: center; width: 24px; height: 24px; }
+.hm-fd2-medium { position: relative; background: #F0EEE9; }
 .hm-fd2-medium svg { display: block; max-width: 100%; height: auto; }
+.hm-fd2-punkte { display: flex; justify-content: center; gap: 4px; padding: 10px 0 0; }
+.hm-fd2-punkte i { width: 6px; height: 6px; border-radius: 50%; background: var(--ig-linie); display: block; }
+.hm-fd2-punkte i.on { background: #3897F0; }
+.hm-fd2-aktionen { display: flex; align-items: center; gap: 14px; padding: 10px 12px 6px; color: var(--ig-ink); }
+.hm-fd2-aktionen .r { margin-left: auto; }
+.hm-fd2-aktionen svg { display: block; }
+.hm-fd2-captiontext { padding: 0 12px; font-size: 14px; line-height: 18px; color: var(--ig-ink); }
+.hm-fd2-captiontext .k { font-weight: 600; margin-right: 5px; }
+.hm-fd2-captiontext p { margin: 0 0 8px; white-space: pre-line; overflow-wrap: anywhere; }
+.hm-fd2-captiontext p:last-child { margin-bottom: 0; }
+.hm-fd2-captiontext .luecke { color: var(--ig-leise); }
+.hm-fd2-mehr { appearance: none; border: 0; background: none; padding: 0; margin: 2px 0 0; font: inherit; font-size: 14px; line-height: 18px; color: var(--ig-leise); cursor: pointer; }
+.hm-fd2-datum { padding: 8px 12px 10px; font-size: 11px; line-height: 14px; color: var(--ig-leise); text-transform: uppercase; letter-spacing: .02em; }
 .hm-fd2-blaettern { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 14px; line-height: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .hm-fd2-blaettern button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--hairline-dark); background: var(--surface-raised); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
 .hm-fd2-blaettern button:disabled { opacity: .45; cursor: default; }
-.hm-fd2-satz, .hm-fd2-lese { font-size: 17px; line-height: 1.5; margin: 14px 0 0; color: var(--ink); max-width: 60ch; }
-.hm-fd2-text > .hm-fd2-lese:first-child { margin-top: 0; }
-.hm-fd2-text > .hm-fd2-lese:first-child + .hm-fd2-caption { margin-top: 16px; }
-.hm-fd2-caption { font-size: 17px; line-height: 1.5; max-width: 60ch; color: var(--ink); white-space: pre-line; }
-.hm-fd2-notiz { border-top: 1px solid var(--hairline-dark); padding-top: 2px; max-width: 60ch; }
-.hm-fd2-caption p { margin: 0 0 1em; }
-.hm-fd2-caption .luecke { color: var(--fd2-leise); padding-left: 12px; border-left: 2px solid var(--hairline-dark); }
-.hm-fd2-caption .entwurf { padding-left: 12px; border-left: 2px solid var(--hairline-dark); }
-.hm-fd2-auftrag { display: block; font-size: 14px; line-height: 20px; color: var(--ink); margin-top: 4px; }
+.hm-fd2-text { min-width: 0; }
+.hm-fd2-satz, .hm-fd2-lese { font-size: 16px; line-height: 1.5; margin: 12px 0 0; color: var(--ink); max-width: 60ch; }
+.hm-fd2-text > .hm-fd2-lese:first-child, .hm-fd2-text > .hm-fd2-satz:first-child { margin-top: 0; }
+.hm-fd2-notiz { max-width: 60ch; }
+.hm-fd2-notiz p { padding-left: 12px; border-left: 2px solid var(--hairline-dark); }
 .hm-fd2-team { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--hairline-dark); font-size: 14px; line-height: 20px; color: var(--ink); }
-.hm-fd2-team h4 { font-size: 14px; line-height: 20px; font-weight: 600; margin: 14px 0 6px; }
+.hm-fd2-team h4 { font-size: 14px; line-height: 20px; font-weight: 600; margin: 16px 0 6px; }
 .hm-fd2-team h4:first-child { margin-top: 0; }
-.hm-fd2-team ul, .hm-fd2-pruef ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.hm-fd2-team li { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 10px; }
+.hm-fd2-team ul, .hm-fd2-pruef ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.hm-fd2-team li { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 10px; padding: 6px 0; border-top: 1px solid var(--hairline-dark); }
+.hm-fd2-team li:first-child { border-top: 0; }
 .hm-fd2-team code, .hm-fd2-pruef code { font-size: 12px; line-height: 18px; overflow-wrap: anywhere; }
-.hm-fd2-pruef { margin-top: 32px; display: grid; gap: 22px; font-size: 14px; line-height: 20px; color: var(--ink); }
-.hm-fd2-pruef h4 { font-size: 16px; line-height: 22px; font-weight: 600; margin: 0 0 8px; }
-.hm-fd2-pruef .zeile { display: grid; grid-template-columns: 18px minmax(0, 230px) minmax(0, 1fr); gap: 10px; align-items: start; }
-.hm-fd2-pruef .luecke { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 90px) minmax(0, 220px); gap: 10px; }
+.hm-fd2-pruef { margin-top: 36px; display: grid; gap: 28px; font-size: 14px; line-height: 20px; color: var(--ink); }
+.hm-fd2-pruef h4 { font-size: 16px; line-height: 22px; font-weight: 600; margin: 0 0 4px; }
+.hm-fd2-pruef .zeile { display: grid; grid-template-columns: 18px minmax(0, 260px) minmax(0, 1fr); gap: 10px; align-items: start; padding: 8px 0; border-top: 1px solid var(--hairline-dark); }
+.hm-fd2-pruef .luecke { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 90px) minmax(0, 240px); gap: 10px; padding: 8px 0; border-top: 1px solid var(--hairline-dark); }
 .hm-fd2-pruef .zeichen { padding-top: 2px; color: var(--ink); }
 @media (max-width: 760px) { .hm-fd2-beitrag { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
 @media (max-width: 560px) {
   .hm-overlay:has(.hm-fd2-beitrag) { padding: 0; }
   .hm-sheet:has(.hm-fd2-beitrag) { width: 100%; min-height: 100%; border-radius: 0; }
+  .hm-sheet:has(.hm-fd2-beitrag) .hm-sheet-body { padding-left: 0; padding-right: 0; }
+  .hm-fd2-beitrag .hm-fd2-text { padding: 0 16px; }
   .hm-fd2-team li, .hm-fd2-pruef .zeile, .hm-fd2-pruef .luecke { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .hm-fd2-pruef .zeichen { display: none; }
 }
 @media (max-width: 460px) {
-  .hm-fd2-modus, .hm-fd2-wochen { width: 100%; }
-  .hm-fd2-modus { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hm-fd2-modus button { padding: 9px 8px; font-size: 13px; line-height: 18px; text-align: center; }
+  .hm-fd2-modus { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .hm-fd2-modus button { padding: 8px 6px; font-size: 13px; line-height: 18px; text-align: center; }
   .hm-fd2-wochen button { padding: 8px 8px; }
+  .hm-fd2-wochen .d { font-size: 11px; }
 }
 `;
   document.head.appendChild(s);
@@ -152,6 +204,44 @@ const HM_FD2_FOKUS = {
   warm: { p: [733, 830], t: [300, 210] },
   kontrast: { p: [789, 395], t: [300, 640] },
 };
+/* Einstellungsgröße je Gesichtsplatz (12_social 3.4: nah Kopf 40 Prozent, halbnah 20 Prozent, weit Person höchstens ein Viertel).
+   Nachbarn in Zeile (i, i minus 1) und Spalte (i, i plus 3) sind nie gleich, kein Schnitt öfter als vier Mal.
+   nah und halbnah zeichnet dieses Modul selbst (hmFd2Zeichnen), weit ist die Hook-Kachel der Markenwelt (WeltPost). */
+const HM_FD2_SCHNITT = { 1: "nah", 2: "halbnah", 4: "weit", 5: "nah", 7: "halbnah", 8: "weit", 10: "nah", 11: "halbnah" };
+/* Lage des Porträts auf der Fläche 1080 x 1350. Das Porträt steht auf der Standlinie (H minus Rand), darunter die Namenszeile.
+   face: Blickpunkt für das Titelbild der Highlights (Gesicht bei rund 27 Prozent der Bildhöhe, gemessen am Porträt-Zuschnitt). */
+function hmFd2PortraitLage(schnitt, spiegel) {
+  const W = 1080, L = 1231;
+  if (schnitt === "nah") { const h = 1796, w = Math.round(h * 0.75); const x = Math.round((W - w) / 2 + (spiegel ? -70 : 70)); return { x, y: 189, w, h, face: [Math.round(x + w * 0.51), Math.round(189 + h * 0.27)] }; }
+  const h = 900, w = 675; const x = Math.round((W - w) / 2 + (spiegel ? -130 : 130)); return { x, y: L - h, w, h, face: [Math.round(x + w * 0.51), Math.round(L - h + h * 0.27)] };
+}
+/* Feste Wörter der Oberfläche, geprüft im Selbsttest (keine Ausrufezeichen, keine Gedankenstriche, keine Textzeichen als Icons) */
+const HM_FD2_UI = {
+  uhr: "9:41", kontoFolgt: "Kontoname folgt", beitraege: "Beiträge", follower: "Follower", gefolgt: "Gefolgt", folgt: "folgt", folgen: "Folgen", nachricht: "Nachricht",
+  raster: "Beiträge", reels: "Reels", mehr: "mehr", weniger: "weniger", gefaellt: "Gefällt mir", kommentieren: "Kommentieren", teilen: "Teilen", speichern: "Speichern", optionen: "Optionen",
+  bioLuecke: "Diese Zeile schreiben wir mit Ihnen vor dem Live-Tag.", profilbildLuecke: "Porträt folgt", hlFolgt: "folgt",
+  woche1: "Woche 1: die ersten drei Beiträge gehen am Live-Tag gemeinsam online.", wocheN: "drei neue Beiträge kommen dazu.",
+  reel: "Das Reel drehen wir am Drehtag.", karussell: "Weitere Seiten schreiben wir nach Ihrer Rückmeldung.", zahlPruefen: "Diese Zahl prüfen wir vor dem Live-Tag mit Ihren Unterlagen.",
+  ersatzOffen: "Was an diesem Tag stattdessen erscheint, legen wir mit Ihnen vor dem Live-Tag fest.", herkunft: "Herkunft", befunde: "Prüfbefunde", luecke: "Lücke", auftraege: "Arbeitsaufträge",
+  pruefliste: "Prüfliste", luecken: "Lücken", keineLuecken: "Keine Lücken.", empfehlung: "Unsere Empfehlung", gegenentwurf: "Gegenentwurf", nebeneinander: "Nebeneinander",
+  titel: "Ihr Feed in den ersten vier Wochen", absatz: "Zwölf Beiträge in der Reihenfolge, in der sie erscheinen. Die erste Woche geht am Live-Tag vollständig online.",
+  staffel: "Staffel 1", objektLuecke: "Hier kommt Ihr erstes Objekt.",
+};
+/* Icons als SVG-Pfade, 24er Raster, 1,5 px Strich (Herz, Kommentar, Teilen, Speichern, Raster, Reels, Pin, Punkte, Plus, Menü, Zurück) */
+const HM_FD2_ICO = {
+  herz: "M12 20.3 4.6 13a4.7 4.7 0 0 1 6.6-6.7l.8.8.8-.8a4.7 4.7 0 0 1 6.6 6.7Z",
+  kommentar: "M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.3A8 8 0 1 1 20 12Z",
+  teilen: "M21 3 10.5 13.5M21 3l-6.5 18-4-7.5L3 9.5Z",
+  speichern: "M6 3.5h12v17l-6-4.5-6 4.5Z",
+  raster: "M3.5 3.5h17v17h-17ZM3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17",
+  reels: "M3.5 3.5h17v17h-17ZM3.5 8.5h17M8 3.5l3 5M14 3.5l3 5M10.5 12v6l4.5-3Z",
+  pin: "M9 3h6M10 3v5l-3.5 4h11L14 8V3M12 12v9",
+  punkte: "M5 12h.01M12 12h.01M19 12h.01",
+  plus: "M3.5 3.5h17v17h-17ZM12 8v8M8 12h8",
+  menue: "M3.5 6.5h17M3.5 12h17M3.5 17.5h17",
+  zurueck: "M15 5l-7 7 7 7",
+  chevron: "M8 10l4 4 4-4",
+};
 
 /* ---------- kleine Helfer ---------- */
 const hmFd2S = (x) => (x == null ? "" : String(x)).trim();
@@ -199,6 +289,9 @@ function hmFd2Satzteil(s) {
    die Serien-Kachel nur im Feuilleton, das Zitat nur in der Weite (Stand wb-markenwelten.jsx). */
 function hmFd2PortraitSichtbar(daten, b, weltId) {
   if (!daten || !daten.portrait || !(b && b.portrait)) return false;
+  /* Eigene Formen dieses Moduls: das Porträt zeichnet nur die Porträtkachel, Text, Zahl und Objekt nie */
+  if (daten.form === "portrait") return true;
+  if (daten.form && daten.form !== "welt") return false;
   if (daten.art === "hook") return true;
   if (daten.art === "serie") return weltId === "editorial";
   if (daten.art === "zitat") return weltId === "ruhig";
@@ -535,7 +628,25 @@ function hmFd2Daten(x, b, ton) {
   const serie = x.serie && x.serie.name && !plakat ? { name: x.serie.name, nr: Math.max(1, x.serie.folge || 1) } : null;
   if (plakat || (art === "serie" && !serie)) art = "hook";
   const bild = art === "objekt" ? { t: x.text || "", loc: "", img: x.bildUrl || null, luecke: !x.bildUrl } : null;
-  return { art, text: x.text || "", unter: x.unter || "", bild, serie, nr: x.nr, portrait: !!(x.gesicht && b && b.portrait), spiegel: x.nr % 2 === 0, ton, luecke: !!x.luecke };
+  const f = hmFd2Form(x, b, art);
+  return { art, text: x.text || "", unter: x.unter || "", bild, serie, nr: x.nr, portrait: !!(x.gesicht && b && b.portrait), spiegel: x.nr % 2 === 0, ton, luecke: !!x.luecke, form: f.form, schnitt: f.schnitt, plakat, zahl: f.zahl || null };
+}
+/* Kachelform aus Platz und Inhalt: portrait (nah, halbnah, eigener Zeichner), welt (weit, Hook-Kachel der Welt), zahl (große Ziffer
+   aus dem sichtbaren Beleg), objekt (eigenes Bild oder ruhige Fläche mit einem Satz), text (Papier oder Nacht nach Ton).
+   Ohne Porträt werden die Gesichtsplätze Textkacheln; ihr Bild entsteht am Porträt-Termin (Lücke steht am Beitrag). */
+function hmFd2Form(x, b, art) {
+  if (art === "objekt") return { form: "objekt" };
+  if (x.gesicht) {
+    const schnitt = HM_FD2_SCHNITT[x.nr] || "weit";
+    if (!(b && b.portrait)) return { form: "text", schnitt };
+    return { form: schnitt === "weit" ? "welt" : "portrait", schnitt };
+  }
+  const tr = hmFd2Treffer(x.text);
+  if (x.beleg && x.beleg.sichtbar && tr.length && /\d/.test(tr[0])) {
+    const m = tr[0].match(/^(\d+(?:[.,]\d+)?)\s?(.+)$/);
+    if (m) return { form: "zahl", zahl: { ziffer: m[1], einheit: m[2], rest: hmFd2S(x.text).replace(tr[0], "").replace(/[\s:,.]+$/, "").replace(/^[\s:,.]+/, "") } };
+  }
+  return { form: "text" };
 }
 /* Doppelte Sätze in der Caption zusammenführen (Hook, Skizze und Beleg sagen oft dasselbe).
    Steht der Beleg schon wörtlich weiter oben, entfällt der eigene Belegteil; x.beleg bleibt. */
@@ -833,159 +944,335 @@ function useHmFd2Breite(ref, start) {
 }
 
 /* ---------- Oberfläche ---------- */
-function HmFd2PinIco() {
-  return <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5.5 2.5h5M6.5 2.5v4L4 9.5h8L9.5 6.5v-4M8 9.5v4" /></svg>;
+function HmFd2Ico({ n, g = 24, sw = 1.5 }) {
+  return <svg width={g} height={g} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HM_FD2_ICO[n]} /></svg>;
 }
 function HmFd2Punkt() {
   return <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="8" cy="8" r="4.5" /></svg>;
 }
-
-function FeedKachel({ post, welt, b, breite, onClick }) {
-  const label = [post.serie && post.serie.name ? post.serie.name : "Beitrag " + post.nr, hmFd2FolgeText(post), post.text || (post.luecke ? post.luecke.satz : "")].filter(Boolean).join(", ");
-  return <button type="button" className="hm-fd2-kachel" aria-label={label} onClick={onClick} style={{ width: breite, height: Math.round(breite * 4 / 3) }}>
-    <WeltPost welt={welt} b={b} daten={post.daten} breite={breite} format="3:4" />
-    {post.angepinnt && <span className="hm-fd2-pin"><HmFd2PinIco /></span>}
-  </button>;
+/* Statusleiste: Uhrzeit, Empfang, WLAN und Akku als feine Striche */
+function HmFd2Status({ insel }) {
+  return <div className="hm-fd2-status" aria-hidden="true">
+    <span>{HM_FD2_UI.uhr}</span>
+    {insel && <span className="insel" />}
+    <span className="rechts">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1.5 10.5v-2M5.5 10.5v-4M9.5 10.5v-6M13.5 10.5v-8" /></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M1.5 4.2a9.5 9.5 0 0 1 13 0M4 6.8a6 6 0 0 1 8 0M6.6 9.4a2.4 2.4 0 0 1 2.8 0" /></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="1" y="1.5" width="21" height="9" rx="2.5" /><path d="M24 4.5v3" /><rect x="3" y="3.5" width="14" height="5" rx="1" fill="currentColor" stroke="none" /></svg>
+    </span>
+  </div>;
 }
-
-/* Titelbild im 64-px-Kreis: vergrößerter Ausschnitt der Kachel, ausgerichtet auf das gezeichnete Gesicht, sonst auf die erste Textzeile */
-function HmFd2Titelbild({ post, welt, b }) {
-  const B = 182; const k = B / 1080;
-  const id = (welt && welt.id) || "ruhig"; const fk = HM_FD2_FOKUS[id] || HM_FD2_FOKUS.ruhig;
-  const port = hmFd2PortraitSichtbar(post.daten, b, id);
-  const [cx, cy] = port ? (fk.ps && post.daten.spiegel ? fk.ps : fk.p) : fk.t;
-  const left = Math.min(0, Math.max(64 - B, Math.round(32 - cx * k)));
-  const top = Math.min(0, Math.max(64 - Math.round(B * 1.25), Math.round(32 - cy * k)));
-  return <span className="hm-fd2-hl-bild" style={{ left, top }}><WeltPost welt={welt} b={b} daten={post.daten} breite={B} /></span>;
+/* Gerät: mit Rahmen (Ecken 44 px, Rand 10 px) oder als nackter Bildschirm bei schmalen Containern */
+function HmFd2Geraet({ rahmen, breite, children }) {
+  const S = rahmen ? breite - 20 : breite;
+  const screen = <div className="hm-fd2-screen" style={{ width: S }}><HmFd2Status insel={rahmen} />{children}{rahmen && <div className="hm-fd2-heim"><span /></div>}</div>;
+  return rahmen ? <div className="hm-fd2-phone" style={{ width: breite }}>{screen}</div> : screen;
 }
-
-function FeedWochen({ feed, woche, setWoche }) {
-  return <div className="hm-fd2-wochen" role="group" aria-label="Woche wählen">
-    {feed.wochen.map((w) => <button key={w.woche} type="button" aria-pressed={woche === w.woche} className={woche === w.woche ? "on" : ""} onClick={() => setWoche(w.woche)}>
-      <span className="t">Woche {w.woche}</span><span className="d">{hmFd2DatumKurz(w.datum)}</span>
-      {hmFd2Feiertag(w.datum) && <span className="d">Feiertag</span>}
-    </button>)}
+function HmFd2Nav({ links, mitte, rechts, leise }) {
+  return <div className="hm-fd2-nav" aria-hidden="true">
+    <span className="ico">{links ? <HmFd2Ico n={links} /> : null}</span>
+    <div className={"mitte" + (leise ? " leise" : "")}>{mitte}</div>
+    <span className="ico">{rechts ? <HmFd2Ico n={rechts} /> : null}</span>
   </div>;
 }
 
-function FeedProfil({ m, variante = "empfehlung", woche = 4, onWoche, breite = 390, onBeitrag, teamSicht, feed }) {
+/* ---------- Eigener Kachel-Zeichner (Porträt nah und halbnah, Zahl, Text, Objekt) ---------- */
+function hmFd2Zeichnen(c, p) {
+  const { W, H, r } = c; const L = H - r; const bw = W - 2 * r;
+  const objektOhne = p.form === "objekt" && !(p.bild && p.bild.img);
+  const t = c.ton(objektOhne ? "flaeche" : (p.ton || "grund"));
+  const el = [hmWGrund(W, H, t.bg)];
+  const kennung = p.plakat ? HM_FD2_UI.staffel : p.serie && p.serie.name ? `${p.serie.name} ${hmFd2Zwei(p.serie.nr)}` : "";
+  const fuss = () => {
+    el.push(hmWName(c, { x: r, y: H - 46, size: 30, fill: t.fg, maxW: W * 0.5 }));
+    if (kennung) el.push(hmWText(c, c.S(kennung, { size: 26, w: W * 0.4, zeilen: 1 }), { x: W - r, unten: H - 46, fill: t.leise, anchor: "end", tab: true }));
+  };
+  if (p.form === "portrait") {
+    const lage = hmFd2PortraitLage(p.schnitt, p.spiegel);
+    const nah = p.schnitt === "nah";
+    /* Text oben auf dem Grund, das Porträt steht auf der Standlinie; nah: Kopf rund 40 Prozent, halbnah rund 20 Prozent der Höhe */
+    const s = nah
+      ? c.S(p.text, { d: 1, size: p.plakat ? 132 : 96, min: 56, w: bw, zeilen: 2, lh: 1.04, hoehe: 200 })
+      : c.S(p.text, { d: 1, size: 84, min: 48, w: bw, zeilen: 3, lh: 1.06, hoehe: lage.y - r - 30 });
+    el.push(hmWPortrait(c, { ...lage, d: hmWPfadRechteck(0, 0, W, L), zoom: 1 }));
+    el.push(hmWText(c, s, { x: r, y: r, fill: t.fg }));
+    fuss();
+  } else if (p.form === "zahl") {
+    const z = p.zahl || { ziffer: p.text, einheit: "", rest: "" };
+    const label = z.rest || p.unter || "";
+    if (label) el.push(hmWText(c, c.S(label, { size: 40, min: 30, w: bw, zeilen: 2, lh: 1.15 }), { x: r, y: r, fill: t.leise }));
+    el.push(hmWText(c, c.S(z.ziffer, { d: 1, size: 460, min: 200, w: bw, zeilen: 1, lh: 1, ls: -0.04 }), { x: r - 12, unten: 780, fill: t.akz, tab: true }));
+    if (z.einheit) el.push(hmWText(c, c.S(z.einheit, { d: 1, size: 96, min: 56, w: bw, zeilen: 1 }), { x: r, unten: 900, fill: t.fg }));
+    if (p.unter && p.unter !== label) el.push(hmWText(c, c.S(p.unter, { size: 36, min: 28, w: bw, zeilen: 2, lh: 1.2 }), { x: r, unten: L - 30, fill: t.fg }));
+    fuss();
+  } else if (p.form === "objekt") {
+    if (!objektOhne) el.push(hmWBild(c, { x: 0, y: 0, w: W, h: L, src: p.bild.img }));
+    else el.push(hmWText(c, c.S(p.text || HM_FD2_UI.objektLuecke, { d: 1, size: 76, min: 44, w: bw, zeilen: 3, lh: 1.08 }), { x: r, y: r, fill: t.fg }));
+    fuss();
+  } else {
+    /* Text in Papier oder Nacht: die textgeführte Satzart, Text oben links, viel Fläche */
+    el.push(hmWText(c, c.S(p.text, { d: 1, size: 104, min: 56, w: bw, zeilen: 5, lh: 1.06, hoehe: L - r - 90 }), { x: r, y: r, fill: t.fg }));
+    if (p.unter && p.unter !== p.text) el.push(hmWText(c, c.S(p.unter, { size: 34, min: 28, w: bw, zeilen: 2, lh: 1.2 }), { x: r, unten: L - 30, fill: t.leise }));
+    fuss();
+  }
+  return el;
+}
+function HmFd2Eigen({ daten, welt, b, breite, eng }) {
+  useHmSchrift();
+  const w = hmWeltHol(welt); const bb = b || {};
+  useHmWeltSchriften(bb, w);
+  const uid = useHmWeltUid();
+  const c = hmWeltCtx(w, bb, 1080, 1350, uid);
+  return <svg className="hm-welt-svg" width={breite} height={Math.round(breite * (eng ? 4 / 3 : 1.25))} viewBox={eng ? "33.75 0 1012.5 1350" : "0 0 1080 1350"} role="img" aria-label={`${w.name}, ${daten.text || HM_FD2_UI.objektLuecke}`} xmlns="http://www.w3.org/2000/svg">{hmFd2Zeichnen(c, daten)}</svg>;
+}
+/* Bild einer Kachel: eigene Form oder die Kachel der Markenwelt */
+function HmFd2Bild({ daten, welt, b, breite, eng }) {
+  const eigen = daten && daten.form && daten.form !== "welt" && typeof hmWeltCtx === "function";
+  if (eigen) return <HmFd2Eigen daten={daten} welt={welt} b={b} breite={breite} eng={eng} />;
+  return <WeltPost welt={welt} b={b} daten={daten} breite={breite} format={eng ? "3:4" : undefined} />;
+}
+/* Blickpunkt je Kachel auf der Fläche 1080 x 1350, für das Titelbild der Highlights */
+function hmFd2Fokus(daten, b, weltId) {
+  const fk = HM_FD2_FOKUS[weltId] || HM_FD2_FOKUS.ruhig;
+  if (!daten) return fk.t;
+  if (daten.form === "portrait") return hmFd2PortraitLage(daten.schnitt, daten.spiegel).face;
+  if (daten.form === "zahl") return [420, 620];
+  if (daten.form === "text" || daten.form === "objekt") return [340, 260];
+  const port = hmFd2PortraitSichtbar(daten, b, weltId);
+  return port ? (fk.ps && daten.spiegel ? fk.ps : fk.p) : fk.t;
+}
+
+/* Ist der Grund der Kachel hell? Dann steht der Pin in Tinte statt in Weiß */
+function hmFd2KachelHell(daten, welt, b) {
+  try {
+    const F = hmWeltFarben(welt, b || {});
+    if (daten && daten.form === "objekt" && daten.bild && daten.bild.img) return false;
+    const ton = daten && daten.form === "objekt" ? "flaeche" : (daten && daten.ton) || "grund";
+    const bg = ton === "dunkel" ? F.dunkel : ton === "hell" ? F.hell : ton === "flaeche" ? F.flaeche : F.grund;
+    return hmFd2Lum(bg) > 0.4;
+  } catch (e) { return false; }
+}
+function FeedKachel({ post, welt, b, breite, onClick }) {
+  const label = [post.serie && post.serie.name ? post.serie.name : "Beitrag " + post.nr, hmFd2FolgeText(post), post.text || (post.luecke ? post.luecke.satz : "")].filter(Boolean).join(", ");
+  const hell = post.angepinnt && hmFd2KachelHell(post.daten, welt, b);
+  return <button type="button" className="hm-fd2-kachel" aria-label={label} onClick={onClick} style={{ width: breite, height: Math.round(breite * 4 / 3) }}>
+    <HmFd2Bild daten={post.daten} welt={welt} b={b} breite={breite} eng />
+    {post.angepinnt && <span className={"hm-fd2-pin" + (hell ? " hell" : "")}><HmFd2Ico n="pin" g={14} sw={2} /></span>}
+  </button>;
+}
+
+/* Titelbild im 64-px-Kreis: vergrößerter Ausschnitt der Kachel, ausgerichtet auf das Gesicht oder die erste Textzeile */
+function HmFd2Titelbild({ post, welt, b }) {
+  const B = 182; const k = B / 1080;
+  const id = (welt && welt.id) || "ruhig";
+  const [cx, cy] = hmFd2Fokus(post.daten, b, id);
+  const left = Math.min(0, Math.max(64 - B, Math.round(32 - cx * k)));
+  const top = Math.min(0, Math.max(64 - Math.round(B * 1.25), Math.round(32 - cy * k)));
+  return <span className="hm-fd2-hl-bild" style={{ left, top }}><HmFd2Bild daten={post.daten} welt={welt} b={b} breite={B} /></span>;
+}
+
+function hmFd2WochenSatz(w, datum) {
+  if (w === 1) return datum ? `Woche 1: die ersten drei Beiträge gehen am ${hmFd2DatumLang(datum)} gemeinsam online.` : HM_FD2_UI.woche1;
+  return `Woche ${w}: ${HM_FD2_UI.wocheN}`;
+}
+function FeedWochen({ feed, woche, setWoche }) {
+  const akt = feed.wochen[Math.min(4, Math.max(1, woche)) - 1];
+  return <>
+    <div className="hm-fd2-wochen" role="group" aria-label="Woche wählen">
+      {feed.wochen.map((w) => <button key={w.woche} type="button" aria-pressed={woche === w.woche} className={woche === w.woche ? "on" : ""} onClick={() => setWoche(w.woche)}>
+        <span className="t">Woche {w.woche}</span><span className="d">{hmFd2DatumKurz(w.datum)}</span>
+        {hmFd2Feiertag(w.datum) && <span className="d">Feiertag</span>}
+      </button>)}
+    </div>
+    <p className="hm-fd2-wochensatz" aria-live="polite">{hmFd2WochenSatz(akt.woche, akt.datum)}</p>
+  </>;
+}
+/* Nachbar in der angezeigten Reihenfolge des Wochenstands (links oben zuerst) */
+function hmFd2Nachbar(feed, woche, nr, delta) {
+  const reihe = feed.wochen[Math.min(4, Math.max(1, woche)) - 1].zeilen.flat();
+  const i = reihe.indexOf(nr); if (i < 0) return null;
+  const j = i + delta; return j >= 0 && j < reihe.length ? reihe[j] : null;
+}
+
+function FeedProfil({ m, variante = "empfehlung", woche = 4, onWoche, breite = 390, onBeitrag, teamSicht, feed, rahmen }) {
   hmFeed2Stil();
   const eigen = useHmFeed12(m.id, variante, !!feed);
   const f = feed || eigen;
   const ref = React.useRef(null);
-  const W = Math.max(240, Math.min(breite, useHmFd2Breite(ref, breite)));
+  const W0 = useHmFd2Breite(ref, breite);
+  const W = Math.max(240, Math.min(breite, W0));
+  const mitRahmen = rahmen !== undefined ? !!rahmen : W0 >= 420;
+  const S = mitRahmen ? W - 20 : W;
   /* Nur neu hinzukommende Zeilen blenden ein (sie werden frisch eingehängt), nie beim Zurückgehen */
   const wAkt = Math.min(4, Math.max(1, woche || 4));
   const letzte = React.useRef(wAkt); const neuVon = React.useRef(99);
   if (letzte.current !== wAkt) { neuVon.current = wAkt > letzte.current ? letzte.current + 1 : 99; letzte.current = wAkt; }
-  const g = W >= 390 ? 2 : Math.max(1, Math.round(W / 195));
-  const kachel = Math.floor(((W - 2 * g) / 3) * 10) / 10;
+  const g = 2;
+  const kachel = Math.floor(((S - 2 * g) / 3) * 10) / 10;
   const stand = f.wochen[wAkt - 1];
   const nachNr = (nr) => f.posts.find((x) => x.nr === nr);
   const pr = f.profil;
+  const sichtbar = stand.zeilen.flat().filter((nr) => nachNr(nr)).length;
   /* Ohne onBeitrag öffnet das Profil den Beitrag selbst, damit jede Kachel als Schaltfläche auch wirkt */
   const [offenNr, setOffenNr] = React.useState(null);
   const oeffne = (x) => { if (onBeitrag) onBeitrag(x); else setOffenNr(x.nr); };
   const offenPost = !onBeitrag && offenNr != null ? nachNr(offenNr) : null;
-  return <div className="hm-fd2-spalte" ref={ref} style={{ maxWidth: breite }} data-variante={f.variante} data-team={teamSicht ? "ja" : undefined}>
-    <div className="hm-fd2-kopf">
-      <div className="hm-fd2-konto">{pr.konto ? pr.konto : <span className="hm-fd2-leise">Kontoname folgt</span>}</div>
-      <div className="hm-fd2-oben">
-        <div className={"hm-fd2-bild" + (pr.profilbild.url ? "" : " luecke")}>{pr.profilbild.url ? <img src={pr.profilbild.url} alt={"Porträt " + pr.name} /> : <span>{pr.profilbild.luecke}</span>}</div>
-        <div className="hm-fd2-wer"><div className="hm-fd2-name">{pr.name}</div><div className="hm-fd2-zeile">{pr.zeile}</div></div>
+  const blaettern = (d) => { const n = hmFd2Nachbar(f, wAkt, offenNr, d); if (n != null) setOffenNr(n); };
+  const akzent = (f.b && f.b.akzent) || "#33503F";
+  return <div className="hm-fd2-geraet" ref={ref} style={{ maxWidth: breite }} data-variante={f.variante} data-team={teamSicht ? "ja" : undefined}>
+    {onWoche && <FeedWochen feed={f} woche={wAkt} setWoche={onWoche} />}
+    <HmFd2Geraet rahmen={mitRahmen} breite={W}>
+      <HmFd2Nav links="zurueck" rechts="punkte" mitte={pr.konto || HM_FD2_UI.kontoFolgt} leise={!pr.konto} />
+      <div className="hm-fd2-kopf">
+        <div className="hm-fd2-oben">
+          <div className={"hm-fd2-bild" + (pr.profilbild.url && sichtbar ? " ring" : "")} style={{ "--fd2-akzent": akzent }}>
+            <div className={"innen" + (pr.profilbild.url ? "" : " luecke")}>{pr.profilbild.url ? <img src={pr.profilbild.url} alt={"Porträt " + pr.name} /> : <span>{HM_FD2_UI.profilbildLuecke}</span>}</div>
+          </div>
+          <div className="hm-fd2-zahlen">
+            <div><div className="n">{sichtbar}</div><div className="l">{HM_FD2_UI.beitraege}</div></div>
+            <div><div className="n leise">{HM_FD2_UI.folgt}</div><div className="l">{HM_FD2_UI.follower}</div></div>
+            <div><div className="n leise">{HM_FD2_UI.folgt}</div><div className="l">{HM_FD2_UI.gefolgt}</div></div>
+          </div>
+        </div>
+        <div className="hm-fd2-wer">
+          <div className="hm-fd2-name">{pr.name}</div>
+          <div className="hm-fd2-zeile">{pr.zeile}</div>
+          <div className="hm-fd2-bio">{pr.bio.map((z, i) => (z ? <div key={i}>{z}</div> : (i === 0 || pr.bio[i - 1]) ? <div key={i} className="hm-fd2-leise">{HM_FD2_UI.bioLuecke}</div> : null))}</div>
+        </div>
+        <div className="hm-fd2-tasten" aria-hidden="true"><span className="voll">{HM_FD2_UI.folgen}</span><span>{HM_FD2_UI.nachricht}</span></div>
       </div>
-      <div className="hm-fd2-bio">{pr.bio.map((z, i) => (z ? <div key={i}>{z}</div> : (i === 0 || pr.bio[i - 1]) ? <div key={i} className="hm-fd2-leise">Diese Zeile schreiben wir mit Ihnen vor dem Live-Tag.</div> : null))}</div>
       <div className="hm-fd2-hls">{pr.highlights.map((h, i) => {
         const x = h.coverNr ? nachNr(h.coverNr) : null;
         return <button key={i} type="button" className="hm-fd2-hl" disabled={!x} onClick={() => x && oeffne(x)} aria-label={h.name ? "Highlight " + h.name : "Highlight folgt"}>
           <span className="hm-fd2-hl-kreis">{x ? <HmFd2Titelbild post={x} welt={f.welt} b={f.b} /> : null}</span>
-          <span className={"hm-fd2-hl-name" + (h.name ? "" : " hm-fd2-leise")}>{h.name || "folgt"}</span>
+          <span className={"hm-fd2-hl-name" + (h.name ? "" : " hm-fd2-leise")}>{h.name || HM_FD2_UI.hlFolgt}</span>
         </button>;
       })}</div>
-    </div>
-    {onWoche && <div style={{ padding: "0 12px 12px" }}><FeedWochen feed={f} woche={wAkt} setWoche={onWoche} /></div>}
-    <div className="hm-fd2-raster" style={{ gap: g }}>
-      {stand.zeilen.map((z, zi) => {
-        const wk = zi === 0 ? 0 : Math.ceil(z[0] / 3);
-        const neu = zi > 0 && wk >= neuVon.current && wk <= wAkt;
-        return <div key={zi === 0 ? "pin" : "w" + wk} className={"hm-fd2-reihe" + (neu ? " neu" : "")} style={{ gap: g }}>
-          {z.map((nr) => { const x = nachNr(nr); return x ? <FeedKachel key={nr} post={x} welt={f.welt} b={f.b} breite={kachel} onClick={() => oeffne(x)} /> : null; })}
-        </div>;
-      })}
-    </div>
-    {offenPost && <FeedBeitrag m={m} post={offenPost} variante={f.variante} feed={f} teamSicht={teamSicht} zu={() => setOffenNr(null)} />}
+      <div className="hm-fd2-reiter" aria-hidden="true"><span className="on"><HmFd2Ico n="raster" /></span><span><HmFd2Ico n="reels" /></span></div>
+      <div className="hm-fd2-raster" style={{ gap: g }}>
+        {stand.zeilen.map((z, zi) => {
+          const wk = zi === 0 ? 0 : Math.ceil(z[0] / 3);
+          const neu = zi > 0 && wk >= neuVon.current && wk <= wAkt;
+          return <div key={zi === 0 ? "pin" : "w" + wk} className={"hm-fd2-reihe" + (neu ? " neu" : "")} style={{ gap: g }}>
+            {z.map((nr) => { const x = nachNr(nr); return x ? <FeedKachel key={nr} post={x} welt={f.welt} b={f.b} breite={kachel} onClick={() => oeffne(x)} /> : null; })}
+          </div>;
+        })}
+      </div>
+    </HmFd2Geraet>
+    {offenPost && <FeedBeitrag m={m} post={offenPost} variante={f.variante} feed={f} teamSicht={teamSicht} zu={() => setOffenNr(null)} onBlaettern={blaettern} />}
   </div>;
 }
 
-/* Caption in Lesegröße; Lücken im Makler-Blick als ein ruhiger Satz, im Team-Blick mit Arbeitsauftrag */
-function HmFd2Caption({ x, anrede, teamSicht }) {
+/* Caption im Makler-Blick: [{ art: "stimme" | "entwurf" | "luecke", text }]; aufeinanderfolgende Lücken ergeben einen ruhigen Satz */
+function hmFd2CaptionTeile(x, anrede) {
   const t = x.captionTeile || {}; const l = x.captionLuecken || []; const ent = x.captionEntwurf || [];
-  const teile = [];
-  let vorher = false;
+  const out = []; let vorher = false;
   ["hook", "einloesung", "beleg", "weitergeben"].forEach((k) => {
     const roh = hmFd2S(t[k]); if (!roh) return;
-    const luecke = l.includes(k);
-    /* Makler-Blick: aufeinanderfolgende Lücken ergeben einen Satz */
-    if (luecke && !teamSicht) { if (!vorher) teile.push(<p key={k} className="luecke">{HM_FD2_MAKLER_LUECKE}</p>); vorher = true; return; }
+    if (l.includes(k)) { if (!vorher) out.push({ art: "luecke", text: HM_FD2_MAKLER_LUECKE }); vorher = true; return; }
     vorher = false;
-    /* Skizze als Entwurf kennzeichnen; eingebettete Lückenmarken werden im Makler-Blick zu einem ruhigen Hinweis */
-    if (!luecke && ent.includes(k)) {
-      const txt = hmFd2Anrede(roh, anrede);
-      teile.push(<p key={k} className="entwurf">{teamSicht ? txt : "Entwurf, den wir mit Ihnen ausformulieren: " + txt.replace(/\s*\[[^\]]*\]/g, " (ergänzen wir mit Ihnen)")}{teamSicht ? <span className="hm-fd2-auftrag">Arbeitsauftrag: Skizze in zwei bis vier Sätzen in der Stimme des Maklers ausformulieren.</span> : null}</p>);
-      return;
-    }
-    teile.push(<p key={k} className={luecke ? "luecke" : undefined}>{hmFd2Anrede(roh, anrede)}{luecke ? <span className="hm-fd2-auftrag">Arbeitsauftrag: {HM_FD2_AUFTRAG[k]}</span> : null}</p>);
+    const txt = hmFd2Anrede(roh, anrede);
+    if (ent.includes(k)) { out.push({ art: "entwurf", text: "Entwurf, den wir mit Ihnen ausformulieren: " + txt.replace(/\s*\[[^\]]*\]/g, " (ergänzen wir mit Ihnen)") }); return; }
+    out.push({ art: "stimme", text: txt });
   });
-  return <div className="hm-fd2-caption">{teile}</div>;
+  return out;
+}
+/* Arbeitsaufträge für das Team, außerhalb des Geräts */
+function hmFd2Auftraege(x) {
+  const out = []; const l = x.captionLuecken || []; const ent = x.captionEntwurf || [];
+  const name = { hook: "Erster Satz", einloesung: "Einlösung", beleg: "Beleg", weitergeben: "Weitergeben" };
+  ["hook", "einloesung", "beleg", "weitergeben"].forEach((k) => { if (l.includes(k) && HM_FD2_AUFTRAG[k]) out.push({ teil: name[k], text: HM_FD2_AUFTRAG[k] }); });
+  ent.forEach((k) => { if (!l.includes(k)) out.push({ teil: name[k] || k, text: "Skizze in zwei bis vier Sätzen in der Stimme des Maklers ausformulieren." }); });
+  (x.captionPreis || []).forEach((k) => out.push({ teil: name[k] || k, text: "Kaufpreis entfernt, Teil ohne Preis neu schreiben." }));
+  if (x.luecke) out.push({ teil: HM_FD2_UI.luecke, text: [x.luecke.auftrag || x.luecke.satz, x.luecke.grund].filter(Boolean).join(" ") });
+  return out;
+}
+function HmFd2Caption({ x, anrede, konto, mehr, setMehr }) {
+  const teile = hmFd2CaptionTeile(x, anrede);
+  const gezeigt = mehr ? teile : teile.slice(0, 1);
+  return <div className="hm-fd2-captiontext">
+    {gezeigt.map((t, i) => <p key={i} className={t.art === "luecke" ? "luecke" : undefined}>{i === 0 && <span className={"k" + (konto ? "" : " hm-fd2-leise")}>{konto || HM_FD2_UI.kontoFolgt}</span>}{t.text}</p>)}
+    {teile.length > 1 && <button type="button" className="hm-fd2-mehr" onClick={() => setMehr(!mehr)} aria-expanded={mehr}>{mehr ? HM_FD2_UI.weniger : HM_FD2_UI.mehr}</button>}
+  </div>;
 }
 
-function FeedBeitrag({ m, post, variante = "empfehlung", zu, teamSicht, feed }) {
+function FeedBeitrag({ m, post, variante = "empfehlung", zu, teamSicht, feed, onBlaettern }) {
   hmFeed2Stil();
   const eigen = useHmFeed12(m.id, variante, !!feed);
   const f = feed || eigen;
   const x = post ? (f.posts.find((y) => y.nr === post.nr) || post) : null;
-  const seiten = x ? (x.seiten || []).map((s) => ({ ...x.daten, art: s.art || "hook", text: s.text || "", unter: s.unter || "", nr: x.nr })) : [];
+  /* Seite 1 ist die Kachel selbst, weitere Seiten stehen als Text in Papier */
+  const seiten = x ? (x.seiten || []).map((s, i) => (i === 0 ? x.daten : { ...x.daten, art: "hook", text: s.text || "", unter: s.unter || "", form: "text", portrait: false, zahl: null, plakat: false })) : [];
   const [seite, setSeite] = React.useState(0);
-  React.useEffect(() => { setSeite(0); }, [x ? x.nr : 0, f.variante]);
+  const [mehr, setMehr] = React.useState(false);
+  const ref = React.useRef(null);
+  const W = useHmFd2Breite(ref, 860);
+  React.useEffect(() => { setSeite(0); setMehr(false); }, [x ? x.nr : 0, f.variante]);
   React.useEffect(() => {
-    if (!x || seiten.length < 2) return undefined;
-    const k = (e) => { if (e.key === "ArrowRight") setSeite((s) => Math.min(seiten.length - 1, s + 1)); else if (e.key === "ArrowLeft") setSeite((s) => Math.max(0, s - 1)); };
+    if (!x) return undefined;
+    const k = (e) => {
+      if (e.key === "ArrowRight") { if (seite < seiten.length - 1) setSeite(seite + 1); else if (onBlaettern) onBlaettern(1); }
+      else if (e.key === "ArrowLeft") { if (seite > 0) setSeite(seite - 1); else if (onBlaettern) onBlaettern(-1); }
+    };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
-  }, [x ? x.nr : 0, seiten.length]);
+  }, [x ? x.nr : 0, seiten.length, seite, onBlaettern]);
   if (!x) return null;
-  const mb = Math.max(220, Math.min(400, (typeof window !== "undefined" ? window.innerWidth : 460) - 56));
+  const zwei = W >= 760;
+  const mb = zwei ? 390 : Math.max(240, Math.min(390, W));
+  const mitRahmen = zwei || W >= 420;
+  const S = mitRahmen ? mb - 20 : mb;
   const daten = seiten.length ? seiten[Math.min(seite, seiten.length - 1)] : x.daten;
   const unter = [hmFd2DatumLang(x.datum), HM_FD2_FORMAT[x.format] || "Beitrag", x.angepinnt ? "angepinnt" : ""].filter(Boolean).join(", ");
   const objektLuecke = x.luecke && x.luecke.art === "objekt";
   const tag = hmFd2Wochentag(x.datum);
+  const pr = f.profil;
+  const auftraege = teamSicht ? hmFd2Auftraege(x) : [];
   return <Sheet offen={true} zu={zu} titel={hmFd2Titel(x)} unter={unter} breit>
-    <div className="hm-fd2-beitrag">
+    <div className="hm-fd2-beitrag" ref={ref}>
       <div className="hm-fd2-medien">
-        <div className="hm-fd2-medium"><WeltPost welt={f.welt} b={f.b} daten={daten} breite={mb} /></div>
-        {seiten.length > 1 && <div className="hm-fd2-blaettern">
+        <HmFd2Geraet rahmen={mitRahmen} breite={mb}>
+          <HmFd2Nav links="zurueck" mitte={HM_FD2_UI.raster} />
+          <div className="hm-fd2-post">
+            <div className="hm-fd2-postkopf">
+              <span className="avatar">{pr.profilbild.url ? <img src={pr.profilbild.url} alt="" /> : null}</span>
+              <span className={"k" + (pr.konto ? "" : " hm-fd2-leise")}>{pr.konto || HM_FD2_UI.kontoFolgt}</span>
+              <span className="ico" aria-hidden="true"><HmFd2Ico n="punkte" g={20} /></span>
+            </div>
+            <div className="hm-fd2-medium"><HmFd2Bild daten={daten} welt={f.welt} b={f.b} breite={S} /></div>
+            {seiten.length > 1 && <div className="hm-fd2-punkte" aria-hidden="true">{seiten.map((_, i) => <i key={i} className={i === seite ? "on" : ""} />)}</div>}
+            <div className="hm-fd2-aktionen">
+              <span role="img" aria-label={HM_FD2_UI.gefaellt}><HmFd2Ico n="herz" /></span>
+              <span role="img" aria-label={HM_FD2_UI.kommentieren}><HmFd2Ico n="kommentar" /></span>
+              <span role="img" aria-label={HM_FD2_UI.teilen}><HmFd2Ico n="teilen" /></span>
+              <span className="r" role="img" aria-label={HM_FD2_UI.speichern}><HmFd2Ico n="speichern" /></span>
+            </div>
+            <HmFd2Caption x={x} anrede={f.anrede} konto={pr.konto} mehr={mehr} setMehr={setMehr} />
+            <div className="hm-fd2-datum">{hmFd2DatumLang(x.datum)}</div>
+          </div>
+        </HmFd2Geraet>
+      </div>
+      <div className="hm-fd2-text">
+        {seiten.length > 1 && <div className="hm-fd2-blaettern" style={{ marginTop: 0, marginBottom: 12 }}>
           <button type="button" onClick={() => setSeite((s) => Math.max(0, s - 1))} disabled={seite === 0} aria-label="Vorherige Seite"><Ico n="zurueck" /></button>
           <span aria-live="polite">Seite {seite + 1} von {seiten.length}</span>
           <button type="button" onClick={() => setSeite((s) => Math.min(seiten.length - 1, s + 1))} disabled={seite >= seiten.length - 1} aria-label="Nächste Seite"><Ico n="weiter" /></button>
         </div>}
-        {x.format === "karussell" && <p className="hm-fd2-satz">Weitere Seiten schreiben wir nach Ihrer Rückmeldung.</p>}
-        {x.format === "reel" && <p className="hm-fd2-satz">Das Reel drehen wir am Drehtag.</p>}
-      </div>
-      <div className="hm-fd2-text">
         {objektLuecke && (x.luecke.ersatz && x.luecke.ersatz.titel
           ? <p className="hm-fd2-lese">{`Bis dahin erscheint an diesem ${tag || "Tag"}: ${x.luecke.ersatz.titel}.`}</p>
-          : <p className="hm-fd2-lese">Was an diesem Tag stattdessen erscheint, legen wir mit Ihnen vor dem Live-Tag fest.</p>)}
-        <HmFd2Caption x={x} anrede={f.anrede} teamSicht={teamSicht} />
+          : <p className="hm-fd2-lese">{HM_FD2_UI.ersatzOffen}</p>)}
+        {x.format === "karussell" && <p className="hm-fd2-satz">{HM_FD2_UI.karussell}</p>}
+        {x.format === "reel" && <p className="hm-fd2-satz">{HM_FD2_UI.reel}</p>}
         {((x.luecke && !objektLuecke) || (x.beleg && x.beleg.status === "selbstauskunft")) && <div className="hm-fd2-notiz">
           {x.luecke && !objektLuecke && <p className="hm-fd2-lese">{x.luecke.satz}</p>}
-          {x.beleg && x.beleg.status === "selbstauskunft" && <p className="hm-fd2-lese">Diese Zahl prüfen wir vor dem Live-Tag mit Ihren Unterlagen.</p>}
+          {x.beleg && x.beleg.status === "selbstauskunft" && <p className="hm-fd2-lese">{HM_FD2_UI.zahlPruefen}</p>}
         </div>}
         {teamSicht && <div className="hm-fd2-team">
-          <h4>Herkunft</h4>
+          {auftraege.length > 0 && <><h4>{HM_FD2_UI.auftraege}</h4><ul>{auftraege.map((a, i) => <li key={i}><span>{a.teil}</span><span>{a.text}</span></li>)}</ul></>}
+          <h4>{HM_FD2_UI.herkunft}</h4>
           <ul>{(x.herkunft || []).map((h, i) => <li key={i}><span>{h.teil}</span><code>{h.feld}</code></li>)}</ul>
-          <h4>Prüfbefunde</h4>
+          <h4>{HM_FD2_UI.befunde}</h4>
           <ul>{(x.befunde || []).map((b, i) => <li key={i}><span>{b.name}</span><span>{b.ok ? "erfüllt" : "offen"}{b.detail ? ", " + b.detail : ""}</span></li>)}</ul>
-          {x.luecke && <><h4>Lücke</h4><p style={{ margin: 0 }}>{x.luecke.auftrag || x.luecke.satz}{x.luecke.grund ? " " + x.luecke.grund : ""}</p></>}
         </div>}
       </div>
     </div>
@@ -1002,26 +1289,28 @@ function FeedVergleich({ m, teamSicht }) {
   const ref = React.useRef(null);
   const W = useHmFd2Breite(ref, 820);
   const neben = modus === "nebeneinander";
-  const zweiSpalten = neben && W >= 820;
-  const breiteEin = zweiSpalten ? Math.min(390, Math.floor((W - 24) / 2)) : Math.min(390, W);
+  const zweiSpalten = neben && W >= 720;
+  const rahmen = W >= 420;
+  const breiteEin = zweiSpalten ? Math.min(400, Math.floor((W - 28) / 2)) : Math.min(400, W);
   const offVar = offen ? (neben ? offen.variante : modus) : "empfehlung";
   const offFeed = offVar === "gegenentwurf" ? fg : fe;
   const offPost = offen ? offFeed.posts.find((x) => x.nr === offen.nr) : null;
   const varianten = neben ? ["empfehlung", "gegenentwurf"] : [modus];
+  const blaettern = (d) => { if (!offen) return; const n = hmFd2Nachbar(offFeed, woche, offen.nr, d); if (n != null) setOffen({ nr: n, variante: offen.variante }); };
   return <div className="hm-fd2-vergleich" ref={ref}>
     <div className="hm-fd2-modus" role="group" aria-label="Entwurf wählen">
-      {[["empfehlung", "Unsere Empfehlung"], ["gegenentwurf", "Gegenentwurf"], ["nebeneinander", "Nebeneinander"]].map(([id, t]) => <button key={id} type="button" aria-pressed={modus === id} className={modus === id ? "on" : ""} onClick={() => setModus(id)}>{t}</button>)}
+      {[["empfehlung", HM_FD2_UI.empfehlung], ["gegenentwurf", HM_FD2_UI.gegenentwurf], ["nebeneinander", HM_FD2_UI.nebeneinander]].map(([id, t]) => <button key={id} type="button" aria-pressed={modus === id} className={modus === id ? "on" : ""} onClick={() => setModus(id)}>{t}</button>)}
     </div>
     {modus !== "empfehlung" && <p className="hm-fd2-achse">{fg.achse.satz}</p>}
     {teamSicht && fe.hinweise.map((h) => <p key={h} className="hm-fd2-hinweis">{h}</p>)}
     <FeedWochen feed={fe} woche={woche} setWoche={setWoche} />
     <div className={"hm-fd2-profile" + (zweiSpalten ? " neben" : "")}>
       {varianten.map((v) => <figure key={v} className="hm-fd2-rahmen" style={{ maxWidth: breiteEin }}>
-        {neben && <figcaption>{v === "empfehlung" ? "Unsere Empfehlung" : "Gegenentwurf"}</figcaption>}
-        <FeedProfil m={m} variante={v} woche={woche} breite={breiteEin} feed={v === "gegenentwurf" ? fg : fe} teamSicht={teamSicht} onBeitrag={(x) => setOffen({ nr: x.nr, variante: v })} />
+        {neben && <figcaption>{v === "empfehlung" ? HM_FD2_UI.empfehlung : HM_FD2_UI.gegenentwurf}</figcaption>}
+        <FeedProfil m={m} variante={v} woche={woche} breite={breiteEin} rahmen={rahmen} feed={v === "gegenentwurf" ? fg : fe} teamSicht={teamSicht} onBeitrag={(x) => setOffen({ nr: x.nr, variante: v })} />
       </figure>)}
     </div>
-    {offPost && <FeedBeitrag m={m} post={offPost} variante={offVar} feed={offFeed} teamSicht={teamSicht} zu={() => setOffen(null)} />}
+    {offPost && <FeedBeitrag m={m} post={offPost} variante={offVar} feed={offFeed} teamSicht={teamSicht} zu={() => setOffen(null)} onBlaettern={blaettern} />}
   </div>;
 }
 
@@ -1029,12 +1318,12 @@ function FeedAbschnitt({ m, teamSicht }) {
   hmFeed2Stil();
   const f = useHmFeed12(m.id, "empfehlung", !teamSicht);
   return <section className="hm-fd2-abschnitt" data-material="vorschau|feed-woche-4|1080">
-    <h3 className="hm-h hm-h2" style={{ margin: 0 }}>Ihr Feed in den ersten vier Wochen</h3>
-    <p className="hm-fd2-absatz">Zwölf Beiträge in der Reihenfolge, in der sie erscheinen. Die erste Woche geht am Live-Tag vollständig online.</p>
+    <h3 className="hm-h hm-h2" style={{ margin: 0 }}>{HM_FD2_UI.titel}</h3>
+    <p className="hm-fd2-absatz">{HM_FD2_UI.absatz}</p>
     <FeedVergleich m={m} teamSicht={teamSicht} />
     {teamSicht && f && <div className="hm-fd2-pruef">
       <div>
-        <h4>Prüfliste</h4>
+        <h4>{HM_FD2_UI.pruefliste}</h4>
         <ul>{f.pruefung.map((r) => <li key={r.name} className="zeile">
           <span className="zeichen">{r.stufe === "meldung" ? <HmFd2Punkt /> : <Ico n={r.ok ? "haken" : "x"} />}</span>
           <span>{r.name}{r.stufe === "meldung" ? ", Meldung" : r.ok ? "" : ", offen"}</span>
@@ -1042,8 +1331,8 @@ function FeedAbschnitt({ m, teamSicht }) {
         </li>)}</ul>
       </div>
       <div>
-        <h4>Lücken</h4>
-        {f.luecken.length ? <ul>{f.luecken.map((l, i) => <li key={i} className="luecke"><span>{l.was}</span><span>{l.wer}</span><code>{l.feld}</code></li>)}</ul> : <p style={{ margin: 0 }}>Keine Lücken.</p>}
+        <h4>{HM_FD2_UI.luecken}</h4>
+        {f.luecken.length ? <ul>{f.luecken.map((l, i) => <li key={i} className="luecke"><span>{l.was}</span><span>{l.wer}</span><code>{l.feld}</code></li>)}</ul> : <p style={{ margin: 0 }}>{HM_FD2_UI.keineLuecken}</p>}
       </div>
     </div>}
   </section>;
@@ -1166,6 +1455,31 @@ function hmSelbsttestFeed2() {
     return { ok: hmFd2Werktag("2026-10-25") === (fei ? "2026-10-27" : "2026-10-26") && hmFd2Werktag("2026-10-27") === "2026-10-27" && (!fei || hmFd2Werktag("2026-10-26") === "2026-10-27"), detail: hmFd2Werktag("2026-10-25") };
   });
   T("Highlight-Name behält die Serienidee", () => { const a = hmFd2Kurzname("Sievering in Zahlen"); const b2 = hmFd2Kurzname("Geraten"); return { ok: a.name === "In Zahlen" && a.gekuerzt && b2.name === "Geraten" && !b2.gekuerzt, detail: a.name }; });
+  T("Porträt-Schnitte wechseln, kein Schnitt öfter als vier Mal, Nachbarn verschieden", () => {
+    const f = hmFeed12(mid, "empfehlung", { ...basis, portrait: "portrait-test.png" });
+    const g = f.posts.filter((x) => x.gesicht); const zahl = {}; g.forEach((x) => { zahl[x.daten.schnitt] = (zahl[x.daten.schnitt] || 0) + 1; });
+    const s = (n) => { const x = nr(f, n); return x && x.gesicht ? x.daten.schnitt : null; };
+    /* Zeile (i, i minus 1) und Spalte (i, i plus 3) in der Anzeige [3,2,1], [6,5,4], [9,8,7], [12,11,10] */
+    const paare = [[1, 2], [4, 5], [7, 8], [10, 11], [1, 4], [4, 7], [7, 10], [2, 5], [5, 8], [8, 11]];
+    const gleich = paare.filter(([a, b2]) => s(a) && s(a) === s(b2));
+    const formen = new Set(g.map((x) => x.daten.form));
+    const lage = hmFd2PortraitLage("nah", false), lage2 = hmFd2PortraitLage("halbnah", true);
+    return { ok: g.length === 8 && g.every((x) => x.daten.schnitt) && Object.values(zahl).every((n) => n <= 4) && Object.keys(zahl).length === 3 && !gleich.length && formen.has("portrait") && formen.has("welt") && lage.h > lage2.h && lage2.y + lage2.h === 1231, detail: JSON.stringify(zahl) + (gleich.length ? " gleich: " + gleich.map((p) => p.join("/")).join(", ") : "") };
+  });
+  T("Kachelformen: Ziffer, Nacht, Objektfläche, ohne Porträt Text", () => {
+    const f = hmFeed12(mid, "empfehlung", { ...basis, portrait: "portrait-test.png" });
+    const d3 = nr(f, 3).daten, d6 = nr(f, 6).daten, d9 = nr(f, 9).daten, d12 = nr(f, 12).daten;
+    const ohne = fe.posts.filter((x) => x.gesicht).every((x) => x.daten.form === "text" && x.daten.schnitt);
+    return { ok: d3.form === "zahl" && d3.zahl.ziffer === "11" && d3.zahl.einheit === "Wochen" && d3.zahl.rest === "Zinshaus" && d6.form === "text" && d6.ton !== d3.ton && d9.form === "zahl" && d9.zahl.ziffer === "8" && d12.form === "objekt" && ohne && !hmFd2PortraitSichtbar({ ...d3, portrait: true }, f.b, "ruhig") && hmFd2PortraitSichtbar(nr(f, 1).daten, f.b, "kontrast"), detail: [3, 6, 9, 12].map((n) => n + ":" + nr(f, n).daten.form).join(" ") };
+  });
+  T("Oberfläche ohne Ausrufezeichen, Gedankenstrich und Textzeichen als Icons", () => {
+    const texte = Object.values(HM_FD2_UI).concat([HM_FD2_MAKLER_LUECKE, HM_FD2_ACHSE_HELL, HM_FD2_ACHSE_DUNKEL, hmFd2WochenSatz(1, "2026-11-24"), hmFd2WochenSatz(2, null)], Object.values(HM_FD2_AUFTRAG), Object.values(HM_FD2_LUECKE), Object.values(HM_FD2_FORMAT));
+    const zeichen = /[!\u2013\u2014\u2022\u00B7\u25A0-\u25FF\u2190-\u21FF\u2600-\u27BF\u2B00-\u2BFF\u2300-\u23FF]|[\u{1F300}-\u{1FAFF}]/u;
+    const schlecht = texte.filter((t) => zeichen.test(t));
+    const ico = Object.values(HM_FD2_ICO).every((d) => /^[MmLlHhVvZzAaCcSsQqTt0-9 .,\-]+$/.test(d));
+    const pruef = fe.pruefung.concat(fg.pruefung).flatMap((r) => [r.name, r.detail]).concat(fe.luecken.map((l) => l.was)).filter((t) => zeichen.test(t));
+    return { ok: !schlecht.length && ico && !pruef.length && hmFd2WochenSatz(2, null) === "Woche 2: drei neue Beiträge kommen dazu.", detail: schlecht.concat(pruef).join(" | ") || "sauber" };
+  });
   return out;
 }
 

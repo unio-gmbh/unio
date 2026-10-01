@@ -25,6 +25,7 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 | **Branding-Qualität v2** (fertig, Abnahme offen) | Prozess v2 in 17 Schritten, Frage-Wirkungs-Tabelle, Beweis für Markus mit zwölf Kacheln | Beweis ansehen, C1 bis C9 freigeben |
 | **Marke erzeugen v2, Teil 1** (fertig, Abnahme offen) | Logo-Werkstatt, eine Quelle, Sofortreparaturen, weiches Scrollen, Markus als v2-Beispiel | Werkstatt ansehen, Markenbeispiele liefern |
 | **Erlebnis und Ergebnis** (fertig, Abnahme offen) | Ihr Stand, Fragebogen v2 mit Bildwahl, Feed-Vorschlag, Reveal mit Presenter, Logo-Werkstatt v2 | Links ansehen, Anrede entscheiden, Paarsatz fotografieren |
+| **Marke sichtbar** (fertig, Sichtprüfung offen) | Logos, Logo-Erlebnis für den Makler, Markenbuch editorial, Feed im Telefon | ansehen, push freigeben, Logo-Wahl für Markus bestätigen |
 | Umbau Markenprozess v2, Rest | Werkbank folgt dem neuen Prozess, in elf Etappen laut `branding-v2/UMBAU_ETAPPEN.md`, zuerst Sofortreparaturen und eine eingefrorene Markenquelle | Freigabe der Umbauliste |
 
 ## Geparkt

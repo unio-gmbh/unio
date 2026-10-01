@@ -24,6 +24,19 @@ Analyse: `erlebnis/BRANDMARK_ANALYSE.md`. Übernommen: Stichworte als Chips, die
 - Ablage zusätzlich: `logos[mid].stichworte = { aus, eigen }`, `logos[mid].zuletzt` (höchstens acht Entwürfe).
 - Grenzen 85 und 70 Prozent im Prüfstand sind Setzungen des Teams.
 
+## Logo-Erlebnis für den Makler (01.10.2026)
+
+Code: `ui_kits/werkbank/wb-logo-erlebnis.jsx`, Komponente `LogoErlebnis({ m, teamSicht, allein })`. Sichtbar unter Marke, Design (Makler-Sicht) und als eigener Link `?ansicht=logo&makler=ID`.
+
+- Bühne: das Logo groß auf Papier, ein Satz zur Herkunft (`hmLkHerkunftText`), der Claim in der Schrift der Marke.
+- Woraus es entsteht: Name, Schrift der Stimme (mit Grund aus den Stimmwörtern), Zeichen aus dem Wort mit Quelle.
+- Im Einsatz: Visitenkarte vorn und hinten, Profilbild, Browser-Reiter mit Favicon, Website-Kopf, Signatur, alles mit echten Angaben.
+- Hell und dunkel: Papier, Nacht, einfarbig, ohne Fachbegriffe.
+- Ihr Urteil: die bis zu drei vom Team gemerkten Entwürfe (`logos[mid].merk`) mit den drei Fragen aus dem Markenvertrag, Antworten in `logos[mid].bewertung[spec.id]` (gleiches Schema wie die Werkstatt), dazu eine Notizzeile. Ohne Entwürfe steht ein Satz, kein leerer Block.
+- Der Makler wählt nicht, er urteilt. Das Team entscheidet in der Werkstatt (Studio, Design, Knopf „Logo-Werkstatt öffnen“, jetzt als Hauptknopf unter dem großen Logo).
+
+Gesetzte Logos (Migration `unio_hm_mig_logo_v3`, Specs in `HM_SEED_LOGOS` in `wb-store.jsx`): Markus Leitner Zeichen und Name mit Ratstrich in Newsreader (Hauptlogo), dazu Feste Dickte mit Ratlinie und Versalien gesperrt zum Urteilen. Elif Demir Zeichen und Name mit Grätzl-Linie in Fraunces (Hauptlogo), dazu gestapelt und Dickte. Sara Novak nur drei Entwürfe zum Urteilen, kein Hauptlogo, weil ihr Weg noch nicht gewählt ist. Bei Elif wurde die eingefrorene Version auf 1.1 gehoben.
+
 ## Eine Quelle (Grundstufe)
 
 - Die Freigabe (Markenbuch durch Daniel, Branding im Studio) friert die Marke als Version mit SHA-256-Prüfsumme ein: Claim, Akzent, Schrift, Logo, Markenwelt, Anrede je Kanal, Versprechen, Positionierung.
