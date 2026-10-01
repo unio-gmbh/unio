@@ -6,6 +6,7 @@
 - [x] 2. Acht Markenrichtungen aus der Recherche (`wb-richtungen.jsx`): Verlag, Instanz, Rat, Grätzl, Signatur, System, Haus und Zahl, Stille. Je Richtung Haltung, Gegenbild zum Markt, Schriften, Logoarten, Zeichen, Akzente, Welt, Bild, Verbote
 - [x] 3. Empfehlung mit Begründung aus Fragebogen und Markt (Markus: Rat mit 14 Punkten, Elif: Grätzl mit 12); Richtung steuert Pool, Arten und Zeichenfolge der Entwürfe, gespeichert in `logos[mid].richtung`
 - [x] 4. Selbsttest 243 in 18 Gruppen grün
+- [x] 5. Werkstatt liegt direkt im Schritt Design (Teamsicht), kein Sheet und kein Extra-Knopf mehr
 - Details: `LOGO_UND_QUELLE.md`, Abschnitte „Schriftpool“ und „Markt und Bewegung“
 
 ## Vorherige Etappen: Markt und Bewegung, Marke sichtbar (gepusht mit dieser Etappe)
@@ -30,7 +31,7 @@
 ## Offen beim Owner
 
 - Katalog `MAKLER_BRANDS.md` überfliegen: fehlen Marken, die du als Vorbild oder Gegenbild siehst? Dann als Sätze liefern, nicht als Dateien.
-- Live testen: Studio, Design, „Logo-Werkstatt öffnen“, Reiter Entwürfe (Richtungen), Schriften, Markt, Bewegung.
+- Live testen: Marke, Design (die Werkstatt steht direkt dort), Reiter Entwürfe (Richtungen), Schriften, Markt, Bewegung.
 - Markus: Hauptlogo ist jetzt Ratstrich in Newsreader statt Maßstab-Wortmarke. Passt das?
 - Feed-Regel: acht Porträts in zwölf Kacheln (E3) oder weniger? Heute acht in drei Schnitten.
 - Ansehen: `?ansicht=stand&makler=markus`, `?ansicht=fragebogen&makler=elif`, Markenbuch von Markus (Kapitel Feed, Reveal starten, Presenter öffnen).

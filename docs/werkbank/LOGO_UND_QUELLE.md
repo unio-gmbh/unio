@@ -9,7 +9,7 @@ Vorbild ist das Prinzip von Looka und Brandmark: Vorlieben über Beispiele, viel
 - **Arten:** Wortmarke, Versalien gesperrt, gestapelt, Monogramm (nebeneinander mit Haarlinie oder gestapelt), Zeichen und Name, Maßstab (feste Teilung mit Skala), Name mit Punkt.
 - **Zeichen:** Ratlinie, wenn die Idee vom Rat handelt; sonst das Zeichen der Markenwelt (Fenster 3:4, Folio, Grätzl-Linie, Schriftfeld, Bogen, Kante).
 - **Schriftpool:** Newsreader, Fraunces, Playfair Display, DM Serif Display, Instrument Sans, Space Grotesk, Manrope, Hanken Grotesk. Die Schriften des Brandings werden bevorzugt.
-- **Bedienung (Team):** Studio, Logo, „Logo-Werkstatt öffnen“. Richtung wählen (Antiqua, Grotesk, mit Zeichen, Initialen), „Neue Runde“, „Mehr davon“ je Entwurf, bis zu drei merken, „Als Logo übernehmen“, „SVG laden“ (Schrift in Pfaden).
+- **Bedienung (Team):** Marke, Design, Abschnitt Logo (die Werkstatt steht seit 01.10.2026 direkt dort, ohne Sheet). Richtung wählen (Antiqua, Grotesk, mit Zeichen, Initialen), „Neue Runde“, „Mehr davon“ je Entwurf, bis zu drei merken, „Als Logo übernehmen“, „SVG laden“ (Schrift in Pfaden).
 - **Im Einsatz:** Profilbild (Monogramm oder Zeichen aus demselben Entwurf), Visitenkarte, Website-Kopf, Post.
 - **Makler:** sieht die gemerkten Entwürfe im Studio und beantwortet drei Fragen aus dem Markenvertrag mit Ja oder Nein. Das Team entscheidet.
 - **Übernahme:** `branding[mid].logo = "konzept"` und `logoKonzept = spec`. `BrandLogo`, die Renderer der Markenwelten, der Website-Kopf und das Materialpaket zeigen denselben Entwurf.
