@@ -5,6 +5,16 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/ux/werkbank",
+      "destination": "/ux/human",
+      "permanent": true
+    },
+    {
+      "source": "/ux/werkbank/:path*",
+      "destination": "/ux/human/:path*",
+      "permanent": true
+    },
+    {
       "source": "/hinter-unio",
       "destination": "/circle-team",
       "permanent": true

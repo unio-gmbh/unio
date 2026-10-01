@@ -2,7 +2,7 @@
 
 ## Was das ist
 
-Werkzeug, mit dem das UNIO-Team Immobilienmakler zu Personenmarken macht: Einrichtung, Marke, Inhalte, Wirkung, Shop. React ohne Build (Babel im Browser), Daten in `hmStore` (localStorage `unio_hm_*`) und IndexedDB `unio_hm_blobs`. Live unter `/ux/werkbank`, gebaut nach `dist/ux/werkbank` wie `build/build.mjs` Schritt 3f.
+Werkzeug, mit dem das UNIO-Team Immobilienmakler zu Personenmarken macht: Einrichtung, Marke, Inhalte, Wirkung, Shop. React ohne Build (Babel im Browser), Daten in `hmStore` (localStorage `unio_hm_*`) und IndexedDB `unio_hm_blobs`. Live unter `/ux/human` (Pfad seit 01.10.2026, vorher `/ux/werkbank`), gebaut nach `dist/ux/human` wie `build/build.mjs` Schritt 3f.
 
 ## Der Mensch, mit dem du arbeitest
 

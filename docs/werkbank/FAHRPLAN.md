@@ -10,7 +10,7 @@ Die Werkbank macht aus einem Immobilienmakler eine Personenmarke auf dem Niveau 
 
 - Arbeitsweise nach Vorlage des Owners: eine Etappe, Plan vor Bau, ein OK, Dateien als Gedächtnis, drei Abschlusszeilen.
 - Repo `unio-gmbh/unio` (öffentlich), neutrale Namen (`werkbank`, `wb-*`). Keine Zugangsdaten in Dateien.
-- Live als passwortgeschützte UX-Vorschau unter `/ux/werkbank`, Daten vorerst im Browser (localStorage, IndexedDB).
+- Live als passwortgeschützte UX-Vorschau unter `/ux/human` (seit 01.10.2026, `/ux/werkbank` leitet um), Daten vorerst im Browser (localStorage, IndexedDB).
 - Claude-Kette für die Marke serverseitig (`api/wb-marke.js`), Regeln im Browser als Rückfall.
 - Higgsfield nur über den MCP-Connector und das normale Abo, nur fürs Team, Automatik über Warteschlange (`api/wb-bildwelt.js`).
 - Keine KI-Bilder von echten oder erkennbaren Personen. Keine Eyebrows, keine Textzeichen als Icons, keine Ausrufezeichen, keine Gedankenstriche.

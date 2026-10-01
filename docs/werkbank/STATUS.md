@@ -31,6 +31,7 @@
 ## Offen beim Owner
 
 - Katalog `MAKLER_BRANDS.md` überfliegen: fehlen Marken, die du als Vorbild oder Gegenbild siehst? Dann als Sätze liefern, nicht als Dateien.
+- Live unter www.unio.at/ux/human (alter Pfad leitet um). Die Logo-Werkstatt ist nur in der Teamsicht: Demo-Schalter auf Team, Makler, Markus Leitner, Reiter Marke, Schritt Design, Abschnitt Logo.
 - Live testen: Marke, Design (die Werkstatt steht direkt dort), Reiter Entwürfe (Richtungen), Schriften, Markt, Bewegung.
 - Markus: Hauptlogo ist jetzt Ratstrich in Newsreader statt Maßstab-Wortmarke. Passt das?
 - Feed-Regel: acht Porträts in zwölf Kacheln (E3) oder weniger? Heute acht in drei Schnitten.
