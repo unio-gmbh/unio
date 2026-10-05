@@ -40,8 +40,8 @@
         "message": "Raw px value — use a design-system spacing token via var()."
       },
       {
-        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Power Grotesk|JetBrains Mono))/i]",
-        "message": "Font not provided by the design system. Available: Power Grotesk, JetBrains Mono."
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Power Grotesk|Outfit))/i]",
+        "message": "Font not provided by the design system. Available: Power Grotesk, Outfit."
       },
       {
         "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|tone|glyph|knob|disabled|style|children|key|ref|className|style|children)$/]",
@@ -404,7 +404,7 @@
       "--gutter": "spacing"
     },
     "fontFamilies": [
-      "JetBrains Mono",
+      "Outfit",
       "Power Grotesk"
     ]
   }

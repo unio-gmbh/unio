@@ -1,19 +1,12 @@
 /* UNIO Webfonts.
    Display: Power Grotesk (lizenzierte Brand-Font, lokal — assets/fonts/).
-   Daten-Mono: JetBrains Mono via Google Fonts (Substitut, s. readme.md). */
-/* JetBrains Mono: self-hosted (variable font, latin) statt Google-Fonts-Request. */
+   Sekundärschrift: Outfit (self-hosted, ersetzt JetBrains Mono ab 05.10.2026). */
+/* Outfit: self-hosted (variable font 100 bis 900, latin). Sekundärschrift für Labels, Datenlayer und kleine Texte. */
 @font-face {
-  font-family: "JetBrains Mono";
-  src: url("../assets/fonts/jetbrains/jetbrains-mono-normal-300-700.woff2") format("woff2");
-  font-weight: 300 700;
+  font-family: "Outfit";
+  src: url("../assets/fonts/outfit/outfit-latin-100-900.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("../assets/fonts/jetbrains/jetbrains-mono-italic-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
   font-display: swap;
 }
 

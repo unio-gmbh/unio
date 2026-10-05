@@ -168,7 +168,7 @@ function hmMbStil() {
 /* Schlussblatt */
 .hm-mb-schluss { margin-top: 120px; padding: 28px 0 40px; border-top: 1px solid var(--hairline-dark); display: flex; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--text-muted); }
 .hm-mb-schluss .r { display: flex; gap: 16px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
-.hm-mb-schluss .r code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; color: var(--text-muted); }
+.hm-mb-schluss .r code { font-family: "Outfit", system-ui, sans-serif; font-size: 12px; color: var(--text-muted); }
 
 /* Feed bleibt wie er ist, nur die Überschrift im Buchmaß */
 .hm-mb .hm-fd2-abschnitt > h3 { font-size: 22px; letter-spacing: -.015em; }

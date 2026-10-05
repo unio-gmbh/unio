@@ -193,7 +193,7 @@ function EBackoffice({ m, zu }) {
 function Visitenkarte({ b, tel, mail, seite }) {
   const f = b.schrift;
   if (seite === "hinten") return <div className="hm-vk hinten" style={{ background: b.akzent }}><BrandLogo b={b} h={34} invert /></div>;
-  return <div className="hm-vk"><BrandLogo b={b} h={26} /><div style={{ marginTop: "auto" }}><div style={{ fontFamily: hmFont(f.d), fontSize: 19, color: "#0B0A09" }}>{b.makler.name}</div><div style={{ fontSize: 11, color: "#383429", marginTop: 2 }}>{b.claim}</div><div style={{ fontSize: 10.5, color: "#383429", marginTop: 10, fontFamily: "JetBrains Mono, monospace" }}>{tel}<br />{mail}<br />unio.at</div></div><i className="hm-vk-punkt" style={{ background: b.akzent }}></i></div>;
+  return <div className="hm-vk"><BrandLogo b={b} h={26} /><div style={{ marginTop: "auto" }}><div style={{ fontFamily: hmFont(f.d), fontSize: 19, color: "#0B0A09" }}>{b.makler.name}</div><div style={{ fontSize: 11, color: "#383429", marginTop: 2 }}>{b.claim}</div><div style={{ fontSize: 10.5, color: "#383429", marginTop: 10, fontFamily: "Outfit, system-ui, sans-serif" }}>{tel}<br />{mail}<br />unio.at</div></div><i className="hm-vk-punkt" style={{ background: b.akzent }}></i></div>;
 }
 function EVisitenkarten({ m, zu, go }) {
   const { st, daten, setZ, setD } = useEinrichtung(m.id);

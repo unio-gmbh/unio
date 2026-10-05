@@ -28,7 +28,7 @@ Leitmotiv im Layering: **Bild (Raum) + Glas (Technologie) + Typografie (Mensch).
 
 ## VISUAL FOUNDATIONS
 - **Farbe:** warmes Off-White `--paper #F7F5F1` + warmes Tiefschwarz `--ink #0B0A09`. EIN Akzent: Signal-Orange `--signal #FB6221` (EcoSoft-Referenz, Feedback 02.07.; Text auf hell: `--signal-deep #C2410C`, Text auf Orange: `--on-signal`) — nur für Datenpunkte, Marker, aktive Zustände. Kühles Hellgrau `--steel #D1D3D5` als Flächen-Ergänzung. **Die Wortmarke bleibt #FFAA09 — nie umfärben.** Dazu drei Bildfarbwelten als Token-Scopes: `[data-palette="terra"|"stahl"|"gruen"]`. Kein klinisches Reinweiß, keine lila-blauen Gradients.
-- **Typografie:** Power Grotesk (lizenzierte Brand-Font, lokal in `assets/fonts/`; Statements sehr groß, `letter-spacing -0.03em`, `line-height 0.98`) + JetBrains Mono (Daten, Labels, 12–14px, VERSALIEN, `+0.16em`). Nichts dazwischen. *(Mono ist weiterhin Google-Fonts-Substitut.)*
+- **Typografie:** Power Grotesk (lizenzierte Brand-Font, lokal in `assets/fonts/`; Statements sehr groß, `letter-spacing -0.03em`, `line-height 0.98`) + Outfit (Sekundärschrift für Daten, Labels, 12–14px, VERSALIEN, `+0.16em`). Nichts dazwischen. *(Mono ist weiterhin Google-Fonts-Substitut.)*
 - **Glas:** `backdrop-filter: blur(20–40px)`, Tint dunkel `rgba(10,9,8,.42)` oder hell `rgba(247,245,241,.42)` je nach Bildhelligkeit, Hairline `1px rgba(255,255,255,.16)`. Doppelrand-Architektur: äußere Shell + innerer Kern mit **konzentrischen Radien** (innen = außen − Padding).
 - **Riffelglas (E4):** Symbol für Intransparenz. Vertikale Streifen (`--flute-width 14px`), immer in Kombination mit Auflösung (ein Teil klar). Als Live-Effekt: gestreifte Verzerrung via SVG-Filter oder Streifen-Columns mit backdrop-filter.
 - **Textur:** Film-Grain-Overlay (`--grain`, 2–4 % Opazität, pointer-events: none). Hairlines statt Borders. Sehr weiche diffuse Schatten (`--shadow-soft`), nie `shadow-md`.
@@ -61,5 +61,5 @@ Leitmotiv im Layering: **Bild (Raum) + Glas (Technologie) + Typografie (Mensch).
 
 ## Offene Punkte
 - Website-Redesign lt. Arbeitsauftrag: Startseite umgesetzt; Bauträger, Makler, Immobilien, Story, Kontakt ausständig (Freigabe je Seite).
-- JetBrains Mono ist Google-Fonts-Substitut. Power Grotesk liegt lokal vor (weitere Schnitte in `uploads/Power Grotesk Complete Family/`).
+- Schriften: nur Power Grotesk (primär) und Outfit (sekundär, selbst gehostet in `assets/fonts/outfit/`). JetBrains Mono wird seit 05.10.2026 nicht mehr verwendet. Power Grotesk liegt lokal vor (weitere Schnitte in `uploads/Power Grotesk Complete Family/`).
 - Platzhalter (`[PLATZHALTER: …]`) niemals durch erfundene Namen/Zahlen ersetzen; alle Zahlen sind Arbeitsstand.

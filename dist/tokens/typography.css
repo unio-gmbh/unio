@@ -1,7 +1,9 @@
-/* UNIO — Typografie. Zwei Stimmen, kein Mittelmaß: große Grotesk + kleine Mono. */
+/* UNIO — Typografie. Zwei Stimmen: große Power Grotesk + kleine Outfit (Sekundärschrift, ersetzt JetBrains Mono ab 05.10.2026).
+   Der Variablenname --font-mono bleibt aus Kompatibilitätsgründen, er zeigt auf Outfit. */
 :root {
   --font-display: "Power Grotesk", "Helvetica Neue", sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+  --font-mono: "Outfit", system-ui, sans-serif;
+  --font-secondary: var(--font-mono);
 
   /* Statements: riesig, eng gesetzt */
   --size-hero: clamp(64px, 9vw, 148px);

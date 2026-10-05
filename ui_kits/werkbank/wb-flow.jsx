@@ -227,7 +227,7 @@ function BrandProfil({ m, st, go }) {
       <h2 className="hm-h hm-h1" style={{ marginTop: 10 }}>{m.name}</h2>
       <p className="hm-sub">{w.leitidee} Eine Seite, aus der Website, Grafik-Vorlagen und Print automatisch entstehen.</p>
       <div className="hm-bp" style={{ marginTop: 28 }}>
-        {w.palette.map((c, i) => <div key={i} className="hm-swatch" style={{ background: c, color: i === 1 ? w.palette[0] : w.palette[1] }}><span className="hm-mono">{["Grund", "Fläche", "Akzent"][i]}</span><span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 13 }}>{c}</span></div>)}
+        {w.palette.map((c, i) => <div key={i} className="hm-swatch" style={{ background: c, color: i === 1 ? w.palette[0] : w.palette[1] }}><span className="hm-mono">{["Grund", "Fläche", "Akzent"][i]}</span><span style={{ fontFamily: "Outfit, system-ui, sans-serif", fontSize: 13 }}>{c}</span></div>)}
         <div className="hm-swatch" style={{ background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}><span className="hm-mono">Schrift</span><span className="hm-type">Aa Bb 0123</span><span style={{ fontSize: 13 }}>{w.schrift[0]} und {w.schrift[1]}</span></div>
       </div>
       <div className="hm-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", marginTop: 16 }}>

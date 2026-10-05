@@ -34,7 +34,7 @@ function hmRichtungStil() {
 .hm-ri-liste.lose li + li { border-top: 0; }
 .hm-ri-gruende { border-top: 1px solid var(--hairline-dark); padding-top: 14px; display: grid; gap: 8px; }
 .hm-ri-gruende .kopf { font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 12px; }
-.hm-ri-gruende .kopf .pkt { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-2); }
+.hm-ri-gruende .kopf .pkt { font-family: "Outfit", system-ui, sans-serif; font-size: 12px; color: var(--ink-2); }
 .hm-ri-leer { font-size: 15px; color: var(--text-muted); }
 .hm-ri-link { border: 0; background: none; padding: 0; font: inherit; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; justify-self: start; }
 .hm-ri-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

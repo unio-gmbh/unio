@@ -9,7 +9,7 @@
 <style>
 @font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_400%%) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Power Grotesk"; src: url(data:font/woff2;base64,%%PG_500%%) format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "JetBrains Mono"; src: url(data:font/woff2;base64,%%JB%%) format("woff2"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Outfit"; src: url(data:font/woff2;base64,%%OUTFIT%%) format("woff2"); font-weight: 100 900; font-display: swap; }
 
 :root {
   --paper: #F7F5F1; --paper-2: #F0EDE6; --paper-3: #E7E2D8;
@@ -24,7 +24,7 @@
   --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   --ease-unio: cubic-bezier(0.32, 0.72, 0, 1);
   --display: "Power Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --mono: "Outfit", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -531,7 +531,7 @@ function drawGuides() {
     for (let x = 0.5; x < W; x += 0.5) s += `<line x1="${x}" y1="0" x2="${x}" y2="20" stroke="#0B0A09" stroke-opacity="${x % 2 === 0 ? .22 : x % 1 === 0 ? .1 : .05}" stroke-width="${px}"/>`;
     for (let y = 0.5; y < 20; y += 0.5) { const yy = 20 - y; s += `<line x1="0" y1="${yy}" x2="${W}" y2="${yy}" stroke="#0B0A09" stroke-opacity="${y % 2 === 0 ? .22 : y % 1 === 0 ? .1 : .05}" stroke-width="${px}"/>`; }
     const helper = (y, label) => `<line x1="0" y1="${y * u}" x2="${W}" y2="${y * u}" stroke="#0B0A09" stroke-opacity=".5" stroke-width="${px}" stroke-dasharray="${px * 2} ${px * 4}"/>` +
-      `<text x="${W - px * 8}" y="${y * u - px * 6}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="${px * 10}" letter-spacing="${px * 1.6}" fill="#0B0A09" fill-opacity=".7">${label}</text>`;
+      `<text x="${W - px * 8}" y="${y * u - px * 6}" text-anchor="end" font-family="Outfit, sans-serif" font-size="${px * 10}" letter-spacing="${px * 1.6}" fill="#0B0A09" fill-opacity=".7">${label}</text>`;
     s += helper(G.crown, "SCHEITEL") + helper(G.eyes, "AUGEN") + helper(G.chin, "KINN");
     const fx = CX() * u, gy = G.nose.y * u;
     for (const q of [0.4, 0.6]) { const qx = q * W; s += `<line x1="${qx}" y1="${-px * 14}" x2="${qx}" y2="${20 + px * 14}" stroke="#0B0A09" stroke-width="${px * 2}" stroke-dasharray="${px * 9} ${px * 6}"/>`; s += `<text x="${qx + px * 8}" y="${20 + px * 22}" font-family="Power Grotesk, sans-serif" font-weight="500" font-size="${px * 18}" fill="#0B0A09">${Math.round(q * 100)} %</text>`; }

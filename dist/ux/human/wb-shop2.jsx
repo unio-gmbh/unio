@@ -55,7 +55,7 @@ const HM_GRAFIK_VORLAGEN = [
 const HM_GRAFIK_ZEILE = /^\s*(?:Kachel|Story|Folie|Slide)\s*\d+\s*[:.]\s*(.+)$/i;
 const HM_GRAFIK_B0 = { vor: "", nach: "", initialen: "", schrift: { d: "Power Grotesk", t: "Power Grotesk" }, akzent: "#FFAA09", logo: "wort", makler: { name: "", region: "" }, claim: "" };
 const hmGrafikOhnePrefix = (z) => { const m = String(z || "").match(HM_GRAFIK_ZEILE); return (m ? m[1] : String(z || "")).trim(); };
-const hmGrafikFont = (gewicht, px, fam) => `${gewicht} ${Math.round(px)}px "${fam}", ${fam === "JetBrains Mono" ? "ui-monospace, monospace" : "ui-serif, Georgia, serif"}`;
+const hmGrafikFont = (gewicht, px, fam) => `${gewicht} ${Math.round(px)}px "${fam}", ${fam === "Outfit" ? "system-ui, sans-serif" : "ui-serif, Georgia, serif"}`;
 const hmGrafikAbstand = (ctx, px) => { if ("letterSpacing" in ctx) ctx.letterSpacing = px + "px"; };
 const hmGrafikHandle = (b) => "@" + (b.vor + "." + b.nach).toLowerCase().replace(/\s/g, "") + ".immo";
 
@@ -95,7 +95,7 @@ function hmGrafikPassend(ctx, text, { fam, gewicht = 400, max, min, breite, zeil
 }
 function hmGrafikZeilen(ctx, zeilen, x, y, lh) { zeilen.forEach((z, i) => ctx.fillText(z, x, y + i * lh)); }
 function hmGrafikMono(ctx, text, x, y, ausr, farbe, px = 22) {
-  ctx.font = hmGrafikFont(400, px, "JetBrains Mono"); hmGrafikAbstand(ctx, px * 0.12);
+  ctx.font = hmGrafikFont(400, px, "Outfit"); hmGrafikAbstand(ctx, px * 0.12);
   ctx.fillStyle = farbe || HM_GRAFIK_FARBEN.leise; ctx.textAlign = ausr || "left";
   ctx.fillText(String(text).toUpperCase(), x, y); ctx.textAlign = "left";
 }
@@ -140,7 +140,7 @@ const HM_GRAFIK_FONTS = {};
 function hmGrafikSchriften(b) {
   const d = b.schrift.d, t = b.schrift.t, k = d + "|" + t;
   if (!HM_GRAFIK_FONTS[k]) HM_GRAFIK_FONTS[k] = (document.fonts
-    ? Promise.all([`400 80px "${d}"`, `600 80px "${d}"`, `400 32px "${t}"`, `600 32px "${t}"`, `400 24px "JetBrains Mono"`].map((f) => document.fonts.load(f).catch(() => null)))
+    ? Promise.all([`400 80px "${d}"`, `600 80px "${d}"`, `400 32px "${t}"`, `600 32px "${t}"`, `400 24px "Outfit"`].map((f) => document.fonts.load(f).catch(() => null)))
     : Promise.resolve()).then(() => true);
   return HM_GRAFIK_FONTS[k];
 }

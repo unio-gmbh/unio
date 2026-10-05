@@ -20,7 +20,7 @@ function hmStandStil() {
 .hm-stand-plan { display: grid; max-width: 820px; }
 .hm-stand-s { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 16px 0 16px 14px; border-top: 1px solid var(--hairline-dark); position: relative; }
 .hm-stand-s:last-child { border-bottom: 1px solid var(--hairline-dark); }
-.hm-stand-s .dt, .hm-stand-s .dauer { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; color: var(--ink-2); }
+.hm-stand-s .dt, .hm-stand-s .dauer { font-family: "Outfit", system-ui, sans-serif; font-size: 13px; color: var(--ink-2); }
 .hm-stand-s .dauer { font-size: 12.5px; text-align: right; white-space: nowrap; }
 .hm-stand-s .t { font-size: 16px; color: var(--ink); }
 .hm-stand-s .u { font-size: 14px; line-height: 1.45; color: var(--ink-2); margin-top: 3px; }
