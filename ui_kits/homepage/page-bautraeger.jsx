@@ -880,7 +880,7 @@ function EinwaendeBt() {
       title={<span>Was du<br />wissen willst.</span>}
       subline="Ehrliche Antworten — kein Kleingedrucktes."
       items={EINWAENDE}
-      anchor={{ text: "Offene Frage? Wir rufen zurück — persönlich, nicht per Bot.", link: "Kontakt aufnehmen", img: "../../assets/team/portrait-02.jpg" }}
+      anchor={{ text: "Offene Frage? Wir rufen zurück — persönlich, nicht per Bot.", link: "Kontakt aufnehmen", img: "../../assets/team/portrait-02.jpg?v=2" }}
     />
   );
 }

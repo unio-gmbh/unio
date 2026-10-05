@@ -4815,7 +4815,7 @@ function EinwaendeBt() {
     anchor: {
       text: "Offene Frage? Wir rufen zurück — persönlich, nicht per Bot.",
       link: "Kontakt aufnehmen",
-      img: "../../assets/team/portrait-02.jpg"
+      img: "../../assets/team/portrait-02.jpg?v=2"
     }
   });
 }
@@ -6390,7 +6390,7 @@ const MK_FACES = [{
   spark: [2, 4, 3, 6, 8],
   off: 0
 }, {
-  img: "../../assets/team/portrait-02.jpg",
+  img: "../../assets/team/portrait-02.jpg?v=2",
   pos: "center 20%",
   stat: "Seit 2024",
   sub: "im CIRCLE · [PLATZHALTER]",
@@ -7729,7 +7729,7 @@ function BeteiligungMk() {
 
 /* ===== 08 · DIE BEWEGUNG — Orange, der Kreis schließt sich ===== */
 function BewegungMk() {
-  const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-02.jpg", "portrait-03.jpg"];
+  const faces = ["portrait-01.jpg", "portrait-02.jpg?v=2", "portrait-03.jpg", "portrait-04.jpg", "portrait-02.jpg?v=2", "portrait-03.jpg"];
   const ref = React.useRef(null);
   const [cp, setCp] = React.useState(BT_RM ? 1 : 0);
   React.useEffect(() => {
@@ -9588,7 +9588,7 @@ const TEAM_PORTRAITS = [{
   label: "Impressionen · Kampagnen",
   spark: [3, 5, 4, 7, 9]
 }, {
-  src: "../../assets/team/portrait-02.jpg",
+  src: "../../assets/team/portrait-02.jpg?v=2",
   pos: "center 20%",
   nm: "Johannes Lindner",
   role: "Founder",

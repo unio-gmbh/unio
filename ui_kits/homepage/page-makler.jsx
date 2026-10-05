@@ -221,7 +221,7 @@ function MkSpark({ pts }) {
 
 const MK_FACES = [
   { img: "../../assets/team/portrait-01.jpg", pos: "center 22%", stat: "12 Abschlüsse", sub: "in 2025", spark: [2, 4, 3, 6, 8], off: 0 },
-  { img: "../../assets/team/portrait-02.jpg", pos: "center 20%", stat: "Seit 2024", sub: "im CIRCLE", spark: [3, 5, 6, 6, 9], off: 32 },
+  { img: "../../assets/team/portrait-02.jpg?v=2", pos: "center 20%", stat: "Seit 2024", sub: "im CIRCLE", spark: [3, 5, 6, 6, 9], off: 32 },
   { img: "../../assets/team/portrait-03.jpg", pos: "center 22%", stat: "1020–1220", sub: "Fokus Wien", spark: [4, 3, 5, 7, 8], off: 64 },
 ];
 
@@ -807,7 +807,7 @@ function BeteiligungMk() {
 /* ===== 08 · DIE BEWEGUNG — Orange, der Kreis schließt sich ===== */
 const ZEIGE_GESICHTER = false; /* AKTIV: "Gesichter des CIRCLE" voruebergehend aus */
 function BewegungMk() {
-  const faces = ["portrait-01.jpg", "portrait-02.jpg", "portrait-03.jpg", "portrait-04.jpg", "portrait-05.jpg", "portrait-06.jpg"];
+  const faces = ["portrait-01.jpg", "portrait-02.jpg?v=2", "portrait-03.jpg", "portrait-04.jpg", "portrait-05.jpg", "portrait-06.jpg"];
   const ref = React.useRef(null);
   const circWrapRef = React.useRef(null);
   const mob = window.useMobile();

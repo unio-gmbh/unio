@@ -82,7 +82,7 @@ function ekSeed() {
     { id: 7, typ: "graetzl", objId: "beheim", titel: "Nebenan verkauft", sub: "1170 Hernals · € 890.000 · 102 m²", zeit: "13.08.", gelesen: true },
   ]);
   ekSchreibe(EK_K.chats, {
-    "beheim": { name: "Lukas Brandtner", rolle: "Makler · Penthouse Beheim", img: "../../assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [
+    "beheim": { name: "Lukas Brandtner", rolle: "Makler · Penthouse Beheim", img: "../../assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [
       { ich: false, txt: "Guten Morgen! Der Verkäufer hat reagiert: Gegenangebot € 1.720.000, gültig bis 22.08.", t: "09:12" },
       { ich: false, txt: "Wenn Sie möchten, gehe ich die Kalkulation gern noch einmal mit Ihnen durch.", t: "09:13" },
       { ich: true, txt: "Danke! Ich schaue es mir heute Abend an.", t: "11:40" },
@@ -109,7 +109,7 @@ function ekNeuesEvent(d, typ, objId, titel, sub) {
 function ekChatNachricht(d, threadId, ich, txt) {
   if (!d.chats[threadId]) {
     const o = ekObj(threadId);
-    d.chats[threadId] = { name: "Lukas Brandtner", rolle: "Makler · " + o.t, img: "../../assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+    d.chats[threadId] = { name: "Lukas Brandtner", rolle: "Makler · " + o.t, img: "../../assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
   }
   d.chats[threadId].msgs.push({ ich, txt, t: "Jetzt" });
 }

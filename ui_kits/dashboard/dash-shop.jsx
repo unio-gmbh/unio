@@ -10,7 +10,7 @@ const SHOP_OBJ = [
   { id: "017", img: "../../assets/img/obenzwei.jpg", title: "ObenZwei — Dachgeschoss", price: "Auf Anfrage", addr: "Vorgartenstraße 128, 1020 Wien" },
 ];
 
-const SHOP_MAKLER = { name: "Daniel Hayden", vorname: "Daniel", initials: "DH", mail: "daniel@unio.at", tel: "+43 670 198 84 48", foto: "../../assets/team/portrait-02.jpg", rolle: "UNIO CIRCLE · WIEN" };
+const SHOP_MAKLER = { name: "Daniel Hayden", vorname: "Daniel", initials: "DH", mail: "daniel@unio.at", tel: "+43 670 198 84 48", foto: "../../assets/team/portrait-02.jpg?v=2", rolle: "UNIO CIRCLE · WIEN" };
 
 /* Druck & Werbemittel: Optionen Maklerbild / Partner-Logo / Format / Menge */
 const PRINT_PRODUKTE = [
@@ -578,7 +578,7 @@ function ShopKarte({ onOpen, children, name, meta, preis, delay, beliebt }) {
 }
 
 /* ---------- Homepage-Editor: Textbausteine, Fotos, Kontakt ---------- */
-const LOOK_FOTOS = ["../../assets/team/portrait-01.jpg", "../../assets/team/portrait-02.jpg", "../../assets/team/portrait-03.jpg", "../../assets/team/portrait-04.jpg"];
+const LOOK_FOTOS = ["../../assets/team/portrait-01.jpg", "../../assets/team/portrait-02.jpg?v=2", "../../assets/team/portrait-03.jpg", "../../assets/team/portrait-04.jpg"];
 const LOOK_DEFAULTS = { headline: "Immobilien, persönlich verkauft.", intro: "Seit über 10 Jahren begleite ich Eigentümer:innen durch den Verkauf, mit Strategie, Sichtbarkeit und persönlicher Begleitung.", region: "Wien & Umgebung", tel: SHOP_MAKLER.tel, mail: SHOP_MAKLER.mail, foto: LOOK_FOTOS[1] };
 
 function LookFeld({ label, value, onChange, area }) {

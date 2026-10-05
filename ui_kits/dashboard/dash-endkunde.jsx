@@ -334,7 +334,7 @@ function EkKaufreise({ ek, tue, objId, oeffneSheet, zurueck, setChatId, go }) {
     { n: "Dr. Weiss & Partner", r: "Vertragserrichtung", img: "../../assets/team/portrait-07.jpg" },
     { n: "Dr. Weiss & Partner", r: "Treuhänder", img: "../../assets/team/portrait-07.jpg" },
     { n: "Dr. Weiss & Partner", r: "Grundbuch", img: "../../assets/team/portrait-07.jpg" },
-    { n: "Lukas Brandtner", r: "Makler · Übergabe", img: "../../assets/team/portrait-02.jpg" },
+    { n: "Lukas Brandtner", r: "Makler · Übergabe", img: "../../assets/team/portrait-02.jpg?v=2" },
   ];
   const TASKS = ["Kaufvertragsentwurf freigeben", "Treuhanderlag bestätigen", "Grundbucheintragung läuft, nichts zu tun", "Übergabetermin wählen"];
   const naechstePhase = () => tue((d) => {

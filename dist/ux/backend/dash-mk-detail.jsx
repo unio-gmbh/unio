@@ -225,7 +225,7 @@ function MkConcierge({ objekt, inline, onMakler }) {
               <div className={"mkd-msg " + (m.du ? "du" : "ai")}>{m.t}</div>
               {m.handoff && (
                 <div style={{ background: "#FFFFFF", borderRadius: 14, boxShadow: "inset 0 0 0 1px var(--hairline-dark)", padding: "12px 14px", display: "flex", alignItems: "center", gap: 11 }}>
-                  <img src="/assets/team/portrait-02.jpg" alt="" style={{ width: 38, height: 38, borderRadius: 99, objectFit: "cover" }} />
+                  <img src="/assets/team/portrait-02.jpg?v=2" alt="" style={{ width: 38, height: 38, borderRadius: 99, objectFit: "cover" }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <b style={{ font: "500 13.5px var(--font-display)", color: "var(--ink)", display: "block" }}>Lukas Brandtner</b>
                     <span style={{ fontSize: 11.5, color: "var(--text-muted)" }}>antwortet meist in unter 2 Stunden</span>

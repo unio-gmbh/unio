@@ -75,7 +75,7 @@ def text_block(x, y, zeilen, grad, gewicht=400):
         out.append(f'<text x="{x:.1f}" y="{y + i*grad*1.08:.1f}" font-family="Power Grotesk" font-weight="{gewicht}" font-size="{grad}" letter-spacing="-0.02em" fill="{INK}">{z}</text>')
     return "".join(out)
 
-STYLE_SVG = f'<style>.et{{font-family:"JetBrains Mono",monospace;font-weight:400;fill:{INK};font-variant-numeric:tabular-nums;letter-spacing:-0.02em}}</style>'
+STYLE_SVG = f'<style>.et{{font-family:"Outfit", system-ui, sans-serif;font-weight:400;fill:{INK};font-variant-numeric:tabular-nums;letter-spacing:-0.02em}}</style>'
 
 # ---------- Posts 1080 x 1350 ----------
 def post(inhalt, pid, fenster=True):
@@ -163,14 +163,14 @@ html = f'''<!doctype html>
 <style>
 /* Muster zu 09_idee.md, Abschnitte 3.7, 3.11 und 3.12. Erzeugt mit einem Skript, alle Maße gerechnet.
    Werkbank-Typografie für Notizen. In den Kacheln eine neutrale Skizzenschrift (Power Grotesk, Etiketten in
-   JetBrains Mono wegen der Tabellenziffern); die Markenschrift entsteht erst in Schritt 10.
+   Outfit (Tabellenziffern über tnum)n); die Markenschrift entsteht erst in Schritt 10.
    Das Zeitmaß steht in der Textfarbe: die Akzentfarbe ist offen, bis vorab.logoAlt vorliegt.
    Schraffur heißt: Material fehlt. Kein generiertes Gesicht, keine fremden Bilder, keine Verläufe. */
 :root {{
   --paper: #F7F5F1; --ink: #0B0A09; --ink-2: #1B1A16; --ink-3: #383429;
   --muted: rgba(27, 26, 22, 0.62); --hair: rgba(11, 10, 9, 0.14);
   --grot: "Power Grotesk", "Helvetica Neue", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --mono: "Outfit", system-ui, sans-serif;
 }}
 * {{ box-sizing: border-box; }}
 body {{ margin: 0; background: #D9D4CA; color: var(--ink-2); font-family: var(--grot); -webkit-font-smoothing: antialiased; }}

@@ -231,7 +231,7 @@ function DashCircle({ onNav, geheZu, tueMk, ohnePond }) {
 
         <window.MkOver offen={!!profilOffen} onClose={() => setProfilOffen(null)}>
           <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-            <img src="/assets/team/portrait-02.jpg" alt="" style={{ width: 52, height: 52, borderRadius: 99, objectFit: "cover" }} />
+            <img src="/assets/team/portrait-02.jpg?v=2" alt="" style={{ width: 52, height: 52, borderRadius: 99, objectFit: "cover" }} />
             <div>
               <h3 style={{ font: "500 21px var(--font-display)", letterSpacing: "-.02em", margin: 0, color: "var(--ink)" }}>Lukas Brandtner</h3>
               <span className="u-label" style={{ fontSize: 8.5, color: "var(--text-muted)" }}>CIRCLE-MITGLIED SEIT 2025 · FOKUS 1170 / 1180 / 1190</span>

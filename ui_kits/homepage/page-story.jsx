@@ -300,7 +300,7 @@ function GoldenCircle() {
 /* ===== 05 · DIE MENSCHEN DAHINTER ===== */
 const TEAM_PORTRAITS = [
   { src: "../../assets/team/portrait-01.jpg", pos: "center 22%", nm: "Jacob Kapsch", role: "Founder", disz: "Marketing", v: "1.500+", label: "Wohnungen vermittelt", spark: [3, 5, 4, 7, 9] },
-  { src: "../../assets/team/portrait-02.jpg", pos: "center 20%", nm: "Johannes Lindner", role: "Founder", disz: "Vertrieb", v: "1 Mrd+", label: "€ Portfolio betreut", spark: [2, 4, 6, 5, 8] },
+  { src: "../../assets/team/portrait-02.jpg?v=2", pos: "center 20%", nm: "Johannes Lindner", role: "Founder", disz: "Vertrieb", v: "1 Mrd+", label: "€ Portfolio betreut", spark: [2, 4, 6, 5, 8] },
   { src: "../../assets/team/portrait-03.jpg", pos: "center 22%", nm: "Nikita Neznamov", role: "Founder", disz: "Technologie", v: "100+", label: "Makler betreut", spark: [4, 3, 6, 7, 9] },
   { src: "../../assets/team/portrait-04.jpg", pos: "center 18%", nm: "Wenzel Waechter", role: "Founder", disz: "Vertrieb", v: "300 Mio", label: "€ Volumen vermittelt", spark: [2, 3, 5, 6, 8] },
   { src: "../../assets/team/portrait-05.jpg", pos: "center 20%", nm: "Florian Hörmann", role: "Founder", disz: "Vertrieb", v: "1 Mrd+", label: "Reichweite erzielt", spark: [2, 4, 5, 7, 8] },

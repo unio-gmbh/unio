@@ -340,11 +340,11 @@ function PropCard({ o, hov, onHov }) {
    qm/zi/score: Demo-Werte (Arbeitsstand). */
 const OBJEKT_DB = [
   { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], agentImg: "../../assets/team/portrait-01.jpg", agent: "Lena Berger" },
-  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg", agent: "Marc Reiter" },
+  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg?v=2", agent: "Marc Reiter" },
   { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], agentImg: "../../assets/team/portrait-03.jpg", agent: "Sophie Frank" },
   { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], agentImg: "../../assets/team/portrait-04.jpg", agent: "David Huber" },
   { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], agentImg: "../../assets/team/portrait-05.jpg", agent: "Nina Vogel" },
-  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg", agent: "Marc Reiter" },
+  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg?v=2", agent: "Marc Reiter" },
 ];
 
 /* Footer */

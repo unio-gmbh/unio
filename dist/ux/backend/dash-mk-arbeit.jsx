@@ -84,7 +84,7 @@ function MkKontakte({ mk, tueMk, geheZu, offenId, setOffenId }) {
       /* Chat ueber den Draft (d.ekChats), nicht direkt in den Speicher:
          mkPersist schreibt d.ekChats am Ende zurueck und wuerde einen
          direkten localStorage-Write sofort ueberschreiben. */
-      if (!d.ekChats.concierge) d.ekChats.concierge = { name: "Lukas Brandtner", rolle: "Makler", img: "/assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+      if (!d.ekChats.concierge) d.ekChats.concierge = { name: "Lukas Brandtner", rolle: "Makler", img: "/assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
       d.ekChats.concierge.msgs.push({ ich: false, txt: "Ich habe " + titel.length + " Objekte für Sie zusammengestellt: " + titel.join(", ") + "." + (anbNotiz.trim() ? " " + anbNotiz.trim() : ""), t: "Jetzt" });
     });
     setAngehakt([]); setAnbNotiz(""); setSheet(null);
@@ -261,7 +261,7 @@ function MkDeals({ mk, tueMk, geheZu, offenDeal, setOffenDeal, initialTab }) {
         window.ekSchreibe(window.EK_K.events, evs);
       }
       if (chatTxt) {
-        if (!d.ekChats[objId]) d.ekChats[objId] = { name: "Lukas Brandtner", rolle: "Makler · " + window.ekObj(objId).t, img: "/assets/team/portrait-02.jpg", antwortzeit: "< 2 h", msgs: [] };
+        if (!d.ekChats[objId]) d.ekChats[objId] = { name: "Lukas Brandtner", rolle: "Makler · " + window.ekObj(objId).t, img: "/assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
         d.ekChats[objId].msgs.push({ ich: false, txt: chatTxt, t: "Jetzt" });
       }
     } else {
