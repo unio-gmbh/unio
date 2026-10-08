@@ -295,9 +295,12 @@ body.embed .panel { padding: 18px 20px 22px; gap: 22px; }
           <div class="seg" id="segSize"><button data-v="native" class="on">Original</button><button data-v="750">750</button><button data-v="1500">1500</button><button data-v="3000">3000</button></div>
           <div class="dlbl mono">Hintergrund</div>
           <div class="switch on" id="swCut"><span class="name">Freistellen</span><i></i></div>
-          <div class="seg" id="segBg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Paper</button></div>
+          <div class="seg" id="segBg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Papier</button></div>
           <div class="keys">Standard laut Backoffice: 3 : 4, Nase zwischen 40 und 60 Prozent, PNG, Originalauflösung, transparent. Jede Datei höchstens 5 MB, größere werden beim Export verkleinert. Änderungen hier gelten für alle Bilder dieser Sitzung.</div>
         </div>
+        <div class="dlbl mono">Hintergrund beim Export</div>
+        <div class="seg" id="segHg"><button data-v="transparent" class="on">Transparent</button><button data-v="#ffffff">Weiß</button><button data-v="#F7F5F1">Papier</button><button data-v="original">Original</button></div>
+        <div class="keys" id="hgHint">Freigestellt und transparent: das Bild lässt sich auf jede Fläche legen. Original behält den Hintergrund des Fotos.</div>
         <button class="btn solid wide" id="export" type="button">Bild exportieren <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
         <button class="btn paper wide" id="exportAll" type="button">Alle als ZIP <span class="knob"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5v9M3.5 8 7 11.5 10.5 8"/></svg></span></button>
       </div>
@@ -711,9 +714,25 @@ function seg(id, key, after) {
 function fmtRules() {
   const tBtn = $("segBg").querySelector('[data-v="transparent"]');
   tBtn.disabled = opts.fmt === "jpg";
+  const hBtn = $("segHg").querySelector('[data-v="transparent"]'); if (hBtn) hBtn.disabled = opts.fmt === "jpg";
   if (opts.fmt === "jpg" && opts.bg === "transparent") $("segBg").querySelector('[data-v="#ffffff"]').click();
 }
 seg("segFmt", "fmt", fmtRules); seg("segSize", "size"); seg("segBg", "bg");
+/* Hintergrund beim Export: ein sichtbarer Wähler für Freistellen und Grund. Original heißt nicht freistellen, Hintergrund des Fotos bleibt */
+const HG_HINT = { transparent: "Freigestellt und transparent: das Bild lässt sich auf jede Fläche legen. PNG oder WEBP, nicht JPG.", "#ffffff": "Freigestellt, dahinter Weiß. Für Portale und Dokumente mit weißem Grund.", "#F7F5F1": "Freigestellt, dahinter das Papier der UNIO-Welt.", original: "Nicht freigestellt. Der Hintergrund des Fotos bleibt, nur Ausschnitt und Größe folgen der Guideline." };
+function hgSync() {
+  const v = !opts.cut ? "original" : opts.bg;
+  $("segHg").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.v === v));
+  $("hgHint").textContent = HG_HINT[v] || HG_HINT.transparent;
+}
+$("segHg").addEventListener("click", async (e) => {
+  const b = e.target.closest("button"); if (!b || b.disabled) return;
+  const v = b.dataset.v;
+  if (v === "original") { if (opts.cut) $("swCut").click(); }
+  else { if (!opts.cut) $("swCut").click(); if (opts.bg !== v) $("segBg").querySelector(`[data-v="${v}"]`).click(); }
+  hgSync();
+});
+$("swCut").addEventListener("click", hgSync); $("segBg").addEventListener("click", hgSync);
 const RATIO_NAME = { "0.75": "3 : 4", "0.8": "4 : 5", "1": "1 : 1", "1.3333": "4 : 3" };
 function frameRules() { $("specFmt").textContent = RATIO_NAME[opts.ratio]; $("specPos").textContent = (opts.pos === "mitte" ? "50 %" : opts.pos + " %") + " · 73 %"; layout(); }
 $("detailsBtn").addEventListener("click", () => { const d = $("details"); d.hidden = !d.hidden; $("detailsState").textContent = d.hidden ? "Einblenden" : "Ausblenden"; });
