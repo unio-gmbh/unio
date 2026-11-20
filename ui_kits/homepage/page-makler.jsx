@@ -1229,7 +1229,7 @@ function App() {
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="makler.html" cta={{ label: "Bewerben", onClick: () => (location.hash = "bewerben") }} />
-      <HeroMk />
+      {window.IST_V2 && !/[?&]hero=alt(&|$)/.test(location.search) ? <window.HeroMkV2 /> : <HeroMk />}
       <FragenMk />
       <AntwortMk />
       <window.SystemBento makler />

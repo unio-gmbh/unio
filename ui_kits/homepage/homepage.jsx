@@ -98,7 +98,7 @@ function SucheHighlights() {
   const [hov, setHov] = React.useState(-1);
   const mob = window.useMobile();
   return (
-    <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: mob ? "96px 6vw 120px" : "150px 6vw 185px" }}>
+    <section id="suche" data-screen-label="Suche" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", borderRadius: window.IST_V2 ? 0 : "28px 28px 0 0", marginTop: window.IST_V2 ? 0 : "-4vh", boxShadow: window.IST_V2 ? "none" : "0 -30px 60px -30px rgba(11,10,9,0.4)", padding: mob ? "96px 6vw 120px" : (window.IST_V2 ? "110px 6vw 185px" : "150px 6vw 185px") }}>
       <div style={{ position: "relative", zIndex: 1 }}>
       <Chapter title={<span>Finde dein<br />nächstes Zuhause.</span>} copy="Kuratierte Projekte und Einzelobjekte, live und transparent vermarktet. Die ganze Suche findest du in der UNIO App." style={{ marginBottom: mob ? 44 : 72 }} />
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24 }}>
@@ -361,7 +361,7 @@ function App() {
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="index.html" />
-      <Hero />
+      {window.IST_V2 && !/[?&]hero=alt(&|$)/.test(location.search) ? <window.HeroV2 /> : <Hero />}
       <SucheHighlights />
       <window.CircleGesichter fuer="suchende" />
       <Markt />

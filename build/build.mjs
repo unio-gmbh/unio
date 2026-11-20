@@ -100,7 +100,7 @@ const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story
 /* Wissens-Hub: statische Seiten unter /wissen (werden separat gepflegt) */
 const WISSEN_DIR = join(ROOT, "wissen");
 
-const JSX_FILES = ["site-shared.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx", "page-partner.jsx"];
+const JSX_FILES = ["site-shared.jsx", "hero-neu.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx", "page-partner.jsx"];
 
 /* interne Links + Asset-Pfade auf saubere URLs umschreiben */
 /* v2 = Variante 2: gleiche Seiten unter Adressen mit einer 2 am Ende
@@ -141,6 +141,30 @@ function ohneStriche(t) {
     .replace(/(\d)\s?\\u201[34]\s?(\d)/g, "$1 bis $2")
     .replace(/\s\\u201[34]\s/g, ", ")
     .replace(/\\u201[34]/g, "-");
+}
+
+/* Variante 2, Raster innen: zweispaltige Aufteilungen mit freien Verhaeltnissen (1.4fr zu 1fr,
+   0.9fr zu 1.1fr ...) werden auf ganze Spalten des 12er-Rasters gelegt, der Abstand auf 24 Pixel.
+   Gleich breite Kartenreihen (repeat(n, 1fr)) bekommen ebenfalls 24 Pixel Abstand.
+   Nur wo direkt dahinter ein Zahlen-Abstand steht, sonst bleibt die Stelle unveraendert. */
+function aufRaster(code) {
+  const sp = (n) => `calc((100% - 264px) / 12 * ${n} + ${(n - 1) * 24}px)`;
+  const abstand = (rest) => {
+    const m = rest.match(/^([^}]{0,160}?[,{]gap:)(?:(\w+\?\d+:)(\d+)|(\d+))(?=[,}])/);
+    if (!m) return null;
+    const alt = +(m[3] || m[4]);
+    if (alt < 14 || alt > 72) return null;
+    return m[1] + (m[2] || "") + "24" + rest.slice(m[0].length);
+  };
+  code = code.replace(/"minmax\(0, ?([\d.]+)fr\) minmax\(0, ?([\d.]+)fr\)"([^]{0,200})/g, (ganz, a, b, rest) => {
+    const neu = abstand(rest); if (neu == null) return ganz;
+    const n = Math.min(8, Math.max(4, Math.round(12 * +a / (+a + +b))));
+    return `"${sp(n)} minmax(0, 1fr)"` + neu;
+  });
+  code = code.replace(/"repeat\(([2346]), 1fr\)"([^]{0,200})/g, (ganz, n, rest) => {
+    const neu = abstand(rest); return neu == null ? ganz : `"repeat(${n}, minmax(0, 1fr))"` + neu;
+  });
+  return code.replaceAll("clamp(24px, 5vw, 96px)", "6vw");
 }
 
 /* React dev-CDN → production */
@@ -185,7 +209,7 @@ async function main() {
     writeFileSync(join(DIST, "assets", "js", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code) + "})();");
     /* Variante 2: eigener Satz Skripte, interne Links zeigen auf die 2er-Adressen */
     mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + ohneStriche(einRand(rewriteUrls(out.code, true), f)) + "})();");
+    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + ohneStriche(aufRaster(einRand(rewriteUrls(out.code, true), f))) + "})();");
   }
   console.log("✓ JSX precompiled:", JSX_FILES.length, "Dateien");
 

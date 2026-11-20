@@ -288,11 +288,12 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
    In der Plattform kommt das aus agents[] des Objekts (siehe docs/makler-praesenz). */
 const MAKLER_BASIS = "https://www.unio.at/";
 const MAKLER_DB = {
-  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg?v=3", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, makler: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
-  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg?v=3", ed: "../../assets/team/editorial/lara-jonas", film: true, makler: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
-  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg?v=3", ed: "../../assets/team/editorial/wenzel-waechter", film: true, makler: true, region: "Wien", url: null },
-  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg?v=3", ed: "../../assets/team/editorial/nikita-neznamov", film: true, makler: true, region: "Wien", url: null },
-  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg?v=3", ed: "../../assets/team/editorial/alexander-maurer", makler: true, region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg?v=4", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, makler: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
+  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg?v=4", ed: "../../assets/team/editorial/lara-jonas", film: true, makler: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg?v=4", ed: "../../assets/team/editorial/wenzel-waechter", film: true, makler: true, region: "Wien", url: null },
+  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg?v=4", ed: "../../assets/team/editorial/nikita-neznamov", film: true, makler: true, region: "Wien", url: null },
+  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg?v=4", ed: "../../assets/team/editorial/alexander-maurer", film: true, makler: true, region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  "philipp-trattner": { name: "Philipp Trattner", ed: "../../assets/team/editorial/philipp-trattner", film: true, makler: true, region: "Trattner & Söhne", url: "https://www.trattner-soehne.at" },
   /* Weitere Menschen bei UNIO (nur in der Uebersicht, nicht im Makler-Streifen) */
   "johannes-lindner": { name: "Johannes Lindner", ed: "../../assets/team/editorial/johannes-lindner", film: true, region: "Vertrieb", url: null },
   "florian-hoermann": { name: "Florian Hörmann", ed: "../../assets/team/editorial/florian-hoermann", film: true, region: "Vertrieb", url: null },
@@ -379,7 +380,7 @@ function CirclePortraet({ m, breite }) {
       <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 52%, rgba(11,10,9,0.66) 100%)" }}></span>
       <span style={{ position: "absolute", left: 20, right: 20, bottom: 18, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, color: "var(--text-inverse)" }}>
         <span style={{ minWidth: 0 }}>
-          <span style={{ display: "block", font: "500 clamp(18px, 1.5vw, 22px)/1.15 var(--font-display)", letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
+          <span style={{ display: "block", font: "500 clamp(16px, 1.25vw, 19px)/1.15 var(--font-display)", letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
           <span className="u-label" style={{ display: "block", marginTop: 6, fontSize: 9.5, color: "rgba(247,245,241,0.78)" }}>{m.region}</span>
         </span>
         {m.url && <span aria-hidden="true" style={{ flex: "none", font: "14px var(--font-mono)", opacity: an ? 1 : 0.55, transform: an ? "translate(2px,-2px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>↗</span>}
@@ -396,6 +397,8 @@ function CircleGesichter({ fuer = "suchende" }) {
   const makler = fuer === "makler";
   const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.makler && m.ed);
   const breite = mob ? "72vw" : spalten(3);
+  const band = React.useRef(null);
+  const weiter = (r) => { const el = band.current; if (el) el.scrollBy({ left: r * (el.clientWidth + RASTER_ABSTAND) / 4 * 2, behavior: "smooth" }); };
   return (
     <section data-screen-label="CIRCLE Gesichter" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
@@ -418,9 +421,17 @@ function CircleGesichter({ fuer = "suchende" }) {
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: mob ? 12 : RASTER_ABSTAND, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: mob ? "0 -6vw" : 0, padding: mob ? "0 6vw" : 0, scrollPaddingLeft: mob ? "6vw" : 0 }}>
+        <div ref={band} style={{ display: "flex", gap: mob ? 12 : RASTER_ABSTAND, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: mob ? "0 -6vw" : 0, padding: mob ? "0 6vw" : 0, scrollPaddingLeft: mob ? "6vw" : 0 }}>
           {liste.map((m) => <CirclePortraet key={m.slug} m={m} breite={breite} />)}
         </div>
+        {/* Mehr als vier Menschen: zwei ruhige Pfeile rechts unter dem Streifen (nur Desktop) */}
+        {!mob && liste.length > 4 && (
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
+            {[[-1, "←", "Zurück"], [1, "→", "Weiter"]].map(([r, z, t]) => (
+              <button key={t} type="button" aria-label={t} onClick={() => weiter(r)} style={{ width: 46, height: 46, borderRadius: "50%", border: "1px solid var(--hairline-dark)", background: "none", cursor: "pointer", font: "16px var(--font-mono)", color: "var(--ink)" }}>{z}</button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

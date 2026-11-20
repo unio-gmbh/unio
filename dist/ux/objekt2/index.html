@@ -226,6 +226,19 @@
     transition:text-decoration-color .3s var(--ease);}
   .mksig button:hover{text-decoration-color:var(--ink);}
   @media (max-width:520px){.mksig .wer i{display:none;}.mksig button{margin-left:auto;}}
+  /* Makler-Karte in der rechten Spalte (zusaetzlich zur Zeile unter dem Titel):
+     Portraet, Rolle, ein Satz in Ich-Form, ein Knopf "Frag Wenzel". */
+  .mkk{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:22px 24px 22px;margin-top:12px;}
+  .mkk .kp{display:flex;gap:14px;align-items:center;}
+  .mkk .kp img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;}
+  .mkk .kp b{display:block;font-size:17px;font-weight:600;letter-spacing:-.015em;}
+  .mkk .kp .mono{display:block;margin-top:4px;color:var(--fg2);}
+  .mkk p{font-size:14px;line-height:1.6;color:var(--fg2);margin-top:14px;}
+  .mkk .frag{display:flex;align-items:center;justify-content:center;width:100%;height:50px;margin-top:16px;border-radius:99px;border:1px solid var(--ink);
+    background:transparent;font:600 14.5px var(--font-display),sans-serif;color:var(--ink);cursor:pointer;text-decoration:none;transition:background .3s var(--ease),color .3s var(--ease);}
+  .mkk .frag:hover{background:var(--ink);color:var(--card);}
+  .mkk .wege{display:flex;justify-content:center;gap:22px;margin-top:14px;font-size:13px;}
+  .mkk .wege a{color:var(--fg2);text-decoration:underline;text-decoration-color:rgba(20,18,16,.2);text-underline-offset:3px;}
   .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
   .ctabar{display:none;}
   .foot{margin-top:34px;text-align:center;}
@@ -588,7 +601,7 @@
         </div>
         <!-- Makler am Objekt: eine Zeile, bevor die erste Zahl kommt -->
         <div class="mksig">
-          <img src="/assets/team/makler/wenzel-waechter.jpg?v=3" alt="">
+          <img src="/assets/team/makler/wenzel-waechter.jpg?v=4" alt="">
           <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
           <button type="button" data-mkfrage>Frage stellen</button>
         </div>
@@ -740,6 +753,18 @@
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
       </div>
 
+      <!-- Makler-Karte rechts: der Mensch zum Objekt, mit einem Satz in Ich-Form -->
+      <div class="mkk">
+        <div class="kp">
+          <img src="/assets/team/makler/wenzel-waechter.jpg?v=4" alt="Wenzel Wächter">
+          <div><b>Wenzel Wächter</b>
+            <span class="mono">Immobilienberater · UNIO Partner</span></div>
+        </div>
+        <p>Ich kenne dieses Penthouse, das Haus und die Lage. Fragen zu Preis, Finanzierung und Ablauf beantworte ich persönlich, auch vor einer Besichtigung.</p>
+        <button class="frag" type="button" data-mkfrage>Frag Wenzel</button>
+        <div class="wege"><a href="tel:+436644160559">Anrufen</a><a href="mailto:wenzel@unio.at">E-Mail</a></div>
+      </div>
+
       <!-- Marktdaten: hell mit Orange-Akzent -->
       <div class="stat">
         <div class="shead2"><span class="mono">Marktdaten</span>
@@ -816,7 +841,7 @@
   <div class="back" id="mkback"></div>
   <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
     <div class="kopf">
-      <img id="mkfoto" src="/assets/team/makler/wenzel-waechter.jpg?v=3" alt=""
+      <img id="mkfoto" src="/assets/team/makler/wenzel-waechter.jpg?v=4" alt=""
         style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
       <div>
         <b id="mkname">Wenzel Wächter</b>
@@ -1520,7 +1545,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   }
   function chatMsg(ich, txt){
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "/assets/team/makler/wenzel-waechter.jpg?v=3", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "/assets/team/makler/wenzel-waechter.jpg?v=4", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
   }
@@ -1889,7 +1914,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     input.value = "";
     var chats = lese("unio_ek_chats", {});
     if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · Traum Penthouse in Hernals",
-      img: "/assets/team/makler/wenzel-waechter.jpg?v=3", antwortzeit: "< 2 h", msgs: [] };
+      img: "/assets/team/makler/wenzel-waechter.jpg?v=4", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
     zeichne();

@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 5 (zusätzlich: Objektkarte neu, alle Menschen in der Übersicht, Raster innen, Auswahlseite für Animationen) |
+| Stand dieses Dokuments | 20.11.2026, Version 6 (zusätzlich: neue Heroes, Makler auf der Objektseite als Zeile und Karte, Raster in allen Abschnitten, natürliche Fotos in den Kreisen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -165,6 +165,31 @@ Rückmeldung Daniel: Die Marke "Aktiv" mit Punkt wirkt wie aus einem Baukasten, 
 Status: wartet auf Auswahl durch Daniel
 
 Bestandsaufnahme aller Animationen und Vorschläge je Element liegen als Auswahlseite vor (Hero, Erscheinen der Abschnitte, Objektkarte, Makler auf der Objektseite, Navigation, festgehaltene Abschnitte, Dauerbewegung). Nach der Auswahl werden die gewählten Wege in Variante 2 gebaut und hier als Pakete beschrieben. Wichtigste Befunde: Überschriften blenden doppelt und bei jedem Scrollen neu ein, die Navigation ändert beim Scrollen ihre Maße, festgehaltene Abschnitte sind bis zu 8,2 Bildschirmhöhen lang, zehn Animationen laufen im System-Bereich endlos.
+
+### MP-22 Hero Startseite und Hero CIRCLE (Version 6)
+
+Status: Entwurf · Referenz gebaut: `/2` und `/makler2` (`ui_kits/homepage/hero-neu.jsx`). Der bisherige Hero bleibt zum Vergleich unter `/2?hero=alt` und `/makler2?hero=alt`.
+
+Vorbilder, am 20.11.2026 selbst im Browser angesehen: rivian.com (Bild als eingerückte Karte mit runden Ecken), apple.com/macbook-air (eine ruhige große Zeile, Inhalte in Karten), aman.com (ein Bild, kaum Text), landonorris.com (der Mensch als Hero, Porträt wird beim Scrollen zur Karte), linear.app (Zeilen steigen aus einer Maske).
+
+Startseite:
+- Der Film füllt fast den ganzen Bildschirm (10 Pixel Rand, runde Ecken). Beim Laden öffnet sich der Rahmen einmal von der Mitte, die zwei Zeilen der Überschrift steigen nacheinander aus einer Maske auf, Absatz und Knöpfe blenden ein. Keine Unschärfe.
+- Beim Scrollen schrumpft der Rahmen auf eine Karte im Raster (Rand 6vw, Platz für die Navigation oben). Darunter erscheint eine ruhige Zeile "Raum. Technologie. Mensch.". Danach läuft die Seite normal weiter.
+- Die Seite wird dabei nicht festgehalten: Der Abschnitt ist 1,7 Bildschirme hoch, der Inhalt klebt, der Scroll bleibt beim Nutzer.
+- Text sitzt auf dem Raster: Überschrift über sieben Spalten, Absatz und Knöpfe ab Spalte acht.
+- Technik: nur `clip-path`, `transform`, `opacity`. Standbild sofort, Film lädt nach. Bei reduzierter Bewegung: stehendes Bild, ein Bildschirm hoch.
+
+CIRCLE-Seite:
+- Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
+- Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-23 Makler auf der Objektseite: Zeile und Karte (Version 6)
+
+Status: Entwurf, von Daniel ausgewählt (Wege A und B zusammen) · Referenz: `/projekt2` und `/ux/objekt2`
+
+- Zeile unter dem Titel wie MP-04.
+- Zusätzlich in der rechten Spalte direkt unter dem Preis eine Karte (`.mkk`): Kreis 56 mit dem natürlichen Foto, Name, "Immobilienberater · UNIO Partner", ein Satz in Ich-Form ("Ich kenne dieses Penthouse, das Haus und die Lage. Fragen zu Preis, Finanzierung und Ablauf beantworte ich persönlich, auch vor einer Besichtigung."), Knopf "Frag {Vorname}", darunter Textlinks Anrufen und E-Mail.
+- Der Satz kommt je Objekt vom Makler (Feld in der Objektanlage). Ohne Satz entfällt der Absatz.
 
 ### MP-03 Link von der Objektseite zur Maklerseite
 
@@ -363,3 +388,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 3 | CIRCLE-Gesichter neu als Porträt-Streifen mit Name im Bild und Film beim Überfahren (MP-14 neu gefasst), Editorial-Material aus dem Drive eingebunden, Makler-Kreise aus derselben Serie. Variante 2 unter eigenen Adressen (`/2`, `/makler2`, `/immobilien2`, `/projekt2`, `/ux/explore2`, `/ux/objekt2`), Variante 1 unverändert. Der Schalter `?makler=1` gilt nur noch lokal. |
 | 20.11.2026 | 4 | Makler-Kreise neutraler (weniger Orange). Neu: Partner-Übersicht `/partner2` (MP-16), einheitlicher Seitenrand und Raster-Werkzeug in Variante 2 (MP-17), Story-Grafik korrigiert (MP-18), Makler-Film im Feed (MP-19), Vorschläge für die Suchseite (MP-15). Kopfzeilen der neuen Abschnitte auf das Spaltenmaß von `Chapter` gelegt. |
 | 20.11.2026 | 5 | Objektkarte ohne "Aktiv" und ohne Nachfrage, Projekte klar markiert (MP-20). Übersicht `/partner2` zeigt alle elf Menschen, Porträt Alexander Maurer per Bild-KI in den Editorial-Stil übertragen (von Daniel freigegeben). Innenkanten in Variante 2 auf dem 12-Spalten-Raster (Helfer `spalten(n)`). Versionskennung an v2-Skripten und Makler-Bildern: Ohne sie zeigte der Browser nach Änderungen den alten Stand, weil `/assets` ein Jahr gehalten wird. Gedankenstriche in den Texten von Variante 2 ersetzt. Auswahlseite für Animationen erstellt (MP-21). |
+| 20.11.2026 | 6 | Kreise wieder mit natürlichen Originalfotos. Philipp Trattner ergänzt (verlinkt auf trattner-soehne.at), Film für Alexander Maurer erzeugt. Neue Heroes für Startseite und CIRCLE-Seite (MP-22). Objektseite mit Zeile und Karte (MP-23). Raster: zweispaltige Aufteilungen und Kartenreihen in allen Abschnitten von Variante 2 liegen auf ganzen Spalten (Funktion `aufRaster` im Build). Noch neben dem Raster: Hero Bauträger, Hero Story, die festgehaltenen Abschnitte Verwaltung und Bewegung auf der CIRCLE-Seite, die Listen Vorteile und Bewerbung. |
