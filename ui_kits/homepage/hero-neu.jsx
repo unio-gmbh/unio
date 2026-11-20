@@ -56,7 +56,7 @@ function HeroV2() {
   const e = p * p * (3 - 2 * p); /* weicher Verlauf 0..1 */
   const seite = `calc(10px + (6vw - 10px) * ${e})`;
   const oben = `calc(10px + ${mob ? 70 : 88}px * ${e})`;
-  const unten = `calc(10px + ${mob ? 16 : 20}vh * ${e})`;
+  const unten = `calc(10px + ${mob ? 5 : 7}vh * ${e})`;
   const radius = 16 + 8 * e;
   const rahmen = da
     ? `inset(${oben} ${seite} ${unten} ${seite} round ${radius}px)`
@@ -64,7 +64,7 @@ function HeroV2() {
   const innen = mob ? "22px" : "clamp(28px, 3.4vw, 60px)";
 
   return (
-    <section id="top" ref={wrap} data-screen-label="Hero" style={{ position: "relative", height: H2_RUHIG ? "100svh" : "170svh", background: "var(--paper)" }}>
+    <section id="top" ref={wrap} data-screen-label="Hero" style={{ position: "relative", height: H2_RUHIG ? "100svh" : "160svh", background: "var(--paper)" }}>
       <div style={{ position: "sticky", top: 0, height: "100svh", overflow: "hidden" }}>
         {/* Medium: Standbild sofort, Film laedt nach */}
         <div style={{ position: "absolute", inset: 0, clipPath: rahmen, WebkitClipPath: rahmen, transition: p === 0 && !H2_RUHIG ? `clip-path 1300ms ${H2_EASE}, -webkit-clip-path 1300ms ${H2_EASE}` : "none", background: "var(--ink)" }}>
@@ -86,20 +86,13 @@ function HeroV2() {
             <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "rgba(247,245,241,0.92)" }}>
               Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst.
             </p>
-            <div style={{ display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 12, marginTop: 22, flexWrap: mob ? "wrap" : "nowrap", whiteSpace: "nowrap" }}>
               <H2Btn size="lg" variant="paper" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
               <H2Btn size="lg" variant="glass" tone="dark" onClick={() => (location.hash = "produkte")}>Wie es funktioniert</H2Btn>
             </div>
           </div>
         </div>
 
-        {/* Unter der Karte, sobald sie geschrumpft ist: eine ruhige Zeile auf dem Raster */}
-        {!H2_RUHIG && (
-          <div aria-hidden={e < 0.6} style={{ position: "absolute", left: "6vw", right: "6vw", bottom: mob ? "5vh" : "7vh", display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: 24, alignItems: "baseline", opacity: Math.max(0, (e - 0.55) / 0.45), color: "var(--ink)" }}>
-            <span style={{ font: `500 ${mob ? 22 : "clamp(24px, 2.4vw, 40px)"}${mob ? "px" : ""}/1.1 var(--font-display)`, letterSpacing: "-0.025em" }}>Raum. Technologie. Mensch.</span>
-            {!mob && <span style={{ font: "400 17px/1.6 var(--font-display)", color: "var(--text-muted)" }}>Kuratierte Objekte in Wien, persönlich betreut.</span>}
-          </div>
-        )}
       </div>
     </section>
   );
@@ -108,8 +101,10 @@ function HeroV2() {
 /* ---------- CIRCLE-Seite: der Mensch ist der Hero ---------- */
 /* Ein durchgehender Film: Jedes Mal, wenn vorne jemand am Makler vorbeigeht, steht dahinter der naechste.
    Geschnitten aus den sechs Einzelfilmen an den Momenten, in denen das Gesicht verdeckt ist
-   (assets/team/editorial/circle-schnitt.mp4, 10,4 Sekunden, Schleife). Die Zeiten sagen, wer wann zu sehen ist. */
-const CIRCLE_SCHNITT = [["marcus-weiss", 0], ["lara-jonas", 1.479], ["wenzel-waechter", 3.146], ["nikita-neznamov", 5.104], ["philipp-trattner", 7.021], ["alexander-maurer", 8.938]];
+   (assets/team/editorial/circle-schnitt.mp4, 6,9 Sekunden, Schleife, zwoelf Menschen). Vor dem Schnitt
+   wird jedes Gesicht erkannt und auf dieselbe Groesse und Lage gebracht, damit die Koepfe deckungsgleich
+   uebereinander liegen. Die Zeiten sagen, wer wann zu sehen ist. */
+const CIRCLE_SCHNITT = [["marcus-weiss", 0], ["lara-jonas", 0.542], ["wenzel-waechter", 1.042], ["philipp-trattner", 1.542], ["alexander-maurer", 2.083], ["nikita-neznamov", 2.75], ["johannes-lindner", 3.667], ["florian-hoermann", 4.167], ["fabian-fuhrmann", 4.667], ["jacob-kapsch", 5.208], ["daniel-hayden", 5.792], ["marcin-fituch", 6.458]];
 function useCircleSchnitt() {
   const leute = CIRCLE_SCHNITT.map(([slug]) => ({ slug, ...window.MAKLER_DB[slug] })).filter((m) => m.name);
   const [i, setI] = React.useState(0);
@@ -308,12 +303,200 @@ function HeroD() {
   );
 }
 
+/* Suchleiste fuer Vorschlag F (Vorbild: Compass und Airbnb, Suche direkt im Hero) */
+function HeroSuche() {
+  const mob = window.useMobile();
+  const feld = { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, padding: mob ? "10px 16px" : "10px 22px", borderLeft: "1px solid var(--hairline-dark)" };
+  const ein = { border: "none", outline: "none", background: "none", padding: 0, font: "500 15px var(--font-display)", color: "var(--ink)", width: "100%", appearance: "none", WebkitAppearance: "none" };
+  const los = (ev) => { ev.preventDefault(); location.assign("immobilien.html"); };
+  return (
+    <form onSubmit={los} style={{ display: "flex", flexDirection: mob ? "column" : "row", alignItems: "stretch", background: "var(--surface-raised)", borderRadius: mob ? 20 : 999, padding: 6, boxShadow: "0 18px 50px rgba(11,10,9,0.28)" }}>
+      <label style={{ ...feld, borderLeft: "none" }}><span className="u-label" style={{ fontSize: 9.5, color: "var(--text-muted)" }}>Wo</span><input id="hs-ort" placeholder="Bezirk oder Ort" style={ein} /></label>
+      <label style={feld}><span className="u-label" style={{ fontSize: 9.5, color: "var(--text-muted)" }}>Was</span><select id="hs-art" defaultValue="" style={ein}><option value="">Alle Objektarten</option><option>Wohnung</option><option>Haus</option><option>Penthouse</option><option>Projekt</option></select></label>
+      <label style={feld}><span className="u-label" style={{ fontSize: 9.5, color: "var(--text-muted)" }}>Budget</span><select id="hs-preis" defaultValue="" style={ein}><option value="">Offen</option><option>bis 500.000</option><option>bis 1 Mio</option><option>bis 2 Mio</option><option>über 2 Mio</option></select></label>
+      <button type="submit" style={{ flex: "none", height: mob ? 50 : "auto", minWidth: 132, padding: "0 26px", border: "none", borderRadius: 999, background: "var(--ink)", color: "var(--paper)", font: "500 15px var(--font-display)", cursor: "pointer" }}>Suchen</button>
+    </form>
+  );
+}
+
+/* ---------- Startseite, Vorschlag E: Schrift zuerst, dann waechst der Film (D und A zusammen) ---------- */
+function HeroE() {
+  const mob = window.useMobile();
+  const wrap = React.useRef(null);
+  const vid = React.useRef(null);
+  const [da, setDa] = React.useState(H2_RUHIG);
+  const [p, setP] = React.useState(0);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  React.useEffect(() => { const v = vid.current; if (!v || H2_RUHIG) return; const q = v.play(); if (q && q.catch) q.catch(() => {}); }, []);
+  React.useEffect(() => {
+    if (H2_RUHIG) return;
+    let frei = true;
+    const mess = () => { frei = true; const el = wrap.current; if (!el) return; const r = el.getBoundingClientRect(); setP(Math.min(1, Math.max(0, (window.innerHeight - r.top) / (window.innerHeight * 0.9) - 0.25))); };
+    const beiScroll = () => { if (frei) { frei = false; requestAnimationFrame(mess); } };
+    window.addEventListener("scroll", beiScroll, { passive: true }); mess();
+    return () => window.removeEventListener("scroll", beiScroll);
+  }, []);
+  const e = p * p * (3 - 2 * p);
+  const rahmen = da ? `inset(0 calc(6vw * ${1 - e}) 0 calc(6vw * ${1 - e}) round ${20 * (1 - e)}px)` : "inset(100% 6vw 0 6vw round 20px)";
+  return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "108px 0 0" : "clamp(120px, 16vh, 170px) 0 0" }}>
+      <div style={{ position: "relative", zIndex: 1, padding: "0 6vw" }}>
+        <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(44px, 13.5vw, 64px)" : "clamp(72px, 11.6vw, 228px)"}/0.9 var(--font-display)`, letterSpacing: "-0.05em", color: "var(--ink)" }}>
+          <H2Zeile da={da} i={0}>Real Estate</H2Zeile>
+          <H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile>
+        </h1>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 18 : 24, alignItems: "end", marginTop: mob ? 24 : "clamp(28px, 5vh, 56px)", opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 560ms` }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
+            <H2Btn size="lg" variant="ghost" onClick={() => (location.hash = "produkte")}>Wie es funktioniert</H2Btn>
+          </div>
+          <p style={{ margin: 0, maxWidth: 440, font: `400 ${mob ? 15.5 : 17}px/1.65 var(--font-display)`, color: "var(--text-muted)" }}>Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst.</p>
+        </div>
+      </div>
+      <div ref={wrap} style={{ position: "relative", marginTop: mob ? 32 : "clamp(36px, 6vh, 72px)", height: mob ? "62vw" : "clamp(380px, 78vh, 860px)", clipPath: rahmen, WebkitClipPath: rahmen, transition: p === 0 && !H2_RUHIG ? `clip-path 1200ms ${H2_EASE} 380ms, -webkit-clip-path 1200ms ${H2_EASE} 380ms` : "none", background: "var(--ink)" }}>
+        <video ref={vid} poster="../../assets/img/hero-poster.jpg" muted loop playsInline preload={H2_RUHIG ? "none" : "metadata"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: `scale(${1.08 - 0.08 * e})` }}>
+          <source src="../../assets/video/hero-fenster.webm" type="video/webm" />
+          <source src="../../assets/video/hero-fenster.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Startseite, Vorschlag F: Film im Rahmen mit Suche (A mit direktem Einstieg) ---------- */
+function HeroF() {
+  const mob = window.useMobile();
+  const vid = React.useRef(null);
+  const [da, setDa] = React.useState(H2_RUHIG);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  React.useEffect(() => { const v = vid.current; if (!v || H2_RUHIG) return; const q = v.play(); if (q && q.catch) q.catch(() => {}); }, []);
+  const rahmen = da ? "inset(10px 10px 10px 10px round 16px)" : "inset(20% 26% 20% 26% round 28px)";
+  return (
+    <section id="top" data-screen-label="Hero" style={{ position: "relative", height: "100svh", minHeight: 620, background: "var(--paper)", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, clipPath: rahmen, WebkitClipPath: rahmen, transition: H2_RUHIG ? "none" : `clip-path 1300ms ${H2_EASE}, -webkit-clip-path 1300ms ${H2_EASE}`, background: "var(--ink)" }}>
+        <video ref={vid} poster="../../assets/img/hero-poster.jpg" muted loop playsInline preload={H2_RUHIG ? "none" : "metadata"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: da ? "none" : "scale(1.1)", transition: H2_RUHIG ? "none" : `transform 2400ms ${H2_EASE}` }}>
+          <source src="../../assets/video/hero-fenster.webm" type="video/webm" />
+          <source src="../../assets/video/hero-fenster.mp4" type="video/mp4" />
+        </video>
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.34) 0%, rgba(11,10,9,0.06) 34%, rgba(11,10,9,0.2) 55%, rgba(11,10,9,0.66) 100%)" }}></div>
+      </div>
+      <div style={{ position: "absolute", left: "6vw", right: "6vw", bottom: mob ? 30 : "clamp(36px, 7vh, 80px)", color: "#FFFFFF" }}>
+        <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(40px, 12vw, 58px)" : "clamp(52px, 7.2vw, 132px)"}/0.95 var(--font-display)`, letterSpacing: "-0.04em" }}>
+          <H2Zeile da={da} i={0}>Real Estate</H2Zeile>
+          <H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile>
+        </h1>
+        <div style={{ marginTop: mob ? 22 : "clamp(24px, 4vh, 44px)", width: mob ? "100%" : window.spalten(9), opacity: da ? 1 : 0, transform: da ? "none" : "translateY(14px)", transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 620ms, transform 900ms ${H2_EASE} 620ms` }}>
+          <HeroSuche />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Startseite, Vorschlag G: Zeile im Balken (Vorbild: thefold.news) ---------- */
+function HeroG() {
+  const mob = window.useMobile();
+  const [da, setDa] = React.useState(H2_RUHIG);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  const gross = `500 ${mob ? "clamp(44px, 13.5vw, 64px)" : "clamp(72px, 11.6vw, 228px)"}/0.9 var(--font-display)`;
+  const balken = da ? "inset(0)" : "inset(0 100% 0 0)";
+  const maske = (n) => ({ clipPath: da ? "inset(0 round 20px)" : "inset(100% 0 0 0 round 20px)", WebkitClipPath: da ? "inset(0 round 20px)" : "inset(100% 0 0 0 round 20px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} ${520 + n * 110}ms, -webkit-clip-path 1200ms ${H2_EASE} ${520 + n * 110}ms` });
+  return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "108px 6vw 56px" : "clamp(120px, 16vh, 170px) 6vw 64px" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <h1 style={{ margin: 0, font: gross, letterSpacing: "-0.05em", color: "var(--ink)" }}>
+          <H2Zeile da={da} i={0}>Real Estate</H2Zeile>
+          <span style={{ display: "block", marginTop: "0.06em", background: "var(--ink)", color: "var(--paper)", padding: "0.04em 0.12em 0.1em", marginLeft: "-0.12em", marginRight: "-0.12em", clipPath: balken, WebkitClipPath: balken, transition: H2_RUHIG ? "none" : `clip-path 1100ms ${H2_EASE} 260ms, -webkit-clip-path 1100ms ${H2_EASE} 260ms` }}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></span>
+        </h1>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(4)} ${window.spalten(4)} minmax(0, 1fr)`, gap: mob ? 14 : 24, marginTop: mob ? 28 : "clamp(32px, 5vh, 60px)", alignItems: "stretch" }}>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 24, opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 620ms` }}>
+            <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.65 var(--font-display)`, color: "var(--text-muted)" }}>Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst.</p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
+            </div>
+          </div>
+          <CircleFilm stil={{ aspectRatio: "4 / 5", ...maske(0) }} />
+          <div style={{ position: "relative", aspectRatio: "4 / 5", overflow: "hidden", background: "var(--paper-2)", ...maske(1) }}>
+            <img src="../../assets/img/obenzwei-terrasse.jpg" alt="Dachterrasse mit Blick über Wien" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- CIRCLE-Seite: Internationalisierung ---------- */
+/* Neue Staedte und Laender anfragen. Vorschlaege sind nur Auswahlhilfen, keine Zusagen. */
+const INT_ORTE = ["Graz", "Salzburg", "Linz", "Innsbruck", "München", "Berlin", "Zürich", "Mailand", "Lissabon", "Dubai"];
+function InternationalMk() {
+  const mob = window.useMobile();
+  const [orte, setOrte] = React.useState([]);
+  const [frei, setFrei] = React.useState("");
+  const [mail, setMail] = React.useState("");
+  const [makler, setMakler] = React.useState(true);
+  const [stand, setStand] = React.useState("offen"); /* offen | sendet | fertig | fehler */
+  const [hinweis, setHinweis] = React.useState("");
+  const wahl = (o) => setOrte((a) => (a.includes(o) ? a.filter((x) => x !== o) : [...a, o]));
+  const alle = [...orte, ...(frei.trim() ? [frei.trim()] : [])];
+  const senden = async (ev) => {
+    ev.preventDefault();
+    if (!alle.length) { setHinweis("Bitte wähle eine Stadt oder trage eine ein."); return; }
+    if (!window.validEmail(mail)) { setHinweis("Bitte trage eine gültige E-Mail-Adresse ein."); return; }
+    setHinweis(""); setStand("sendet");
+    const ok = await window.submitLead("international", { orte: alle, email: mail.trim(), makler });
+    setStand(ok ? "fertig" : "fehler");
+  };
+  const feld = { width: "100%", height: 52, padding: "0 18px", borderRadius: 14, border: "1px solid rgba(247,245,241,0.22)", background: "rgba(247,245,241,0.06)", color: "var(--paper)", font: "400 16px var(--font-display)", outline: "none" };
+  return (
+    <section id="international" data-screen-label="International" style={{ position: "relative", zIndex: 2, background: "var(--ink)", color: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 40 : 24, alignItems: "start" }}>
+        <div>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(34px, 10vw, 46px)" : "clamp(44px, 5.4vw, 96px)"}/0.98 var(--font-display)`, letterSpacing: "-0.035em" }}>Wien ist<br />der Anfang<span style={{ color: "var(--signal)" }}>.</span></h2>
+          <p style={{ margin: mob ? "20px 0 0" : "30px 0 0", maxWidth: 480, font: `400 ${mob ? 15.5 : 17}px/1.65 var(--font-display)`, color: "rgba(247,245,241,0.7)" }}>
+            CIRCLE wächst dorthin, wo gute Makler sind. Sag uns, in welcher Stadt oder in welchem Land du starten möchtest. Wir melden uns, sobald es dort konkret wird.
+          </p>
+          <span className="u-label" style={{ display: "block", marginTop: mob ? 26 : 44, fontSize: 10, color: "rgba(247,245,241,0.55)" }}>Heute aktiv: Wien und Umgebung</span>
+        </div>
+        {stand === "fertig" ? (
+          <div style={{ paddingTop: mob ? 0 : 12 }}>
+            <div style={{ font: `500 ${mob ? 24 : 32}px/1.15 var(--font-display)`, letterSpacing: "-0.02em" }}>Danke. Deine Anfrage für {alle.join(", ")} ist bei uns.</div>
+            <p style={{ margin: "14px 0 0", font: "400 16px/1.6 var(--font-display)", color: "rgba(247,245,241,0.7)" }}>Wir melden uns unter {mail.trim()}, sobald es dort konkret wird.</p>
+          </div>
+        ) : (
+          <form onSubmit={senden} noValidate>
+            <span className="u-label" style={{ display: "block", fontSize: 10, color: "rgba(247,245,241,0.55)", marginBottom: 14 }}>Wo möchtest du starten</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {INT_ORTE.map((o) => {
+                const an = orte.includes(o);
+                return <button key={o} type="button" aria-pressed={an} onClick={() => wahl(o)} style={{ height: 42, padding: "0 18px", borderRadius: 999, cursor: "pointer", font: "500 14.5px var(--font-display)", border: an ? "1px solid var(--signal)" : "1px solid rgba(247,245,241,0.24)", background: an ? "var(--signal)" : "transparent", color: an ? "#1A1305" : "var(--paper)", transition: `background 200ms ${H2_EASE}, color 200ms ${H2_EASE}` }}>{o}</button>;
+              })}
+            </div>
+            <div style={{ display: "grid", gap: 10, marginTop: 20 }}>
+              <input id="int-ort" value={frei} onChange={(e) => setFrei(e.target.value)} placeholder="Andere Stadt oder anderes Land" aria-label="Andere Stadt oder anderes Land" style={feld} />
+              <input id="int-mail" type="email" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="E-Mail-Adresse" aria-label="E-Mail-Adresse" style={feld} />
+            </div>
+            <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, font: "400 14.5px var(--font-display)", color: "rgba(247,245,241,0.8)", cursor: "pointer" }}>
+              <input id="int-makler" type="checkbox" checked={makler} onChange={(e) => setMakler(e.target.checked)} style={{ width: 18, height: 18, accentColor: "#FFAA09" }} />
+              Ich bin Makler und möchte dort selbst starten
+            </label>
+            {hinweis && <p role="alert" style={{ margin: "14px 0 0", font: "400 14.5px var(--font-display)", color: "var(--signal)" }}>{hinweis}</p>}
+            {stand === "fehler" && <p role="alert" style={{ margin: "14px 0 0", font: "400 14.5px var(--font-display)", color: "var(--signal)" }}>Das hat gerade nicht geklappt. Bitte versuche es noch einmal oder schreib an office@unio.at.</p>}
+            <div style={{ marginTop: 22 }}>
+              <H2Btn size="lg" variant="signal" knob type="submit" disabled={stand === "sendet"}>{stand === "sendet" ? "Wird gesendet" : "Stadt anfragen"}</H2Btn>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /* Umschalter fuer die Abstimmung: /2?hero=a|b|c|d, mit ?hero=alt der bisherige Hero.
    Eine kleine Leiste unten links fuehrt durch die Vorschlaege. Nur in Variante 2. */
 function HeroWahl({ alt }) {
   const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "a";
-  const liste = [["a", "A", "Film wird zur Karte"], ["b", "B", "Mensch und Raum"], ["c", "C", "Mensch in der Mitte"], ["d", "D", "Schrift zuerst"], ["alt", "Alt", "Bisheriger Hero"]];
-  const hero = m === "alt" ? alt : m === "b" ? <HeroB /> : m === "c" ? <HeroC /> : m === "d" ? <HeroD /> : <HeroV2 />;
+  const liste = [["a", "A", "Film wird zur Karte"], ["b", "B", "Mensch und Raum"], ["c", "C", "Mensch in der Mitte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["g", "G", "Zeile im Balken"], ["alt", "Alt", "Bisheriger Hero"]];
+  const hero = m === "alt" ? alt : m === "b" ? <HeroB /> : m === "c" ? <HeroC /> : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : m === "g" ? <HeroG /> : <HeroV2 />;
   return (
     <React.Fragment>
       {hero}
@@ -327,4 +510,4 @@ function HeroWahl({ alt }) {
   );
 }
 
-Object.assign(window, { HeroV2, HeroMkV2, HeroB, HeroC, HeroD, HeroWahl, CircleFilm });
+Object.assign(window, { HeroV2, HeroMkV2, HeroB, HeroC, HeroD, HeroE, HeroF, HeroG, HeroWahl, CircleFilm, InternationalMk });

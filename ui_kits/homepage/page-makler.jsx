@@ -1239,6 +1239,7 @@ function App() {
       <BeteiligungMk />
       <MarkeAssetMk />
       <window.CircleGesichter fuer="makler" />
+      {window.IST_V2 && <window.InternationalMk />}
       <BewegungMk />
       <SchritteMk />
       <VergleichMk />

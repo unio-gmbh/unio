@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 7 (zusätzlich: vier Hero-Vorschläge für die Startseite, geschnittener Makler-Film, Positionen der Founder, Raster-Reste) |
+| Stand dieses Dokuments | 20.11.2026, Version 8 (zusätzlich: Schnitt mit zwölf Menschen, Hero A bis G, Internationalisierung, zehn Vorschläge) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,37 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-25 Stand Version 8: Schnitt neu, Hero A bis G, Internationalisierung, Vorschläge
+
+Status: Entwurf, Auswahl durch Daniel offen
+
+**Geschnittener Film, zweite Fassung** (`assets/team/editorial/circle-schnitt.mp4`, 6,9 Sekunden, Schleife): zwölf Menschen statt sechs, je rund eine halbe Sekunde. Vor dem Schnitt wird in jedem Einzelfilm das Gesicht erkannt und auf dieselbe Größe und Lage gebracht (Gesichtsbreite 28 Prozent der Bildbreite, Gesichtsmitte auf 31 Prozent der Höhe), damit die Köpfe deckungsgleich liegen. Geschnitten wird an den Bildern, in denen ein Vorbeigehender das Gesicht verdeckt. Reihenfolge und Zeiten stehen in `CIRCLE_SCHNITT` in `hero-neu.jsx`.
+
+**Hero Startseite, sieben Vorschläge** (`/2?hero=a` bis `g`):
+- A: Film wird zur Karte. Knöpfe nebeneinander, keine Zeile mehr unter der Karte.
+- D: Schrift zuerst, darunter drei Bilder.
+- E: D und A zusammen. Große Schrift, darunter ein Film über zwölf Spalten, der beim Scrollen auf volle Breite wächst.
+- F: wie A, mit einer Suchleiste im Film (Wo, Was, Budget, Suchen). Vorbild Compass und Airbnb.
+- G: zweite Zeile der Überschrift in einem dunklen Balken, der sich von links öffnet. Vorbild thefold.news.
+- B und C wie in MP-24.
+
+**Internationalisierung** (`/makler2#international`, Komponente `InternationalMk` in `hero-neu.jsx`): dunkler Abschnitt nach den CIRCLE-Gesichtern. Links "Wien ist der Anfang." mit Absatz und der Zeile "Heute aktiv: Wien und Umgebung". Rechts ein Formular: zehn Städte zum Antippen (Mehrfachauswahl, nur Vorschläge), ein freies Feld für andere Städte oder Länder, E-Mail, Haken "Ich bin Makler und möchte dort selbst starten", Knopf "Stadt anfragen". Gesendet wird an den bestehenden Lead-Eingang mit dem Typ `international` und den Feldern `orte`, `email`, `makler`. Nach dem Senden steht eine Bestätigung an der Stelle des Formulars. Für die Plattform: Anfragen je Ort zählen, damit sichtbar wird, wo Nachfrage entsteht.
+
+**Weitere Vorschläge für Darstellung und Bedienung**, jeweils mit Vorbild (am 20.11.2026 selbst angesehen):
+
+| Nr. | Bereich | Heute | Vorschlag | Vorbild |
+|---|---|---|---|---|
+| 1 | Startseite, Objekte | drei Beispielkarten | mehrere Reihen zum seitlichen Schieben mit je einem Thema ("Neu", "Dachgeschoss", "Projekte"), Pfeile rechts oben | airbnb.com |
+| 2 | Startseite, Versprechen | drei große Zahlen, die unscharf einzählen | eine ruhige Zahlenzeile mit Haarlinien, sofort lesbar | thefold.news |
+| 3 | Aussage-Abschnitte | Text färbt sich Wort für Wort ein, dreimal je Seite, dabei wird die Seite festgehalten | je Seite ein großer, mittig gesetzter Satz mit einem einzigen Bild, ohne Festhalten | takumi.uno |
+| 4 | Hervorgehobenes Objekt | gibt es nicht | ein Objekt allein auf einer farbigen Fläche über die volle Breite, mit Makler | lesintranquilles.com |
+| 5 | System-Bereich | zehn kleine Animationen laufen gleichzeitig | ein großes Bild der Plattform, darüber drei bis vier Reiter, die den Ausschnitt wechseln | linear.app |
+| 6 | Navigation | Leiste schrumpft zur Pille | Form bleibt, nur der Grund blendet ein | apple.com, rivian.com |
+| 7 | CIRCLE, Verwaltung | 8,2 Bildschirme festgehalten | drei Tafeln zum seitlichen Schieben | airbnb.com |
+| 8 | Vorab-Objekte | gibt es nicht | eigene Reihe "Zuerst bei UNIO" für Objekte vor der Veröffentlichung | compass.com (Exclusives) |
+| 9 | Bewegung allgemein | keine Wahl für Besucher | kleiner Schalter "Bewegung an oder aus" im Fuß der Seite | thefold.news |
+| 10 | Fuß der Seite | bewegte unscharfe Glut | ruhige Fläche | alle genannten |
 
 ### MP-24 Hero-Vorschläge Startseite und geschnittener Film (Version 7)
 
@@ -401,3 +432,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 5 | Objektkarte ohne "Aktiv" und ohne Nachfrage, Projekte klar markiert (MP-20). Übersicht `/partner2` zeigt alle elf Menschen, Porträt Alexander Maurer per Bild-KI in den Editorial-Stil übertragen (von Daniel freigegeben). Innenkanten in Variante 2 auf dem 12-Spalten-Raster (Helfer `spalten(n)`). Versionskennung an v2-Skripten und Makler-Bildern: Ohne sie zeigte der Browser nach Änderungen den alten Stand, weil `/assets` ein Jahr gehalten wird. Gedankenstriche in den Texten von Variante 2 ersetzt. Auswahlseite für Animationen erstellt (MP-21). |
 | 20.11.2026 | 6 | Kreise wieder mit natürlichen Originalfotos. Philipp Trattner ergänzt (verlinkt auf trattner-soehne.at), Film für Alexander Maurer erzeugt. Neue Heroes für Startseite und CIRCLE-Seite (MP-22). Objektseite mit Zeile und Karte (MP-23). Raster: zweispaltige Aufteilungen und Kartenreihen in allen Abschnitten von Variante 2 liegen auf ganzen Spalten (Funktion `aufRaster` im Build). Noch neben dem Raster: Hero Bauträger, Hero Story, die festgehaltenen Abschnitte Verwaltung und Bewegung auf der CIRCLE-Seite, die Listen Vorteile und Bewerbung. |
 | 20.11.2026 | 7 | Hero der CIRCLE-Seite mit geschnittenem Film: Die Person wechselt, wenn vorne jemand vorbeigeht. Vier Hero-Vorschläge für die Startseite mit Umschalter (MP-24). Founder tragen im CIRCLE-Bereich die Position von der Story-Seite ("Founder · Vertrieb" usw.). Raster: Hero-Karten von Bauträger und Story auf dem Seitenrand, Liste Vorteile exakt in Spalte 2, Einzug der festgehaltenen Tafeln auf Spalte 2. |
+| 20.11.2026 | 8 | Film neu geschnitten: zwölf Menschen, schneller, Gesichter deckungsgleich. Hero A angepasst (Knöpfe nebeneinander, Zeile darunter entfernt), neue Vorschläge E, F, G. Abschnitt Internationalisierung auf der CIRCLE-Seite. Zehn weitere Vorschläge mit Vorbildern (MP-25). |
