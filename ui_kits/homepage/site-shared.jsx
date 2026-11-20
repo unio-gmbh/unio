@@ -282,69 +282,111 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
   );
 }
 
-/* Objektkarte: Nachfrage-Badge + Partner-Avatar im Bild, Aktiv-Pill,
-   Adresszeile, Mono-Datenzeile (m² · Zi · Preis) */
+/* Makler-Register (Demo-Stand): echte UNIO Partner, die live eine eigene Seite haben.
+   slug = Pfad der Partnerseite auf www.unio.at (live: /marcus-weiss usw.).
+   url: null heisst: noch keine eigene Seite, die Zeile ist dann nicht klickbar.
+   In der Plattform kommt das aus agents[] des Objekts (siehe docs/makler-praesenz). */
+const MAKLER_BASIS = "https://www.unio.at/";
+const MAKLER_DB = {
+  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
+  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", region: "Wien", url: null },
+};
+/* Sicherheits-Schalter: Auf den oeffentlichen Seiten ist die Makler-Zeile AUS.
+   Sie erscheint nur mit ?makler=1 in der Adresse (Vorschau fuer Abstimmung).
+   So kann ein versehentlicher Merge oder Build nichts live schalten.
+   Freigabe erst nach Entscheidung, siehe docs/makler-praesenz/UEBERGABE_MARCIN.md. */
+const MAKLER_SICHTBAR = typeof location !== "undefined" && /[?&]makler=1(&|$)/.test(location.search);
+const maklerVon = (o) => (o && o.mk && MAKLER_DB[o.mk]) || null;
+const maklerInitialen = (name) => (name || "").split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+
+/* Makler-Kreis: eine Komponente, drei feste Groessen (Karte 34, Modul 56, Profil 96).
+   Ohne Foto erscheinen Initialen auf Ink, nie ein leerer Kreis. */
+function MaklerKreis({ m, size = 34, zoom = false }) {
+  const [kaputt, setKaputt] = React.useState(false);
+  return (
+    <span style={{ position: "relative", flex: "none", display: "block", width: size, height: size, borderRadius: "50%", overflow: "hidden", background: "var(--ink)", boxShadow: "0 0 0 1px var(--hairline-dark)" }}>
+      {m.img && !kaputt
+        ? <img src={m.img} alt="" onError={() => setKaputt(true)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: m.pos || "center 30%", transform: zoom ? "scale(1.12)" : "scale(1)", transition: "transform var(--dur-fast) var(--ease-unio)" }} />
+        : <span aria-hidden="true" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", font: `500 ${Math.round(size * 0.36)}px var(--font-display)`, letterSpacing: "0.02em", color: "var(--paper)" }}>{maklerInitialen(m.name)}</span>}
+    </span>
+  );
+}
+
+/* Makler-Zeile am Fuss jeder Objektkarte: Kreis, Name, Aufgabe. Immer sichtbar
+   (auch auf Touch, wo es kein Hover gibt), eigener Link zur Partnerseite.
+   Sitzt bewusst unter dem Bild: das Objektfoto bleibt der Held. */
+function MaklerZeile({ m, dicht = false }) {
+  const [h, setH] = React.useState(false);
+  if (!m || !MAKLER_SICHTBAR) return null;
+  const inhalt = (
+    <React.Fragment>
+      <MaklerKreis m={m} size={34} zoom={h} />
+      <span style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
+        <span style={{ font: "500 14.5px/1.15 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
+        <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", whiteSpace: "nowrap" }}>Beratung und Besichtigung</span>
+      </span>
+      {m.url && <span aria-hidden="true" style={{ marginLeft: "auto", flex: "none", font: "13px var(--font-mono)", color: h ? "var(--signal-deep)" : "var(--text-muted)", transform: h ? "translateX(3px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>→</span>}
+    </React.Fragment>
+  );
+  const st = { display: "flex", alignItems: "center", gap: 11, margin: dicht ? "0 14px" : "0 16px", padding: "12px 0 10px", borderTop: "1px solid var(--hairline-dark)", textDecoration: "none", minHeight: 44 };
+  return m.url
+    ? <a href={m.url} aria-label={m.name + ", Profil ansehen"} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} onFocus={() => setH(true)} onBlur={() => setH(false)} style={st}>{inhalt}</a>
+    : <div style={st}>{inhalt}</div>;
+}
+
+/* Objektkarte: Nachfrage-Badge im Bild, Aktiv-Pill, Adresszeile,
+   Mono-Datenzeile (m² · Zi · Preis), Makler-Zeile am Fuss.
+   Zwei Links nebeneinander (Objekt, Makler), keine verschachtelten Anker. */
 const PIcon = ({ d }) => (
   <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--text-muted)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "none" }}>
     <path d={d}></path>
   </svg>
 );
 function PropCard({ o, hov, onHov }) {
-  const [aHov, setAHov] = React.useState(false);
-  const agent = o.agent || "UNIO Partner:in";
+  const m = maklerVon(o);
   return (
-    <a href={PROJEKT_URL}
+    <div
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
-      style={{ textDecoration: "none", display: "block", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
-      <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
-        <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-        {/* Partner-Avatar im Bild, rechts oben — Hover: Gesicht zoomt, Name gleitet links heraus */}
-        <div
-          role="link" tabIndex={0} title={"Persönlich betreut · " + agent}
-          onMouseEnter={() => setAHov(true)} onMouseLeave={() => setAHov(false)}
-          onFocus={() => setAHov(true)} onBlur={() => setAHov(false)}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); location.assign("makler.html"); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); location.assign("makler.html"); } }}
-          style={{ position: "absolute", top: 12, right: 12, cursor: "pointer", display: "flex", flexDirection: "row-reverse", alignItems: "center" }}>
-          {/* Kreis mit Gesicht */}
-          <span style={{ position: "relative", zIndex: 2, flex: "none", display: "block", width: 36, height: 36, borderRadius: "50%", overflow: "hidden", boxShadow: aHov ? "0 0 0 2px rgba(253,252,250,1), 0 6px 18px rgba(11,10,9,0.4)" : "0 0 0 2px rgba(253,252,250,0.95), 0 4px 14px rgba(11,10,9,0.3)", transition: "box-shadow var(--dur-fast) var(--ease-unio)" }}>
-            <img src={o.agentImg || "../../assets/team/portrait-01.jpg"} alt={agent} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 22%", transform: aHov ? "scale(1.22)" : "scale(1)", transition: "transform var(--dur-mid, 400ms) var(--ease-unio)" }} />
-          </span>
-          {/* Name gleitet hinter dem Kreis nach links heraus */}
-          <span className="u-label" aria-hidden={!aHov} style={{ position: "relative", zIndex: 1, marginRight: -16, paddingLeft: 13, paddingRight: 22, height: 28, display: "inline-flex", alignItems: "center", borderRadius: 14, whiteSpace: "nowrap", fontSize: 10, letterSpacing: "0.06em", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", pointerEvents: "none", opacity: aHov ? 1 : 0, transform: aHov ? "translateX(0)" : "translateX(14px)", transition: "opacity var(--dur-fast) var(--ease-unio), transform var(--dur-mid, 380ms) var(--ease-unio)" }}>{agent}</span>
+      style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+      <a href={PROJEKT_URL} style={{ textDecoration: "none", display: "block" }}>
+        <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
+          <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
+          {/* Nachfrage-Badge unten links */}
+          {o.score && (
+            <span className="u-label" style={{ position: "absolute", left: 12, bottom: 12, fontSize: 10, padding: "7px 13px", borderRadius: 8, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>Nachfrage {o.score}</span>
+          )}
         </div>
-        {/* Nachfrage-Badge unten links */}
-        {o.score && (
-          <span className="u-label" style={{ position: "absolute", left: 12, bottom: 12, fontSize: 10, padding: "7px 13px", borderRadius: 8, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>Nachfrage {o.score}</span>
-        )}
-      </div>
-      <div style={{ padding: "16px 16px 14px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <span style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", minWidth: 0 }}>{o.t}</span>
-          <span className="u-label" style={{ flex: "none", fontSize: 9.5, color: "var(--signal-deep)", background: "var(--signal-soft)", padding: "6px 12px", borderRadius: "var(--r-pill)", display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Aktiv
-          </span>
+        <div style={{ padding: "16px 16px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+            <span style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", minWidth: 0 }}>{o.t}</span>
+            <span className="u-label" style={{ flex: "none", fontSize: 9.5, color: "var(--signal-deep)", background: "var(--signal-soft)", padding: "6px 12px", borderRadius: "var(--r-pill)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Aktiv
+            </span>
+          </div>
+          <div style={{ font: "400 15px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{o.adr}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, font: "13px var(--font-mono)", color: "var(--ink-2)" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M2.5 2.5h11v11h-11zM10 2.5 2.5 10" />{o.qm} m²</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M4 13.5V4a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 12 4v9.5M4 13.5h8M9.8 8.2h.01" />{o.zi} Zi.</span>
+            <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7, font: "500 15.5px var(--font-display)", color: "var(--ink)" }}><PIcon d="M8.6 2.5H13.5v4.9L7.4 13.5a1 1 0 0 1-1.4 0L2.5 10a1 1 0 0 1 0-1.4zM11 5h.01" />{o.price}</span>
+          </div>
         </div>
-        <div style={{ font: "400 15px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{o.adr}</div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, font: "13px var(--font-mono)", color: "var(--ink-2)" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M2.5 2.5h11v11h-11zM10 2.5 2.5 10" />{o.qm} m²</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M4 13.5V4a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 12 4v9.5M4 13.5h8M9.8 8.2h.01" />{o.zi} Zi.</span>
-          <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7, font: "500 15.5px var(--font-display)", color: "var(--ink)" }}><PIcon d="M8.6 2.5H13.5v4.9L7.4 13.5a1 1 0 0 1-1.4 0L2.5 10a1 1 0 0 1 0-1.4zM11 5h.01" />{o.price}</span>
-        </div>
-      </div>
-    </a>
+      </a>
+      <MaklerZeile m={m} />
+    </div>
   );
 }
 
 /* ll = ungefähre Lage (Bezirks-Ebene) für die Kartenansicht — keine Adressen.
-   qm/zi/score: Demo-Werte (Arbeitsstand). */
+   qm/zi/score: Demo-Werte (Arbeitsstand). mk: Demo-Zuordnung auf MAKLER_DB. */
 const OBJEKT_DB = [
-  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], agentImg: "../../assets/team/portrait-01.jpg", agent: "Lena Berger" },
-  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], agentImg: "../../assets/team/portrait-02.jpg?v=2", agent: "Marc Reiter" },
-  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], agentImg: "../../assets/team/portrait-03.jpg", agent: "Sophie Frank" },
-  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], agentImg: "../../assets/team/portrait-04.jpg", agent: "David Huber" },
-  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], agentImg: "../../assets/team/portrait-05.jpg", agent: "Nina Vogel" },
-  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], agentImg: "../../assets/team/portrait-02.jpg?v=2", agent: "Marc Reiter" },
+  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], mk: "marcus-weiss" },
+  { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], mk: "lara-jonas" },
+  { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], mk: "wenzel-waechter" },
+  { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], mk: "alexander-maurer" },
+  { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], mk: "marcus-weiss" },
+  { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], mk: "lara-jonas" },
 ];
 
 /* Footer */
@@ -700,6 +742,7 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
+  MAKLER_DB, maklerVon, MaklerKreis, MaklerZeile,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
 });

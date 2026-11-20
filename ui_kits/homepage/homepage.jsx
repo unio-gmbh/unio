@@ -90,9 +90,9 @@ function Hero() {
 
 /* ---------- Beispiel-Objekte: die Suche laeuft in der UNIO App ---------- */
 const BEISPIEL_OBJEKTE = [
-  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", ort: "Wien · Neubau", art: "Villa", href: "https://app.unio.at/property/57" },
-  { img: "../../assets/img/obenzwei-terrasse.jpg", t: "ObenZwei", ort: "1020 Wien · Penthouse", art: "Dachgeschoss", href: "https://app.unio.at/property/3" },
-  { img: "../../assets/img/maxingstrasse-zimmer.jpg", t: "Maxingstraße 72", ort: "1130 Wien · Bieterverfahren", art: "Stilaltbau", href: "https://app.unio.at/project/6" },
+  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", ort: "Wien · Neubau", art: "Villa", href: "https://app.unio.at/property/57", mk: "marcus-weiss" },
+  { img: "../../assets/img/obenzwei-terrasse.jpg", t: "ObenZwei", ort: "1020 Wien · Penthouse", art: "Dachgeschoss", href: "https://app.unio.at/property/3", mk: "wenzel-waechter" },
+  { img: "../../assets/img/maxingstrasse-zimmer.jpg", t: "Maxingstraße 72", ort: "1130 Wien · Bieterverfahren", art: "Stilaltbau", href: "https://app.unio.at/project/6", mk: "lara-jonas" },
 ];
 function SucheHighlights() {
   const [hov, setHov] = React.useState(-1);
@@ -104,9 +104,10 @@ function SucheHighlights() {
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, 1fr)", gap: 24 }}>
         {BEISPIEL_OBJEKTE.map((o, i) => (
           <Reveal key={o.t} delay={i * 90}>
-            <a href={o.href} target="_blank" rel="noopener"
+            <div
               onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
-              style={{ display: "block", textDecoration: "none", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+              style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+              <a href={o.href} target="_blank" rel="noopener" style={{ display: "block", textDecoration: "none" }}>
               <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
                 <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov === i ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
                 <span className="u-label" style={{ position: "absolute", top: 12, left: 12, fontSize: 9, padding: "6px 12px", borderRadius: 999, background: "rgba(253,252,250,0.92)", color: "var(--ink-2)", WebkitBackdropFilter: "blur(8px)", backdropFilter: "blur(8px)" }}>{o.art}</span>
@@ -118,7 +119,9 @@ function SucheHighlights() {
                   In der UNIO App ansehen <span style={{ font: "12px var(--font-mono)" }}>↗</span>
                 </div>
               </div>
-            </a>
+              </a>
+              <window.MaklerZeile m={window.maklerVon(o)} dicht />
+            </div>
           </Reveal>
         ))}
       </div>

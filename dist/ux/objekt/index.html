@@ -14,8 +14,8 @@
 
 <!--
   1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
-  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler-Foto Platzhalter.
-  Inhalte: app.unio.at/property/2 · Marktdaten Demo · [Makler-Name] Platzhalter.
+  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler: Wenzel Wächter (wie live).
+  Inhalte: app.unio.at/property/2 · Marktdaten Demo · Makler-Modul und Signatur am Objekt.
 -->
 <style>
   :root{ --bg:#F2EFE9; --card:#FBFAF6; --ink:#141210; --fg2:#6E6862; --fg3:#A19A91;
@@ -214,11 +214,35 @@
   .tile span{display:block;margin-top:6px;font-size:11px;color:var(--fg2);line-height:1.45;}
   .tile .ta{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:99px;
     border:1px solid var(--hair);display:grid;place-items:center;color:var(--fg2);}
-  .agent{display:flex;gap:13px;align-items:center;background:var(--card);border:1px solid var(--hair);
-    border-radius:20px;padding:16px;margin-top:12px;}
-  .agent img{width:50px;height:50px;border-radius:14px;object-fit:cover;object-position:center 20%;}
-  .agent b{display:block;font-size:14px;font-weight:600;}
-  .agent .mono{display:block;margin-top:3px;}
+  /* Makler am Objekt. Zwei Stellen, eine Person:
+     .mksig  = Signatur direkt unter dem Titel (auf jedem Viewport im ersten Bildschirm)
+     .mkmod  = Modul in der Rail direkt unter dem Preis (Beratung, Antwortzeit, Kontakt) */
+  .mksig{display:flex;align-items:center;gap:12px;margin-top:18px;padding:10px 12px 10px 10px;background:var(--card);
+    border:1px solid var(--hair);border-radius:99px;width:max-content;max-width:100%;}
+  .mksig img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;}
+  .mksig .wer{min-width:0;}
+  .mksig b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mksig .mono{display:block;margin-top:3px;font-size:8.5px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mksig button{flex:none;margin-left:6px;height:36px;padding:0 15px;border-radius:99px;border:1px solid rgba(20,18,16,.18);background:transparent;
+    font:500 12.5px var(--font-display);color:var(--ink);cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease);}
+  .mksig button:hover{background:var(--ink);color:var(--card);}
+  .mksig .mono i{font-style:normal;}
+  @media (max-width:520px){.mksig{width:100%;}.mksig button{margin-left:auto;}.mksig .mono i{display:none;}}
+  .mkmod{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:22px 24px 20px;margin-top:12px;}
+  .mkmod .kopf2{display:flex;gap:14px;align-items:center;}
+  .mkmod .kopf2 img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;}
+  .mkmod .kopf2 b{display:block;font-size:17px;font-weight:600;letter-spacing:-.015em;}
+  .mkmod .kopf2 .mono{display:block;margin-top:4px;color:var(--fg2);}
+  .mkmod p{font-size:13.5px;line-height:1.6;color:var(--fg2);margin-top:14px;}
+  .mkmod .fakt{margin-top:14px;}
+  .mkmod .fakt div{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:9px 0;border-top:1px solid var(--hair);}
+  .mkmod .fakt span{color:var(--fg2);}
+  .mkmod .fakt b{font-weight:600;text-align:right;}
+  .mkmod .btn{margin-top:14px;}
+  .mkmod .direkt{display:flex;gap:8px;margin-top:10px;}
+  .mkmod .direkt a{flex:1;display:flex;align-items:center;justify-content:center;height:42px;border-radius:99px;border:1px solid rgba(20,18,16,.18);
+    font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;transition:border-color .3s var(--ease);}
+  .mkmod .direkt a:hover{border-color:var(--ink);}
   .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
   .ctabar{display:none;}
   .foot{margin-top:34px;text-align:center;}
@@ -579,6 +603,13 @@
             <span class="mono">Zum Verkauf · Wohnung · Top 29 · 1170 Wien</span>
           </div>
         </div>
+        <!-- Makler-Signatur: die Person steht beim Objekt, bevor die erste Zahl kommt -->
+        <div class="mksig">
+          <img src="/assets/team/makler/wenzel-waechter.jpg" alt="">
+          <div class="wer"><b>Wenzel Wächter</b>
+            <span class="mono">Berät zu diesem Objekt<i> · antwortet meist in unter 2 Stunden</i></span></div>
+          <button type="button" data-mkfrage>Frage stellen</button>
+        </div>
         <div class="figs">
           <div class="fg dark">
             <div class="r1"><b>Wohnfläche</b><span class="mono">m²</span></div>
@@ -727,6 +758,26 @@
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
       </div>
 
+      <!-- Makler-Modul: direkt unter dem Preis, vor den Marktdaten.
+           Profil-Link erscheint nur, wenn der Makler eine eigene Seite hat (hier: noch keine). -->
+      <div class="mkmod" id="mkmod">
+        <div class="kopf2">
+          <img src="/assets/team/makler/wenzel-waechter.jpg" alt="Wenzel Wächter">
+          <div><b>Wenzel Wächter</b>
+            <span class="mono">Immobilienberater · UNIO Partner</span></div>
+        </div>
+        <p>Kennt dieses Penthouse, das Haus und die Lage aus erster Hand. Fragen zu Preis, Finanzierung und Kaufablauf beantwortet er persönlich, auch vor einer Besichtigung.</p>
+        <div class="fakt">
+          <div><span>Antwortet meist</span><b>in unter 2 Stunden</b></div>
+          <div><span>Besichtigung</span><b>vor Ort oder per Video</b></div>
+        </div>
+        <button class="btn" type="button" data-mkfrage>Frage an Wenzel stellen</button>
+        <div class="direkt">
+          <a href="tel:+436644160559">Anrufen</a>
+          <a href="mailto:wenzel@unio.at">E-Mail</a>
+        </div>
+      </div>
+
       <!-- Marktdaten: hell mit Orange-Akzent -->
       <div class="stat">
         <div class="shead2"><span class="mono">Marktdaten</span>
@@ -753,12 +804,6 @@
         </div>
       </div>
 
-      <div class="agent">
-        <img src="/assets/team/portrait-02.jpg?v=2" alt="">
-        <div><b>[Makler-Name]</b>
-          <span class="mono">UNIO Partner · Boom Living</span></div>
-      </div>
-      <p class="lock">Kontaktdaten geschützt — nach Login sichtbar.</p>
     </aside>
   </div>
 
@@ -809,11 +854,11 @@
   <div class="back" id="mkback"></div>
   <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
     <div class="kopf">
-      <img id="mkfoto" src="/assets/team/portrait-02.jpg?v=2" alt=""
+      <img id="mkfoto" src="/assets/team/makler/wenzel-waechter.jpg" alt=""
         style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
       <div>
-        <b id="mkname">Lukas Brandtner</b>
-        <span class="mono" style="font-size:8.5px">Makler · antwortet in unter 2 Stunden</span>
+        <b id="mkname">Wenzel Wächter</b>
+        <span class="mono" style="font-size:8.5px">Immobilienberater · antwortet meist in unter 2 Stunden</span>
       </div>
       <button class="x" id="mkx" aria-label="Schließen">✕</button>
     </div>
@@ -827,7 +872,7 @@
     </a>
     <div class="verlauf" id="mkverlauf"></div>
     <div class="fuss">
-      <input id="mkinput" placeholder="Nachricht an den Makler …" aria-label="Nachricht an den Makler">
+      <input id="mkinput" placeholder="Frage an Wenzel …" aria-label="Nachricht an Wenzel Wächter">
       <button id="mksend">Senden</button>
     </div>
   </div>
@@ -1152,7 +1197,7 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(heroimg.complete)heroimg.classList.add('ld');
 else heroimg.addEventListener('load',()=>heroimg.classList.add('ld'));
 
-const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .agent, .lock')];
+const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .mkmod, .lock')];
 rvEls.forEach(el=>el.classList.add('rv'));
 document.querySelectorAll('.trow .t').forEach((el,i)=>el.style.transitionDelay=(i*70)+'ms');
 const io=new IntersectionObserver(es=>es.forEach(e=>{
@@ -1513,7 +1558,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   }
   function chatMsg(ich, txt){
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · " + o.t, img: "/assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "/assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
   }
@@ -1881,8 +1926,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     if (!t) return;
     input.value = "";
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · Traum Penthouse in Hernals",
-      img: "/assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · Traum Penthouse in Hernals",
+      img: "/assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
     zeichne();
@@ -1901,6 +1946,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     auf();
     if (frage) { input.value = frage; }
   };
+  /* Signatur und Modul fuehren in denselben Chat am Objekt */
+  document.querySelectorAll("[data-mkfrage]").forEach(function(b){ b.addEventListener("click", function(){ auf(); input.focus(); }); });
 })();
 </script>
 </body>

@@ -66,6 +66,19 @@
     font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
 
   /* Aktionen rechts */
+  /* Makler am Objekt: Kreis, Name, Aufgabe. Immer sichtbar, eigener Link zur Partnerseite. */
+  .mkz{display:inline-flex;align-items:center;gap:10px;margin-top:14px;text-decoration:none;color:var(--paper);min-height:44px;}
+  .card .mkz img,.srow .mkz img{position:static;inset:auto;animation:none!important;transform:none;flex:none;border-radius:50%;object-fit:cover;object-position:center 30%;display:block;}
+  .card .mkz img{width:34px;height:34px;box-shadow:0 0 0 1.5px rgba(247,245,241,.9);}
+  .mkz .ini{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-size:12px;font-weight:500;box-shadow:0 0 0 1.5px rgba(247,245,241,.9);}
+  .mkz b{display:block;font-size:14.5px;font-weight:500;letter-spacing:-.01em;line-height:1.15;text-shadow:0 1px 14px rgba(0,0,0,.45);}
+  .mkz span span{display:block;margin-top:3px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.78);}
+  .mkz .pf{font-family:var(--font-mono),monospace;font-size:12px;color:rgba(247,245,241,.7);transition:transform .3s var(--ease);}
+  a.mkz:hover .pf{transform:translateX(3px);}
+  .srow .mkz{margin-top:7px;gap:7px;min-height:0;color:#6E6862;font-size:12px;}
+  .srow .mkz img{width:20px;height:20px;box-shadow:0 0 0 1px rgba(20,18,16,.14);}
+  .srow .mkz .ini{width:20px;height:20px;font-size:8px;box-shadow:none;}
+  .srow a.mkz:hover{color:#141210;}
   .rail{position:absolute;right:14px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;align-items:center;}
   .rail button,.rail a{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;text-decoration:none;
     background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.22);color:var(--paper);
@@ -306,6 +319,31 @@
     { id:"reel-kling",   video:"../../assets/video/explore-kling-c.mp4", img:"../../assets/img/albrechts-fassade.jpg", t:"Das Albrecht · Reel", ort:"1170 Wien · Hernals", preis:"ab € 470.000", tags:["neubau","1170","projekt","reel"] },
     { id:"reel-design",  video:"../../assets/video/explore-design.mp4",  img:"../../assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
   ];
+  /* Makler-Register (Demo-Zuordnung): echte UNIO Partner mit Live-Seite auf www.unio.at.
+     url: null heisst: noch keine eigene Seite, dann ist die Zeile kein Link.
+     In der Plattform kommt das aus agents[] des Objekts (docs/makler-praesenz). */
+  var MAKLER = {
+    "marcus-weiss":     { name:"Marcus Anthofer-Weiss", img:"../../assets/team/makler/marcus-anthofer-weiss.jpg", url:"https://www.unio.at/marcus-weiss" },
+    "lara-jonas":       { name:"Lara Jonas",            img:"../../assets/team/makler/lara-jonas.jpg",            url:"https://www.unio.at/lara-jonas" },
+    "alexander-maurer": { name:"Alexander Maurer",      img:"../../assets/team/makler/alexander-maurer.jpg",      url:"https://www.unio.at/alexander-maurer" },
+    "wenzel-waechter":  { name:"Wenzel Wächter",        img:"../../assets/team/makler/wenzel-waechter.jpg",       url:null }
+  };
+  var MK_ZU = [["beheim","wenzel-waechter"],["penthouse","wenzel-waechter"],["reel-riffel","wenzel-waechter"],["albrecht","marcus-weiss"],["reel-kling","marcus-weiss"],
+    ["ecoluxe","marcus-weiss"],["hufhaus","alexander-maurer"],["reel-hufhaus","alexander-maurer"],["obenzwei","lara-jonas"],["maxing","lara-jonas"],
+    ["schoenbrunn","lara-jonas"],["facade","lara-jonas"],["reel-design","lara-jonas"]];
+  function maklerVon(o){
+    for (var i = 0; i < MK_ZU.length; i++) if (o.id === MK_ZU[i][0] || o.id.indexOf(MK_ZU[i][0] + "-") === 0 || o.id.indexOf(MK_ZU[i][0]) === 0 && /\d$/.test(o.id)) return MAKLER[MK_ZU[i][1]];
+    return null;
+  }
+  function maklerZeile(o, klein){
+    var m = maklerVon(o); if (!m) return "";
+    var ini = m.name.split(/[\s-]+/).map(function(w){ return w[0]; }).slice(0, 2).join("");
+    var bild = m.img ? '<img src="' + m.img + '" alt="" loading="lazy">' : '<i class="ini">' + ini + '</i>';
+    var text = klein ? '<span>' + m.name + '</span>' : '<span><b>' + m.name + '</b><span>Beratung und Besichtigung</span></span>' + (m.url ? '<i class="pf" aria-hidden="true">→</i>' : '');
+    return m.url
+      ? '<a class="mkz" href="' + m.url + '" target="_blank" rel="noopener" aria-label="' + m.name + ', Profil ansehen">' + bild + text + '</a>'
+      : '<span class="mkz">' + bild + text + '</span>';
+  }
   /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
   /* Embed-Modus: laeuft als nativer Tab im Endkunden-Portal (iframe), eigene Topbar weg */
   if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");
@@ -391,6 +429,7 @@
         (ekProfil.kaufkraft && o.preisNum && kkLeistbar(o)
           ? '<div class="rchip">≈ ' + eurK(kkRate(o)) + '/MONAT · LEISTBAR</div>'
           : (rendite(o) ? '<div class="rchip">RENDITE ' + rendite(o) + ' %</div>' : '')) +
+        (maklerVon(o) ? '<div>' + maklerZeile(o) + '</div>' : '') +
         '<a class="more" href="' + DETAIL + '&obj=' + o.id + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
       '</div>' +
       '<div class="rail">' +
@@ -425,7 +464,7 @@
       burst.classList.remove("go"); void burst.offsetWidth; burst.classList.add("go");
       if (window.__zaehlerUpd) window.__zaehlerUpd();
     };
-    el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more")) likeBurst(); });
+    el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more, .mkz")) likeBurst(); });
     /* Doppeltipp nur bei echten Tipps: Wischgesten (Bewegung/Dauer) NIE anfassen,
        sonst wuergt preventDefault auf iOS das Scroll-Momentum ab. */
     var letzterTap = 0, tapStart = null;
@@ -433,7 +472,7 @@
       tapStart = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() } : null;
     }, { passive: true });
     el.addEventListener("touchend", function(e){
-      if (!tapStart || e.target.closest(".rail, .info .more")) { tapStart = null; letzterTap = 0; return; }
+      if (!tapStart || e.target.closest(".rail, .info .more, .mkz")) { tapStart = null; letzterTap = 0; return; }
       var t = e.changedTouches[0];
       var bewegt = Math.abs(t.clientX - tapStart.x) > 12 || Math.abs(t.clientY - tapStart.y) > 12;
       var dauer = Date.now() - tapStart.t;
@@ -646,10 +685,10 @@
         if (ueberBudget(o)) row.classList.add("ueber");
         row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
           '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
-          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' +
+          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div>' + maklerZeile(o, true) + '</div>' +
           '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
         row.addEventListener("click", function(e){
-          if (e.target.closest(".sherz")) return;
+          if (e.target.closest(".sherz, a.mkz")) return;
           insFeed(o.id);
         });
         row.addEventListener("mouseenter", function(){ aktivPin(o.id, false); });
