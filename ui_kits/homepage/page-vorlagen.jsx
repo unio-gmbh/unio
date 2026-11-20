@@ -1,5 +1,5 @@
 /* Vorlagen (nur Variante 2): alle Vorschlaege als echte, benutzbare Bausteine zum Ansehen.
-   Je Element mehrere Varianten untereinander. Reiter oben: Startseite, CIRCLE, Bautraeger, Story, Struktur.
+   Je Element mehrere Varianten untereinander. Reiter oben: Startseite, CIRCLE, Bautraeger, Story, Effekt, Struktur.
    Vorbilder, selbst angesehen am 20.11.2026: airbnb.com, compass.com, thefold.news, takumi.uno,
    lesintranquilles.com, linear.app, apple.com, rivian.com, dejongm.com.
    Demo-Inhalte: Objekte aus OBJEKT_DB, Zahlen und Saetze aus den bestehenden Seiten. Nichts erfunden. */
@@ -431,8 +431,282 @@ function Struktur() {
   );
 }
 
+/* ---------- Effekt: scharfes Motiv, Menschen ziehen unscharf davor vorbei ----------
+   Herkunft: die Portraets im CIRCLE (Makler scharf, Passanten in Bewegungsunschaerfe, Schnitt beim Verdecken).
+   Hier als Baukasten: (a) erzeugter Film, (b) reine CSS-Ebene ueber jedem Foto, (c) Passant als Blende.
+   Vorbilder, selbst angesehen am 20.11.2026: landonorris.com (Mensch als Blende), apple.com (ein Motiv, ruhig),
+   aman.com (Bildwechsel ohne Sprung), compass.com (Vorab-Objekte). Technik der Blende: Maske, die einer Kante folgt
+   (auf awwwards.com als "mask wipe transition" gesammelt). */
+const FX_RUHIG = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FX_KURVE = "cubic-bezier(0.55, 0, 0.3, 1)";
+const FX_CSS = `
+@keyframes fxGeh { from { transform: translateX(-104%); } to { transform: translateX(268%); } }
+@keyframes fxAuf { from { clip-path: inset(0 120% 0 0); } to { clip-path: inset(0 -20% 0 0); } }
+@keyframes fxLauf { from { transform: translateX(var(--von)); } to { transform: translateX(var(--bis)); } }
+.fx-karte .fx-fig { animation: none; transform: translateX(-104%); }
+.fx-karte:hover .fx-fig { animation: fxGeh 760ms ${FX_KURVE} both; }
+.fx-karte .fx-neu { clip-path: inset(0 120% 0 0); }
+.fx-karte:hover .fx-neu { animation: fxAuf 760ms ${FX_KURVE} both; }
+`;
+function FxStil() { return <style dangerouslySetInnerHTML={{ __html: FX_CSS }} />; }
+
+/* Eine Gestalt: Kopf und Koerper, zusammen weichgezeichnet und in Laufrichtung gezogen */
+function Gestalt({ stil, klasse, ton }) {
+  const kern = ton === "hell" ? "rgba(247,245,241,0.5)" : "rgba(22,17,12,0.74)";
+  return (
+    <div aria-hidden="true" className={klasse} style={{ position: "absolute", top: "-6%", left: 0, height: "118%", width: "38%", pointerEvents: "none", filter: "blur(22px)", willChange: "transform", ...stil }}>
+      <div style={{ position: "absolute", left: "30%", top: "9%", width: "40%", aspectRatio: "1 / 1.15", borderRadius: "50%", background: kern, boxShadow: "0 0 60px 26px rgba(255,150,40,0.55)" }}></div>
+      <div style={{ position: "absolute", left: "8%", right: "8%", top: "27%", bottom: "-4%", borderRadius: "42% 42% 0 0 / 22% 22% 0 0", background: `linear-gradient(90deg, rgba(255,140,30,0.5), ${kern} 28%, ${kern} 72%, rgba(255,170,9,0.55))` }}></div>
+    </div>
+  );
+}
+
+/* (b) Ebene: Passanten laufen endlos ueber ein beliebiges Bild. Reines CSS, kein Film noetig. */
+const LAEUFER = [[0.34, 13, 0, 1, 0.9], [0.22, 9, -4, -1, 0.7], [0.46, 17, -9, 1, 0.8], [0.18, 7.5, -2, -1, 0.55], [0.28, 11, -6.5, 1, 0.75], [0.4, 15, -12, -1, 0.85], [0.2, 8.5, -5, 1, 0.6], [0.3, 12, -1, -1, 0.7]];
+function Passanten({ n = 3, ton }) {
+  if (FX_RUHIG) return null;
+  return (
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+      {LAEUFER.slice(0, n).map(([b, dauer, start, richt, deck], k) => (
+        <Gestalt key={k} ton={ton} stil={{ width: b * 100 + "%", opacity: deck, filter: `blur(${Math.round(14 + b * 60)}px)`, top: 18 - b * 40 + "%", height: 100 + b * 60 + "%", "--von": richt > 0 ? "-110%" : 100 / b + 10 + "%", "--bis": richt > 0 ? 100 / b + 10 + "%" : "-110%", animation: `fxLauf ${dauer}s linear ${start}s infinite` }} />
+      ))}
+    </div>
+  );
+}
+
+/* (c) Blende: der neue Inhalt wird hinter einer vorbeigehenden Gestalt aufgedeckt */
+function useBlende(anzahl, takt) {
+  const [z, setZ] = React.useState({ i: 0, alt: null, k: 0 });
+  const geh = React.useCallback((ziel) => setZ((s) => { const i = ((typeof ziel === "function" ? ziel(s.i) : ziel) + anzahl) % anzahl; return i === s.i ? s : { i, alt: s.i, k: s.k + 1 }; }), [anzahl]);
+  const [halt, setHalt] = React.useState(false);
+  React.useEffect(() => { if (!takt || halt || FX_RUHIG) return; const t = setInterval(() => geh((i) => i + 1), takt); return () => clearInterval(t); }, [takt, halt, geh]);
+  return { ...z, geh, setHalt };
+}
+function Blende({ z, zeig, stil, dauer = 900 }) {
+  return (
+    <div style={{ position: "relative", overflow: "hidden", background: "var(--ink)", ...stil }}>
+      {z.alt != null && <div key={"a" + z.k} style={{ position: "absolute", inset: 0 }}>{zeig(z.alt)}</div>}
+      <div key={"n" + z.k} style={{ position: "absolute", inset: 0, animation: z.k && !FX_RUHIG ? `fxAuf ${dauer}ms ${FX_KURVE} both` : "none" }}>{zeig(z.i)}</div>
+      {z.k > 0 && !FX_RUHIG && <Gestalt key={"g" + z.k} stil={{ animation: `fxGeh ${dauer}ms ${FX_KURVE} both` }} />}
+    </div>
+  );
+}
+const fxBild = (src, alt) => <img src={src} alt={alt || ""} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />;
+const FxSchild = ({ oben, name, unten, rechts, klein }) => (
+  <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "70px 28px 24px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, color: "var(--text-inverse)", background: "linear-gradient(180deg, rgba(11,10,9,0), rgba(11,10,9,0.66))" }}>
+    <span style={{ minWidth: 0 }}>
+      {oben && <span className="u-label" style={{ display: "block", fontSize: 10, color: "rgba(247,245,241,0.8)", marginBottom: 9 }}>{oben}</span>}
+      <span style={{ display: "block", font: `500 ${klein ? "clamp(17px, 1.55vw, 24px)" : "clamp(22px, 2.4vw, 38px)"}/1.05 ` + G, letterSpacing: "-0.025em", whiteSpace: "nowrap" }}>{name}</span>
+      {unten && <span style={{ display: "block", font: "400 15px/1.4 " + G, color: "rgba(247,245,241,0.82)", marginTop: 7 }}>{unten}</span>}
+    </span>
+    {rechts}
+  </div>
+);
+
+/* E1 A: erzeugter Film, zwei Projekte, Wechsel ueber die Blende */
+const FX_FILME = [["effekt-albrecht", "Das Albrecht", "Wien 1170, Hernals", "Projekt"], ["effekt-fassade", "Albrechts Townhouses", "Fassade", "Projekt"]];
+function Effekt1A() {
+  const z = useBlende(FX_FILME.length, 5200);
+  return (
+    <div style={{ padding: "44px 6vw" }}>
+      <Blende z={z} stil={{ aspectRatio: "16 / 8", borderRadius: 24 }} zeig={(i) => { const [f, n, u, o] = FX_FILME[i]; return (
+        <div style={{ position: "absolute", inset: 0 }}>
+          {fxBild("../../assets/video/" + f + ".jpg", n)}
+          {!FX_RUHIG && <video src={"../../assets/video/" + f + ".mp4"} muted loop playsInline autoPlay preload="metadata" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}></video>}
+          <FxSchild oben={o} name={n} unten={u} rechts={<span className="u-label" style={{ flex: "none", fontSize: 10, color: "rgba(247,245,241,0.8)" }}>{"0" + (i + 1)} / {"0" + FX_FILME.length}</span>} />
+        </div>); }} />
+    </div>
+  );
+}
+/* E1 B: dieselbe Wirkung als Ebene ueber einem normalen Foto */
+function Effekt1B() {
+  const [n, setN] = React.useState(3);
+  const o = VDB[4];
+  return (
+    <div style={{ padding: "44px 6vw" }}>
+      <div style={{ position: "relative", overflow: "hidden", aspectRatio: "16 / 8", borderRadius: 24, background: "var(--ink)" }}>
+        {fxBild(o.img, o.t)}
+        <Passanten n={n} />
+        <FxSchild oben="Verfügbar" name={o.t} unten={o.adr} />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+        <span style={{ font: "400 15px " + G, color: "var(--text-muted)", marginRight: 6 }}>Menschen im Bild</span>
+        {[[0, "keine"], [1, "eine Person"], [3, "wenige"], [6, "viele"]].map(([w, t]) => <button key={t} type="button" aria-pressed={n === w} onClick={() => setN(w)} style={{ height: 38, padding: "0 16px", borderRadius: 999, cursor: "pointer", border: "1px solid var(--hairline-dark)", background: n === w ? "var(--ink)" : "transparent", color: n === w ? "var(--paper)" : "var(--ink)", font: "500 14px " + G }}>{t}</button>)}
+      </div>
+    </div>
+  );
+}
+
+/* E2 A: Galerie, jedes Bild kommt hinter einem Passanten hervor */
+const FX_GALERIE = [["albrechts-fassade.jpg", "Fassade"], ["albrechts-hof.jpg", "Hof"], ["albrechts-wohnen.jpg", "Wohnen"], ["albrechts-schlafen.jpg", "Schlafen"], ["albrechts-dachgeschoss.jpg", "Dachgeschoss"]];
+function Effekt2A() {
+  const z = useBlende(FX_GALERIE.length, 0);
+  return (
+    <div style={{ padding: "44px 6vw" }}>
+      <Blende z={z} stil={{ aspectRatio: "16 / 8", borderRadius: 24 }} zeig={(i) => <div style={{ position: "absolute", inset: 0 }}>{fxBild(A + FX_GALERIE[i][0], "Albrechts Townhouses, " + FX_GALERIE[i][1])}</div>} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, marginTop: 18, flexWrap: "wrap" }}>
+        <div role="tablist" style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+          {FX_GALERIE.map(([, t], k) => <button key={t} type="button" role="tab" aria-selected={k === z.i} onClick={() => z.geh(k)} style={{ padding: "6px 0", border: 0, borderBottom: k === z.i ? "2px solid var(--ink)" : "2px solid transparent", background: "none", cursor: "pointer", font: "500 16px " + G, color: k === z.i ? "var(--ink)" : "var(--text-muted)" }}>{t}</button>)}
+        </div>
+        <Pfeile auf={(r) => z.geh((i) => i + r)} />
+      </div>
+    </div>
+  );
+}
+/* E2 B: Mensch und Objekt wechseln gemeinsam. Ein Passant, zwei Flaechen, ein Takt. */
+function Effekt2B() {
+  const paare = VDB.filter((o) => vMakler(o) && vMakler(o).ed).filter((o, k, a) => a.findIndex((x) => x.mk === o.mk) === k);
+  const z = useBlende(paare.length, 4200);
+  const mob = vMob();
+  const o = paare[z.i], m = vMakler(o);
+  return (
+    <div style={{ padding: "44px 6vw" }} onMouseEnter={() => z.setHalt(true)} onMouseLeave={() => z.setHalt(false)}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${vsp(4)} minmax(0, 1fr)`, gap: 24 }}>
+        <Blende z={z} dauer={760} stil={{ aspectRatio: "4 / 5", borderRadius: 24 }} zeig={(i) => { const mm = vMakler(paare[i]); return <div style={{ position: "absolute", inset: 0 }}>{fxBild(mm.ed + ".jpg", "Porträt von " + mm.name)}<FxSchild klein name={mm.name} unten={mm.region} /></div>; }} />
+        <Blende z={z} dauer={1060} stil={{ minHeight: mob ? 260 : 0, aspectRatio: mob ? "4 / 3" : "auto", borderRadius: 24 }} zeig={(i) => { const oo = paare[i]; return <div style={{ position: "absolute", inset: 0 }}>{fxBild(oo.img, oo.t)}<FxSchild oben={oo.projekt ? "Projekt" : "Verfügbar"} name={oo.t} unten={oo.adr} rechts={<span style={{ flex: "none", font: "500 18px " + G }}>{oo.projekt && oo.price !== "Auf Anfrage" ? "ab " : ""}{oo.price}</span>} /></div>; }} />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, marginTop: 18 }}>
+        <span style={{ font: "400 15px/1.5 " + G, color: "var(--text-muted)" }}>{m.name} zeigt {o.t}. Wechsel alle vier Sekunden, hält an, solange die Maus darauf steht.</span>
+        <Pfeile auf={(r) => z.geh((i) => i + r)} />
+      </div>
+    </div>
+  );
+}
+
+/* E3: ein Projekt geht live. Davor stehen Menschen, das Haus bleibt bis zum Start unscharf. */
+const FX_PHASEN = [["Angekündigt", 6, 16, "Das Haus ist nur zu erahnen. Wer sich vormerkt, sieht es zuerst.", "Vormerken"], ["Start", 3, 0, "Am Starttag gehen die Menschen zur Seite, das Haus wird scharf.", "Einheiten ansehen"], ["Verfügbar", 1, 0, "Danach bleibt eine Person im Bild, als ruhige Signatur.", "Einheiten ansehen"]];
+function Effekt3A() {
+  const [p, setP] = React.useState(0);
+  const [name, n, weich, text, knopf] = FX_PHASEN[p];
+  const o = VDB[0];
+  return (
+    <div style={{ padding: "44px 6vw" }}>
+      <div style={{ position: "relative", overflow: "hidden", aspectRatio: "16 / 8", borderRadius: 24, background: "var(--ink)" }}>
+        <img src={A + "albrecht-dusk.jpg"} alt={o.t} style={{ position: "absolute", inset: "-3%", width: "106%", height: "106%", objectFit: "cover", filter: `blur(${weich}px) saturate(${weich ? 0.7 : 1})`, transition: FX_RUHIG ? "none" : `filter 1400ms ${V_EASE}` }} />
+        <Passanten n={n} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 28px 26px", color: "var(--text-inverse)", background: "linear-gradient(180deg, rgba(11,10,9,0) 45%, rgba(11,10,9,0.7))" }}>
+          <span className="u-label" style={{ fontSize: 10, color: "rgba(247,245,241,0.8)" }}>Projekt · {name}</span>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginTop: 10, flexWrap: "wrap" }}>
+            <span>
+              <span style={{ display: "block", font: "500 clamp(30px, 4.2vw, 68px)/1 " + G, letterSpacing: "-0.03em", whiteSpace: "nowrap" }}>{o.t}</span>
+              <span style={{ display: "block", maxWidth: 520, font: "400 16px/1.55 " + G, color: "rgba(247,245,241,0.85)", marginTop: 12 }}>{text}</span>
+            </span>
+            <button type="button" style={{ flex: "none", height: 52, padding: "0 26px", borderRadius: 999, border: 0, background: "var(--paper)", color: "var(--ink)", cursor: "pointer", font: "500 16px " + G }}>{knopf}</button>
+          </div>
+        </div>
+      </div>
+      <div role="tablist" style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+        {FX_PHASEN.map(([t], k) => <button key={t} type="button" role="tab" aria-selected={p === k} onClick={() => setP(k)} style={{ height: 38, padding: "0 16px", borderRadius: 999, cursor: "pointer", border: "1px solid var(--hairline-dark)", background: p === k ? "var(--ink)" : "transparent", color: p === k ? "var(--paper)" : "var(--ink)", font: "500 14px " + G }}>{k + 1} {t}</button>)}
+      </div>
+    </div>
+  );
+}
+
+/* E4: Objektkarte. Beim Darueberfahren geht jemand vorbei, dahinter steht das zweite Bild. */
+const FX_KARTEN = [[0, "albrecht-dusk.jpg"], [1, "obenzwei-terrasse.jpg"], [2, "beheim-2.jpg"], [4, "int-bath.jpg"]];
+function Effekt4A() {
+  const mob = vMob();
+  return (
+    <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, minmax(0, 1fr))", gap: 24 }}>
+      {FX_KARTEN.map(([k, zweit]) => { const o = VDB[k], m = vMakler(o); return (
+        <a key={o.t} href="#effekt" className="fx-karte" style={{ display: "block", textDecoration: "none", color: "var(--ink)" }}>
+          <div style={{ position: "relative", overflow: "hidden", aspectRatio: "4 / 5", borderRadius: 18, background: "var(--ink)" }}>
+            {fxBild(o.img, o.t)}
+            <div className="fx-neu" style={{ position: "absolute", inset: 0 }}>{fxBild(A + zweit, "")}</div>
+            <Gestalt klasse="fx-fig" stil={{ filter: "blur(14px)" }} />
+            {m && <span style={{ position: "absolute", right: 12, top: 12 }}><VKreis m={m} size={38} /></span>}
+          </div>
+          <div style={{ font: "500 clamp(15px, 1.25vw, 18px)/1.2 " + G, letterSpacing: "-0.015em", whiteSpace: "nowrap", marginTop: 14 }}>{o.t}</div>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, marginTop: 5 }}>
+            <span style={{ font: "400 14px/1.4 " + G, color: "var(--text-muted)" }}>{o.adr}</span>
+            <span style={{ flex: "none", font: "500 15px " + G }}>{o.projekt && o.price !== "Auf Anfrage" ? "ab " : ""}{o.price}</span>
+          </div>
+        </a>); })}
+    </div>
+  );
+}
+
+/* E5: Seitenwechsel. Von der Liste zum Objekt, die Gestalt traegt den Wechsel. */
+function Effekt5A() {
+  const z = useBlende(2, 0);
+  const o = VDB[2], m = vMakler(o);
+  return (
+    <div style={{ padding: "44px 6vw" }}>
+      <Blende z={z} dauer={1000} stil={{ aspectRatio: "16 / 8", borderRadius: 24, background: "var(--paper)", boxShadow: "0 0 0 1px var(--hairline-dark)" }} zeig={(i) => i === 0 ? (
+        <div style={{ position: "absolute", inset: 0, background: "var(--paper)", padding: "5% 5% 0", display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24 }}>
+          {[VDB[1], o, VDB[4]].map((x) => <button key={x.t} type="button" onClick={() => x === o && z.geh(1)} style={{ all: "unset", cursor: x === o ? "pointer" : "default", display: "block" }}>
+            <span style={{ display: "block", position: "relative", overflow: "hidden", aspectRatio: "4 / 3", borderRadius: 14 }}>{fxBild(x.img, x.t)}</span>
+            <span style={{ display: "block", font: "500 17px " + G, marginTop: 12, color: "var(--ink)" }}>{x.t}</span>
+            <span style={{ display: "block", font: "400 14px " + G, color: x === o ? "var(--signal-deep)" : "var(--text-muted)", marginTop: 3 }}>{x === o ? "Hier drücken" : x.adr}</span>
+          </button>)}
+        </div>
+      ) : (
+        <div style={{ position: "absolute", inset: 0 }}>
+          {fxBild(A + "beheim-2.jpg", o.t)}
+          <FxSchild oben={"Verfügbar · " + o.adr} name={o.t} unten={m ? "Dein Makler: " + m.name : ""} rechts={<button type="button" onClick={() => z.geh(0)} style={{ flex: "none", height: 42, padding: "0 18px", borderRadius: 999, border: "1px solid rgba(247,245,241,0.4)", background: "none", color: "var(--paper)", cursor: "pointer", font: "500 14px " + G }}>Zurück zur Liste</button>} />
+        </div>
+      )} />
+    </div>
+  );
+}
+
+/* Wo der Effekt sonst noch traegt: Liste zum Entscheiden */
+const FX_ORTE = [
+  ["Projektstart", "Projektseite, Startseite, Newsletter", "Vor dem Start stehen Menschen vor dem unscharfen Haus. Am Starttag wird es scharf. Vorlage E3.", "hoch", "mittel"],
+  ["Hero Immobilien", "/immobilien", "Statt eines stehenden Bildes der Film: Objekte wechseln, wenn jemand vorbeigeht. Vorlage E1 A.", "hoch", "mittel"],
+  ["Jedes Objektfoto", "Objektseite, Suche", "Die Ebene liegt über dem ersten Bild jedes Objekts. Kein Film, kein Aufwand je Objekt. Vorlage E1 B.", "mittel", "klein"],
+  ["Mensch und Objekt", "Startseite, CIRCLE", "Makler und sein Objekt wechseln gemeinsam. Macht die Verbindung sichtbar, um die es geht. Vorlage E2 B.", "hoch", "klein"],
+  ["Galerie", "Objektseite", "Bildwechsel hinter einem Passanten statt Schieben. Vorlage E2 A.", "mittel", "klein"],
+  ["Objektkarte", "Suche, Reihen", "Beim Darüberfahren geht jemand vorbei, dahinter das zweite Bild. Vorlage E4.", "mittel", "klein"],
+  ["Seitenwechsel", "ganze Seite", "Der Wechsel von Liste zu Objekt läuft hinter einer Gestalt. Vorlage E5. Nur an einer Stelle einsetzen, sonst nutzt es sich ab.", "hoch", "mittel"],
+  ["Makler-Seite", "/marcus-weiss und weitere", "Oben das Porträt mit Passanten, dahinter wechseln die eigenen Objekte.", "hoch", "klein"],
+  ["Verkauft", "Objektseite, Karte", "Nach dem Verkauf wird das Haus unscharf, die Menschen davor scharf: das Haus gehört jetzt jemandem.", "mittel", "klein"],
+  ["Story", "/story", "Drei Gruppen (Vertrieb, Marketing, Technologie) gehen aneinander vorbei und bleiben als ein Bild stehen.", "mittel", "mittel"],
+  ["Bauträger", "/bautraeger, LENS", "Dichte der Passanten als Bild für Interesse am Projekt. Erst wenn echte Anfragezahlen angebunden sind.", "mittel", "groß"],
+  ["Anzeigen und Reels", "Meta, Außenwerbung", "Derselbe Film im Hochformat. Website und Werbung sehen gleich aus.", "hoch", "klein"],
+  ["Wartezeit", "Ladezustand, Seite nicht gefunden", "Eine einzelne Gestalt geht durchs Bild, statt eines Ladekreises.", "klein", "klein"],
+];
+function EffektOrte() {
+  const zelle = { padding: "16px 24px 16px 0", borderTop: "1px solid var(--hairline-dark)", font: "400 16px/1.5 " + G, color: "var(--ink)", verticalAlign: "top", textAlign: "left" };
+  return (
+    <div style={{ padding: "48px 6vw 0", overflowX: "auto" }}>
+      <table style={{ width: "100%", minWidth: 760, borderCollapse: "collapse" }}>
+        <thead><tr>{["Einsatz", "Ort", "Idee", "Wirkung", "Aufwand"].map((t) => <th key={t} className="u-label" style={{ ...zelle, borderTop: 0, fontSize: 10, color: "var(--text-muted)" }}>{t}</th>)}</tr></thead>
+        <tbody>{FX_ORTE.map(([e, o, i, w, a]) => <tr key={e}><td style={{ ...zelle, width: "16%", fontWeight: 500 }}>{e}</td><td style={{ ...zelle, width: "18%", color: "var(--text-muted)" }}>{o}</td><td style={{ ...zelle, color: "var(--text-muted)" }}>{i}</td><td style={{ ...zelle, width: "9%", color: w === "hoch" ? "var(--signal-deep)" : "var(--text-muted)" }}>{w}</td><td style={{ ...zelle, width: "9%", color: "var(--text-muted)", paddingRight: 0 }}>{a}</td></tr>)}</tbody>
+      </table>
+      <p style={{ margin: "40px 0 0", maxWidth: 760, font: "400 17px/1.65 " + G, color: "var(--text-muted)" }}>Regel für den Einsatz: je Seite höchstens eine Stelle, an der sich Menschen bewegen. Überall sonst steht das Motiv still. Wer Bewegung im System abgestellt hat, sieht einen einfachen Bildwechsel.</p>
+    </div>
+  );
+}
+function EffektSeite() {
+  return (
+    <div id="effekt">
+      <FxStil />
+      <Gruppe nr="E1" titel="Das Objekt hinter Menschen" text="Der Effekt der Makler-Porträts, übertragen auf Häuser: das Haus steht scharf und still, davor ziehen Menschen unscharf vorbei." />
+      <Vorlage nr="E1" variante="A" titel="Film" was="Erzeugt aus dem echten Projektbild, Wechsel hinter einem Passanten" vorbild="landonorris.com, apple.com"><Effekt1A /></Vorlage>
+      <Vorlage nr="E1" variante="B" titel="Ebene über jedem Foto" was="Kein Film nötig, läuft über jedem vorhandenen Bild" vorbild="apple.com"><Effekt1B /></Vorlage>
+
+      <Gruppe nr="E2" titel="Vorbeigehen als Blende" text="Bei den Maklern wechselt die Person, wenn jemand vorbeigeht. Dieselbe Logik als Bildwechsel für alles andere." />
+      <Vorlage nr="E2" variante="A" titel="Galerie" was="Reiter oder Pfeile drücken" vorbild="aman.com"><Effekt2A /></Vorlage>
+      <Vorlage nr="E2" variante="B" titel="Mensch und Objekt wechseln gemeinsam" was="Links der Makler, rechts sein Objekt" vorbild="landonorris.com, compass.com"><Effekt2B /></Vorlage>
+
+      <Gruppe nr="E3" titel="Ein Projekt geht live" text="Deine Idee, als Ablauf in drei Zuständen. Die Menschen stehen für das Interesse vor dem Start." />
+      <Vorlage nr="E3" variante="A" titel="Vom Erahnen zum Sehen" was="Unten die drei Zustände durchschalten" vorbild="compass.com, apple.com"><Effekt3A /></Vorlage>
+
+      <Gruppe nr="E4" titel="Objektkarte" text="Die kleinste Form: eine Gestalt, ein Bildwechsel, nur beim Darüberfahren." />
+      <Vorlage nr="E4" variante="A" titel="Zweites Bild hinter dem Passanten" was="Mit der Maus über eine Karte fahren" vorbild="airbnb.com"><Effekt4A /></Vorlage>
+
+      <Gruppe nr="E5" titel="Seitenwechsel" text="Der Schritt von der Liste ins Objekt, getragen von einer Gestalt." />
+      <Vorlage nr="E5" variante="A" titel="Liste zu Objekt" was="Auf das mittlere Objekt drücken" vorbild="landonorris.com"><Effekt5A /></Vorlage>
+
+      <Gruppe nr="E" titel="Wo der Effekt noch trägt" text="Alle Einsatzorte auf einen Blick, mit Wirkung und Aufwand." />
+      <EffektOrte />
+    </div>
+  );
+}
+
 /* ---------- Seite ---------- */
-const REITER = [["start", "Startseite"], ["circle", "CIRCLE"], ["bautraeger", "Bauträger"], ["story", "Story"], ["struktur", "Struktur"]];
+const REITER = [["start", "Startseite"], ["circle", "CIRCLE"], ["bautraeger", "Bauträger"], ["story", "Story"], ["effekt", "Effekt"], ["struktur", "Struktur"]];
 function VorlagenSeite() {
   const lies = () => { const h = location.hash.replace("#", ""); return REITER.some((r) => r[0] === h) ? h : "start"; };
   const [r, setR] = React.useState(lies);
@@ -522,6 +796,7 @@ function VorlagenSeite() {
         <Vorlage nr="S3" variante="C" titel="Satz im Bild" was="" vorbild="rivian.com"><Aussage3C satz="Einzeln lindert man Symptome. Gemeinsam baut man ein System." bild={A + "vienna-street.jpg"} /></Vorlage>
       </div>}
 
+      {r === "effekt" && <EffektSeite />}
       {r === "struktur" && <Struktur />}
     </div>
   );

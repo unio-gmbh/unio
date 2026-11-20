@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 9 (zusätzlich: Vorlagen-Seite mit allen Bausteinen in Varianten, Vorschlag zur Seitenstruktur) |
+| Stand dieses Dokuments | 20.11.2026, Version 10 (zusätzlich: Effekt-Studie "Menschen ziehen am Motiv vorbei" als Baukasten, Reiter Effekt auf `/vorlagen2`) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,28 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-27 Effekt "Menschen ziehen vorbei" als Baukasten (Version 10)
+
+Status: Vorschlag zur Auswahl · Aufwand: klein bis mittel · Referenz gebaut: `/vorlagen2#effekt`
+
+Der Effekt der Makler-Porträts (Motiv scharf, Passanten unscharf, Wechsel beim Verdecken) als wiederverwendbare Bausteine. Quelle: `ui_kits/homepage/page-vorlagen.jsx`, Abschnitt "Effekt".
+
+| Baustein | Was er tut | Technik |
+|---|---|---|
+| `Gestalt` | Eine weichgezeichnete Figur (Kopf und Körper, `filter: blur`) | zwei `div`, kein Bild |
+| `Passanten` | Figuren laufen endlos über ein beliebiges Bild (Vorlage E1 B, E3) | CSS-Animation `fxLauf`, nur `transform` |
+| `useBlende` und `Blende` | Neuer Inhalt wird hinter einer vorbeigehenden Figur aufgedeckt (E2, E5) | `clip-path: inset()` und `transform` laufen mit derselben Dauer und Kurve |
+| Karte `.fx-karte` | Dasselbe beim Darüberfahren, ohne JavaScript (E4) | reine CSS-Regeln in `FX_CSS` |
+| Film (E1 A) | Erzeugte Filme aus echten Projektbildern | `assets/video/effekt-albrecht.mp4`, `effekt-fassade.mp4`, je mit Standbild `.jpg` |
+
+Für die Plattform wichtig:
+
+- Die Blende braucht zwei Ebenen: alter Inhalt unten, neuer Inhalt oben mit `clip-path`. In Next.js eignet sich dafür die View Transitions API oder ein Wrapper im Layout (E5 Seitenwechsel). Empfehlung: nur an einer Stelle einsetzen (Liste zu Objekt).
+- Bei `prefers-reduced-motion` entfällt die Figur, der Inhalt wechselt direkt. `Passanten` rendert dann nichts.
+- E3 (Projektstart) braucht am Projekt ein Feld für den Zustand: `angekuendigt`, `start`, `verfuegbar`, dazu ein Startdatum. Im Zustand `angekuendigt` wird das Bild mit `filter: blur(16px)` gezeigt und der Knopf heißt "Vormerken".
+- Die Zuordnung Makler zu Objekt in E2 B kommt aus dem Feld `mk` (siehe MP-01).
+- Die Filme sind KI-erzeugt aus den echten Renderings. Vor einem Einsatz auf der Live-Seite je Projekt mit dem Bauträger abstimmen.
 
 ### MP-26 Vorlagen-Seite und Seitenstruktur (Version 9)
 
@@ -461,3 +483,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 9a | Mit dem bisherigen Hero (`/2?hero=alt`) stehen die CIRCLE-Gesichter weiter unten: nach dem System-Bereich, direkt vor den Zielgruppen. |
 | 20.11.2026 | 9b | CIRCLE und Bauträger in Variante 2: Der Hero bleibt stehen, der zweite Abschnitt schiebt sich mit runden Ecken und Schatten darüber (wie auf der Startseite mit dem bisherigen Hero). Auf der CIRCLE-Seite sind die senkrechten Linien im zweiten Abschnitt entfernt. Am Handy und bei reduzierter Bewegung bleibt der Hero nicht stehen. |
 | 20.11.2026 | 9c | Hero-Karten von Bauträger und Story sind wieder so breit wie die Navigation (40 Pixel Rand). Die Umstellung auf den Rasterrand hatte sie schmaler als die Navigation gemacht. Beides wandert gemeinsam aufs Raster, sobald die neue Navigation (Vorlage 6A) gewählt ist. |
+| 20.11.2026 | 10 | Effekt-Studie: Der Effekt der Makler-Porträts als Baukasten für Objekte (MP-27). Neuer Reiter Effekt auf `/vorlagen2` mit sieben Vorlagen (Film, Ebene über jedem Foto, Galerie, Mensch und Objekt, Projektstart in drei Zuständen, Objektkarte, Seitenwechsel) und einer Liste von dreizehn Einsatzorten. Zwei Filme aus echten Projektbildern erzeugt. |
