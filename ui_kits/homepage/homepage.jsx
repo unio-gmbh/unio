@@ -361,7 +361,7 @@ function App() {
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="index.html" />
-      {window.IST_V2 && !/[?&]hero=alt(&|$)/.test(location.search) ? <window.HeroV2 /> : <Hero />}
+      {window.IST_V2 ? <window.HeroWahl alt={<Hero />} /> : <Hero />}
       <SucheHighlights />
       <window.CircleGesichter fuer="suchende" />
       <Markt />

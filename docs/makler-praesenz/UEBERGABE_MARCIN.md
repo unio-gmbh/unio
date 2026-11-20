@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 6 (zusätzlich: neue Heroes, Makler auf der Objektseite als Zeile und Karte, Raster in allen Abschnitten, natürliche Fotos in den Kreisen) |
+| Stand dieses Dokuments | 20.11.2026, Version 7 (zusätzlich: vier Hero-Vorschläge für die Startseite, geschnittener Makler-Film, Positionen der Founder, Raster-Reste) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,17 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-24 Hero-Vorschläge Startseite und geschnittener Film (Version 7)
+
+Status: Entwurf, Auswahl durch Daniel offen · Referenz: `/2?hero=a`, `b`, `c`, `d` (`ui_kits/homepage/hero-neu.jsx`, Umschalter unten links)
+
+- **A, Film wird zur Karte:** wie MP-22.
+- **B, Mensch und Raum:** links Überschrift, Absatz und Knöpfe über sieben Spalten, rechts über fünf Spalten ein hoher Film, in dem der Makler selbst durch ein Objekt führt (Rundgang Wenzel Wächter, Jardin Hermes).
+- **C, Mensch in der Mitte:** drei gleich breite Felder. Links "Real Estate" rechtsbündig, in der Mitte der geschnittene Makler-Film im Format 4:5, rechts "Finally Simple." mit dem Knopf.
+- **D, Schrift zuerst:** sehr große Überschrift über die ganze Breite, darunter Knöpfe und Absatz, darunter drei Bilder auf dem Raster (sechs, drei und drei Spalten): Stadt, Mensch, Objekt.
+
+Geschnittener Film (`assets/team/editorial/circle-schnitt.mp4`, 10,4 Sekunden, Schleife): Aus den sechs Einzelfilmen so geschnitten, dass die Person genau in dem Moment wechselt, in dem vorne jemand vorbeigeht und das Gesicht verdeckt. Reihenfolge und Startzeiten in Sekunden: Marcus Anthofer-Weiss 0, Lara Jonas 1,48, Wenzel Wächter 3,15, Nikita Neznamov 5,10, Philipp Trattner 7,02, Alexander Maurer 8,94. Name und Zähler im Bild folgen diesen Zeiten (`CIRCLE_SCHNITT`). Der Film ist der Hero der CIRCLE-Seite (`/makler2`). Kommt ein Makler dazu, muss der Film neu geschnitten werden. Für die Plattform wäre ein fester Ablauf sinnvoll: je Makler ein Einzelfilm mit markierten Wechselmomenten, der Schnitt entsteht daraus automatisch.
 
 ### MP-23 Makler auf der Objektseite: Zeile und Karte (Version 6)
 
@@ -389,3 +400,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 4 | Makler-Kreise neutraler (weniger Orange). Neu: Partner-Übersicht `/partner2` (MP-16), einheitlicher Seitenrand und Raster-Werkzeug in Variante 2 (MP-17), Story-Grafik korrigiert (MP-18), Makler-Film im Feed (MP-19), Vorschläge für die Suchseite (MP-15). Kopfzeilen der neuen Abschnitte auf das Spaltenmaß von `Chapter` gelegt. |
 | 20.11.2026 | 5 | Objektkarte ohne "Aktiv" und ohne Nachfrage, Projekte klar markiert (MP-20). Übersicht `/partner2` zeigt alle elf Menschen, Porträt Alexander Maurer per Bild-KI in den Editorial-Stil übertragen (von Daniel freigegeben). Innenkanten in Variante 2 auf dem 12-Spalten-Raster (Helfer `spalten(n)`). Versionskennung an v2-Skripten und Makler-Bildern: Ohne sie zeigte der Browser nach Änderungen den alten Stand, weil `/assets` ein Jahr gehalten wird. Gedankenstriche in den Texten von Variante 2 ersetzt. Auswahlseite für Animationen erstellt (MP-21). |
 | 20.11.2026 | 6 | Kreise wieder mit natürlichen Originalfotos. Philipp Trattner ergänzt (verlinkt auf trattner-soehne.at), Film für Alexander Maurer erzeugt. Neue Heroes für Startseite und CIRCLE-Seite (MP-22). Objektseite mit Zeile und Karte (MP-23). Raster: zweispaltige Aufteilungen und Kartenreihen in allen Abschnitten von Variante 2 liegen auf ganzen Spalten (Funktion `aufRaster` im Build). Noch neben dem Raster: Hero Bauträger, Hero Story, die festgehaltenen Abschnitte Verwaltung und Bewegung auf der CIRCLE-Seite, die Listen Vorteile und Bewerbung. |
+| 20.11.2026 | 7 | Hero der CIRCLE-Seite mit geschnittenem Film: Die Person wechselt, wenn vorne jemand vorbeigeht. Vier Hero-Vorschläge für die Startseite mit Umschalter (MP-24). Founder tragen im CIRCLE-Bereich die Position von der Story-Seite ("Founder · Vertrieb" usw.). Raster: Hero-Karten von Bauträger und Story auf dem Seitenrand, Liste Vorteile exakt in Spalte 2, Einzug der festgehaltenen Tafeln auf Spalte 2. |

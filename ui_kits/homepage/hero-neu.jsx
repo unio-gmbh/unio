@@ -106,30 +106,56 @@ function HeroV2() {
 }
 
 /* ---------- CIRCLE-Seite: der Mensch ist der Hero ---------- */
+/* Ein durchgehender Film: Jedes Mal, wenn vorne jemand am Makler vorbeigeht, steht dahinter der naechste.
+   Geschnitten aus den sechs Einzelfilmen an den Momenten, in denen das Gesicht verdeckt ist
+   (assets/team/editorial/circle-schnitt.mp4, 10,4 Sekunden, Schleife). Die Zeiten sagen, wer wann zu sehen ist. */
+const CIRCLE_SCHNITT = [["marcus-weiss", 0], ["lara-jonas", 1.479], ["wenzel-waechter", 3.146], ["nikita-neznamov", 5.104], ["philipp-trattner", 7.021], ["alexander-maurer", 8.938]];
+function useCircleSchnitt() {
+  const leute = CIRCLE_SCHNITT.map(([slug]) => ({ slug, ...window.MAKLER_DB[slug] })).filter((m) => m.name);
+  const [i, setI] = React.useState(0);
+  const vid = React.useRef(null);
+  React.useEffect(() => {
+    const v = vid.current; if (!v || H2_RUHIG) return;
+    let lauf = 0;
+    const takt = () => {
+      const t = v.currentTime; let k = 0;
+      for (let n = 0; n < CIRCLE_SCHNITT.length; n++) if (t >= CIRCLE_SCHNITT[n][1]) k = n;
+      setI((alt) => (alt === k ? alt : k));
+      lauf = requestAnimationFrame(takt);
+    };
+    const los = () => { const q = v.play(); if (q && q.catch) q.catch(() => {}); };
+    v.addEventListener("canplay", los); los();
+    lauf = requestAnimationFrame(takt);
+    return () => { cancelAnimationFrame(lauf); v.removeEventListener("canplay", los); };
+  }, []);
+  return { leute, i, vid };
+}
+function CircleFilm({ stil }) {
+  const { leute, i, vid } = useCircleSchnitt();
+  const m = leute[i] || leute[0];
+  return (
+    <div style={{ position: "relative", overflow: "hidden", background: "var(--ink)", ...stil }}>
+      <img src="../../assets/team/editorial/circle-schnitt.jpg" alt={"Porträt von " + m.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      {!H2_RUHIG && <video ref={vid} src="../../assets/team/editorial/circle-schnitt.mp4" muted loop playsInline preload="auto" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}></video>}
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 58%, rgba(11,10,9,0.62) 100%)" }}></div>
+      <div style={{ position: "absolute", left: 22, right: 22, bottom: 20, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, color: "var(--text-inverse)" }}>
+        <span style={{ minWidth: 0 }}>
+          <span style={{ display: "block", font: "500 clamp(18px, 1.7vw, 26px)/1.1 var(--font-display)", letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
+          <span className="u-label" style={{ display: "block", marginTop: 7, fontSize: 10, color: "rgba(247,245,241,0.8)" }}>{m.region}</span>
+        </span>
+        <span className="u-label" style={{ flex: "none", fontSize: 10, color: "rgba(247,245,241,0.8)", fontVariantNumeric: "tabular-nums" }}>{String(i + 1).padStart(2, "0")} / {String(leute.length).padStart(2, "0")}</span>
+      </div>
+    </div>
+  );
+}
 function HeroMkV2() {
   const mob = window.useMobile();
-  const leute = Object.keys(window.MAKLER_DB).map((s) => ({ slug: s, ...window.MAKLER_DB[s] })).filter((m) => m.makler && m.film);
   const [da, setDa] = React.useState(H2_RUHIG);
-  const [i, setI] = React.useState(0);
-  const filme = React.useRef({});
   React.useEffect(() => {
     if (H2_RUHIG) return;
     const t = setTimeout(() => setDa(true), 60);
     return () => clearTimeout(t);
   }, []);
-  React.useEffect(() => {
-    if (H2_RUHIG || leute.length < 2) return;
-    const t = setInterval(() => { if (!document.hidden) setI((x) => (x + 1) % leute.length); }, 5000);
-    return () => clearInterval(t);
-  }, [leute.length]);
-  React.useEffect(() => {
-    if (H2_RUHIG) return;
-    leute.forEach((m, k) => {
-      const v = filme.current[m.slug]; if (!v) return;
-      if (k === i) { try { v.currentTime = 0; } catch (err) {} const q = v.play(); if (q && q.catch) q.catch(() => {}); } else v.pause();
-    });
-  }, [i]);
-  const m = leute[i] || leute[0];
   return (
     <section id="top" data-track="chapter_view_01" data-screen-label="Hero" className="u-grain" style={{ position: "relative", zIndex: 0, background: "var(--paper)", padding: mob ? "112px 6vw 64px" : "clamp(120px, 17vh, 180px) 6vw clamp(64px, 9vh, 110px)" }}>
       <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 36 : 24, alignItems: "end" }}>
@@ -157,21 +183,47 @@ function HeroMkV2() {
             </div>
           </div>
         </div>
-        {/* Rechts ueber 5 Spalten: ein Mensch nach dem anderen, als Film */}
-        <div style={{ position: "relative", aspectRatio: "4 / 5", borderRadius: "var(--r-panel)", overflow: "hidden", background: "var(--ink)", clipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", WebkitClipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} 120ms, -webkit-clip-path 1200ms ${H2_EASE} 120ms` }}>
-          {leute.map((x, k) => (
-            <div key={x.slug} aria-hidden={k !== i} style={{ position: "absolute", inset: 0, opacity: k === i ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 800ms ${H2_EASE}` }}>
-              <img src={x.ed + ".jpg"} alt={k === i ? "Porträt von " + x.name : ""} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-              {!H2_RUHIG && <video ref={(el) => { filme.current[x.slug] = el; }} src={x.ed + ".mp4"} muted loop playsInline preload={k === 0 ? "auto" : "none"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}></video>}
+        {/* Rechts ueber 5 Spalten: der geschnittene Film */}
+        <CircleFilm stil={{ aspectRatio: "4 / 5", borderRadius: "var(--r-panel)", clipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", WebkitClipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} 120ms, -webkit-clip-path 1200ms ${H2_EASE} 120ms` }} />
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Startseite, Vorschlag B: Mensch und Raum ---------- */
+/* Links die Aussage, rechts ein echter Rundgang: der Makler fuehrt selbst durch das Objekt. */
+function HeroB() {
+  const mob = window.useMobile();
+  const [da, setDa] = React.useState(H2_RUHIG);
+  const vid = React.useRef(null);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  React.useEffect(() => { const v = vid.current; if (!v || H2_RUHIG) return; const q = v.play(); if (q && q.catch) q.catch(() => {}); }, []);
+  const maske = da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)";
+  return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "108px 6vw 56px" : "118px 6vw 64px", minHeight: mob ? 0 : "100svh", display: "flex", alignItems: "stretch" }}>
+      <div style={{ position: "relative", zIndex: 1, flex: 1, display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 32 : 24, alignItems: "end" }}>
+        <div style={{ paddingBottom: mob ? 0 : 8 }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(40px, 12vw, 58px)" : "clamp(52px, 7vw, 128px)"}/0.95 var(--font-display)`, letterSpacing: "-0.04em", color: "var(--ink)" }}>
+            <H2Zeile da={da} i={0}>Real Estate</H2Zeile>
+            <H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile>
+          </h1>
+          <div style={{ opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 560ms` }}>
+            <p style={{ margin: mob ? "20px 0 0" : "28px 0 0", maxWidth: 480, font: `400 ${mob ? 15.5 : 17}px/1.65 var(--font-display)`, color: "var(--text-muted)" }}>
+              Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Hinter jedem Objekt steht jemand, der es kennt.
+            </p>
+            <div style={{ display: "flex", gap: 12, marginTop: 26, flexWrap: "wrap" }}>
+              <H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
+              <H2Btn size="lg" variant="ghost" onClick={() => (location.hash = "produkte")}>Wie es funktioniert</H2Btn>
             </div>
-          ))}
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 55%, rgba(11,10,9,0.62) 100%)" }}></div>
-          <div style={{ position: "absolute", left: 24, right: 24, bottom: 22, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, color: "var(--text-inverse)" }}>
-            <span style={{ minWidth: 0 }}>
-              <span style={{ display: "block", font: `500 ${mob ? 22 : "clamp(22px, 2vw, 30px)"}${mob ? "px" : ""}/1.1 var(--font-display)`, letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
-              <span className="u-label" style={{ display: "block", marginTop: 7, fontSize: 10, color: "rgba(247,245,241,0.8)" }}>{m.region}</span>
-            </span>
-            <span className="u-label" style={{ flex: "none", fontSize: 10, color: "rgba(247,245,241,0.8)", fontVariantNumeric: "tabular-nums" }}>{String(i + 1).padStart(2, "0")} / {String(leute.length).padStart(2, "0")}</span>
+          </div>
+        </div>
+        <div style={{ position: "relative", height: mob ? "auto" : "min(calc(100svh - 182px), 780px)", aspectRatio: mob ? "4 / 5" : "auto", borderRadius: "var(--r-panel)", overflow: "hidden", background: "var(--ink)", clipPath: maske, WebkitClipPath: maske, transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} 120ms, -webkit-clip-path 1200ms ${H2_EASE} 120ms` }}>
+          <img src="../../assets/video/makler-wenzel-jardin.jpg" alt="Wenzel Wächter vor dem Projekt Jardin Hermes" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          {!H2_RUHIG && <video ref={vid} src="../../assets/video/makler-wenzel-jardin.mp4" muted loop playsInline preload="auto" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}></video>}
+          <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 62%, rgba(11,10,9,0.6) 100%)" }}></div>
+          <div style={{ position: "absolute", left: 22, right: 22, bottom: 20, color: "var(--text-inverse)" }}>
+            <span style={{ display: "block", font: "500 clamp(18px, 1.7vw, 26px)/1.1 var(--font-display)", letterSpacing: "-0.02em" }}>Wenzel Wächter</span>
+            <span className="u-label" style={{ display: "block", marginTop: 7, fontSize: 10, color: "rgba(247,245,241,0.8)" }}>Führt durch Jardin Hermes</span>
           </div>
         </div>
       </div>
@@ -179,4 +231,100 @@ function HeroMkV2() {
   );
 }
 
-Object.assign(window, { HeroV2, HeroMkV2 });
+/* ---------- Startseite, Vorschlag C: der Mensch in der Mitte ---------- */
+/* Die Aussage rahmt den Menschen: eine Zeile links, eine rechts, in der Mitte der geschnittene Film. */
+function HeroC() {
+  const mob = window.useMobile();
+  const [da, setDa] = React.useState(H2_RUHIG);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  const maske = da ? "inset(0 round 24px)" : "inset(50% 0 50% 0 round 24px)";
+  const zeile = { margin: 0, font: `500 ${mob ? "clamp(40px, 12vw, 58px)" : "clamp(34px, 4.3vw, 82px)"}/0.96 var(--font-display)`, letterSpacing: "-0.04em", color: "var(--ink)", whiteSpace: mob ? "normal" : "nowrap" };
+  const film = <CircleFilm stil={{ aspectRatio: "4 / 5", width: "100%", justifySelf: "center", borderRadius: "var(--r-panel)", clipPath: maske, WebkitClipPath: maske, transition: H2_RUHIG ? "none" : `clip-path 1300ms ${H2_EASE} 80ms, -webkit-clip-path 1300ms ${H2_EASE} 80ms` }} />;
+  if (mob) return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "108px 6vw 56px" }}>
+      <h1 style={zeile}><H2Zeile da={da} i={0}>Real Estate</H2Zeile><H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile></h1>
+      <div style={{ marginTop: 28 }}>{film}</div>
+      <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}><H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn></div>
+    </section>
+  );
+  return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "118px 6vw 64px", minHeight: "100svh", display: "flex", alignItems: "center" }}>
+      <h1 style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>Real Estate Finally Simple.</h1>
+      <div style={{ position: "relative", zIndex: 1, width: "100%", display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24, alignItems: "center" }}>
+        <div style={{ textAlign: "right" }}>
+          <div aria-hidden="true" style={zeile}><H2Zeile da={da} i={0}>Real Estate</H2Zeile></div>
+          <p style={{ margin: "26px 0 0 auto", maxWidth: 340, font: "400 17px/1.65 var(--font-display)", color: "var(--text-muted)", opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 620ms` }}>Hinter jedem Objekt steht ein Mensch, der es kennt.</p>
+        </div>
+        {film}
+        <div>
+          <div aria-hidden="true" style={zeile}><H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile></div>
+          <div style={{ display: "flex", gap: 12, marginTop: 26, flexWrap: "wrap", opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 620ms` }}>
+            <H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Startseite, Vorschlag D: Schrift zuerst ---------- */
+/* Eine sehr grosse Zeile ueber die ganze Breite, darunter drei Bilder auf dem Raster: Raum, Mensch, Objekt. */
+function HeroD() {
+  const mob = window.useMobile();
+  const [da, setDa] = React.useState(H2_RUHIG);
+  const vid = React.useRef(null);
+  React.useEffect(() => { if (H2_RUHIG) return; const t = setTimeout(() => setDa(true), 60); return () => clearTimeout(t); }, []);
+  React.useEffect(() => { const v = vid.current; if (!v || H2_RUHIG) return; const q = v.play(); if (q && q.catch) q.catch(() => {}); }, []);
+  const maske = (n) => ({ clipPath: da ? "inset(0 round 20px)" : "inset(100% 0 0 0 round 20px)", WebkitClipPath: da ? "inset(0 round 20px)" : "inset(100% 0 0 0 round 20px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} ${380 + n * 110}ms, -webkit-clip-path 1200ms ${H2_EASE} ${380 + n * 110}ms` });
+  const hoch = mob ? "auto" : "clamp(240px, 38vh, 420px)";
+  return (
+    <section id="top" data-screen-label="Hero" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: mob ? "108px 6vw 56px" : "clamp(120px, 16vh, 170px) 6vw 64px" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(44px, 13.5vw, 64px)" : "clamp(72px, 11.6vw, 228px)"}/0.9 var(--font-display)`, letterSpacing: "-0.05em", color: "var(--ink)" }}>
+          <H2Zeile da={da} i={0}>Real Estate</H2Zeile>
+          <H2Zeile da={da} i={1}>Finally Simple<span style={{ color: "var(--signal)" }}>.</span></H2Zeile>
+        </h1>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 18 : 24, alignItems: "end", marginTop: mob ? 24 : "clamp(28px, 5vh, 56px)", opacity: da ? 1 : 0, transition: H2_RUHIG ? "none" : `opacity 700ms ${H2_EASE} 560ms` }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <H2Btn size="lg" variant="solid" knob onClick={() => (location.hash = "suche")}>Immobilie finden</H2Btn>
+            <H2Btn size="lg" variant="ghost" onClick={() => (location.hash = "produkte")}>Wie es funktioniert</H2Btn>
+          </div>
+          <p style={{ margin: 0, maxWidth: 440, font: `400 ${mob ? 15.5 : 17}px/1.65 var(--font-display)`, color: "var(--text-muted)" }}>Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst.</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr 1fr" : `${window.spalten(6)} ${window.spalten(3)} minmax(0, 1fr)`, gap: mob ? 10 : 24, marginTop: mob ? 32 : "clamp(36px, 6vh, 72px)" }}>
+          <div style={{ position: "relative", height: hoch, aspectRatio: mob ? "16 / 10" : "auto", gridColumn: mob ? "1 / -1" : "auto", overflow: "hidden", background: "var(--ink)", ...maske(0) }}>
+            <video ref={vid} poster="../../assets/img/hero-poster.jpg" muted loop playsInline preload={H2_RUHIG ? "none" : "metadata"} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}>
+              <source src="../../assets/video/hero-fenster.webm" type="video/webm" />
+              <source src="../../assets/video/hero-fenster.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <CircleFilm stil={{ height: hoch, aspectRatio: mob ? "4 / 5" : "auto", ...maske(1) }} />
+          <div style={{ position: "relative", height: hoch, aspectRatio: mob ? "4 / 5" : "auto", overflow: "hidden", background: "var(--paper-2)", ...maske(2) }}>
+            <img src="../../assets/img/obenzwei-terrasse.jpg" alt="Dachterrasse mit Blick über Wien" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Umschalter fuer die Abstimmung: /2?hero=a|b|c|d, mit ?hero=alt der bisherige Hero.
+   Eine kleine Leiste unten links fuehrt durch die Vorschlaege. Nur in Variante 2. */
+function HeroWahl({ alt }) {
+  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "a";
+  const liste = [["a", "A", "Film wird zur Karte"], ["b", "B", "Mensch und Raum"], ["c", "C", "Mensch in der Mitte"], ["d", "D", "Schrift zuerst"], ["alt", "Alt", "Bisheriger Hero"]];
+  const hero = m === "alt" ? alt : m === "b" ? <HeroB /> : m === "c" ? <HeroC /> : m === "d" ? <HeroD /> : <HeroV2 />;
+  return (
+    <React.Fragment>
+      {hero}
+      <nav aria-label="Hero-Vorschläge" style={{ position: "fixed", left: 16, bottom: 16, zIndex: 80, display: "flex", alignItems: "center", gap: 4, padding: "6px 8px 6px 14px", borderRadius: 999, background: "var(--ink)", color: "var(--paper)", boxShadow: "0 10px 30px rgba(11,10,9,0.25)" }}>
+        <span className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.7)", marginRight: 6 }}>Hero</span>
+        {liste.map(([k, z, t]) => (
+          <a key={k} href={"?hero=" + k} title={t} aria-current={k === m ? "true" : undefined} style={{ minWidth: 34, height: 30, padding: "0 10px", borderRadius: 999, display: "grid", placeItems: "center", textDecoration: "none", font: "500 12.5px var(--font-display)", background: k === m ? "var(--signal)" : "transparent", color: k === m ? "#1A1305" : "var(--paper)" }}>{z}</a>
+        ))}
+      </nav>
+    </React.Fragment>
+  );
+}
+
+Object.assign(window, { HeroV2, HeroMkV2, HeroB, HeroC, HeroD, HeroWahl, CircleFilm });

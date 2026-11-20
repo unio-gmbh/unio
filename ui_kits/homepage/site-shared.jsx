@@ -290,17 +290,18 @@ const MAKLER_BASIS = "https://www.unio.at/";
 const MAKLER_DB = {
   "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg?v=4", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, makler: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
   "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg?v=4", ed: "../../assets/team/editorial/lara-jonas", film: true, makler: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
-  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg?v=4", ed: "../../assets/team/editorial/wenzel-waechter", film: true, makler: true, region: "Wien", url: null },
-  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg?v=4", ed: "../../assets/team/editorial/nikita-neznamov", film: true, makler: true, region: "Wien", url: null },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg?v=4", ed: "../../assets/team/editorial/wenzel-waechter", film: true, makler: true, region: "Founder · Vertrieb", url: null },
+  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg?v=4", ed: "../../assets/team/editorial/nikita-neznamov", film: true, makler: true, region: "Founder · Technologie", url: null },
   "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg?v=4", ed: "../../assets/team/editorial/alexander-maurer", film: true, makler: true, region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
   "philipp-trattner": { name: "Philipp Trattner", ed: "../../assets/team/editorial/philipp-trattner", film: true, makler: true, region: "Trattner & Söhne", url: "https://www.trattner-soehne.at" },
-  /* Weitere Menschen bei UNIO (nur in der Uebersicht, nicht im Makler-Streifen) */
-  "johannes-lindner": { name: "Johannes Lindner", ed: "../../assets/team/editorial/johannes-lindner", film: true, region: "Vertrieb", url: null },
-  "florian-hoermann": { name: "Florian Hörmann", ed: "../../assets/team/editorial/florian-hoermann", film: true, region: "Vertrieb", url: null },
-  "fabian-fuhrmann": { name: "Fabian Fuhrmann", ed: "../../assets/team/editorial/fabian-fuhrmann", film: true, region: "Vertrieb", url: null },
-  "jacob-kapsch": { name: "Jacob Kapsch", ed: "../../assets/team/editorial/jacob-kapsch", film: true, region: "Marketing", url: null },
-  "daniel-hayden": { name: "Daniel Hayden", ed: "../../assets/team/editorial/daniel-hayden", film: true, region: "Marketing", url: null },
-  "marcin-fituch": { name: "Marcin Fituch", ed: "../../assets/team/editorial/marcin-fituch", film: true, region: "Technologie", url: null },
+  /* Weitere Menschen bei UNIO (nur in der Uebersicht, nicht im Makler-Streifen).
+     Positionen der Founder wie auf der Story-Seite (TEAM_PORTRAITS in page-story.jsx). */
+  "johannes-lindner": { name: "Johannes Lindner", ed: "../../assets/team/editorial/johannes-lindner", film: true, region: "Founder · Vertrieb", url: null },
+  "florian-hoermann": { name: "Florian Hörmann", ed: "../../assets/team/editorial/florian-hoermann", film: true, region: "Founder · Vertrieb", url: null },
+  "fabian-fuhrmann": { name: "Fabian Fuhrmann", ed: "../../assets/team/editorial/fabian-fuhrmann", film: true, region: "Founder · Vertrieb", url: null },
+  "jacob-kapsch": { name: "Jacob Kapsch", ed: "../../assets/team/editorial/jacob-kapsch", film: true, region: "Founder · Marketing", url: null },
+  "daniel-hayden": { name: "Daniel Hayden", ed: "../../assets/team/editorial/daniel-hayden", film: true, region: "Founder · Marketing", url: null },
+  "marcin-fituch": { name: "Marcin Fituch", ed: "../../assets/team/editorial/marcin-fituch", film: true, region: "Founder · Technologie", url: null },
 };
 /* Variante 2: Seiten mit einer 2 in der Adresse (/2, /makler2, /immobilien2 ...).
    Der Build setzt dort window.UNIO_V2. Variante 1 bleibt unveraendert, dort sind

@@ -164,6 +164,18 @@ function aufRaster(code) {
   code = code.replace(/"repeat\(([2346]), 1fr\)"([^]{0,200})/g, (ganz, n, rest) => {
     const neu = abstand(rest); return neu == null ? ganz : `"repeat(${n}, minmax(0, 1fr))"` + neu;
   });
+  /* Liste mit Nummernspalte (Vorteile): Nummer = 1 Spalte, Text beginnt exakt in Spalte 2 */
+  code = code.replace(/"64px minmax\(0, ?([\d.]+)fr\) minmax\(0, ?([\d.]+)fr\)"([^]{0,200})/g, (ganz, a, b, rest) => {
+    const neu = abstand(rest); if (neu == null) return ganz;
+    const n = Math.min(8, Math.max(4, Math.round(11 * +a / (+a + +b))));
+    return `"${sp(1)} ${sp(n)} minmax(0, 1fr)"` + neu;
+  });
+  code = code.replace(/"64px minmax\(0, 1\.5fr\) minmax\(0, 1fr\)"(,gap:\w+\?"12px 0":)"0 40px"/g, (g, mitte) => `"${sp(1)} ${sp(6)} minmax(0, 1fr)"${mitte}"0 24px"`);
+  /* Hero-Karten von Bautraeger und Story: Kartenkante auf den Seitenrand */
+  code = code.replaceAll('"98px 40px 0"', '"98px 6vw 0"');
+  /* Eingerueckte Tafeln der festgehaltenen Abschnitte: Einzug = Beginn von Spalte 2 */
+  const sp2 = "calc(6vw + (88vw - 264px) / 12 + 24px)";
+  code = code.replaceAll('11vw"', sp2 + '"').replaceAll('"0 9vw 0 ', '"0 6vw 0 ');
   return code.replaceAll("clamp(24px, 5vw, 96px)", "6vw");
 }
 
