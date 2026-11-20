@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 1 |
+| Stand dieses Dokuments | 20.11.2026, Version 2 (reduzierte Fassung: ein Makler-Element pro Fläche) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -25,13 +25,14 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 |---|---|---|---|---|
 | Makler-Daten in der Suche | Feld `agents` vorhanden, immer leer | Demo-Register mit 4 echten Partnern | `agents` gefüllt | MP-01 |
 | Porträt des Maklers | Zwei getrennte Quellen (Firmenprofil und Maklerseite), dadurch teils nur Initialen | ein Bild je Person | eine Quelle für alle Flächen | MP-01 |
-| Objektkarte Startseite | ohne Person | Makler-Zeile am Kartenfuß | Makler-Zeile | MP-02 |
-| Objektkarte Suche `/listing` | ohne Person | Makler-Zeile am Kartenfuß | Makler-Zeile | MP-02 |
+| Objektkarte Startseite | ohne Person | ein Kreis rechts oben im Bild | Kreis im Bild | MP-02 |
+| Objektkarte Suche `/listing` | ohne Person | ein Kreis rechts oben im Bild | Kreis im Bild | MP-02 |
 | Link Objektseite zur Maklerseite | fehlt | auf Karten gebaut, auf der Objektseite noch offen (Wenzel Wächter hat keine Maklerseite) | vorhanden | MP-03 |
-| Person auf der Objektseite, oben | fehlt | Makler-Signatur unter dem Titel | Signatur | MP-04 |
-| Person auf der Objektseite, Spalte | Feld "Kontaktdaten", unter der 3D-Tour | Makler-Modul direkt unter dem Preis | Modul | MP-05 |
-| Objektseite mobil | Person ganz unten, Leiste "Kontakt & Anfrage" | Signatur im ersten Bildschirm | Signatur plus Leiste mit Gesicht | MP-04, MP-06 |
+| Person auf der Objektseite | Feld "Kontaktdaten" in der Spalte, mobil ganz unten | eine randlose Zeile unter dem Titel | eine Zeile unter dem Titel, "Kontaktdaten" entfällt | MP-04 |
+| Objektseite mobil, feste Leiste | "Kontakt & Anfrage" ohne Gesicht | unverändert | Leiste mit Gesicht | MP-06 |
 | Wording | "Kontaktdaten", "Details anfordern" | Berater-Wording | Berater-Wording | MP-07 |
+| CIRCLE-Gesichter Startseite | fehlt | gebaut | Bereich nach der Objekt-Vorschau | MP-14 |
+| CIRCLE-Gesichter CIRCLE-Seite `/makler` | fehlt | gebaut | Bereich mit freiem Platz | MP-14 |
 | Kurzprofil am Kreis | fehlt | fehlt | geplant | MP-08 |
 | Chat am Objekt | fehlt (Formular) | vorhanden | geplant | MP-09 |
 | Termin bei der Person | fehlt | Besichtigung mit 3 Vorschlägen vorhanden, noch nicht an die Person gebunden | geplant | MP-10 |
@@ -115,82 +116,66 @@ Abnahme:
 2. Marcus Anthofer-Weiss erscheint auf seinen Objektseiten mit demselben Foto wie auf `/marcus-weiss`.
 3. `profileUrl` ist nur gesetzt, wenn die Seite erreichbar ist.
 
-### MP-02 Makler-Zeile auf der Objektkarte
+### MP-02 Makler-Kreis auf der Objektkarte
 
-Status: Entwurf · Aufwand: klein · Referenz gebaut
+Status: Entwurf · Aufwand: klein · Referenz gebaut (Version 2)
 
 Wo live: Karten auf der Startseite (Abschnitt "Finde dein nächstes Zuhause") und in `/listing`. Später auch Merkliste und Objekte auf Projektseiten.
 
 Referenz im Repo:
-- Komponente `MaklerKreis` und `MaklerZeile` in `ui_kits/homepage/site-shared.jsx`
+- Komponenten `MaklerKreis` und `MaklerMarke` in `ui_kits/homepage/site-shared.jsx`
 - Einbau in `PropCard` (dieselbe Datei) und in `SucheHighlights` in `ui_kits/homepage/homepage.jsx`
-- Dunkle Variante auf Foto und kleine Variante in Listen: `maklerZeile()` und die CSS-Klasse `.mkz` in `ui_kits/explore/index.html`
-- Bilder: [Karte](bilder/repo-objektkarte.jpg), [Startseite](bilder/repo-startseite-vorschau.jpg), [Explore und Liste](bilder/repo-explore-liste-objekt-mobil.jpg)
+- Feed und Liste: `maklerKreis()` und die CSS-Klasse `.mkr` in `ui_kits/explore/index.html`
+- Bilder: [Karte in Ruhe und beim Überfahren](bilder/v2-objektkarte-ruhe-und-hover.jpg), [Startseite](bilder/v2-startseite-vorschau.jpg), [Feed](bilder/v2-explore-feed.jpg), [Liste und Objektseite mobil](bilder/v2-liste-und-objektseite-mobil.jpg)
 
 Aufbau:
-- Sitzt am Fuß der Karte, unter dem Text, getrennt durch eine Haarlinie. Nicht im Bild.
-- Links Kreis 34 Pixel, daneben Name (14,5 Pixel, mittelfett), darunter klein in Versalien "Beratung und Besichtigung", rechts ein Pfeil.
-- Mindesthöhe 44 Pixel.
-- Eigener Link zur Maklerseite, getrennt vom Link zum Objekt. Keine verschachtelten Links: Die Karte ist ein Behälter mit zwei Links nebeneinander.
-- Bewegung beim Überfahren und bei Tastaturfokus: Foto wächst auf 112 Prozent, Pfeil rückt 3 Pixel nach rechts und wird Akzentfarbe. Dauer 450 Millisekunden, Kurve `cubic-bezier(0.32, 0.72, 0, 1)`.
+- Ein Kreis, 40 Pixel, rechts oben im Objektbild, 12 Pixel Abstand zur Bildkante. Heller Rand 2 Pixel, weicher Schatten.
+- Kein Text in Ruhe. Am Desktop gleitet beim Überfahren oder bei Tastaturfokus der Name als dunkle Glasfläche links aus dem Kreis heraus, das Foto wächst auf 112 Prozent. Dauer 450 Millisekunden, Kurve `cubic-bezier(0.32, 0.72, 0, 1)`.
+- Eigener Link zur Maklerseite, liegt als eigenes Element über der Karte. Kein Link im Link.
+- Liste mit kleinem Vorschaubild: Kreis 28 Pixel an der rechten unteren Ecke des Bilds.
+- Vertikaler Feed: Kreis 52 Pixel als oberster Punkt der Aktionsleiste, Vorname als Beschriftung.
 
 Zustände:
-- Kein Foto: Initialen (zwei Buchstaben) hell auf dunklem Kreis.
-- Keine Maklerseite: Zeile ohne Link und ohne Pfeil.
-- Kein Makler am Objekt: Zeile entfällt ganz, die Karte endet wie heute.
-- Langer Name: einzeilig, wird mit Auslassungspunkten gekürzt.
+- Kein Foto: Initialen hell auf dunklem Kreis.
+- Keine Maklerseite: Kreis ohne Link, Name beim Überfahren bleibt.
+- Kein Makler am Objekt: kein Kreis.
+
+Zu klären: Der Kreis teilt sich die Ecke mit dem Merken-Herz (auf Maklerseiten heute rechts oben). Vorschlag: Herz links oben oder in die Textzeile.
 
 Abnahme:
-1. Die Zeile ist auf dem Handy ohne Überfahren sichtbar.
-2. Klick auf die Zeile öffnet die Maklerseite, Klick auf den Rest der Karte das Objekt.
-3. Mit Tastatur sind beide Links getrennt erreichbar. Der Makler-Link hat die Beschriftung "{Name}, Profil ansehen".
-4. Alle vier Zustände sehen sauber aus.
-5. Die Karte springt beim Laden des Fotos nicht in der Höhe.
+1. Am Handy öffnet ein Tipp auf den Kreis die Maklerseite, ein Tipp auf den Rest der Karte das Objekt.
+2. Mit Tastatur sind beide Links getrennt erreichbar. Beschriftung des Makler-Links: "{Name}, betreut dieses Objekt. Profil ansehen".
+3. Die Trefferfläche des Kreises ist mindestens 44 mal 44 Pixel groß.
+4. Alle drei Zustände sehen sauber aus.
 
 ### MP-03 Link von der Objektseite zur Maklerseite
 
 Status: Entwurf · Aufwand: sehr klein
 
-Im heutigen Feld "Kontaktdaten" (später im Makler-Modul) Name und Kreis mit `profileUrl` verlinken und eine Zeile "Profil und weitere Objekte" ergänzen. Nur wenn `profileUrl` gesetzt ist.
+Im heutigen Feld "Kontaktdaten" (später in der Makler-Zeile, MP-04) Name und Kreis mit `profileUrl` verlinken und eine Zeile "Profil und weitere Objekte" ergänzen. Nur wenn `profileUrl` gesetzt ist.
 
 Abnahme: Von der Objektseite eines Objekts von Lara Jonas kommt man mit einem Klick auf `/lara-jonas`.
 
-### MP-04 Makler-Signatur unter dem Titel
+### MP-04 Makler-Zeile unter dem Titel (ersetzt "Kontaktdaten")
 
-Status: Entwurf · Aufwand: klein · Referenz gebaut
+Status: Entwurf · Aufwand: klein · Referenz gebaut (Version 2)
 
-Wo live: `/property/{slug}`, direkt unter Titel und Ortszeile, vor dem Preisblock.
+Wo live: `/property/{slug}`, direkt unter Titel und Ortszeile, vor Preis und Kennzahlen. Das Feld "Kontaktdaten" in der rechten Spalte entfällt.
 
-Referenz: `.mksig` in `ui_kits/objektseite/index.html`. Bild: [Signatur](bilder/repo-objektseite-signatur.jpg).
+Referenz: `.mksig` in `ui_kits/objektseite/index.html`. Bild: [Zeile](bilder/v2-objektseite-zeile.jpg).
 
-Aufbau: abgerundete Fläche in Pillenform. Kreis 40, Name, darunter klein "Berät zu diesem Objekt · antwortet meist in unter 2 Stunden", rechts Knopf "Frage stellen". Unter 520 Pixel Breite füllt sie die Zeile, der zweite Teil der kleinen Zeile entfällt.
+Aufbau: eine randlose Zeile ohne Hintergrund. Kreis 36, dann "{Name} berät zu diesem Objekt" (Name fett, Rest gedämpft), dann Textlink "Frage stellen" mit feiner Unterstreichung. Unter 520 Pixel Breite steht nur der Name, der Link rückt an den rechten Rand.
 
-Verhalten: "Frage stellen" öffnet den Kontaktweg am Objekt. Solange es keinen Chat gibt (MP-09): zum Formular springen und das Feld fokussieren.
-
-Abnahme:
-1. Auf einem Handy mit 390 Pixel Breite ist die Signatur ohne Scrollen sichtbar oder nach höchstens einem Bildschirm.
-2. Ohne gemessene Antwortzeit steht nur "Berät zu diesem Objekt".
-
-### MP-05 Makler-Modul ersetzt "Kontaktdaten"
-
-Status: Entwurf · Aufwand: mittel · Referenz gebaut (Grundform)
-
-Wo live: rechte Spalte der Objektseite. Neue Reihenfolge: Preis, Makler-Modul, 3D-Tour, Formular.
-
-Referenz: `.mkmod` in `ui_kits/objektseite/index.html`. Bild: [Modul](bilder/repo-objektseite-modul.jpg).
-
-Aufbau von oben nach unten:
-1. Kreis 56, Name (17 Pixel, fett), darunter klein Rolle und "UNIO Partner"
-2. Ein Satz zur Zuständigkeit (Text siehe MP-07)
-3. Zwei Faktenzeilen mit Haarlinie: "Antwortet meist / in unter 2 Stunden", "Besichtigung / vor Ort oder per Video"
-4. Hauptknopf "Frage an {Vorname} stellen"
-5. Zwei leise Knöpfe nebeneinander: "Anrufen", "E-Mail"
-6. Wenn `profileUrl` gesetzt: Zeile "Profil und weitere Objekte"
+Verhalten: "Frage stellen" öffnet den Kontaktweg am Objekt. Solange es keinen Chat gibt (MP-09): zum Formular springen und das erste Feld fokussieren. Name und Kreis verlinken auf die Maklerseite, wenn es eine gibt (MP-03).
 
 Abnahme:
-1. Die Überschrift "Kontaktdaten" kommt nicht mehr vor.
-2. Das Modul steht über der 3D-Tour.
-3. Faktenzeile zur Antwortzeit entfällt, wenn nicht gemessen.
+1. Auf einem Handy mit 390 Pixel Breite ist die Zeile spätestens nach einem Bildschirm sichtbar.
+2. Es gibt auf der Objektseite genau eine Stelle mit dem Makler (plus später die Leiste aus MP-06).
+3. Die Überschrift "Kontaktdaten" kommt nicht mehr vor. Telefon und E-Mail sind über "Frage stellen" erreichbar.
+
+### MP-05 Makler-Modul
+
+Status: verworfen in Version 2 (zu viele Ebenen). Die Nummer bleibt reserviert.
 
 ### MP-06 Begleitende Leiste mobil
 
@@ -203,6 +188,27 @@ Die feste Leiste unten zeigt links Kreis 32 und Vorname, rechts den Hauptknopf "
 Status: Entwurf · Aufwand: sehr klein · Texte in [PLAN.md](PLAN.md), Abschnitt 7
 
 Vor der Umsetzung offen: Du oder Sie, Rollenbezeichnung, juristische Prüfung.
+
+### MP-14 CIRCLE-Gesichter
+
+Status: Entwurf · Aufwand: klein · Referenz gebaut
+
+Wo live: Startseite direkt nach der Objekt-Vorschau, und `/makler` nach dem Abschnitt zur eigenen Marke.
+
+Referenz: Komponente `CircleGesichter` in `ui_kits/homepage/site-shared.jsx`, Einbau in `homepage.jsx` (`fuer="suchende"`) und `page-makler.jsx` (`fuer="makler"`). Bilder: [Startseite](bilder/v2-circle-startseite.jpg), [CIRCLE-Seite](bilder/v2-circle-seite.jpg), [mobil](bilder/v2-circle-mobil.jpg).
+
+Aufbau: links Überschrift, ein Absatz, ein Knopf. Rechts eine Reihe von Kreisen (96 Pixel, mobil 84), darunter Name und Region. Jeder Kreis verlinkt auf die Maklerseite. Mobil seitlich schiebbar mit Einrasten. Auf der CIRCLE-Seite endet die Reihe mit einem gestrichelten leeren Kreis "Dein Platz", der zur Bewerbung führt.
+
+Texte:
+- Startseite: "Hinter jedem Objekt steht ein Mensch." · "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar." · Knopf "CIRCLE entdecken"
+- CIRCLE-Seite: "Der CIRCLE wächst." · "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte." · Knopf "Platz im CIRCLE anfragen"
+
+Daten: alle Partner mit Foto und Freigabe für die öffentliche Darstellung, Reihenfolge nicht nach Leistung (Vorschlag: nach Eintritt oder zufällig je Aufruf). Braucht ein Feld "öffentlich zeigen" je Makler.
+
+Abnahme:
+1. Ein neuer Partner mit Foto erscheint ohne Code-Änderung.
+2. Partner ohne Maklerseite erscheinen ohne Link.
+3. Ab etwa neun Partnern bricht die Reihe am Desktop sauber in eine zweite Zeile um.
 
 ### MP-08 bis MP-13
 
@@ -224,7 +230,7 @@ Nicht Teil der Makler-Präsenz, aber beim Prüfen gesehen:
 ## 7. Schutz vor versehentlichem Livegang
 
 - Alle Änderungen liegen nur auf dem Branch `claude/vibrant-edison-th7jx0`. Kein Merge nach `main`, kein Pull Request.
-- Auf den öffentlichen Seiten des Repos (Startseite, `/immobilien`) ist die Makler-Zeile abgeschaltet. Sie erscheint nur, wenn `?makler=1` an der Adresse hängt. Der Schalter heißt `MAKLER_SICHTBAR` in `ui_kits/homepage/site-shared.jsx`.
+- Auf den öffentlichen Seiten des Repos (Startseite, `/makler`, `/immobilien`) sind Makler-Kreis und CIRCLE-Gesichter abgeschaltet. Sie erscheinen nur, wenn `?makler=1` an der Adresse hängt. Der Schalter heißt `MAKLER_SICHTBAR` in `ui_kits/homepage/site-shared.jsx`.
 - Explore-Feed und Objektseite liegen wie bisher im passwortgeschützten Bereich `/ux`.
 - Empfehlung für die Plattform: jedes Paket hinter einem eigenen Schalter ausliefern und erst auf einer Testumgebung zeigen.
 
@@ -232,9 +238,10 @@ So siehst du die Vorschau (nach lokalem Start oder auf einer Vorschau-Adresse de
 
 | Fläche | Adresse |
 |---|---|
-| Startseite mit Makler-Zeile | `/?makler=1`, dann zu "Finde dein nächstes Zuhause" |
+| Startseite mit Makler-Kreis und CIRCLE-Gesichtern | `/?makler=1`, dann zu "Finde dein nächstes Zuhause" |
+| CIRCLE-Seite mit Gesichtern | `/makler?makler=1` |
 | Explore-Feed und Liste | `/ux/explore` |
-| Objektseite mit Signatur und Modul | `/ux/objekt` |
+| Objektseite mit Makler-Zeile | `/ux/objekt` |
 | Quelltext | `ui_kits/homepage/`, `ui_kits/explore/`, `ui_kits/objektseite/` |
 
 ## 8. Offene Fragen an Marcin
@@ -251,7 +258,7 @@ So siehst du die Vorschau (nach lokalem Start oder auf einer Vorschau-Adresse de
 | Live vorhanden | Im Repo nachgezogen? |
 |---|---|
 | Echte Makler mit Maklerseite | Ja: Register `MAKLER_DB` mit Marcus Anthofer-Weiss, Lara Jonas, Alexander Maurer, Wenzel Wächter. Fotos als einheitliche Ausschnitte in `assets/team/makler/` |
-| Kreis mit Foto auf der Objektseite | Ja, als Signatur und Modul (statt Platzhalter "[Makler-Name]") |
+| Kreis mit Foto auf der Objektseite | Ja, als eine Zeile unter dem Titel (statt Platzhalter "[Makler-Name]") |
 | Objektseite des Penthouse Hernals wird von Wenzel Wächter betreut | Ja, im Prototyp stand vorher ein erfundener Name |
 | Startseite zeigt drei echte Objekte mit Slug-Adressen | Offen: Das Repo zeigt drei Beispielobjekte mit alten Nummern-Adressen auf app.unio.at |
 | Text der Vorschau "Entdecke weitere Immobilien in unserer Suche", Knopf "Alle Immobilien" | Offen |
@@ -263,3 +270,4 @@ So siehst du die Vorschau (nach lokalem Start oder auf einer Vorschau-Adresse de
 | Datum | Version | Was |
 |---|---|---|
 | 20.11.2026 | 1 | Erste Fassung. Live-Stand geprüft. Im Repo gebaut: Makler-Register, Makler-Kreis, Makler-Zeile auf Objektkarte, Startseite, Explore-Feed und Liste. Makler-Signatur und Makler-Modul auf der Objektseite. Erfundene Maklernamen entfernt, Klickziel korrigiert (vorher Anwerbeseite `/makler`). Schalter `?makler=1` für öffentliche Seiten. Pakete MP-01 bis MP-07 beschrieben. |
+| 20.11.2026 | 2 | Reduzierte Fassung nach Rückmeldung Daniel: ein Makler-Element pro Fläche. Karte: nur Kreis im Bild (MP-02 neu gefasst). Objektseite: eine randlose Zeile, Modul gestrichen (MP-04 neu, MP-05 verworfen). Explore: Kreis in der Aktionsleiste und am Vorschaubild. Neu: CIRCLE-Gesichter auf Startseite und CIRCLE-Seite (MP-14). Bilder ersetzt (`bilder/v2-*`). |

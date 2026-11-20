@@ -1,6 +1,8 @@
 # Makler-Präsenz: Plan
 
-Stand: 20.11.2026 · Version 1 · Status: Entwurf zur Abstimmung, nichts davon ist live
+Stand: 20.11.2026 · Version 2 · Status: Entwurf zur Abstimmung, nichts davon ist live
+
+**Änderung in Version 2 (Rückmeldung Daniel): weniger Ebenen.** Pro Fläche gibt es genau ein Makler-Element, und zwar einen Kreis. Keine eigene Zeile unter der Karte, kein eigener Kasten auf der Objektseite. Neu dazu: der Bereich CIRCLE-Gesichter auf Startseite und CIRCLE-Seite.
 
 Ziel: Makler und ihre Maklerseiten stärker zeigen und überall die Verbindung zwischen Person und Objekt herstellen. Maßstab ist High-End-UI. Leitfrage bei jeder Entscheidung: Wie würde Apple das lösen?
 
@@ -69,7 +71,7 @@ Hinweis zur Belastbarkeit: Die Beschreibungen der Oberflächen stammen überwieg
 | Nr. | Muster | Vorbild | Was genau | Übertrag auf UNIO |
 |---|---|---|---|---|
 | 1 | Ein Objekt, eine Person, eine Anfrage | Homes.com, Compass | Auf der Objektseite steht nur der betreuende Makler, jede Anfrage geht an ihn | Grundregel für alles Weitere. Zillow wird für das Gegenteil seit 2025 verklagt |
-| 2 | Makler-Zeile auf der Karte | Airbnb, Linear | Kleiner Kreis plus Name, das Foto des Objekts bleibt der Held | Schritt 1, gebaut |
+| 2 | Makler-Kreis auf der Karte | Airbnb, Linear | Kleiner Kreis, das Foto des Objekts bleibt der Held | Schritt 1, gebaut |
 | 3 | Kurzprofil beim Antippen | GitHub, Slack, LinkedIn | Antippen des Kreises öffnet eine kleine Karte: Porträt, Schwerpunkt, Zahl der Objekte, zwei Aktionen | Schritt 3 |
 | 4 | "Lernen Sie ... kennen"-Karte | Airbnb ("Meet your host") | Abgesetzte Karte: großes Porträt, drei Fakten, Antwortzeit, eine Hauptaktion | Schritt 2, Grundform gebaut |
 | 5 | Antwortzeit als Versprechen | Airbnb, Intercom | "Antwortet meist innerhalb von ..." aus echten Messwerten, sonst neutraler Satz | Schritt 2, braucht Messung |
@@ -95,11 +97,11 @@ Nicht gefunden: ein Test, der isoliert zeigt, dass ein Maklerfoto auf der Objekt
 
 ## 4. Leitprinzipien: wie Apple es machen würde
 
-1. Das Objekt bleibt der Held. Die Person ist die zweite Ebene, nie ein Aufkleber auf dem Foto. Darum sitzt die Makler-Zeile unter dem Bild und nicht im Bild.
-2. Eine Komponente, überall dieselbe. Der Makler-Kreis hat drei feste Größen: 34 Pixel auf Karten, 56 im Modul, 96 im Profilkopf. Nichts dazwischen.
-3. Eine Hauptaktion pro Stelle. Karte: Profil ansehen. Signatur: Frage stellen. Modul: Frage stellen, Anruf und E-Mail als leise Zweitwege.
+1. Das Objekt bleibt der Held. Die Person ist die zweite Ebene: ein einziger Kreis, kein zusätzlicher Text, kein zusätzlicher Kasten.
+2. Eine Komponente, überall dieselbe. Der Makler-Kreis hat feste Größen: 40 Pixel auf Karten, 36 auf der Objektseite, 96 im CIRCLE-Bereich. Dazu die Regel: ein Makler-Element pro Fläche, nie zwei.
+3. Eine Aktion pro Stelle. Karte: Profil ansehen. Objektseite: Frage stellen.
 4. Tiefe in Stufen. Karte, dann Kurzprofil, dann Profil. Jede Stufe zeigt mehr, keine zeigt alles.
-5. Alles funktioniert mit dem Finger. Nichts Wichtiges hängt an einer Mausbewegung. (Die alte Fassung zeigte den Namen nur beim Überfahren mit der Maus, am Handy also nie.)
+5. Alles funktioniert mit dem Finger. Am Handy führt ein Tipp auf den Kreis direkt zur Maklerseite. Der Name beim Überfahren mit der Maus ist eine Zugabe am Desktop, keine Voraussetzung.
 6. Nie ein leerer Zustand. Kein Foto: Initialen auf dunklem Grund. Keine Maklerseite: Zeile ohne Pfeil und ohne Link. Keine gemessene Antwortzeit: neutraler Satz statt Zahl.
 7. Ruhe. Keine Sterne, keine Abzeichen, keine Zähler auf der Karte. Bewegung nur als Bestätigung (Kreis wächst leicht, Pfeil rückt drei Pixel).
 8. Ehrlich. Keine erfundenen Namen, Zahlen oder Stimmen. Was nicht gemessen ist, wird nicht behauptet.
@@ -108,9 +110,9 @@ Aus den UNIO-Gestaltungsregeln bleiben gültig: keine Zeile über Überschriften
 
 ## 5. Zielbild: die Reise mit einer Person
 
-1. **Entdecken** (Startseite, Suche, Explore). Jede Objektkarte endet mit einer Zeile: Kreis, Name, "Beratung und Besichtigung". Antippen führt zur Maklerseite.
+1. **Entdecken** (Startseite, Suche, Explore). Jede Objektkarte trägt einen Kreis mit dem Gesicht des Maklers. Antippen führt zur Maklerseite.
 2. **Einordnen** (Kurzprofil). Antippen des Kreises zeigt, wer das ist: Schwerpunkt, Grätzl, Zahl der aktuellen Objekte, zwei Wege weiter.
-3. **Ansehen** (Objektseite). Unter dem Titel steht, wer berät. Unter dem Preis steht das Makler-Modul. Mobil begleitet die Person als feste Leiste. Im Text steht eine persönliche Einschätzung.
+3. **Ansehen** (Objektseite). Unter dem Titel steht in einer Zeile, wer berät. Später begleitet die Person mobil als feste Leiste, und im Text steht ihre persönliche Einschätzung.
 4. **Fragen** (Chat, Termin). Eine Frage oder ein Terminvorschlag, direkt bei der Person, mit ehrlicher Antwortzeit.
 5. **Vertrauen** (Maklerseite). Wer ist das, was hat die Person verkauft, was betreut sie gerade. Von jedem Objekt dort führt ein sichtbarer Weg zurück.
 6. **Bleiben** (Konto). Nach der ersten Anfrage ist die Person "mein Makler": in der Navigation, in der Merkliste, im Kaufablauf.
@@ -123,23 +125,23 @@ Für jeden Baustein: was er tut, wo er hingehört, welche Daten er braucht. Die 
 
 Runder Ausschnitt des Porträts in drei Größen. Ohne Foto Initialen. Eine Quelle für das Bild, damit Maklerseite und Objektseite dasselbe Gesicht zeigen. Einheitlicher Bildausschnitt: Kopf und Schulteransatz, Augen im oberen Drittel, ruhiger heller Hintergrund. Dafür gibt es bereits das Werkzeug Makler-Zuschnitt (`/maklerzuschnitt`).
 
-### M2 Makler-Zeile auf der Objektkarte
+### M2 Makler-Kreis auf der Objektkarte
 
-Unter dem Kartentext, durch eine Haarlinie getrennt: Kreis 34, Name, darunter klein "Beratung und Besichtigung", rechts ein Pfeil. Eigener Link zur Maklerseite, getrennt vom Link zum Objekt. Mindesthöhe 44 Pixel für den Finger. Gilt für Startseite, Suche, Explore-Feed, Listenansicht, Merkliste und die Objekte auf Projektseiten.
+Ein Kreis (40 Pixel, heller Rand) rechts oben im Objektbild. Sonst nichts. Am Desktop gleitet beim Überfahren der Name links heraus. Tippen oder Klicken führt zur Maklerseite, der Rest der Karte zum Objekt. Gilt für Startseite, Suche und Merkliste. Im Explore-Feed sitzt derselbe Kreis als oberster Punkt der Aktionsleiste rechts (mit Vorname darunter), in der Listenansicht an der Ecke des Vorschaubilds.
 
-Stand: im Repo gebaut. Bilder: [Karte](bilder/repo-objektkarte.jpg), [Startseite](bilder/repo-startseite-vorschau.jpg), [Explore, Liste, Objekt mobil](bilder/repo-explore-liste-objekt-mobil.jpg).
+Stand: im Repo gebaut. Bilder: [Karte in Ruhe und beim Überfahren](bilder/v2-objektkarte-ruhe-und-hover.jpg), [Startseite](bilder/v2-startseite-vorschau.jpg), [Explore-Feed](bilder/v2-explore-feed.jpg), [Liste und Objektseite mobil](bilder/v2-liste-und-objektseite-mobil.jpg).
 
 ### M3 Kurzprofil
 
 Kleine Karte beim Antippen oder Überfahren des Kreises: Porträt 56, Name, Schwerpunkt ("Altbau und Dachgeschoss"), Grätzl ("Hietzing, Penzing"), "12 aktuelle Objekte", zwei Aktionen: Profil ansehen, Frage stellen. Am Handy als Blatt von unten. Noch nicht gebaut.
 
-### M4 Makler-Signatur auf der Objektseite
+### M4 Makler-Zeile auf der Objektseite
 
-Direkt unter dem Titel, vor den Kennzahlen: Kreis 40, Name, "Berät zu diesem Objekt", Antwortzeit, Knopf "Frage stellen". Damit steht die Person auf jedem Gerät im ersten Bildschirm. Stand: gebaut. Bild: [Signatur](bilder/repo-objektseite-signatur.jpg).
+Eine einzige randlose Zeile direkt unter dem Titel: Kreis 36, "Wenzel Wächter berät zu diesem Objekt", Textlink "Frage stellen". Kein Kasten, kein Hintergrund. Damit steht die Person auf jedem Gerät im ersten Bildschirm. Die Kontaktwege (Nachricht, später Anruf und Termin) liegen hinter "Frage stellen". Stand: gebaut. Bild: [Zeile](bilder/v2-objektseite-zeile.jpg).
 
-### M5 Makler-Modul auf der Objektseite
+### M5 Makler-Modul (zurückgestellt)
 
-In der rechten Spalte direkt unter dem Preis, vor den Marktdaten. Kreis 56, Name, Rolle, ein Satz zur Zuständigkeit, zwei Fakten (Antwortzeit, Art der Besichtigung), Hauptknopf "Frage an Wenzel stellen", darunter Anrufen und E-Mail, darunter "Profil und weitere Objekte", wenn es eine Maklerseite gibt. Ersetzt das Feld "Kontaktdaten". Stand: Grundform gebaut. Bild: [Modul](bilder/repo-objektseite-modul.jpg).
+In Version 1 gab es zusätzlich einen eigenen Kasten unter dem Preis. Er ist gestrichen, weil er eine weitere Ebene war. Das heutige Live-Feld "Kontaktdaten" entfällt damit ersatzlos, sobald M4 da ist. Falls später mehr Platz für die Person gewünscht ist (Antwortzeit, Termine, Einschätzung), wächst M4 nach unten auf, statt dass ein zweiter Ort entsteht.
 
 ### M6 Begleitende Leiste mobil
 
@@ -147,7 +149,7 @@ Die feste Leiste unten zeigt links den Kreis und den Vornamen, rechts den Hauptk
 
 ### M7 Termin bei der Person
 
-Im Makler-Modul drei nächste Termine als antippbare Felder ("Do 17:30", "Sa 10:00", "Video heute 18:00"). Der Baustein Besichtigung gibt es im Repo bereits, er wird an die Person gebunden. Braucht einen gepflegten Kalender je Makler.
+Hinter "Frage stellen" drei nächste Termine als antippbare Felder ("Do 17:30", "Sa 10:00", "Video heute 18:00"). Der Baustein Besichtigung gibt es im Repo bereits, er wird an die Person gebunden. Braucht einen gepflegten Kalender je Makler.
 
 ### M8 Persönliche Einschätzung
 
@@ -161,6 +163,19 @@ Die Seiten bleiben eigene Marken. Ergänzt werden: ein fester Faktenblock (Schwe
 
 Nach der ersten Anfrage: Kreis in der Navigation des Kontos, gemeinsame Merkliste, Status der Anfrage, dieselbe Person im Kaufablauf. Im Endkunden-Portal des Repos ist die Logik bereits beschrieben (`docs/ENDKUNDEN_PORTAL_PROZESSLOGIK.md`).
 
+### M12 CIRCLE-Gesichter
+
+Ein ruhiger Bereich mit den Partnern als Reihe von Kreisen (96 Pixel), Name und Region darunter. Jeder Kreis führt zur Maklerseite. Eine Komponente, zwei Einsätze:
+
+- Startseite, direkt nach der Objekt-Vorschau: "Hinter jedem Objekt steht ein Mensch." mit Knopf "CIRCLE entdecken".
+- CIRCLE-Seite (`/makler`), nach dem Abschnitt zur eigenen Marke: "Der CIRCLE wächst." mit einem freien Kreis "Dein Platz" am Ende und Knopf "Platz im CIRCLE anfragen".
+
+Die Reihe speist sich aus den Makler-Daten. Kommt ein Partner dazu, wächst sie von selbst. Am Handy lässt sie sich seitlich schieben. Bewusst keine Zahlen, keine Rangfolge, keine Abzeichen.
+
+Stand: gebaut, zeigt die vier Partner mit Foto. Bilder: [Startseite](bilder/v2-circle-startseite.jpg), [CIRCLE-Seite](bilder/v2-circle-seite.jpg), [mobil](bilder/v2-circle-mobil.jpg).
+
+Offen: Für diesen Bereich liegen im Drive einheitliche Editorial-Porträts und kurze Videos (auch Willkommens-Videos). Sie wären die bessere Bildquelle als die jetzigen Ausschnitte. Die Dateien ließen sich aus der Arbeitsumgebung nicht herunterladen, sie müssen ins Repo gelegt oder per Link freigegeben werden.
+
 ### M11 Makler auf Projektseiten und in der Übersicht
 
 Projektseiten zeigen das Vertriebsteam des Projekts als zwei bis drei Kreise mit Namen. Optional eine Übersichtsseite aller Partner. Zurückgestellt, siehe Abschnitt 8.
@@ -173,10 +188,9 @@ Grundsatz: Wir beschreiben, was die Person für den Interessenten tut, nicht ihr
 |---|---|---|
 | Überschrift bei der Person | Kontaktdaten | entfällt, der Name ist die Überschrift |
 | Rolle | keine | Immobilienberater · UNIO Partner |
-| Karte | keine | Beratung und Besichtigung |
-| Signatur | keine | Berät zu diesem Objekt · antwortet meist in unter 2 Stunden |
-| Modul, Satz | keiner | Kennt dieses Penthouse, das Haus und die Lage aus erster Hand. Fragen zu Preis, Finanzierung und Kaufablauf beantwortet er persönlich, auch vor einer Besichtigung. |
-| Hauptknopf | Details anfordern | Frage an Wenzel stellen |
+| Karte | keine | nur der Kreis, Name beim Überfahren |
+| Objektseite | keine | Wenzel Wächter berät zu diesem Objekt · Frage stellen |
+| Aktion | Details anfordern | Frage stellen |
 | Mobil unten | Kontakt & Anfrage | Wenzel fragen |
 | Chat, Kopf | (kein Chat) | Immobilienberater · antwortet meist in unter 2 Stunden |
 | Rückweg | keiner | Profil und weitere Objekte |
@@ -194,15 +208,14 @@ Offene Sprachfrage: Die Startseite spricht per Du, die Live-Objektseite und die 
 
 ## 8. Kritische Prüfung
 
-Was ich bewusst anders gemacht habe als gewünscht oder bisher gebaut:
+Entscheidung nach Rückmeldung (Version 2): Der Kreis sitzt im Bild, ohne eigene Zeile. Das ist die ruhigste Lösung und entspricht dem ursprünglichen Wunsch. Der Preis dafür: Am Handy sieht man den Namen erst nach dem Tippen. Das ist vertretbar, weil das Gesicht die Aufgabe übernimmt und die Maklerseite einen Tipp entfernt ist.
 
-- **Kreis unter dem Bild statt im Bild.** Der Wunsch war der Kreis direkt bei der Immobilie. Im Bild konkurriert er mit dem Merken-Herz und den Objekt-Marken und verdeckt das wichtigste Verkaufsargument, das Foto. Unter dem Bild ist er immer sichtbar, hat Platz für den Namen und ist mit dem Finger gut zu treffen. Falls ihr den Kreis doch im Bild wollt, ist das eine Änderung an einer Stelle.
-- **Name immer sichtbar statt erst beim Überfahren.** Am Handy gibt es kein Überfahren.
+Was dabei zu beachten ist: Der Kreis teilt sich die Bildecke mit dem Merken-Herz der Plattform. Vorschlag: Herz links oben, Kreis rechts oben, oder das Herz wandert in die Textzeile.
 
 Risiken und Gegenpositionen:
 
 1. **Fotos verteilen Anfragen nicht nach Leistung.** Studien zeigen Benachteiligung nach Herkunft und einen Vorteil für attraktive Gesichter. Gegenmittel: einheitliche Porträts (ein Stil, ein Ausschnitt), nie nach Person sortieren, Verteilung der Anfragen je Makler beobachten. Das ist kein Grund, auf Gesichter zu verzichten, aber ein Grund, es sauber zu machen.
-2. **Leere oder schwache Profile schaden mehr als gar keine.** Ein Modul mit Initialen und ohne Satz wirkt lieblos. Darum Pflichtfelder vor der Freischaltung einer Person: Foto, Schwerpunkt, zwei Sätze. Bis dahin erscheint die Person in der einfachen Form.
+2. **Leere oder schwache Profile schaden mehr als gar keine.** Ein Profil mit Initialen und ohne Satz wirkt lieblos. Darum Pflichtfelder vor der Freischaltung einer Person: Foto, Schwerpunkt, zwei Sätze. Bis dahin erscheint die Person in der einfachen Form.
 3. **Wem gehört die Anfrage?** Objektanfragen gehen immer an den betreuenden Makler. Eine Maklerseite zeigt nur eigene Objekte. Sobald ein Makler auf seiner Seite fremde UNIO-Objekte zeigen darf, braucht es eine klare Regel zur Provision. Das ist eine Geschäftsentscheidung, keine Gestaltungsfrage.
 4. **Öffentliche Antwortzeit erzeugt Druck.** Urlaub, Teilzeit und Wochenenden müssen eingerechnet werden (Bürozeiten, Vertretung). Antwortzeiten und spätere Bewertungen sind Leistungsdaten einer Person, dafür braucht es eine vertragliche Grundlage mit den Maklern.
 5. **Stars gegen Gemeinschaft.** Zahlen im Profil machen starke Makler stärker und neue unsichtbar. Darum zuerst feste Felder zur Person, Kennzahlen erst ab einer Schwelle und nie als Rangliste.
@@ -232,18 +245,25 @@ Ergebnis: Daten stehen bereit, sichtbar ändert sich noch nichts. Aufwand: klein
 
 ### Schritt 1: Die Person auf jeder Karte
 
-- Makler-Zeile (M2) auf Startseite, Suche, Explore und Merkliste.
+- Makler-Kreis (M2) auf Startseite, Suche, Explore und Merkliste.
 - Link von der Objektseite zur Maklerseite (ein Satz, eine Zeile).
 
 Stand: im Repo als Vorschau gebaut und geprüft. Ergebnis: Vom ersten Blick an gehört zu jedem Objekt ein Mensch, und zwischen Objekt und Maklerseite gibt es beide Richtungen. Aufwand in der Plattform: klein.
 
 ### Schritt 2: Die Objektseite stellt die Person vor
 
-- Makler-Signatur unter dem Titel (M4), Makler-Modul unter dem Preis (M5), begleitende Leiste mobil (M6).
+- Makler-Zeile unter dem Titel (M4), begleitende Leiste mobil (M6). Kein eigener Kasten.
 - Neues Wording (Abschnitt 7), "Kontaktdaten" entfällt.
 - Antwortzeit zunächst als neutraler Satz, Messung im Hintergrund starten.
 
-Stand: Signatur und Modul im Repo gebaut, Leiste offen. Ergebnis: Die Person steht mobil im ersten Bildschirm statt 7.000 Pixel tiefer. Aufwand: mittel.
+Stand: Zeile im Repo gebaut, Leiste offen. Ergebnis: Die Person steht mobil im ersten Bildschirm statt 7.000 Pixel tiefer. Aufwand: mittel.
+
+### Schritt 2b: Die Community zeigen
+
+- CIRCLE-Gesichter (M12) auf der Startseite und auf der CIRCLE-Seite.
+- Editorial-Porträts aus dem Drive als einheitliche Bildquelle einbinden.
+
+Stand: im Repo gebaut. Ergebnis: Die Startseite führt sichtbar zu den Menschen und zum CIRCLE, die CIRCLE-Seite zeigt eine Community, die wächst. Aufwand: klein.
 
 ### Schritt 3: Kurzprofil und feste Felder zur Person
 
@@ -256,7 +276,7 @@ Ergebnis: Jeder Kreis hat Tiefe, kein Profil ist leer. Aufwand: mittel.
 ### Schritt 4: Fragen und Termine direkt bei der Person
 
 - Chat am Objekt statt Formular (im Repo vorhanden), mit gemessener Antwortzeit.
-- Drei Terminvorschläge im Makler-Modul (M7), Videobesichtigung als Möglichkeit.
+- Drei Terminvorschläge bei der Person (M7), Videobesichtigung als Möglichkeit.
 - Vertretungsregel, wenn die Person nicht erreichbar ist.
 
 Ergebnis: Aus "Details anfordern" wird ein Gespräch mit einem Menschen. Aufwand: groß (Kalender, Benachrichtigungen, Messung).
@@ -299,7 +319,7 @@ Vor Schritt 1 eine Nulllinie erfassen, dann je Schritt vergleichen.
 | Kennzahl | Warum |
 |---|---|
 | Anfragen je 100 Objektseiten-Aufrufe, getrennt nach Handy und Desktop | Hauptwirkung |
-| Anteil der Objektseiten-Besuche, bei denen die Person gesehen wird | Zeigt den Effekt von Signatur und Leiste |
+| Anteil der Objektseiten-Besuche, bei denen die Person gesehen wird | Zeigt den Effekt von Makler-Zeile und Leiste |
 | Klicks von der Karte zur Maklerseite und von dort zurück zu Objekten | Nutzt jemand die Verbindung? |
 | Zeit bis zur ersten Antwort des Maklers | Grundlage für das Antwortzeit-Versprechen |
 | Anteil Chat gegenüber Formular und Anruf | Passt der Kanal? |
@@ -315,7 +335,7 @@ Schritt 1 und 2 nach Möglichkeit als Vergleich ausspielen (die Hälfte der Besu
 4. Bekommt jeder aktive Makler eine Maklerseite, auch ohne Paket Personal Brand?
 5. Darf eine Maklerseite fremde UNIO-Objekte zeigen, und wie wird dann die Provision geteilt?
 6. Wer pflegt die persönliche Einschätzung und wer gibt sie frei?
-7. Kreis unter dem Bild (Vorschlag) oder im Bild.
+7. Entschieden in Version 2: Kreis im Bild, ein Element pro Fläche.
 8. Einheitliches Porträt-Shooting: ja oder nein, und bis wann.
 
 ## 12. Quellen

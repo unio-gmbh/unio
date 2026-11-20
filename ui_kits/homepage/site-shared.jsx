@@ -293,15 +293,15 @@ const MAKLER_DB = {
   "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
   "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", region: "Wien", url: null },
 };
-/* Sicherheits-Schalter: Auf den oeffentlichen Seiten ist die Makler-Zeile AUS.
-   Sie erscheint nur mit ?makler=1 in der Adresse (Vorschau fuer Abstimmung).
+/* Sicherheits-Schalter: Auf den oeffentlichen Seiten sind Makler-Marke und CIRCLE-Gesichter AUS.
+   Sie erscheinen nur mit ?makler=1 in der Adresse (Vorschau fuer Abstimmung).
    So kann ein versehentlicher Merge oder Build nichts live schalten.
    Freigabe erst nach Entscheidung, siehe docs/makler-praesenz/UEBERGABE_MARCIN.md. */
 const MAKLER_SICHTBAR = typeof location !== "undefined" && /[?&]makler=1(&|$)/.test(location.search);
 const maklerVon = (o) => (o && o.mk && MAKLER_DB[o.mk]) || null;
 const maklerInitialen = (name) => (name || "").split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
-/* Makler-Kreis: eine Komponente, drei feste Groessen (Karte 34, Modul 56, Profil 96).
+/* Makler-Kreis: eine Komponente, feste Groessen (Karte 40, Objektseite 36, CIRCLE 116).
    Ohne Foto erscheinen Initialen auf Ink, nie ein leerer Kreis. */
 function MaklerKreis({ m, size = 34, zoom = false }) {
   const [kaputt, setKaputt] = React.useState(false);
@@ -314,31 +314,89 @@ function MaklerKreis({ m, size = 34, zoom = false }) {
   );
 }
 
-/* Makler-Zeile am Fuss jeder Objektkarte: Kreis, Name, Aufgabe. Immer sichtbar
-   (auch auf Touch, wo es kein Hover gibt), eigener Link zur Partnerseite.
-   Sitzt bewusst unter dem Bild: das Objektfoto bleibt der Held. */
-function MaklerZeile({ m, dicht = false }) {
+/* Makler-Marke: EIN Kreis im Objektbild, rechts oben. Kein weiterer Text, keine weitere Zeile.
+   Maus oder Tastatur: der Name gleitet links heraus. Finger: Tippen fuehrt direkt zur Partnerseite.
+   Liegt als eigenes Element ueber der Karte (kein Link im Link). oben/rechts = Abstand zur Kartenkante. */
+function MaklerMarke({ m, oben = 20, rechts = 20 }) {
   const [h, setH] = React.useState(false);
   if (!m || !MAKLER_SICHTBAR) return null;
   const inhalt = (
     <React.Fragment>
-      <MaklerKreis m={m} size={34} zoom={h} />
-      <span style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-        <span style={{ font: "500 14.5px/1.15 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
-        <span className="u-label" style={{ fontSize: 9, color: "var(--text-muted)", whiteSpace: "nowrap" }}>Beratung und Besichtigung</span>
+      <span style={{ position: "relative", zIndex: 2, flex: "none", display: "block", borderRadius: "50%", boxShadow: h ? "0 0 0 2px rgba(253,252,250,1), 0 6px 18px rgba(11,10,9,0.4)" : "0 0 0 2px rgba(253,252,250,0.95), 0 4px 14px rgba(11,10,9,0.3)", transition: "box-shadow var(--dur-fast) var(--ease-unio)" }}>
+        <MaklerKreis m={m} size={40} zoom={h} />
       </span>
-      {m.url && <span aria-hidden="true" style={{ marginLeft: "auto", flex: "none", font: "13px var(--font-mono)", color: h ? "var(--signal-deep)" : "var(--text-muted)", transform: h ? "translateX(3px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>→</span>}
+      <span className="u-label" aria-hidden="true" style={{ position: "relative", zIndex: 1, marginRight: -18, paddingLeft: 14, paddingRight: 26, height: 30, display: "inline-flex", alignItems: "center", borderRadius: 15, whiteSpace: "nowrap", fontSize: 10, letterSpacing: "0.06em", background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)", pointerEvents: "none", opacity: h ? 1 : 0, transform: h ? "translateX(0)" : "translateX(14px)", transition: "opacity var(--dur-fast) var(--ease-unio), transform var(--dur-fast) var(--ease-unio)" }}>{m.name}</span>
     </React.Fragment>
   );
-  const st = { display: "flex", alignItems: "center", gap: 11, margin: dicht ? "0 14px" : "0 16px", padding: "12px 0 10px", borderTop: "1px solid var(--hairline-dark)", textDecoration: "none", minHeight: 44 };
+  const st = { position: "absolute", top: oben, right: rechts, zIndex: 3, display: "flex", flexDirection: "row-reverse", alignItems: "center", textDecoration: "none", borderRadius: 999 };
+  const ev = { onMouseEnter: () => setH(true), onMouseLeave: () => setH(false), onFocus: () => setH(true), onBlur: () => setH(false) };
   return m.url
-    ? <a href={m.url} aria-label={m.name + ", Profil ansehen"} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)} onFocus={() => setH(true)} onBlur={() => setH(false)} style={st}>{inhalt}</a>
-    : <div style={st}>{inhalt}</div>;
+    ? <a href={m.url} aria-label={m.name + ", betreut dieses Objekt. Profil ansehen"} style={st} {...ev}>{inhalt}</a>
+    : <span title={m.name} style={st} {...ev}>{inhalt}</span>;
+}
+
+/* CIRCLE-Gesichter: die wachsende Makler-Community als ruhige Reihe von Kreisen.
+   Jeder Kreis fuehrt zur Partnerseite. Eine Komponente fuer Startseite (fuer="suchende")
+   und CIRCLE-Seite (fuer="makler", mit freiem Platz am Ende). Daten aus MAKLER_DB:
+   kommt ein Partner dazu, waechst die Reihe von selbst. */
+function CircleGesichter({ fuer = "suchende" }) {
+  const mob = useMobile();
+  const [hov, setHov] = React.useState("");
+  if (!MAKLER_SICHTBAR) return null;
+  const makler = fuer === "makler";
+  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] }));
+  const d = mob ? 84 : 96;
+  const kreis = (m) => (
+    <span style={{ display: "block", width: d, height: d, borderRadius: "50%", overflow: "hidden", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+      <img src={m.img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: m.pos || "center 30%", transform: hov === m.slug ? "scale(1.06)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
+    </span>
+  );
+  const unter = (name, zeile) => (
+    <React.Fragment>
+      <span style={{ display: "block", marginTop: 14, font: `500 ${mob ? 14 : 15.5}px/1.2 var(--font-display)`, letterSpacing: "-0.01em", color: "var(--ink)" }}>{name}</span>
+      <span className="u-label" style={{ display: "block", marginTop: 5, fontSize: 9, color: "var(--text-muted)" }}>{zeile}</span>
+    </React.Fragment>
+  );
+  const zelle = { flex: "none", width: d + (mob ? 28 : 34), scrollSnapAlign: "start", textDecoration: "none", display: "block" };
+  return (
+    <section data-screen-label="CIRCLE Gesichter" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
+      <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: mob ? 44 : 64, alignItems: "end" }}>
+        <div>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.4vw, 40px)" : "clamp(36px, 3.6vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+            {makler ? <span>Der CIRCLE<br />wächst.</span> : <span>Hinter jedem Objekt<br />steht ein Mensch.</span>}
+          </h2>
+          <p style={{ margin: "22px 0 0", maxWidth: 440, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)" }}>
+            {makler
+              ? "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte."
+              : "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar."}
+          </p>
+          <div style={{ marginTop: 30 }}>
+            {makler
+              ? <Button variant="signal" knob onClick={() => (location.hash = "bewerben")}>Platz im CIRCLE anfragen</Button>
+              : <Button variant="solid" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Button>}
+          </div>
+        </div>
+        <div style={mob
+          ? { display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: "0 -6vw", padding: "4px 6vw" }
+          : { display: "flex", flexWrap: "wrap", rowGap: 36, padding: "4px 0" }}>
+          {liste.map((m) => m.url
+            ? <a key={m.slug} href={m.url} aria-label={m.name + ", Profil ansehen"} onMouseEnter={() => setHov(m.slug)} onMouseLeave={() => setHov("")} onFocus={() => setHov(m.slug)} onBlur={() => setHov("")} style={zelle}>{kreis(m)}{unter(m.name, m.region)}</a>
+            : <div key={m.slug} style={zelle}>{kreis(m)}{unter(m.name, m.region)}</div>)}
+          {makler && (
+            <a href="#bewerben" style={zelle}>
+              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: d, height: d, borderRadius: "50%", border: "1px dashed rgba(11,10,9,0.32)", font: "300 30px var(--font-display)", color: "var(--signal-deep)" }}>+</span>
+              {unter("Dein Platz", "Jetzt anfragen")}
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 /* Objektkarte: Nachfrage-Badge im Bild, Aktiv-Pill, Adresszeile,
-   Mono-Datenzeile (m² · Zi · Preis), Makler-Zeile am Fuss.
-   Zwei Links nebeneinander (Objekt, Makler), keine verschachtelten Anker. */
+   Mono-Datenzeile (m² · Zi · Preis), Makler-Marke als Kreis im Bild.
+   Zwei Links (Objekt, Makler), keine verschachtelten Anker. */
 const PIcon = ({ d }) => (
   <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--text-muted)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "none" }}>
     <path d={d}></path>
@@ -349,7 +407,7 @@ function PropCard({ o, hov, onHov }) {
   return (
     <div
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
-      style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+      style={{ position: "relative", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
       <a href={PROJEKT_URL} style={{ textDecoration: "none", display: "block" }}>
         <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
           <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
@@ -373,7 +431,7 @@ function PropCard({ o, hov, onHov }) {
           </div>
         </div>
       </a>
-      <MaklerZeile m={m} />
+      <MaklerMarke m={m} />
     </div>
   );
 }
@@ -742,7 +800,7 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
-  MAKLER_DB, maklerVon, MaklerKreis, MaklerZeile,
+  MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
 });

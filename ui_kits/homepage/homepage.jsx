@@ -106,7 +106,7 @@ function SucheHighlights() {
           <Reveal key={o.t} delay={i * 90}>
             <div
               onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(-1)}
-              style={{ background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
+              style={{ position: "relative", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov === i ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov === i ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
               <a href={o.href} target="_blank" rel="noopener" style={{ display: "block", textDecoration: "none" }}>
               <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
                 <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov === i ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
@@ -120,7 +120,7 @@ function SucheHighlights() {
                 </div>
               </div>
               </a>
-              <window.MaklerZeile m={window.maklerVon(o)} dicht />
+              <window.MaklerMarke m={window.maklerVon(o)} />
             </div>
           </Reveal>
         ))}
@@ -363,6 +363,7 @@ function App() {
       <SiteNav active="index.html" />
       <Hero />
       <SucheHighlights />
+      <window.CircleGesichter fuer="suchende" />
       <Markt />
       <Produkte />
       <window.SystemBento />

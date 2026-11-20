@@ -15,7 +15,7 @@
 <!--
   1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
   Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler: Wenzel Wächter (wie live).
-  Inhalte: app.unio.at/property/2 · Marktdaten Demo · Makler-Modul und Signatur am Objekt.
+  Inhalte: app.unio.at/property/2 · Marktdaten Demo · eine Makler-Zeile unter dem Titel.
 -->
 <style>
   :root{ --bg:#F2EFE9; --card:#FBFAF6; --ink:#141210; --fg2:#6E6862; --fg3:#A19A91;
@@ -214,35 +214,18 @@
   .tile span{display:block;margin-top:6px;font-size:11px;color:var(--fg2);line-height:1.45;}
   .tile .ta{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:99px;
     border:1px solid var(--hair);display:grid;place-items:center;color:var(--fg2);}
-  /* Makler am Objekt. Zwei Stellen, eine Person:
-     .mksig  = Signatur direkt unter dem Titel (auf jedem Viewport im ersten Bildschirm)
-     .mkmod  = Modul in der Rail direkt unter dem Preis (Beratung, Antwortzeit, Kontakt) */
-  .mksig{display:flex;align-items:center;gap:12px;margin-top:18px;padding:10px 12px 10px 10px;background:var(--card);
-    border:1px solid var(--hair);border-radius:99px;width:max-content;max-width:100%;}
-  .mksig img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none;}
-  .mksig .wer{min-width:0;}
-  .mksig b{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mksig .mono{display:block;margin-top:3px;font-size:8.5px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mksig button{flex:none;margin-left:6px;height:36px;padding:0 15px;border-radius:99px;border:1px solid rgba(20,18,16,.18);background:transparent;
-    font:500 12.5px var(--font-display);color:var(--ink);cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease);}
-  .mksig button:hover{background:var(--ink);color:var(--card);}
-  .mksig .mono i{font-style:normal;}
-  @media (max-width:520px){.mksig{width:100%;}.mksig button{margin-left:auto;}.mksig .mono i{display:none;}}
-  .mkmod{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:22px 24px 20px;margin-top:12px;}
-  .mkmod .kopf2{display:flex;gap:14px;align-items:center;}
-  .mkmod .kopf2 img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;}
-  .mkmod .kopf2 b{display:block;font-size:17px;font-weight:600;letter-spacing:-.015em;}
-  .mkmod .kopf2 .mono{display:block;margin-top:4px;color:var(--fg2);}
-  .mkmod p{font-size:13.5px;line-height:1.6;color:var(--fg2);margin-top:14px;}
-  .mkmod .fakt{margin-top:14px;}
-  .mkmod .fakt div{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:9px 0;border-top:1px solid var(--hair);}
-  .mkmod .fakt span{color:var(--fg2);}
-  .mkmod .fakt b{font-weight:600;text-align:right;}
-  .mkmod .btn{margin-top:14px;}
-  .mkmod .direkt{display:flex;gap:8px;margin-top:10px;}
-  .mkmod .direkt a{flex:1;display:flex;align-items:center;justify-content:center;height:42px;border-radius:99px;border:1px solid rgba(20,18,16,.18);
-    font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;transition:border-color .3s var(--ease);}
-  .mkmod .direkt a:hover{border-color:var(--ink);}
+  /* Makler am Objekt: EINE randlose Zeile unter dem Titel. Kein Kasten, keine zweite Stelle.
+     Kreis, Name, eine Aussage, ein Textlink. Die Kontaktwege liegen im Chat dahinter. */
+  .mksig{display:flex;align-items:center;gap:11px;margin-top:20px;}
+  .mksig img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
+  .mksig .wer{min-width:0;font-size:14.5px;line-height:1.35;color:var(--fg2);}
+  .mksig .wer b{font-weight:600;color:var(--ink);}
+  .mksig .wer i{font-style:normal;}
+  .mksig button{flex:none;margin-left:6px;padding:8px 0;border:none;background:none;cursor:pointer;
+    font:500 14.5px var(--font-display);color:var(--ink);text-decoration:underline;text-decoration-color:rgba(20,18,16,.25);text-underline-offset:4px;
+    transition:text-decoration-color .3s var(--ease);}
+  .mksig button:hover{text-decoration-color:var(--ink);}
+  @media (max-width:520px){.mksig .wer i{display:none;}.mksig button{margin-left:auto;}}
   .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
   .ctabar{display:none;}
   .foot{margin-top:34px;text-align:center;}
@@ -603,11 +586,10 @@
             <span class="mono">Zum Verkauf · Wohnung · Top 29 · 1170 Wien</span>
           </div>
         </div>
-        <!-- Makler-Signatur: die Person steht beim Objekt, bevor die erste Zahl kommt -->
+        <!-- Makler am Objekt: eine Zeile, bevor die erste Zahl kommt -->
         <div class="mksig">
           <img src="/assets/team/makler/wenzel-waechter.jpg" alt="">
-          <div class="wer"><b>Wenzel Wächter</b>
-            <span class="mono">Berät zu diesem Objekt<i> · antwortet meist in unter 2 Stunden</i></span></div>
+          <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
           <button type="button" data-mkfrage>Frage stellen</button>
         </div>
         <div class="figs">
@@ -756,26 +738,6 @@
         </button>
         <button class="ghost">Exposé erhalten
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
-      </div>
-
-      <!-- Makler-Modul: direkt unter dem Preis, vor den Marktdaten.
-           Profil-Link erscheint nur, wenn der Makler eine eigene Seite hat (hier: noch keine). -->
-      <div class="mkmod" id="mkmod">
-        <div class="kopf2">
-          <img src="/assets/team/makler/wenzel-waechter.jpg" alt="Wenzel Wächter">
-          <div><b>Wenzel Wächter</b>
-            <span class="mono">Immobilienberater · UNIO Partner</span></div>
-        </div>
-        <p>Kennt dieses Penthouse, das Haus und die Lage aus erster Hand. Fragen zu Preis, Finanzierung und Kaufablauf beantwortet er persönlich, auch vor einer Besichtigung.</p>
-        <div class="fakt">
-          <div><span>Antwortet meist</span><b>in unter 2 Stunden</b></div>
-          <div><span>Besichtigung</span><b>vor Ort oder per Video</b></div>
-        </div>
-        <button class="btn" type="button" data-mkfrage>Frage an Wenzel stellen</button>
-        <div class="direkt">
-          <a href="tel:+436644160559">Anrufen</a>
-          <a href="mailto:wenzel@unio.at">E-Mail</a>
-        </div>
       </div>
 
       <!-- Marktdaten: hell mit Orange-Akzent -->
@@ -1197,7 +1159,7 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(heroimg.complete)heroimg.classList.add('ld');
 else heroimg.addEventListener('load',()=>heroimg.classList.add('ld'));
 
-const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .mkmod, .lock')];
+const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .lock')];
 rvEls.forEach(el=>el.classList.add('rv'));
 document.querySelectorAll('.trow .t').forEach((el,i)=>el.style.transitionDelay=(i*70)+'ms');
 const io=new IntersectionObserver(es=>es.forEach(e=>{

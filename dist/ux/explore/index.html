@@ -66,19 +66,14 @@
     font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
 
   /* Aktionen rechts */
-  /* Makler am Objekt: Kreis, Name, Aufgabe. Immer sichtbar, eigener Link zur Partnerseite. */
-  .mkz{display:inline-flex;align-items:center;gap:10px;margin-top:14px;text-decoration:none;color:var(--paper);min-height:44px;}
-  .card .mkz img,.srow .mkz img{position:static;inset:auto;animation:none!important;transform:none;flex:none;border-radius:50%;object-fit:cover;object-position:center 30%;display:block;}
-  .card .mkz img{width:34px;height:34px;box-shadow:0 0 0 1.5px rgba(247,245,241,.9);}
-  .mkz .ini{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-size:12px;font-weight:500;box-shadow:0 0 0 1.5px rgba(247,245,241,.9);}
-  .mkz b{display:block;font-size:14.5px;font-weight:500;letter-spacing:-.01em;line-height:1.15;text-shadow:0 1px 14px rgba(0,0,0,.45);}
-  .mkz span span{display:block;margin-top:3px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.78);}
-  .mkz .pf{font-family:var(--font-mono),monospace;font-size:12px;color:rgba(247,245,241,.7);transition:transform .3s var(--ease);}
-  a.mkz:hover .pf{transform:translateX(3px);}
-  .srow .mkz{margin-top:7px;gap:7px;min-height:0;color:#6E6862;font-size:12px;}
-  .srow .mkz img{width:20px;height:20px;box-shadow:0 0 0 1px rgba(20,18,16,.14);}
-  .srow .mkz .ini{width:20px;height:20px;font-size:8px;box-shadow:none;}
-  .srow a.mkz:hover{color:#141210;}
+  /* Makler am Objekt: EIN Kreis. Im Feed als oberster Punkt der Rail, in der Liste am Vorschaubild.
+     Kein Zusatztext im Infoblock. Tippen fuehrt zur Partnerseite. */
+  .rail .mkr{width:52px;height:52px;border-radius:50%;display:block;padding:0;overflow:hidden;border:2px solid rgba(247,245,241,.95);background:#141210;}
+  .card .rail .mkr img{position:static;inset:auto;width:100%;height:100%;animation:none!important;transform:none;object-fit:cover;object-position:center 30%;display:block;}
+  .srow{position:relative;}
+  .srow .mkr{position:absolute;left:74px;top:50px;width:28px;height:28px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px #FFFFFF,0 3px 10px rgba(20,18,16,.22);background:#141210;display:block;transition:transform .25s var(--ease);}
+  .srow .mkr img{width:100%;height:100%;border-radius:0;object-fit:cover;object-position:center 30%;display:block;}
+  .srow a.mkr:hover{transform:scale(1.12);}
   .rail{position:absolute;right:14px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;align-items:center;}
   .rail button,.rail a{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;text-decoration:none;
     background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.22);color:var(--paper);
@@ -335,15 +330,14 @@
     for (var i = 0; i < MK_ZU.length; i++) if (o.id === MK_ZU[i][0] || o.id.indexOf(MK_ZU[i][0] + "-") === 0 || o.id.indexOf(MK_ZU[i][0]) === 0 && /\d$/.test(o.id)) return MAKLER[MK_ZU[i][1]];
     return null;
   }
-  function maklerZeile(o, klein){
+  function maklerKreis(o){
     var m = maklerVon(o); if (!m) return "";
-    var ini = m.name.split(/[\s-]+/).map(function(w){ return w[0]; }).slice(0, 2).join("");
-    var bild = m.img ? '<img src="' + m.img + '" alt="" loading="lazy">' : '<i class="ini">' + ini + '</i>';
-    var text = klein ? '<span>' + m.name + '</span>' : '<span><b>' + m.name + '</b><span>Beratung und Besichtigung</span></span>' + (m.url ? '<i class="pf" aria-hidden="true">→</i>' : '');
+    var bild = '<img src="' + m.img + '" alt="" loading="lazy">';
     return m.url
-      ? '<a class="mkz" href="' + m.url + '" target="_blank" rel="noopener" aria-label="' + m.name + ', Profil ansehen">' + bild + text + '</a>'
-      : '<span class="mkz">' + bild + text + '</span>';
+      ? '<a class="mkr" href="' + m.url + '" target="_blank" rel="noopener" aria-label="' + m.name + ', betreut dieses Objekt. Profil ansehen" title="' + m.name + '">' + bild + '</a>'
+      : '<span class="mkr" title="' + m.name + '">' + bild + '</span>';
   }
+  function maklerVorname(o){ var m = maklerVon(o); return m ? m.name.split(" ")[0] : ""; }
   /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
   /* Embed-Modus: laeuft als nativer Tab im Endkunden-Portal (iframe), eigene Topbar weg */
   if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");
@@ -429,10 +423,10 @@
         (ekProfil.kaufkraft && o.preisNum && kkLeistbar(o)
           ? '<div class="rchip">≈ ' + eurK(kkRate(o)) + '/MONAT · LEISTBAR</div>'
           : (rendite(o) ? '<div class="rchip">RENDITE ' + rendite(o) + ' %</div>' : '')) +
-        (maklerVon(o) ? '<div>' + maklerZeile(o) + '</div>' : '') +
         '<a class="more" href="' + DETAIL + '&obj=' + o.id + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
       '</div>' +
       '<div class="rail">' +
+        (maklerVon(o) ? maklerKreis(o) + '<span class="lbl">' + maklerVorname(o) + '</span>' : '') +
         '<button class="herz' + (like ? " on" : "") + '" aria-label="Merken">' + HERZ + '</button>' +
         '<span class="lbl">Merken</span>' +
         '<button class="share" aria-label="Teilen"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6.5 10 2.5 6 6.5M10 3v10M4 11v4.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></button>' +
@@ -464,7 +458,7 @@
       burst.classList.remove("go"); void burst.offsetWidth; burst.classList.add("go");
       if (window.__zaehlerUpd) window.__zaehlerUpd();
     };
-    el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more, .mkz")) likeBurst(); });
+    el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more")) likeBurst(); });
     /* Doppeltipp nur bei echten Tipps: Wischgesten (Bewegung/Dauer) NIE anfassen,
        sonst wuergt preventDefault auf iOS das Scroll-Momentum ab. */
     var letzterTap = 0, tapStart = null;
@@ -472,7 +466,7 @@
       tapStart = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() } : null;
     }, { passive: true });
     el.addEventListener("touchend", function(e){
-      if (!tapStart || e.target.closest(".rail, .info .more, .mkz")) { tapStart = null; letzterTap = 0; return; }
+      if (!tapStart || e.target.closest(".rail, .info .more")) { tapStart = null; letzterTap = 0; return; }
       var t = e.changedTouches[0];
       var bewegt = Math.abs(t.clientX - tapStart.x) > 12 || Math.abs(t.clientY - tapStart.y) > 12;
       var dauer = Date.now() - tapStart.t;
@@ -685,10 +679,10 @@
         if (ueberBudget(o)) row.classList.add("ueber");
         row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
           '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
-          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div>' + maklerZeile(o, true) + '</div>' +
+          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' + maklerKreis(o) +
           '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
         row.addEventListener("click", function(e){
-          if (e.target.closest(".sherz, a.mkz")) return;
+          if (e.target.closest(".sherz, a.mkr")) return;
           insFeed(o.id);
         });
         row.addEventListener("mouseenter", function(){ aktivPin(o.id, false); });

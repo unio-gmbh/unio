@@ -1238,6 +1238,7 @@ function App() {
       <RechnerMk />
       <BeteiligungMk />
       <MarkeAssetMk />
+      <window.CircleGesichter fuer="makler" />
       <BewegungMk />
       <SchritteMk />
       <VergleichMk />
