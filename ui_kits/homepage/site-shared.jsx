@@ -274,7 +274,7 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
   }, []);
   const rev = (d) => ({ opacity: seen ? 1 : 0, filter: seen ? "blur(0)" : "blur(8px)", transform: seen ? "none" : "translateY(20px)", transition: `opacity 900ms var(--ease-unio) ${d}ms, filter 900ms var(--ease-unio) ${d}ms, transform 950ms var(--ease-unio) ${d}ms` });
   return (
-    <div ref={ref} style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (nr ? "64px minmax(0, 1.35fr) minmax(0, 1fr)" : "minmax(0, 1.35fr) minmax(0, 1fr)"), gap: mob ? 16 : 44, alignItems: mob ? "start" : "end", ...style }}>
+    <div ref={ref} style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (IST_V2 ? `${spalten(7)} minmax(0, 1fr)` : (nr ? "64px minmax(0, 1.35fr) minmax(0, 1fr)" : "minmax(0, 1.35fr) minmax(0, 1fr)")), gap: mob ? 16 : (IST_V2 ? RASTER_ABSTAND : 44), alignItems: mob ? "start" : "end", ...style }}>
       {nr ? <span style={{ font: "14px var(--font-mono)", color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", paddingBottom: mob ? 0 : 8, ...rev(0) }}>{nr}</span> : null}
       <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: dark ? "var(--text-inverse)" : "var(--ink)", ...rev(90) }}>{title}</h2>
       {copy ? <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: dark ? "var(--text-inverse-muted)" : "var(--text-muted)", maxWidth: 440, ...rev(180) }}>{copy}</p> : <span></span>}
@@ -288,16 +288,29 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
    In der Plattform kommt das aus agents[] des Objekts (siehe docs/makler-praesenz). */
 const MAKLER_BASIS = "https://www.unio.at/";
 const MAKLER_DB = {
-  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
-  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", ed: "../../assets/team/editorial/lara-jonas", film: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
-  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", ed: "../../assets/team/editorial/wenzel-waechter", film: true, region: "Wien", url: null },
-  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg", ed: "../../assets/team/editorial/nikita-neznamov", film: true, region: "Wien", url: null },
-  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", ed: "../../assets/team/editorial/alexander-maurer", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg?v=3", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, makler: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
+  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg?v=3", ed: "../../assets/team/editorial/lara-jonas", film: true, makler: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg?v=3", ed: "../../assets/team/editorial/wenzel-waechter", film: true, makler: true, region: "Wien", url: null },
+  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg?v=3", ed: "../../assets/team/editorial/nikita-neznamov", film: true, makler: true, region: "Wien", url: null },
+  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg?v=3", ed: "../../assets/team/editorial/alexander-maurer", makler: true, region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  /* Weitere Menschen bei UNIO (nur in der Uebersicht, nicht im Makler-Streifen) */
+  "johannes-lindner": { name: "Johannes Lindner", ed: "../../assets/team/editorial/johannes-lindner", film: true, region: "Vertrieb", url: null },
+  "florian-hoermann": { name: "Florian Hörmann", ed: "../../assets/team/editorial/florian-hoermann", film: true, region: "Vertrieb", url: null },
+  "fabian-fuhrmann": { name: "Fabian Fuhrmann", ed: "../../assets/team/editorial/fabian-fuhrmann", film: true, region: "Vertrieb", url: null },
+  "jacob-kapsch": { name: "Jacob Kapsch", ed: "../../assets/team/editorial/jacob-kapsch", film: true, region: "Marketing", url: null },
+  "daniel-hayden": { name: "Daniel Hayden", ed: "../../assets/team/editorial/daniel-hayden", film: true, region: "Marketing", url: null },
+  "marcin-fituch": { name: "Marcin Fituch", ed: "../../assets/team/editorial/marcin-fituch", film: true, region: "Technologie", url: null },
 };
 /* Variante 2: Seiten mit einer 2 in der Adresse (/2, /makler2, /immobilien2 ...).
    Der Build setzt dort window.UNIO_V2. Variante 1 bleibt unveraendert, dort sind
    Makler-Kreis und CIRCLE-Gesichter aus. ?makler=1 schaltet sie lokal zum Testen ein. */
 const MAKLER_SICHTBAR = typeof window !== "undefined" && (window.UNIO_V2 === true || /[?&]makler=1(&|$)/.test(location.search));
+/* Raster: 12 Spalten, Abstand 24 Pixel, Rand 6vw. spalten(n) ist die exakte Breite von n Spalten
+   inklusive der Abstaende dazwischen. Damit liegen auch Innenkanten auf dem Raster.
+   Variante 1 behaelt ihre alten Masse. */
+const RASTER_ABSTAND = 24;
+const spalten = (n) => `calc((100% - ${11 * RASTER_ABSTAND}px) / 12 * ${n} + ${(n - 1) * RASTER_ABSTAND}px)`;
+const IST_V2 = typeof window !== "undefined" && window.UNIO_V2 === true;
 const maklerVon = (o) => (o && o.mk && MAKLER_DB[o.mk]) || null;
 const maklerInitialen = (name) => (name || "").split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
@@ -381,13 +394,13 @@ function CircleGesichter({ fuer = "suchende" }) {
   const mob = useMobile();
   if (!MAKLER_SICHTBAR) return null;
   const makler = fuer === "makler";
-  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.film);
-  const breite = mob ? "72vw" : "calc((100% - 48px) / 4)";
+  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.makler && m.ed);
+  const breite = mob ? "72vw" : spalten(3);
   return (
     <section data-screen-label="CIRCLE Gesichter" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
         {/* Kopf im selben Spaltenmass wie Chapter: Ueberschrift links, Text rechts auf derselben Linie */}
-        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.35fr) minmax(0, 1fr)", gap: mob ? 16 : 44, alignItems: mob ? "start" : "end", marginBottom: mob ? 36 : 72 }}>
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${spalten(7)} minmax(0, 1fr)`, gap: mob ? 16 : RASTER_ABSTAND, alignItems: mob ? "start" : "end", marginBottom: mob ? 36 : 72 }}>
           <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             {makler ? <span>Der CIRCLE<br />wächst.</span> : <span>Hinter jedem Objekt<br />steht ein Mensch.</span>}
           </h2>
@@ -405,7 +418,7 @@ function CircleGesichter({ fuer = "suchende" }) {
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: mob ? "0 -6vw" : 0, padding: mob ? "0 6vw" : 0, scrollPaddingLeft: mob ? "6vw" : 0 }}>
+        <div style={{ display: "flex", gap: mob ? 12 : RASTER_ABSTAND, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: mob ? "0 -6vw" : 0, padding: mob ? "0 6vw" : 0, scrollPaddingLeft: mob ? "6vw" : 0 }}>
           {liste.map((m) => <CirclePortraet key={m.slug} m={m} breite={breite} />)}
         </div>
       </div>
@@ -413,16 +426,18 @@ function CircleGesichter({ fuer = "suchende" }) {
   );
 }
 
-/* Objektkarte: Nachfrage-Badge im Bild, Aktiv-Pill, Adresszeile,
-   Mono-Datenzeile (m² · Zi · Preis), Makler-Marke als Kreis im Bild.
-   Zwei Links (Objekt, Makler), keine verschachtelten Anker. */
-const PIcon = ({ d }) => (
-  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--text-muted)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "none" }}>
-    <path d={d}></path>
-  </svg>
-);
+/* Objektkarte (Fassung 2). Ruhig und eindeutig:
+   - Kein Status-Pill, kein Punkt, keine Nachfrage-Zahl.
+   - Der Status steht als schlichtes Wort am Anfang der Datenzeile ("Verfügbar", "Reserviert").
+   - Ein Projekt ist sofort erkennbar: dunkle Marke "Projekt" im Bild, Datenzeile nennt
+     die Einheiten, Preis beginnt mit "ab".
+   - Makler als Kreis rechts oben im Bild. Zwei Links (Objekt, Makler), nie verschachtelt. */
 function PropCard({ o, hov, onHov }) {
   const m = maklerVon(o);
+  const pr = o.projekt;
+  const daten = pr
+    ? [pr.einheiten + " Einheiten", pr.frei != null ? pr.frei + " verfügbar" : null].filter(Boolean)
+    : [o.qm + " m²", o.zi + " Zi."];
   return (
     <div
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
@@ -430,23 +445,19 @@ function PropCard({ o, hov, onHov }) {
       <a href={PROJEKT_URL} style={{ textDecoration: "none", display: "block" }}>
         <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
           <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-          {/* Nachfrage-Badge unten links */}
-          {o.score && (
-            <span className="u-label" style={{ position: "absolute", left: 12, bottom: 12, fontSize: 10, padding: "7px 13px", borderRadius: 8, background: "var(--glass-dark)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)", color: "var(--text-inverse)", boxShadow: "inset 0 0 0 1px var(--hairline-light)" }}>Nachfrage {o.score}</span>
+          {pr && (
+            <span className="u-label" style={{ position: "absolute", left: 12, top: 12, fontSize: 10, padding: "7px 12px", borderRadius: 8, background: "var(--ink)", color: "var(--paper)" }}>Projekt</span>
           )}
         </div>
         <div style={{ padding: "16px 16px 14px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-            <span style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", minWidth: 0 }}>{o.t}</span>
-            <span className="u-label" style={{ flex: "none", fontSize: 9.5, color: "var(--signal-deep)", background: "var(--signal-soft)", padding: "6px 12px", borderRadius: "var(--r-pill)", display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--signal)" }}></span>Aktiv
+          <div style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{o.t}</div>
+          <div style={{ font: "400 15px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 6 }}>{o.adr}</div>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, marginTop: 16, paddingTop: 13, borderTop: "1px solid var(--hairline-dark)" }}>
+            <span style={{ font: "400 14px/1.3 var(--font-display)", color: "var(--text-muted)", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {!pr && <span style={{ fontWeight: 500, color: "var(--ink)" }}>{o.status || "Verfügbar"}</span>}
+              {!pr && " · "}{daten.join(" · ")}
             </span>
-          </div>
-          <div style={{ font: "400 15px/1.4 var(--font-display)", color: "var(--text-muted)", marginTop: 7 }}>{o.adr}</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14, font: "13px var(--font-mono)", color: "var(--ink-2)" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M2.5 2.5h11v11h-11zM10 2.5 2.5 10" />{o.qm} m²</span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}><PIcon d="M4 13.5V4a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 12 4v9.5M4 13.5h8M9.8 8.2h.01" />{o.zi} Zi.</span>
-            <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7, font: "500 15.5px var(--font-display)", color: "var(--ink)" }}><PIcon d="M8.6 2.5H13.5v4.9L7.4 13.5a1 1 0 0 1-1.4 0L2.5 10a1 1 0 0 1 0-1.4zM11 5h.01" />{o.price}</span>
+            <span style={{ flex: "none", font: "500 16px/1.3 var(--font-display)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{pr && o.price !== "Auf Anfrage" ? "ab " : ""}{o.price}</span>
           </div>
         </div>
       </a>
@@ -458,7 +469,7 @@ function PropCard({ o, hov, onHov }) {
 /* ll = ungefähre Lage (Bezirks-Ebene) für die Kartenansicht — keine Adressen.
    qm/zi/score: Demo-Werte (Arbeitsstand). mk: Demo-Zuordnung auf MAKLER_DB. */
 const OBJEKT_DB = [
-  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], mk: "marcus-weiss" },
+  { img: "../../assets/img/albrecht.jpg", t: "Das Albrecht", adr: "Wien 1170, Hernals", projekt: { einheiten: 9 }, qm: 145, zi: 5, score: 94, price: "€ 1,85 Mio", q: "albrecht townhaus neubau 1170 hernals haus", ll: [48.2277, 16.3268], mk: "marcus-weiss" },
   { img: "../../assets/img/obenzwei.jpg", t: "ObenZwei", adr: "Wien 1020, Leopoldstadt", qm: 131, zi: 4, score: 89, price: "Auf Anfrage", q: "obenzwei penthouse terrasse 1020 leopoldstadt wohnung", ll: [48.2172, 16.3985], mk: "lara-jonas" },
   { img: "../../assets/img/beheim.jpg", t: "Penthouse Beheim", adr: "Beheimgasse, 1170 Wien", qm: 138, zi: 4, score: 91, price: "€ 1,70 Mio", q: "beheim penthouse erstbezug 1170 wohnung terrasse", ll: [48.2325, 16.3157], mk: "wenzel-waechter" },
   { img: "../../assets/img/vienna-garden.jpg", t: "Garten-Refugium", adr: "Wien-Umland, Wienerwald", qm: 210, zi: 6, score: 87, price: "€ 1,90 Mio", q: "haus garten pool gruen wienerwald refugium", ll: [48.1531, 16.2345], mk: "alexander-maurer" },
@@ -841,7 +852,7 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
-  MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet,
+  MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet, spalten, RASTER_ABSTAND, IST_V2,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
 });

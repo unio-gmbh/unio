@@ -130,7 +130,7 @@
   .energy .mono{display:block;margin-top:5px;}
   .energy p{font-size:14.5px;font-weight:600;}
 
-  /* ===== RAUMPROFIL (berechnet) — Lineal-Skalen im Radio-Dial-Stil ===== */
+  /* ===== RAUMPROFIL (berechnet), Lineal-Skalen im Radio-Dial-Stil ===== */
   .rp{display:flex;flex-direction:column;gap:26px;}
   .rpitem{display:grid;grid-template-columns:1fr auto;gap:6px 28px;align-items:end;}
   .rpitem .lab{font-size:13.5px;font-weight:600;}
@@ -161,7 +161,7 @@
     background:none;border:none;padding:10px;font-size:13.5px;font-weight:600;color:var(--ink);
     cursor:pointer;font-family:inherit;}
 
-  /* ===== MARKTDATEN — hell, Orange als Akzent ===== */
+  /* ===== MARKTDATEN, hell, Orange als Akzent ===== */
   .stat{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;
     position:relative;margin-top:12px;}
   .stat .shead2{display:flex;align-items:center;gap:10px;}
@@ -428,7 +428,7 @@
           </div>
         </div>
         <div class="mksig">
-          <img src="/assets/team/makler/wenzel-waechter.jpg" alt="">
+          <img src="/assets/team/makler/wenzel-waechter.jpg?v=3" alt="">
           <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
           <a href="mailto:wenzel@unio.at?subject=Frage%20zum%20Traum%20Penthouse%20in%20Hernals">Frage stellen</a>
         </div>
@@ -456,7 +456,7 @@
         <h2>Über dieses Objekt</h2>
         <p>Dieses außergewöhnliche Penthouse in Hernals vereint großzügigen Wohnkomfort mit
         spektakulären Außenflächen und unverbaubarem Blick auf Kahlenberg und Stephansdom.
-        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen — inklusive
+        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen, inklusive
         direktem Liftzugang in die Wohnung.</p>
         <p>Das Raumkonzept umfasst ein großzügiges Wohnzimmer mit Kamin, einen Masterbereich
         mit freistehender Badewanne sowie ein Gästezimmer. Bei Bedarf lassen sich zwei
@@ -577,9 +577,9 @@
   <h2>Ähnliche Objekte</h2>
   <div class="simgrid">
     <a class="simcard" href="/immobilien2#suche">
-      <img src="/assets/img/obenzwei.jpg" alt="ObenZwei — Penthouse, Wien 1020" loading="lazy">
+      <img src="/assets/img/obenzwei.jpg" alt="ObenZwei, Penthouse, Wien 1020" loading="lazy">
       <span class="scrim" aria-hidden="true"></span>
-      <span class="cap"><b>ObenZwei — Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
+      <span class="cap"><b>ObenZwei, Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
     </a>
     <a class="simcard" href="/immobilien2#suche">
       <img src="/assets/img/beheim.jpg" alt="Penthouse Beheim, Wien 1170" loading="lazy">
@@ -593,7 +593,7 @@
     </a>
   </div>
   <div class="ownerhook">
-    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist — kostenlos, datenbasiert, in 48 Stunden.</p>
+    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist, kostenlos, datenbasiert, in 48 Stunden.</p>
     <a href="https://bewertung.unio.at" rel="noopener">Immobilie bewerten <span aria-hidden="true">→</span></a>
   </div>
 </section>
@@ -720,7 +720,7 @@ const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,ge
     document.getElementById('rpv1').innerHTML=Math.round(v)+'<em>m²</em>';
     document.getElementById('rpi1').dataset.pos=(pos*100).toFixed(1);
     document.getElementById('rpn1').textContent=
-      v<25?'Effiziente Grundrisse — viel Raumprogramm auf kompakter Fläche.'
+      v<25?'Effiziente Grundrisse, viel Raumprogramm auf kompakter Fläche.'
       :v<=35?'Ausgewogenes Verhältnis von Fläche und Zimmern.'
       :'Sehr großzügige Raumzuschnitte.';
   }
@@ -732,7 +732,7 @@ const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,ge
       (P.aussenflaeche||0)===0?'Keine eigenen Freiflächen.'
       :a<10?'Geringer Freiflächenanteil.'
       :a<=25?'Solider Freiflächenanteil.'
-      :'Außergewöhnlich viel Freifläche — hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
+      :'Außergewöhnlich viel Freifläche, hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
     if(P.kaufpreis>0){
       const p1=P.kaufpreis/P.wohnflaeche,
             p2=P.kaufpreis/(P.wohnflaeche+(P.aussenflaeche||0)*P.gewicht);

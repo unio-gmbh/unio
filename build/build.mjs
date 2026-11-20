@@ -130,6 +130,15 @@ function einRand(code, datei) {
   });
 }
 
+/* Variante 2, Texte: keine Gedankenstriche. Aus " — " wird ein Komma, aus Zahlenspannen "bis". */
+const V2_STAMP = Date.now().toString(36);
+function ohneStriche(t) {
+  return t
+    .replace(/(\d)\s?[\u2013\u2014]\s?(\d)/g, "$1 bis $2")
+    .replace(/\s[\u2013\u2014]\s/g, ", ")
+    .replace(/[\u2013\u2014]/g, "-");
+}
+
 /* React dev-CDN → production */
 function productionReact(s) {
   return s
@@ -172,7 +181,7 @@ async function main() {
     writeFileSync(join(DIST, "assets", "js", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code) + "})();");
     /* Variante 2: eigener Satz Skripte, interne Links zeigen auf die 2er-Adressen */
     mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + einRand(rewriteUrls(out.code, true), f) + "})();");
+    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + ohneStriche(einRand(rewriteUrls(out.code, true), f)) + "})();");
   }
   console.log("✓ JSX precompiled:", JSX_FILES.length, "Dateien");
 
@@ -208,7 +217,10 @@ async function main() {
     s = productionReact(s);
     s = rewriteUrls(s, true);
     s = s.replace(/<script src="https:\/\/unpkg\.com\/@babel\/standalone[^>]*><\/script>\n?/, "");
-    s = s.replace(/<script type="text\/babel" src="([a-z-]+)\.jsx"><\/script>/g, '<script src="/assets/js2/$1.js"></script>');
+    /* Versionskennung: /assets/* wird ein Jahr lang im Browser gehalten (vercel.json),
+       ohne Kennung saehe man nach einer Aenderung weiter den alten Stand. */
+    s = s.replace(/<script type="text\/babel" src="([a-z-]+)\.jsx"><\/script>/g, `<script src="/assets/js2/$1.js?v=${V2_STAMP}"></script>`);
+    s = ohneStriche(s);
     s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} · Variante 2</title>`);
     s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
     s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n</head>");
@@ -266,6 +278,7 @@ async function main() {
       /* Einheiten-Links der Projekt-Ueberseite bleiben in der geschuetzten UX-Vorschau */
       s = s.replaceAll('href="projekt.html"', 'href="/ux/objekt"');
       s = rewriteUrls(s, kit.endsWith("2"));
+      if (kit.endsWith("2") && f.endsWith(".html")) s = ohneStriche(s);
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
       /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
          relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite).

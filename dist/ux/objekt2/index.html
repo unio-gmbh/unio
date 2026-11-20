@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Traum Penthouse in Hernals — UNIO</title>
+<title>Traum Penthouse in Hernals, UNIO</title>
 <link rel="stylesheet" href="/styles.css">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon/favicon-192.png">
@@ -136,7 +136,7 @@
   .energy .mono{display:block;margin-top:5px;}
   .energy p{font-size:14.5px;font-weight:600;}
 
-  /* ===== RAUMPROFIL (berechnet) — Lineal-Skalen im Radio-Dial-Stil ===== */
+  /* ===== RAUMPROFIL (berechnet), Lineal-Skalen im Radio-Dial-Stil ===== */
   .rp{display:flex;flex-direction:column;gap:26px;}
   .rpitem{display:grid;grid-template-columns:1fr auto;gap:6px 28px;align-items:end;}
   .rpitem .lab{font-size:13.5px;font-weight:600;}
@@ -167,7 +167,7 @@
     background:none;border:none;padding:10px;font-size:13.5px;font-weight:600;color:var(--ink);
     cursor:pointer;font-family:inherit;}
 
-  /* ===== MARKTDATEN — hell, Orange als Akzent ===== */
+  /* ===== MARKTDATEN, hell, Orange als Akzent ===== */
   .stat{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;
     position:relative;margin-top:12px;}
   .stat .shead2{display:flex;align-items:center;gap:10px;}
@@ -588,7 +588,7 @@
         </div>
         <!-- Makler am Objekt: eine Zeile, bevor die erste Zahl kommt -->
         <div class="mksig">
-          <img src="/assets/team/makler/wenzel-waechter.jpg" alt="">
+          <img src="/assets/team/makler/wenzel-waechter.jpg?v=3" alt="">
           <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
           <button type="button" data-mkfrage>Frage stellen</button>
         </div>
@@ -616,7 +616,7 @@
         <h2>Über dieses Objekt</h2>
         <p>Dieses außergewöhnliche Penthouse in Hernals vereint großzügigen Wohnkomfort mit
         spektakulären Außenflächen und unverbaubarem Blick auf Kahlenberg und Stephansdom.
-        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen — inklusive
+        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen, inklusive
         direktem Liftzugang in die Wohnung.</p>
         <p>Das Raumkonzept umfasst ein großzügiges Wohnzimmer mit Kamin, einen Masterbereich
         mit freistehender Badewanne sowie ein Gästezimmer. Bei Bedarf lassen sich zwei
@@ -816,7 +816,7 @@
   <div class="back" id="mkback"></div>
   <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
     <div class="kopf">
-      <img id="mkfoto" src="/assets/team/makler/wenzel-waechter.jpg" alt=""
+      <img id="mkfoto" src="/assets/team/makler/wenzel-waechter.jpg?v=3" alt=""
         style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
       <div>
         <b id="mkname">Wenzel Wächter</b>
@@ -892,9 +892,9 @@
   <h2>Ähnliche Objekte</h2>
   <div class="simgrid">
     <a class="simcard" href="/ux/objekt2?von=objekt&obj=obenzwei">
-      <img src="/assets/img/obenzwei.jpg" alt="ObenZwei — Penthouse, Wien 1020" loading="lazy">
+      <img src="/assets/img/obenzwei.jpg" alt="ObenZwei, Penthouse, Wien 1020" loading="lazy">
       <span class="scrim" aria-hidden="true"></span>
-      <span class="cap"><b>ObenZwei — Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
+      <span class="cap"><b>ObenZwei, Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
     </a>
     <a class="simcard" href="/ux/objekt2?von=objekt&obj=beheim">
       <img src="/assets/img/beheim.jpg" alt="Penthouse Beheim, Wien 1170" loading="lazy">
@@ -908,7 +908,7 @@
     </a>
   </div>
   <div class="ownerhook">
-    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist — kostenlos, datenbasiert, in 48 Stunden.</p>
+    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist, kostenlos, datenbasiert, in 48 Stunden.</p>
     <a href="https://bewertung.unio.at" rel="noopener">Immobilie bewerten <span aria-hidden="true">→</span></a>
   </div>
 </section>
@@ -1124,7 +1124,7 @@ const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,ge
     document.getElementById('rpv1').innerHTML=Math.round(v)+'<em>m²</em>';
     document.getElementById('rpi1').dataset.pos=(pos*100).toFixed(1);
     document.getElementById('rpn1').textContent=
-      v<25?'Effiziente Grundrisse — viel Raumprogramm auf kompakter Fläche.'
+      v<25?'Effiziente Grundrisse, viel Raumprogramm auf kompakter Fläche.'
       :v<=35?'Ausgewogenes Verhältnis von Fläche und Zimmern.'
       :'Sehr großzügige Raumzuschnitte.';
   }
@@ -1136,7 +1136,7 @@ const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,ge
       (P.aussenflaeche||0)===0?'Keine eigenen Freiflächen.'
       :a<10?'Geringer Freiflächenanteil.'
       :a<=25?'Solider Freiflächenanteil.'
-      :'Außergewöhnlich viel Freifläche — hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
+      :'Außergewöhnlich viel Freifläche, hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
     if(P.kaufpreis>0){
       const p1=P.kaufpreis/P.wohnflaeche,
             p2=P.kaufpreis/(P.wohnflaeche+(P.aussenflaeche||0)*P.gewicht);
@@ -1371,7 +1371,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     bar.insertBefore(fr, bar.firstChild);
   }
 
-  /* Scroll-Through: naechstes Objekt am Seitenende — nur auf Touch-Geraeten.
+  /* Scroll-Through: naechstes Objekt am Seitenende, nur auf Touch-Geraeten.
      Am Desktop endet die Seite am Footer (Rueckweg: die Explore-Pill links unten). */
   try {
     var next = JSON.parse(sessionStorage.getItem("unio_explore_next") || "null");
@@ -1520,7 +1520,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   }
   function chatMsg(ich, txt){
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "/assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "/assets/team/makler/wenzel-waechter.jpg?v=3", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
   }
@@ -1889,7 +1889,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     input.value = "";
     var chats = lese("unio_ek_chats", {});
     if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · Traum Penthouse in Hernals",
-      img: "/assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+      img: "/assets/team/makler/wenzel-waechter.jpg?v=3", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
     zeichne();

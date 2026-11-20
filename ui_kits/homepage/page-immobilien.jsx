@@ -94,8 +94,8 @@ function SucheIm() {
           <Bi variant={showMap ? "signal" : "ghost"} size="sm" onClick={() => setShowMap(!showMap)}>{showMap ? "Karte ausblenden" : "Auf der Karte ansehen"}</Bi>
         </div>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.08fr) minmax(0, 0.92fr)", gap: 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
-        <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (window.IST_V2 ? `${window.spalten(7)} minmax(0, 1fr)` : "minmax(0, 1.08fr) minmax(0, 0.92fr)"), gap: window.IST_V2 ? 24 : 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
+        <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: window.IST_V2 ? 24 : 20 }}>
           {treffer.map((o, i) => (
             <Reveal key={o.t} delay={(i % 2) * 70}>
               <div id={"objekt-" + i}>
