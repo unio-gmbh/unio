@@ -85,7 +85,8 @@ function Reveal({ children, delay = 0, style }) {
 const NAV_LINKS = [
   ["Makler", "makler.html"],
   ["Bauträger", "bautraeger.html"],
-  ["Immobilien", SEARCH_URL],
+  /* Variante 2 und 3: zur neuen Suche im Repo. Variante 1 fuehrt wie live in die App. */
+  ["Immobilien", typeof window !== "undefined" && window.UNIO_V2 === true ? "immobilien.html" : SEARCH_URL],
   ["Story", "story.html"],
   ["Kontakt", "kontakt.html"],
 ];
