@@ -432,128 +432,95 @@ function Struktur() {
 }
 
 /* ---------- Bewegte Bilder: das Haus steht still, nur die Menschen gehen ----------
-   Zweite Fassung der Effekt-Studie (die erste mit kuenstlichen Gestalten ist verworfen).
-   Grundlage: drei Strassenansichten von Daniel (assets/img/strasse-fruehling.jpg, strasse-herbst.jpg, eck-cafe.jpg),
-   daraus je ein kurzer Film ohne Kamerabewegung (assets/video/leb-*.mp4). Standbild und Film sind deckungsgleich.
+   Grundlage: drei Strassenansichten von Daniel, daraus je zwei Filme ohne Kamerabewegung (assets/video/leb-*.mp4):
+   "ruhig" (wie das Ausgangsbild) und "circle" (warmes Licht, grosse unscharfe Passanten vorn, wie die Makler-Filme).
+   Bausteine LebBild, StoererBreit, StoererKarte, StoererZeile liegen in site-shared.jsx und laufen auf /immobilien2.
    Vorbilder, selbst angesehen am 20.11.2026: airbnb.com (Hinweiskarte in der Trefferliste), compass.com (Vorab-Objekte),
-   apple.com (ein Film, der nur laeuft, wenn er sichtbar ist), aman.com (ruhige breite Bilder zwischen Abschnitten).
-   Die drei Bilder sind Beispiele ohne Projektnamen, deshalb stehen hier keine Namen, Adressen oder Preise. */
-const LB_RUHIG = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-const LB = { fruehling: ["leb-fruehling.jpg", "leb-fruehling.mp4", "Straßenansicht mit Altbau und ausgebautem Dach"], herbst: ["leb-herbst.jpg", "leb-herbst.mp4", "Straßenansicht im Herbst mit Neubau und Altbau"], cafe: ["leb-cafe.jpg", "leb-cafe.mp4", "Eckhaus mit Café im Erdgeschoss"] };
-
-/* Standbild, darueber der Film. wann: "sicht" (laeuft, solange sichtbar), "hover" (laeuft nur bei an=true), "nie" */
-function LebBild({ bild, wann = "sicht", an, pos, stil }) {
-  const [img, film, alt] = LB[bild];
-  const ref = React.useRef(null);
-  const [sicht, setSicht] = React.useState(false);
-  const [bereit, setBereit] = React.useState(false);
-  React.useEffect(() => {
-    if (wann !== "sicht" || LB_RUHIG || !ref.current || typeof IntersectionObserver !== "function") return;
-    const io = new IntersectionObserver(([e]) => setSicht(e.isIntersecting), { threshold: 0.35 });
-    io.observe(ref.current);
-    return () => io.disconnect();
-  }, [wann]);
-  const laeuft = !LB_RUHIG && (wann === "sicht" ? sicht : wann === "hover" ? !!an : false);
-  const vid = React.useRef(null);
-  React.useEffect(() => { const v = vid.current; if (!v) return; if (laeuft) { const q = v.play(); if (q && q.catch) q.catch(() => {}); } else v.pause(); }, [laeuft, bereit]);
-  const voll = { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: pos || "center" };
-  return (
-    <div ref={ref} style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", ...stil }}>
-      <img src={"../../assets/video/" + img} alt={alt} loading="lazy" style={voll} />
-      {!LB_RUHIG && wann !== "nie" && (sicht || an || bereit) && <video ref={vid} src={"../../assets/video/" + film} muted loop playsInline preload="auto" aria-hidden="true" onCanPlay={() => setBereit(true)} style={{ ...voll, opacity: bereit && (laeuft || wann === "sicht") ? 1 : 0, transition: "opacity 500ms ease" }}></video>}
-    </div>
-  );
-}
-const lbVerlauf = (richtung) => ({ position: "absolute", inset: 0, background: richtung === "links" ? "linear-gradient(90deg, rgba(11,10,9,0.62), rgba(11,10,9,0.1) 62%, rgba(11,10,9,0))" : "linear-gradient(180deg, rgba(11,10,9,0) 40%, rgba(11,10,9,0.66))" });
+   apple.com und rivian.com (Film als Startbild, laeuft nur, wenn sichtbar), aman.com (ruhige breite Bilder).
+   Die Bilder sind Beispiele ohne Projektnamen, deshalb stehen hier keine Namen, Adressen oder Preise. */
+const { LebBild, StoererBreit, StoererKarte, StoererZeile } = window;
+const lbVerlauf = (richtung) => ({ position: "absolute", inset: 0, background: richtung === "links" ? "linear-gradient(90deg, rgba(11,10,9,0.66), rgba(11,10,9,0.14) 62%, rgba(11,10,9,0))" : "linear-gradient(180deg, rgba(11,10,9,0.12) 30%, rgba(11,10,9,0.7))" });
 const lbGross = { margin: 0, font: "500 clamp(26px, 3vw, 48px)/1.04 " + G, letterSpacing: "-0.03em", color: "var(--text-inverse)" };
 const lbKlein = { margin: 0, font: "400 16px/1.55 " + G, color: "rgba(247,245,241,0.86)" };
 const LbLink = ({ children, hell }) => <span style={{ display: "inline-flex", alignItems: "center", gap: 8, font: "500 15px " + G, color: hell ? "var(--text-inverse)" : "var(--ink)", borderBottom: "1px solid currentColor", paddingBottom: 3 }}>{children} <span aria-hidden="true" style={{ font: "13px var(--font-mono)" }}>→</span></span>;
-const lbListe = { padding: "44px 6vw", display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 24 };
-const lbListeMob = { padding: "44px 6vw", display: "grid", gridTemplateColumns: "1fr", gap: 24 };
+const lbChip = (an) => ({ height: 38, padding: "0 16px", borderRadius: 999, cursor: "pointer", border: "1px solid var(--hairline-dark)", background: an ? "var(--ink)" : "transparent", color: an ? "var(--paper)" : "var(--ink)", font: "500 14px " + G, whiteSpace: "nowrap" });
 
-/* L1 Stoerer in der Trefferliste */
-function Stoerer1A() {
+/* H Startscreens: derselbe Aufbau, Film und Stil umschaltbar */
+const LB_ORTE = [["fruehling", "Straße"], ["herbst", "Herbst"], ["cafe", "Eckhaus"]];
+function StartScreen({ zeilen, text, knopf, zweiter, start = "herbst" }) {
   const mob = vMob();
-  return (
-    <div style={mob ? lbListeMob : lbListe}>
-      <VCard o={VDB[1]} /><VCard o={VDB[2]} />
-      <a href="#effekt" style={{ gridColumn: mob ? "auto" : "span 2", position: "relative", display: "block", minHeight: 300, borderRadius: "var(--r-card)", overflow: "hidden", textDecoration: "none" }}>
-        <LebBild bild="herbst" stil={{ position: "absolute", inset: 0 }} />
-        <div aria-hidden="true" style={lbVerlauf("links")}></div>
-        <div style={{ position: "absolute", left: 28, bottom: 26, right: 28, maxWidth: 380 }}>
-          <span className="u-label" style={{ fontSize: 10, color: "rgba(247,245,241,0.8)" }}>Für Eigentümer</span>
-          <p style={{ ...lbGross, fontSize: "clamp(24px, 2.3vw, 36px)", marginTop: 10 }}>Du willst verkaufen?</p>
-          <p style={{ ...lbKlein, margin: "10px 0 16px" }}>Erfahre in wenigen Minuten, was deine Immobilie wert ist.</p>
-          <LbLink hell>Immobilie kostenlos bewerten</LbLink>
-        </div>
-      </a>
-      <VCard o={VDB[0]} /><VCard o={VDB[4]} /><VCard o={VDB[3]} /><VCard o={VDB[5]} />
-    </div>
-  );
-}
-function Stoerer1B() {
-  const mob = vMob();
-  const [an, setAn] = React.useState(false);
-  return (
-    <div style={mob ? lbListeMob : lbListe}>
-      <VCard o={VDB[1]} /><VCard o={VDB[2]} />
-      <a href="#effekt" onMouseEnter={() => setAn(true)} onMouseLeave={() => setAn(false)} style={{ display: "flex", flexDirection: "column", textDecoration: "none", background: "var(--ink)", borderRadius: "var(--r-card)", padding: 8 }}>
-        <LebBild bild="fruehling" wann="hover" an={an} pos="30% center" stil={{ height: 210, borderRadius: "calc(var(--r-card) - 8px)" }} />
-        <div style={{ padding: "16px 16px 14px", display: "flex", flexDirection: "column", flex: 1 }}>
-          <div style={{ font: "500 21px/1.15 " + G, letterSpacing: "-0.02em", color: "var(--text-inverse)" }}>Zuerst bei UNIO</div>
-          <div style={{ font: "400 15px/1.4 " + G, color: "rgba(247,245,241,0.72)", marginTop: 6 }}>Projekte vor dem Vermarktungsstart</div>
-          <div style={{ marginTop: "auto", paddingTop: 13, borderTop: "1px solid rgba(247,245,241,0.18)" }}><span style={{ font: "500 15px " + G, color: "var(--signal)" }}>Vormerken →</span></div>
-        </div>
-      </a>
-      <VCard o={VDB[0]} />
-    </div>
-  );
-}
-function Stoerer1C() {
-  const mob = vMob();
+  const [ort, setOrt] = React.useState(start);
+  const [stil, setStil] = React.useState("ruhig");
+  const bild = stil === "circle" ? ort + "-circle" : ort;
   return (
     <div style={{ padding: "44px 6vw" }}>
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, minmax(0, 1fr))", gap: 24 }}><VCard o={VDB[1]} /><VCard o={VDB[2]} /><VCard o={VDB[0]} /><VCard o={VDB[4]} /></div>
-      <a href="#effekt" style={{ margin: "24px 0", display: "flex", alignItems: "center", gap: 24, padding: 8, paddingRight: 28, borderRadius: "var(--r-card)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", background: "var(--surface-raised)", textDecoration: "none", flexWrap: mob ? "wrap" : "nowrap" }}>
-        <LebBild bild="cafe" pos="60% 70%" stil={{ flex: "none", width: mob ? "100%" : vsp(3), height: 112, borderRadius: "calc(var(--r-card) - 8px)" }} />
-        <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: "block", font: "500 20px/1.2 " + G, letterSpacing: "-0.015em", color: "var(--ink)" }}>Nichts Passendes dabei?</span>
-          <span style={{ display: "block", font: "400 15px/1.5 " + G, color: "var(--text-muted)", marginTop: 5 }}>Sag uns, was du suchst. Ein Makler aus dem CIRCLE meldet sich, sobald es das gibt.</span>
-        </span>
-        <LbLink>Suchauftrag anlegen</LbLink>
-      </a>
-      <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, minmax(0, 1fr))", gap: 24 }}><VCard o={VDB[3]} /><VCard o={VDB[5]} /><VCard o={VDB[1]} /><VCard o={VDB[2]} /></div>
+      <div style={{ position: "relative", height: mob ? 560 : "min(86vh, 820px)", minHeight: 520, borderRadius: 24, overflow: "hidden", background: "var(--ink)" }}>
+        <LebBild bild={bild} stil={{ position: "absolute", inset: 0 }} />
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.28), rgba(11,10,9,0.05) 34%, rgba(11,10,9,0.72))" }}></div>
+        <div style={{ position: "absolute", left: mob ? 22 : 44, right: mob ? 22 : 44, bottom: mob ? 26 : 44, display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 7fr) minmax(0, 5fr)", gap: 24, alignItems: "end" }}>
+          <h3 style={{ margin: 0, font: `500 ${mob ? "clamp(38px, 11vw, 56px)" : "clamp(48px, 6vw, 108px)"}/0.96 ` + G, letterSpacing: "-0.04em", color: "var(--text-inverse)" }}>
+            {zeilen.map((z, k) => <span key={z} style={{ display: "block", whiteSpace: "nowrap" }}>{z}{k === zeilen.length - 1 && <span style={{ color: "var(--signal)" }}>.</span>}</span>)}
+          </h3>
+          <div>
+            <p style={{ ...lbKlein, fontSize: 17, maxWidth: 440 }}>{text}</p>
+            <div style={{ display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }}>
+              <VBtn size="lg" variant="paper" knob>{knopf}</VBtn>
+              {zweiter && <VBtn size="lg" variant="glass" tone="dark">{zweiter}</VBtn>}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+        <span style={{ font: "400 15px " + G, color: "var(--text-muted)", marginRight: 4 }}>Stil</span>
+        {[["ruhig", "Ruhig"], ["circle", "Wie die Makler-Filme"]].map(([k, t]) => <button key={k} type="button" aria-pressed={stil === k} onClick={() => setStil(k)} style={lbChip(stil === k)}>{t}</button>)}
+        <span style={{ font: "400 15px " + G, color: "var(--text-muted)", margin: "0 4px 0 18px" }}>Bild</span>
+        {LB_ORTE.map(([k, t]) => <button key={k} type="button" aria-pressed={ort === k} onClick={() => setOrt(k)} style={lbChip(ort === k)}>{t}</button>)}
+      </div>
+    </div>
+  );
+}
+/* Alle sechs Filme nebeneinander */
+function FilmVergleich() {
+  const mob = vMob();
+  return (
+    <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, minmax(0, 1fr))", gap: 24 }}>
+      {["", "-circle"].map((s) => LB_ORTE.map(([k, t]) => (
+        <div key={k + s}>
+          <LebBild bild={k + s} stil={{ aspectRatio: "16 / 9", borderRadius: 16 }} />
+          <div style={{ font: "400 14px " + G, color: "var(--text-muted)", marginTop: 10 }}>{t}, {s ? "wie die Makler-Filme" : "ruhig"}</div>
+        </div>
+      )))}
     </div>
   );
 }
 
-/* L2 Teaser zwischen Abschnitten */
-function Teaser2A() {
+/* L1 Stoerer in der Trefferliste (so auf /immobilien2 eingebaut) */
+function StoererListe() {
+  const mob = vMob();
+  const breit = { gridColumn: mob ? "auto" : "span 2" };
   return (
-    <div style={{ padding: "44px 6vw" }}>
-      <a href="#effekt" style={{ position: "relative", display: "block", aspectRatio: "21 / 9", minHeight: 320, borderRadius: 24, overflow: "hidden", textDecoration: "none" }}>
-        <LebBild bild="herbst" pos="center 62%" stil={{ position: "absolute", inset: 0 }} />
-        <div aria-hidden="true" style={lbVerlauf()}></div>
-        <div style={{ position: "absolute", left: 32, right: 32, bottom: 30, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
-          <p style={lbGross}>Entdecke weitere Immobilien<br />in unserer Suche.</p>
-          <span style={{ flex: "none", height: 52, padding: "0 26px", borderRadius: 999, display: "inline-flex", alignItems: "center", background: "var(--paper)", color: "var(--ink)", font: "500 16px " + G }}>Alle Immobilien</span>
-        </div>
-      </a>
+    <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(4, minmax(0, 1fr))", gap: 24 }}>
+      <VCard o={VDB[0]} /><VCard o={VDB[1]} />
+      <StoererBreit stil={breit} />
+      <VCard o={VDB[2]} /><StoererKarte /><VCard o={VDB[3]} /><VCard o={VDB[4]} />
+      <StoererZeile stil={{ gridColumn: mob ? "auto" : "span 4" }} />
     </div>
   );
 }
-function Teaser2B() {
+
+/* Startseite */
+function Tueren({ drei }) {
   const mob = vMob();
   const [an, setAn] = React.useState(-1);
-  const tueren = [["fruehling", "Ich suche.", "Jedes Objekt wird von einem Menschen betreut.", "Objekte ansehen", "30% center"], ["cafe", "Ich verkaufe.", "Volle Transparenz von der Bewertung bis zur Übergabe.", "Immobilie bewerten", "center"]];
+  const tueren = [["fruehling", "Ich suche.", "Jedes Objekt wird von einem Menschen betreut.", "Objekte ansehen", "30% center"], ["cafe", "Ich verkaufe.", "Volle Transparenz von der Bewertung bis zur Übergabe.", "Immobilie bewerten", "center"]].concat(drei ? [["herbst", "Ich baue.", "Makler und Marketing, verbunden zu einem System.", "Projekt prüfen lassen", "80% center"]] : []);
   return (
-    <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, minmax(0, 1fr))", gap: 24 }}>
+    <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : `repeat(${tueren.length}, minmax(0, 1fr))`, gap: 24 }}>
       {tueren.map(([b, t, s, l, pos], k) => (
-        <a key={t} href="#effekt" onMouseEnter={() => setAn(k)} onMouseLeave={() => setAn(-1)} style={{ position: "relative", display: "block", aspectRatio: "4 / 3", borderRadius: 24, overflow: "hidden", textDecoration: "none" }}>
+        <a key={t} href="#effekt" onMouseEnter={() => setAn(k)} onMouseLeave={() => setAn(-1)} style={{ position: "relative", display: "block", aspectRatio: drei ? "4 / 5" : "4 / 3", borderRadius: 24, overflow: "hidden", textDecoration: "none" }}>
           <LebBild bild={b} wann="hover" an={an === k} pos={pos} stil={{ position: "absolute", inset: 0 }} />
           <div aria-hidden="true" style={lbVerlauf()}></div>
           <div style={{ position: "absolute", left: 28, right: 28, bottom: 26 }}>
-            <p style={lbGross}>{t}</p>
+            <p style={{ ...lbGross, fontSize: drei ? "clamp(24px, 2.4vw, 38px)" : lbGross.fontSize }}>{t}</p>
             <p style={{ ...lbKlein, margin: "10px 0 16px", maxWidth: 380 }}>{s}</p>
             <LbLink hell>{l}</LbLink>
           </div>
@@ -562,22 +529,53 @@ function Teaser2B() {
     </div>
   );
 }
-function Teaser2C() {
-  const mob = vMob();
+function BreitesBild({ bild, pos, satz, knopf }) {
   return (
-    <div style={{ padding: "64px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : `${vsp(7)} minmax(0, 1fr)`, gap: 24, alignItems: "center" }}>
-      <LebBild bild="cafe" stil={{ aspectRatio: "3 / 2", borderRadius: 24 }} />
-      <div style={{ paddingLeft: mob ? 0 : "clamp(0px, 3vw, 56px)" }}>
-        <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>CIRCLE</span>
-        <p style={{ ...lbGross, color: "var(--ink)", marginTop: 14 }}>Makler, die ihr Viertel kennen.</p>
-        <p style={{ margin: "16px 0 24px", maxWidth: 400, font: "400 17px/1.65 " + G, color: "var(--text-muted)" }}>Hinter jedem Objekt steht ein Mensch aus dem CIRCLE. Lerne die Partner kennen.</p>
-        <LbLink>Alle Partner ansehen</LbLink>
+    <div style={{ padding: "44px 6vw" }}>
+      <div style={{ position: "relative", aspectRatio: "21 / 9", minHeight: 320, borderRadius: 24, overflow: "hidden" }}>
+        <LebBild bild={bild} pos={pos} stil={{ position: "absolute", inset: 0 }} />
+        <div aria-hidden="true" style={lbVerlauf()}></div>
+        <div style={{ position: "absolute", left: 32, right: 32, bottom: 30, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+          <p style={{ ...lbGross, maxWidth: 760 }}>{satz}</p>
+          {knopf && <VBtn size="lg" variant="paper" knob>{knopf}</VBtn>}
+        </div>
       </div>
     </div>
   );
 }
+/* Bild sieben Spalten, Inhalt fuenf Spalten */
+function BildUndText({ bild, marke, titel, text, link, kinder, rechts }) {
+  const mob = vMob();
+  const b = <LebBild bild={bild} stil={{ aspectRatio: "3 / 2", borderRadius: 24 }} />;
+  const t = (
+    <div style={{ padding: mob ? 0 : (rechts ? "0 clamp(0px, 3vw, 56px) 0 0" : "0 0 0 clamp(0px, 3vw, 56px)") }}>
+      {marke && <span className="u-label" style={{ fontSize: 10, color: "var(--text-muted)" }}>{marke}</span>}
+      <p style={{ ...lbGross, color: "var(--ink)", marginTop: 14 }}>{titel}</p>
+      {text && <p style={{ margin: "16px 0 0", maxWidth: 420, font: "400 17px/1.65 " + G, color: "var(--text-muted)" }}>{text}</p>}
+      {kinder}
+      {link && <div style={{ marginTop: 24 }}><LbLink>{link}</LbLink></div>}
+    </div>
+  );
+  return (
+    <div style={{ padding: "64px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : (rechts ? `minmax(0, 1fr) ${vsp(7)}` : `${vsp(7)} minmax(0, 1fr)`), gap: 24, alignItems: "center" }}>
+      {rechts && !mob ? <React.Fragment>{t}{b}</React.Fragment> : <React.Fragment>{b}{t}</React.Fragment>}
+    </div>
+  );
+}
+function BautraegerZahlen() {
+  return (
+    <div style={{ marginTop: 26, borderTop: "2px solid var(--ink)" }}>
+      {[["100 %", "Transparenz", "Jede Anfrage live in LENS"], ["80 %", "weniger Aufwand", "Vermarktung, Prüfung und Abwicklung übernehmen wir"]].map(([z, w, s]) => (
+        <div key={w} style={{ display: "grid", gridTemplateColumns: "96px minmax(0, 1fr)", gap: 16, padding: "14px 0", borderBottom: "1px solid var(--hairline-dark)", alignItems: "baseline" }}>
+          <span style={{ font: "500 26px/1 " + G, letterSpacing: "-0.02em", color: "var(--ink)", whiteSpace: "nowrap" }}>{z}</span>
+          <span><span style={{ display: "block", font: "500 16px/1.3 " + G, color: "var(--ink)" }}>{w}</span><span style={{ display: "block", font: "400 14.5px/1.5 " + G, color: "var(--text-muted)", marginTop: 3 }}>{s}</span></span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-/* L3 Karte */
+/* Karte */
 function Karte3A() {
   const mob = vMob();
   const [an, setAn] = React.useState(-1);
@@ -598,64 +596,33 @@ function Karte3A() {
     </div>
   );
 }
-function Karte3B() {
-  const mob = vMob();
-  return (
-    <div style={{ padding: "44px 6vw" }}>
-      <a href="#effekt" style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${vsp(8)} minmax(0, 1fr)`, gap: 0, textDecoration: "none", background: "var(--surface-raised)", borderRadius: 24, padding: 8, boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-        <LebBild bild="fruehling" stil={{ aspectRatio: "16 / 10", borderRadius: 16 }} />
-        <div style={{ display: "flex", flexDirection: "column", padding: mob ? "22px 16px 16px" : "28px 28px 24px 36px" }}>
-          <span className="u-label" style={{ fontSize: 10, color: "var(--signal-deep)" }}>Projekt im Fokus</span>
-          <p style={{ ...lbGross, color: "var(--ink)", fontSize: "clamp(26px, 2.6vw, 40px)", marginTop: 14 }}>Beispielprojekt</p>
-          <p style={{ margin: "14px 0 0", font: "400 16px/1.6 " + G, color: "var(--text-muted)" }}>Ein Projekt je Woche bekommt diesen Platz. Das Bild lebt, solange die Karte sichtbar ist.</p>
-          <div style={{ marginTop: "auto", paddingTop: 22 }}><LbLink>Einheiten ansehen</LbLink></div>
-        </div>
-      </a>
-    </div>
-  );
-}
-
-/* L4 Kleiner Stoerer in der Ecke */
-function Ecke4A() {
-  const [auf, setAuf] = React.useState(true);
-  return (
-    <div style={{ padding: "44px 6vw" }}>
-      <div style={{ position: "relative", height: 420, borderRadius: 24, overflow: "hidden", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-        <div aria-hidden="true" style={{ padding: "40px 40px 0", display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 24, opacity: 0.5 }}>{[0, 1, 2].map((k) => <div key={k}><div style={{ height: 150, borderRadius: 14, background: "var(--hairline-dark)" }}></div><div style={{ height: 12, width: "60%", borderRadius: 6, background: "var(--hairline-dark)", marginTop: 14 }}></div><div style={{ height: 10, width: "40%", borderRadius: 6, background: "var(--hairline-dark)", marginTop: 8 }}></div></div>)}</div>
-        {auf ? (
-          <div style={{ position: "absolute", right: 24, bottom: 24, width: 300, maxWidth: "calc(100% - 48px)", background: "var(--surface-raised)", borderRadius: 18, padding: 8, boxShadow: "var(--shadow-float), inset 0 0 0 1px var(--hairline-dark)" }}>
-            <LebBild bild="herbst" pos="78% center" stil={{ height: 130, borderRadius: 11 }} />
-            <button type="button" aria-label="Schließen" onClick={() => setAuf(false)} style={{ position: "absolute", right: 16, top: 16, width: 28, height: 28, borderRadius: "50%", border: 0, background: "rgba(11,10,9,0.55)", color: "var(--paper)", cursor: "pointer", font: "14px var(--font-mono)" }}>×</button>
-            <div style={{ padding: "12px 10px 8px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <span style={{ font: "500 15px/1.3 " + G, color: "var(--ink)" }}>Neues Projekt, bald in der Suche</span>
-              <span style={{ flex: "none", font: "500 14px " + G, color: "var(--signal-deep)" }}>Vormerken →</span>
-            </div>
-          </div>
-        ) : <button type="button" onClick={() => setAuf(true)} style={{ position: "absolute", right: 24, bottom: 24, height: 40, padding: "0 16px", borderRadius: 999, border: "1px solid var(--hairline-dark)", background: "var(--surface-raised)", cursor: "pointer", font: "500 14px " + G, color: "var(--ink)" }}>Störer wieder zeigen</button>}
-      </div>
-    </div>
-  );
-}
 
 function EffektSeite() {
   return (
     <div id="effekt">
-      <Gruppe nr="L1" titel="Störer in der Trefferliste" text="Die Suche bleibt ohne Hero. Dafür steht mitten in den Treffern ein einziges Element, in dem sich etwas bewegt: Das Haus steht still, nur die Menschen gehen." />
-      <Vorlage nr="L1" variante="A" titel="Breit, über zwei Plätze" was="Ersetzt den gestrichenen Abschnitt Verkaufen" vorbild="airbnb.com"><Stoerer1A /></Vorlage>
-      <Vorlage nr="L1" variante="B" titel="Im Format einer Objektkarte" was="Dunkel, lebt nur beim Darüberfahren" vorbild="compass.com"><Stoerer1B /></Vorlage>
-      <Vorlage nr="L1" variante="C" titel="Schmale Zeile zwischen den Reihen" was="Am leisesten, stört den Lesefluss kaum" vorbild="airbnb.com"><Stoerer1C /></Vorlage>
+      <Gruppe nr="H" titel="Startscreens mit Film" text="Derselbe Aufbau für drei Seiten. Unter jedem Bild lassen sich Stil und Motiv umschalten: ruhig wie dein Ausgangsbild oder wie die Makler-Filme." />
+      <Vorlage nr="H" variante="A" titel="Startseite" was="Zum Vergleich mit Hero A, D, E und F unter /2" vorbild="rivian.com, apple.com"><StartScreen start="herbst" zeilen={["Real Estate", "Finally Simple"]} text="Suchen, verkaufen, bauen: ein System, getragen von Menschen, die ihr Viertel kennen." knopf="Immobilien ansehen" zweiter="Immobilie bewerten" /></Vorlage>
+      <Vorlage nr="H" variante="B" titel="Bauträger" was="Ersetzt die zweigeteilte Karte" vorbild="rivian.com"><StartScreen start="fruehling" zeilen={["Projekte planbar", "und erfolgreich"]} text="Die stärksten Makler der Stadt, das beste Marketing und volle Transparenz: verbunden für deinen Abverkauf." knopf="Projekt prüfen lassen" /></Vorlage>
+      <Vorlage nr="H" variante="C" titel="Story" was="Die Stadt als Bühne" vorbild="apple.com"><StartScreen start="cafe" zeilen={["Move", "as one"]} text="Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie ein Unternehmen." knopf="Die Menschen ansehen" /></Vorlage>
+      <Vorlage nr="H" variante="Filme" titel="Alle sechs Filme" was="Oben ruhig, unten wie die Makler-Filme"><FilmVergleich /></Vorlage>
 
-      <Gruppe nr="L2" titel="Teaser zwischen Abschnitten" text="Für Startseite, CIRCLE und Story: ein ruhiges Bild, das zur Suche oder zu den Menschen führt." />
-      <Vorlage nr="L2" variante="A" titel="Breites Bild, Satz im Bild" was="Lebt, solange es sichtbar ist" vorbild="aman.com, apple.com"><Teaser2A /></Vorlage>
-      <Vorlage nr="L2" variante="B" titel="Zwei Türen" was="Suchen und Verkaufen, lebt beim Darüberfahren" vorbild="compass.com"><Teaser2B /></Vorlage>
-      <Vorlage nr="L2" variante="C" titel="Bild links, Text rechts" was="Sieben zu fünf Spalten" vorbild="aman.com"><Teaser2C /></Vorlage>
+      <Gruppe nr="L1" titel="Störer in der Trefferliste" text="So eingebaut auf /immobilien2: breit nach dem zweiten Objekt, orange Karte nach dem dritten, Zeile nach dem fünften." />
+      <Vorlage nr="L1" variante="A, B, C" titel="Gemischt zwischen den Treffern" was="Breit mit Knopf, Karte in Orange, schmale Zeile" vorbild="airbnb.com, compass.com"><StoererListe /></Vorlage>
 
-      <Gruppe nr="L3" titel="Karte" text="Dasselbe Prinzip auf der Objektkarte: Das Standbild und der Film sind deckungsgleich, beim Start springt nichts." />
-      <Vorlage nr="L3" variante="A" titel="Objektkarte, lebt beim Darüberfahren" was="Nur für Projekte, die einen Film haben" vorbild="airbnb.com"><Karte3A /></Vorlage>
-      <Vorlage nr="L3" variante="B" titel="Projekt im Fokus" was="Eine große Karte, immer in Bewegung" vorbild="compass.com, apple.com"><Karte3B /></Vorlage>
+      <Gruppe nr="ST" titel="Startseite" text="Drei Stellen, an denen ein lebendes Bild ein heutiges Element ersetzen kann." />
+      <Vorlage nr="ST" variante="A" titel="Zwei Türen" was="Suchen und Verkaufen, lebt beim Darüberfahren" vorbild="compass.com"><Tueren /></Vorlage>
+      <Vorlage nr="ST" variante="B" titel="Drei Türen" was="Ersetzt die Zielgruppen-Weiche" vorbild="compass.com, aman.com"><Tueren drei /></Vorlage>
+      <Vorlage nr="ST" variante="C" titel="Breites Bild vor den Objekten" was="Führt in die Suche" vorbild="aman.com, apple.com"><BreitesBild bild="herbst" pos="center 62%" satz={<span>Entdecke weitere Immobilien<br />in unserer Suche.</span>} knopf="Alle Immobilien" /></Vorlage>
+      <Vorlage nr="ST" variante="D" titel="Menschen hinter den Objekten" was="Führt zu den Partnern, vor dem CIRCLE-Streifen" vorbild="aman.com"><BildUndText bild="cafe" marke="CIRCLE" titel="Makler, die ihr Viertel kennen." text="Hinter jedem Objekt steht ein Mensch aus dem CIRCLE. Lerne die Partner kennen." link="Alle Partner ansehen" /></Vorlage>
 
-      <Gruppe nr="L4" titel="Kleiner Störer in der Ecke" text="Schwebt unten rechts über der Seite und lässt sich schließen. Nur für einen Anlass zur selben Zeit." />
-      <Vorlage nr="L4" variante="A" titel="Hinweis auf ein neues Projekt" was="Mit Kreuz schließen" vorbild="airbnb.com"><Ecke4A /></Vorlage>
+      <Gruppe nr="BT" titel="Bauträger" text="Das Projekt in seiner Straße, mit Leben davor: genau das Bild, das ein Bauträger von seinem Haus sehen will." />
+      <Vorlage nr="BT" variante="A" titel="Bild und Zahlen" was="Ersetzt den Abschnitt Nutzen" vorbild="aman.com, thefold.news"><BildUndText bild="fruehling" marke="Wenn du baust" titel="Dein Projekt, mitten im Leben." kinder={<BautraegerZahlen />} link="Projekt prüfen lassen" /></Vorlage>
+      <Vorlage nr="BT" variante="B" titel="Abschluss vor dem Formular" was="Ein Satz, ein Knopf" vorbild="rivian.com"><BreitesBild bild="herbst-circle" pos="center 60%" satz="Projekte planbar und erfolgreich." knopf="Projekt prüfen lassen" /></Vorlage>
+      <Vorlage nr="BT" variante="C" titel="Referenzen als lebende Karten" was="Je Projekt ein Film, lebt beim Darüberfahren" vorbild="airbnb.com"><Karte3A /></Vorlage>
+
+      <Gruppe nr="SY" titel="Story" text="Die Stadt als ruhiger Hintergrund für die großen Sätze." />
+      <Vorlage nr="SY" variante="A" titel="Satz im lebenden Bild" was="Ersetzt einen der festgehaltenen Abschnitte" vorbild="rivian.com, apple.com"><BreitesBild bild="cafe-circle" satz="Einzeln lindert man Symptome. Gemeinsam baut man ein System." /></Vorlage>
+      <Vorlage nr="SY" variante="B" titel="Text links, Bild rechts" was="Übergang zu den Menschen" vorbild="aman.com"><BildUndText rechts bild="cafe" marke="Story" titel="Move as one." text="Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie ein Unternehmen." link="Die Menschen ansehen" /></Vorlage>
     </div>
   );
 }

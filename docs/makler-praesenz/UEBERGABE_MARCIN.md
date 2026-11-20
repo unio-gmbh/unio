@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 11 (zusätzlich: bewegte Bilder als Störer, Teaser und Karte auf `/vorlagen2#effekt`, `/immobilien2` nur noch mit Suche) |
+| Stand dieses Dokuments | 20.11.2026, Version 12 (zusätzlich: Störer mit bewegten Bildern in der Suche `/immobilien2`, Startscreens mit Film und weitere Vorlagen auf `/vorlagen2#effekt`) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -183,29 +183,28 @@ CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
 
-### MP-27 Bewegte Bilder als Störer, Teaser und Karte (Version 11, ersetzt die Fassung aus Version 10)
+### MP-27 Bewegte Bilder: Störer in der Suche, Startscreens, Teaser (Version 12)
 
-Status: Vorschlag zur Auswahl · Aufwand: klein · Referenz gebaut: `/vorlagen2#effekt`
+Status: Störer gebaut auf `/immobilien2` · übrige Vorlagen zur Auswahl auf `/vorlagen2#effekt` · Aufwand: klein
 
-Die erste Fassung (künstliche Gestalten per CSS, Blende, Projektstart) hat Daniel verworfen und ist aus dem Repo entfernt. Neue Fassung: echte Straßenansichten, in denen das Haus still steht und nur die Menschen gehen.
+Prinzip: echte Straßenansichten, in denen das Haus still steht und nur die Menschen gehen. Die erste Fassung mit künstlichen Gestalten (Version 10) ist verworfen und entfernt.
 
-| Vorlage | Was | Verhalten |
+**Bausteine in `ui_kits/homepage/site-shared.jsx`**
+
+| Baustein | Was | Verhalten |
 |---|---|---|
-| L1 A | Breiter Störer in der Trefferliste über zwei Kartenplätze ("Du willst verkaufen?") | Film läuft, solange sichtbar |
-| L1 B | Störer im Format einer Objektkarte, dunkel ("Zuerst bei UNIO") | Film nur beim Darüberfahren |
-| L1 C | Schmale Zeile zwischen zwei Kartenreihen ("Nichts Passendes dabei?") | Film läuft, solange sichtbar |
-| L2 A | Breites Teaser-Bild 21:9 mit Satz und Knopf | solange sichtbar |
-| L2 B | Zwei Türen: Suchen und Verkaufen | beim Darüberfahren |
-| L2 C | Bild sieben Spalten, Text fünf Spalten | solange sichtbar |
-| L3 A | Objektkarte, deren Bild beim Darüberfahren lebt | beim Darüberfahren |
-| L3 B | Große Karte "Projekt im Fokus" | solange sichtbar |
-| L4 A | Kleiner Störer unten rechts, schließbar | solange sichtbar |
+| `LebBild` | `img` als Standbild, darüber `video` (stumm, Schleife, `playsInline`). Das Video wird erst eingehängt, wenn es gebraucht wird | `wann="sicht"`: läuft per `IntersectionObserver`, solange sichtbar. `wann="hover"`: läuft nur beim Darüberfahren. Bei `prefers-reduced-motion` nur das Standbild |
+| `StoererBreit` | Breiter Störer über zwei Kartenplätze: "Du willst verkaufen?", Knopf "Immobilie kostenlos bewerten" (Designsystem-Knopf, Variante `signal` mit Knauf, öffnet die Bewertung) | Film läuft, solange sichtbar |
+| `StoererKarte` | Störer im Format der Objektkarte auf Akzentfläche (`--signal`): "Zuerst bei UNIO", führt vorerst auf Kontakt | Film nur beim Darüberfahren |
+| `StoererZeile` | Schmale Zeile über die Listenbreite: "Nichts Passendes dabei?", Knopf "Suche beschreiben", führt vorerst auf Kontakt | Film läuft, solange sichtbar |
 
-Baustein: `LebBild` in `ui_kits/homepage/page-vorlagen.jsx`. Ein `img` als Standbild, darüber ein `video` (stumm, Schleife, `playsInline`), das erst geladen wird, wenn es gebraucht wird, und per `IntersectionObserver` oder beim Darüberfahren startet und stoppt. Das Standbild ist das erste Bild des Films, deshalb springt beim Start nichts. Bei `prefers-reduced-motion` bleibt nur das Standbild.
+**Einbau in der Suche** (`page-immobilien.jsx`, nur Variante 2): `StoererBreit` nach dem 2. Treffer, `StoererKarte` nach dem 3., `StoererZeile` nach dem 5. Bei weniger Treffern entfallen die späteren. Für die Plattform: dieselbe Regel in `/listing`, je Ergebnisseite höchstens einmal je Störer. "Vormerken" und "Suche beschreiben" brauchen später eigene Ziele (Vormerkliste, Suchauftrag).
 
-Dateien: `assets/video/leb-fruehling.mp4`, `leb-herbst.mp4`, `leb-cafe.mp4`, je mit `.jpg`. Die Filme sind aus drei Bildern von Daniel per Bild-KI erzeugt (5 Sekunden, Schleife mit Überblendung). Die Bilder sind Beispiele ohne Projektnamen, darum zeigen die Vorlagen keine Namen, Adressen oder Preise. Für die Plattform: am Objekt ein optionales Feld `film` (Adresse der mp4) und `film_poster`.
+`/immobilien2` zeigt nur die Suche: kein Hero, kein Abschnitt "Ich verkaufe". Der Einstieg für Eigentümer ist `StoererBreit`.
 
-Außerdem in Version 11: `/immobilien2` zeigt nur noch die Suche. Hero und der Abschnitt "Ich verkaufe" sind in Variante 2 entfernt. Der Hinweis für Eigentümer kann als Störer L1 A in die Trefferliste zurückkommen.
+**Filme**: `assets/video/leb-<name>.mp4` mit Standbild `leb-<name>.jpg` (erstes Bild des Films, deshalb springt beim Start nichts). Namen: `fruehling`, `herbst`, `cafe` (ruhig) und `fruehling-circle`, `herbst-circle`, `cafe-circle` (warmes Licht, große unscharfe Passanten vorn, wie die Makler-Filme). Erzeugt per Bild-KI aus drei Bildern von Daniel, 4,4 Sekunden, Schleife mit Überblendung, je 0,3 bis 0,6 MB. Für die Plattform: am Objekt optionale Felder `film` und `film_poster`.
+
+**Vorlagen zur Auswahl** (`/vorlagen2#effekt`): Startscreens mit Film für Startseite, Bauträger und Story (H A bis H C, Stil und Motiv umschaltbar), Startseite ST A bis ST D, Bauträger BT A bis BT C, Story SY A und SY B. Die Bilder sind Beispiele ohne Projektnamen, darum stehen dort keine Namen, Adressen oder Preise.
 
 ### MP-26 Vorlagen-Seite und Seitenstruktur (Version 9)
 
@@ -487,3 +486,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 9c | Hero-Karten von Bauträger und Story sind wieder so breit wie die Navigation (40 Pixel Rand). Die Umstellung auf den Rasterrand hatte sie schmaler als die Navigation gemacht. Beides wandert gemeinsam aufs Raster, sobald die neue Navigation (Vorlage 6A) gewählt ist. |
 | 20.11.2026 | 10 | Effekt-Studie: Der Effekt der Makler-Porträts als Baukasten für Objekte (MP-27). Neuer Reiter Effekt auf `/vorlagen2` mit sieben Vorlagen (Film, Ebene über jedem Foto, Galerie, Mensch und Objekt, Projektstart in drei Zuständen, Objektkarte, Seitenwechsel) und einer Liste von dreizehn Einsatzorten. Zwei Filme aus echten Projektbildern erzeugt. |
 | 20.11.2026 | 11 | Fassung aus Version 10 verworfen und entfernt. Neu: bewegte Bilder aus echten Straßenansichten als Störer, Teaser und Karte, neun Vorlagen L1 A bis L4 A (MP-27). `/immobilien2` ohne Hero und ohne zweiten Abschnitt, nur die Suche. |
+| 20.11.2026 | 12 | Störer in die Suche `/immobilien2` eingebaut: breit mit Designsystem-Knopf, Karte auf Akzentfläche statt dunkel, schmale Zeile (MP-27). Bausteine nach `site-shared.jsx` verschoben. Drei weitere Filme im Stil der Makler-Filme. Vorlagen: Startscreens mit Film für Startseite, Bauträger und Story, dazu je zwei bis vier Elemente pro Seite. |

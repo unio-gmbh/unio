@@ -861,10 +861,83 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
   });
 })();
 
+/* ---------- Bewegte Bilder (Variante 2) ----------
+   Das Haus steht still, nur die Menschen gehen. Standbild und Film sind deckungsgleich (leb-<name>.jpg ist das erste Bild
+   von leb-<name>.mp4). wann: "sicht" (laeuft, solange sichtbar), "hover" (laeuft nur bei an=true), "nie".
+   Namen: fruehling, herbst, cafe, dazu je eine Fassung im Stil der Makler-Filme: fruehling-circle, herbst-circle, cafe-circle. */
+const LEB_ALT = { fruehling: "Straßenansicht mit Altbau und ausgebautem Dach", herbst: "Straßenansicht im Herbst mit Neubau und Altbau", cafe: "Eckhaus mit Café im Erdgeschoss" };
+function LebBild({ bild, wann = "sicht", an, pos, stil }) {
+  const ruhig = U_RM;
+  const ref = React.useRef(null);
+  const vid = React.useRef(null);
+  const [sicht, setSicht] = React.useState(false);
+  const [bereit, setBereit] = React.useState(false);
+  React.useEffect(() => {
+    if (wann !== "sicht" || ruhig || !ref.current || typeof IntersectionObserver !== "function") return;
+    const io = new IntersectionObserver(([e]) => setSicht(e.isIntersecting), { threshold: 0.3 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [wann]);
+  const laeuft = !ruhig && (wann === "sicht" ? sicht : wann === "hover" ? !!an : false);
+  React.useEffect(() => { const v = vid.current; if (!v) return; if (laeuft) { const q = v.play(); if (q && q.catch) q.catch(() => {}); } else v.pause(); }, [laeuft, bereit]);
+  React.useEffect(() => { setBereit(false); }, [bild]);
+  const voll = { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: pos || "center" };
+  const basis = "../../assets/video/leb-" + bild;
+  return (
+    <div ref={ref} style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", ...stil }}>
+      <img src={basis + ".jpg"} alt={LEB_ALT[bild.replace("-circle", "")] || ""} loading="lazy" style={voll} />
+      {!ruhig && wann !== "nie" && (sicht || an || bereit) && <video key={bild} ref={vid} src={basis + ".mp4"} muted loop playsInline preload="auto" aria-hidden="true" onCanPlay={() => setBereit(true)} style={{ ...voll, opacity: bereit && (laeuft || wann === "sicht") ? 1 : 0, transition: "opacity 500ms ease" }}></video>}
+    </div>
+  );
+}
+/* Stoerer fuer die Trefferliste. Alle drei haben dieselbe Kartenrundung und sitzen auf dem Raster der Liste. */
+function StoererBreit({ bild = "herbst", stil }) {
+  return (
+    <div style={{ position: "relative", minHeight: 320, borderRadius: "var(--r-card)", overflow: "hidden", ...stil }}>
+      <LebBild bild={bild} stil={{ position: "absolute", inset: 0 }} />
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(11,10,9,0.66), rgba(11,10,9,0.14) 64%, rgba(11,10,9,0))" }}></div>
+      <div style={{ position: "absolute", left: 28, bottom: 28, right: 28, maxWidth: 400 }}>
+        <span className="u-label" style={{ fontSize: 10, color: "rgba(247,245,241,0.8)" }}>Für Eigentümer</span>
+        <p style={{ margin: "10px 0 0", font: "500 clamp(24px, 2.3vw, 36px)/1.05 var(--font-display)", letterSpacing: "-0.03em", color: "var(--text-inverse)" }}>Du willst verkaufen?</p>
+        <p style={{ margin: "10px 0 20px", font: "400 16px/1.55 var(--font-display)", color: "rgba(247,245,241,0.86)" }}>Erfahre in wenigen Minuten, was deine Immobilie wert ist.</p>
+        <Button variant="signal" knob data-track="stoerer_bewerten" onClick={() => window.open(BEWERTUNG_URL, "_blank")}>Immobilie kostenlos bewerten</Button>
+      </div>
+    </div>
+  );
+}
+function StoererKarte({ bild = "fruehling", pos = "30% center" }) {
+  const [an, setAn] = React.useState(false);
+  return (
+    <a href="kontakt.html" data-track="stoerer_vormerken" onMouseEnter={() => setAn(true)} onMouseLeave={() => setAn(false)} style={{ display: "flex", flexDirection: "column", height: "100%", boxSizing: "border-box", textDecoration: "none", background: "var(--signal)", borderRadius: "var(--r-card)", padding: 8 }}>
+      <LebBild bild={bild} wann="hover" an={an} pos={pos} stil={{ height: 210, flex: "none", borderRadius: "calc(var(--r-card) - 8px)" }} />
+      <div style={{ padding: "16px 16px 14px", display: "flex", flexDirection: "column", flex: 1 }}>
+        <div style={{ font: "500 21px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)", whiteSpace: "nowrap" }}>Zuerst bei UNIO</div>
+        <div style={{ font: "400 15px/1.4 var(--font-display)", color: "rgba(11,10,9,0.74)", marginTop: 6 }}>Projekte vor dem Vermarktungsstart</div>
+        <div style={{ marginTop: "auto", paddingTop: 13, borderTop: "1px solid rgba(11,10,9,0.22)", display: "flex", justifyContent: "space-between", alignItems: "baseline", font: "500 16px/1.3 var(--font-display)", color: "var(--ink)" }}><span>Vormerken</span><span aria-hidden="true" style={{ font: "14px var(--font-mono)" }}>→</span></div>
+      </div>
+    </a>
+  );
+}
+function StoererZeile({ bild = "cafe", pos = "60% 70%", stil }) {
+  const mob = useMobile();
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: mob ? 14 : 24, padding: 8, paddingRight: mob ? 8 : 20, borderRadius: "var(--r-card)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", background: "var(--surface-raised)", flexWrap: mob ? "wrap" : "nowrap", ...stil }}>
+      <LebBild bild={bild} pos={pos} stil={{ flex: "none", width: mob ? "100%" : 200, height: 112, borderRadius: "calc(var(--r-card) - 8px)" }} />
+      <span style={{ flex: 1, minWidth: 0, padding: mob ? "0 8px" : 0 }}>
+        <span style={{ display: "block", font: "500 20px/1.2 var(--font-display)", letterSpacing: "-0.015em", color: "var(--ink)" }}>Nichts Passendes dabei?</span>
+        <span style={{ display: "block", font: "400 15px/1.5 var(--font-display)", color: "var(--text-muted)", marginTop: 5 }}>Sag uns, was du suchst. Ein Makler aus dem CIRCLE meldet sich.</span>
+      </span>
+      <span style={{ flex: "none", padding: mob ? "0 0 8px 8px" : 0 }}><Button variant="ghost" size="sm" data-track="stoerer_suchauftrag" onClick={() => location.assign("kontakt.html")}>Suche beschreiben</Button></span>
+    </div>
+  );
+}
+
+
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
   MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet, spalten, RASTER_ABSTAND, IST_V2,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
+  LebBild, StoererBreit, StoererKarte, StoererZeile,
 });

@@ -2,7 +2,7 @@
 const {
   GlassPanel: GPi, Button: Bi, Input: Ini, Select: Seli,
 } = window.UNIODesignSystem_b6216a;
-const { SiteNav, SiteFooter, PageHero, Chapter, Reveal, PropCard, OBJEKT_DB } = window;
+const { SiteNav, SiteFooter, PageHero, Chapter, Reveal, PropCard, OBJEKT_DB, StoererBreit, StoererKarte, StoererZeile } = window;
 
 /* Kartenpanel (Leaflet, helle CARTO-Tiles): Marker = Signal-Punkte auf
    ungefährer Bezirkslage. Hover in der Liste hebt den Pin hervor,
@@ -96,13 +96,26 @@ function SucheIm() {
       )}
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (window.IST_V2 ? `${window.spalten(7)} minmax(0, 1fr)` : "minmax(0, 1.08fr) minmax(0, 0.92fr)"), gap: window.IST_V2 ? 24 : 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
         <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: window.IST_V2 ? 24 : 20 }}>
-          {treffer.map((o, i) => (
-            <Reveal key={o.t} delay={(i % 2) * 70}>
-              <div id={"objekt-" + i}>
-                <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
-              </div>
-            </Reveal>
-          ))}
+          {treffer.map((o, i) => {
+            const karte = (
+              <Reveal key={o.t} delay={(i % 2) * 70}>
+                <div id={"objekt-" + i}>
+                  <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
+                </div>
+              </Reveal>
+            );
+            /* Variante 2: Stoerer zwischen den Treffern. Nach dem 2. Objekt breit, nach dem 3. als Karte, nach dem 5. als Zeile. */
+            if (!window.IST_V2) return karte;
+            const breit = { gridColumn: mob ? "auto" : "span 2" };
+            return (
+              <React.Fragment key={o.t}>
+                {karte}
+                {i === 1 && <StoererBreit stil={breit} />}
+                {i === 2 && <StoererKarte />}
+                {i === 4 && <StoererZeile stil={breit} />}
+              </React.Fragment>
+            );
+          })}
           {treffer.length === 0 && (
             <div style={{ gridColumn: mob ? "auto" : "span 2", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
               Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
