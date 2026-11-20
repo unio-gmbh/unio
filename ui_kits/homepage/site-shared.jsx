@@ -288,16 +288,16 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
    In der Plattform kommt das aus agents[] des Objekts (siehe docs/makler-praesenz). */
 const MAKLER_BASIS = "https://www.unio.at/";
 const MAKLER_DB = {
-  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
-  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", ed: "../../assets/team/editorial/marcus-anthofer-weiss", region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
+  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", ed: "../../assets/team/editorial/lara-jonas", region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", ed: "../../assets/team/editorial/wenzel-waechter", region: "Wien", url: null },
+  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg", ed: "../../assets/team/editorial/nikita-neznamov", region: "Wien", url: null },
   "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
-  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", region: "Wien", url: null },
 };
-/* Sicherheits-Schalter: Auf den oeffentlichen Seiten sind Makler-Marke und CIRCLE-Gesichter AUS.
-   Sie erscheinen nur mit ?makler=1 in der Adresse (Vorschau fuer Abstimmung).
-   So kann ein versehentlicher Merge oder Build nichts live schalten.
-   Freigabe erst nach Entscheidung, siehe docs/makler-praesenz/UEBERGABE_MARCIN.md. */
-const MAKLER_SICHTBAR = typeof location !== "undefined" && /[?&]makler=1(&|$)/.test(location.search);
+/* Variante 2: Seiten mit einer 2 in der Adresse (/2, /makler2, /immobilien2 ...).
+   Der Build setzt dort window.UNIO_V2. Variante 1 bleibt unveraendert, dort sind
+   Makler-Kreis und CIRCLE-Gesichter aus. ?makler=1 schaltet sie lokal zum Testen ein. */
+const MAKLER_SICHTBAR = typeof window !== "undefined" && (window.UNIO_V2 === true || /[?&]makler=1(&|$)/.test(location.search));
 const maklerVon = (o) => (o && o.mk && MAKLER_DB[o.mk]) || null;
 const maklerInitialen = (name) => (name || "").split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
@@ -335,59 +335,76 @@ function MaklerMarke({ m, oben = 20, rechts = 20 }) {
     : <span title={m.name} style={st} {...ev}>{inhalt}</span>;
 }
 
-/* CIRCLE-Gesichter: die wachsende Makler-Community als ruhige Reihe von Kreisen.
-   Jeder Kreis fuehrt zur Partnerseite. Eine Komponente fuer Startseite (fuer="suchende")
-   und CIRCLE-Seite (fuer="makler", mit freiem Platz am Ende). Daten aus MAKLER_DB:
-   kommt ein Partner dazu, waechst die Reihe von selbst. */
-function CircleGesichter({ fuer = "suchende" }) {
-  const mob = useMobile();
-  const [hov, setHov] = React.useState("");
-  if (!MAKLER_SICHTBAR) return null;
-  const makler = fuer === "makler";
-  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] }));
-  const d = mob ? 84 : 96;
-  const kreis = (m) => (
-    <span style={{ display: "block", width: d, height: d, borderRadius: "50%", overflow: "hidden", background: "var(--paper-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
-      <img src={m.img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: m.pos || "center 30%", transform: hov === m.slug ? "scale(1.06)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-    </span>
-  );
-  const unter = (name, zeile) => (
+/* CIRCLE-Gesichter: die Community als Streifen grosser Editorial-Portraets (4:5).
+   Der Name steht IM Bild, einzeilig, unten links. Keine Kreise mit Text darunter.
+   Maus: das Portraet wird zum Film (5 Sekunden, stumm). Finger: der Film laeuft,
+   sobald die Karte im Bild steht. Karte fuehrt zur Partnerseite, wenn es eine gibt.
+   Eine Komponente fuer Startseite (fuer="suchende") und CIRCLE-Seite (fuer="makler").
+   Zeigt nur Partner mit Editorial-Material (Feld ed). */
+function CirclePortraet({ m, breite }) {
+  const [an, setAn] = React.useState(false);
+  const ref = React.useRef(null);
+  const vid = React.useRef(null);
+  const ruhig = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const touch = !!(window.matchMedia && matchMedia("(hover: none)").matches);
+  React.useEffect(() => {
+    if (!touch || ruhig || !ref.current || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((e) => setAn(e[0].intersectionRatio > 0.7), { threshold: [0, 0.7, 1] });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+  React.useEffect(() => {
+    const v = vid.current; if (!v) return;
+    if (an && !ruhig) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else { v.pause(); }
+  }, [an]);
+  const maus = touch ? {} : { onMouseEnter: () => setAn(true), onMouseLeave: () => setAn(false), onFocus: () => setAn(true), onBlur: () => setAn(false) };
+  const st = { position: "relative", flex: "none", width: breite, aspectRatio: "4 / 5", borderRadius: "var(--r-card)", overflow: "hidden", display: "block", textDecoration: "none", background: "var(--ink)", scrollSnapAlign: "start" };
+  const inhalt = (
     <React.Fragment>
-      <span style={{ display: "block", marginTop: 14, font: `500 ${mob ? 14 : 15.5}px/1.2 var(--font-display)`, letterSpacing: "-0.01em", color: "var(--ink)" }}>{name}</span>
-      <span className="u-label" style={{ display: "block", marginTop: 5, fontSize: 9, color: "var(--text-muted)" }}>{zeile}</span>
+      <img src={m.ed + ".jpg"} alt={"Porträt von " + m.name} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: an ? "scale(1.03)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
+      <video ref={vid} src={m.ed + ".mp4"} muted loop playsInline preload="none" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: an && !ruhig ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></video>
+      <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 52%, rgba(11,10,9,0.66) 100%)" }}></span>
+      <span style={{ position: "absolute", left: 20, right: 20, bottom: 18, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, color: "var(--text-inverse)" }}>
+        <span style={{ minWidth: 0 }}>
+          <span style={{ display: "block", font: "500 clamp(18px, 1.5vw, 22px)/1.15 var(--font-display)", letterSpacing: "-0.02em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
+          <span className="u-label" style={{ display: "block", marginTop: 6, fontSize: 9.5, color: "rgba(247,245,241,0.78)" }}>{m.region}</span>
+        </span>
+        {m.url && <span aria-hidden="true" style={{ flex: "none", font: "14px var(--font-mono)", opacity: an ? 1 : 0.55, transform: an ? "translate(2px,-2px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>↗</span>}
+      </span>
     </React.Fragment>
   );
-  const zelle = { flex: "none", width: d + (mob ? 28 : 34), scrollSnapAlign: "start", textDecoration: "none", display: "block" };
+  return m.url
+    ? <a ref={ref} href={m.url} aria-label={m.name + ", Profil ansehen"} style={st} {...maus}>{inhalt}</a>
+    : <div ref={ref} style={st} {...maus}>{inhalt}</div>;
+}
+function CircleGesichter({ fuer = "suchende" }) {
+  const mob = useMobile();
+  if (!MAKLER_SICHTBAR) return null;
+  const makler = fuer === "makler";
+  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.ed);
+  const breite = mob ? "72vw" : "calc((100% - 48px) / 4)";
   return (
     <section data-screen-label="CIRCLE Gesichter" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
-      <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: mob ? 44 : 64, alignItems: "end" }}>
-        <div>
-          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.4vw, 40px)" : "clamp(36px, 3.6vw, 56px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 32, flexWrap: "wrap", marginBottom: mob ? 36 : 64 }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.4vw, 40px)" : "clamp(40px, 4.2vw, 68px)"}/1.02 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             {makler ? <span>Der CIRCLE<br />wächst.</span> : <span>Hinter jedem Objekt<br />steht ein Mensch.</span>}
           </h2>
-          <p style={{ margin: "22px 0 0", maxWidth: 440, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)" }}>
-            {makler
-              ? "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte."
-              : "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar."}
-          </p>
-          <div style={{ marginTop: 30 }}>
-            {makler
-              ? <Button variant="signal" knob onClick={() => (location.hash = "bewerben")}>Platz im CIRCLE anfragen</Button>
-              : <Button variant="solid" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Button>}
+          <div style={{ maxWidth: 400 }}>
+            <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)" }}>
+              {makler
+                ? "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte."
+                : "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar."}
+            </p>
+            <div style={{ marginTop: 22 }}>
+              {makler
+                ? <Button variant="signal" knob onClick={() => (location.hash = "bewerben")}>Platz im CIRCLE anfragen</Button>
+                : <Button variant="solid" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Button>}
+            </div>
           </div>
         </div>
-        <div style={mob
-          ? { display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: "0 -6vw", padding: "4px 6vw" }
-          : { display: "flex", flexWrap: "wrap", rowGap: 36, padding: "4px 0" }}>
-          {liste.map((m) => m.url
-            ? <a key={m.slug} href={m.url} aria-label={m.name + ", Profil ansehen"} onMouseEnter={() => setHov(m.slug)} onMouseLeave={() => setHov("")} onFocus={() => setHov(m.slug)} onBlur={() => setHov("")} style={zelle}>{kreis(m)}{unter(m.name, m.region)}</a>
-            : <div key={m.slug} style={zelle}>{kreis(m)}{unter(m.name, m.region)}</div>)}
-          {makler && (
-            <a href="#bewerben" style={zelle}>
-              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: d, height: d, borderRadius: "50%", border: "1px dashed rgba(11,10,9,0.32)", font: "300 30px var(--font-display)", color: "var(--signal-deep)" }}>+</span>
-              {unter("Dein Platz", "Jetzt anfragen")}
-            </a>
-          )}
+        <div style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", scrollbarWidth: "none", margin: mob ? "0 -6vw" : 0, padding: mob ? "0 6vw" : 0, scrollPaddingLeft: mob ? "6vw" : 0 }}>
+          {liste.map((m) => <CirclePortraet key={m.slug} m={m} breite={breite} />)}
         </div>
       </div>
     </section>

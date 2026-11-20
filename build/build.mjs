@@ -84,17 +84,28 @@ const PAGES = [
   { src: "datenschutz.html", out: "datenschutz.html", path: "/datenschutz", title: "Datenschutzerklärung | UNIO", description: "Datenschutzerklärung der UNIO Website.", noindex: true, static: true },
 ];
 
+/* Variante 2 der Hauptseiten: Adresse mit 2, immer noindex */
+const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story|kontakt|projekt)\.html$/.test(p.src)).map((p) => ({
+  ...p, noindex: true, extraSchema: undefined,
+  out: p.src === "index.html" ? "2.html" : p.src.replace(".html", "2.html"),
+  path: p.path === "/" ? "/2" : p.path + "2",
+}));
+
 /* Wissens-Hub: statische Seiten unter /wissen (werden separat gepflegt) */
 const WISSEN_DIR = join(ROOT, "wissen");
 
 const JSX_FILES = ["site-shared.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx"];
 
 /* interne Links + Asset-Pfade auf saubere URLs umschreiben */
-function rewriteUrls(s) {
+/* v2 = Variante 2: gleiche Seiten unter Adressen mit einer 2 am Ende
+   (/2, /makler2, /immobilien2, /projekt2 ...). Variante 1 bleibt unveraendert. */
+const V2_SEITEN = "makler|bautraeger|immobilien|story|kontakt|projekt";
+function rewriteUrls(s, v2 = false) {
   s = s.replaceAll("../../assets/", "/assets/");
   s = s.replaceAll("../../styles.css", "/styles.css");
   s = s.replaceAll("../../_ds_bundle.js", "/assets/js/_ds_bundle.js");
-  s = s.replace(/(?<![\w/])index\.html/g, "/");
+  s = s.replace(/(?<![\w/])index\.html/g, v2 ? "/2" : "/");
+  if (v2) s = s.replace(new RegExp("\\b(" + V2_SEITEN + ")2?\\.html", "g"), "/$12");
   s = s.replace(/\b(makler|bautraeger|immobilien|story|kontakt|projekt|impressum|datenschutz|agb)\.html/g, "/$1");
   s = s.replaceAll('href="/#', 'href="/#');
   return s;
@@ -140,6 +151,9 @@ async function main() {
     /* IIFE-Wrapper: Babel-standalone gab jeder Datei einen eigenen Scope,
        als klassische Scripts würden top-level consts sonst global kollidieren. */
     writeFileSync(join(DIST, "assets", "js", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code) + "})();");
+    /* Variante 2: eigener Satz Skripte, interne Links zeigen auf die 2er-Adressen */
+    mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
+    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code, true) + "})();");
   }
   console.log("✓ JSX precompiled:", JSX_FILES.length, "Dateien");
 
@@ -166,6 +180,22 @@ async function main() {
     writeFileSync(join(DIST, p.out), s);
   }
   console.log("✓ Seiten transformiert:", PAGES.length);
+
+  /* 3a) Variante 2: dieselben Seiten unter /2, /makler2 ... (noindex, nicht in Sitemap).
+        Eigene Quelle <name>2.html, falls vorhanden, sonst die der Variante 1. */
+  for (const p of V2_PAGES) {
+    const eigene = p.src.replace(".html", "2.html");
+    let s = readFileSync(join(SRC, existsSync(join(SRC, eigene)) ? eigene : p.src), "utf8");
+    s = productionReact(s);
+    s = rewriteUrls(s, true);
+    s = s.replace(/<script src="https:\/\/unpkg\.com\/@babel\/standalone[^>]*><\/script>\n?/, "");
+    s = s.replace(/<script type="text\/babel" src="([a-z-]+)\.jsx"><\/script>/g, '<script src="/assets/js2/$1.js"></script>');
+    s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} · Variante 2</title>`);
+    s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
+    s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n</head>");
+    writeFileSync(join(DIST, p.out), s);
+  }
+  console.log("✓ Variante 2:", V2_PAGES.map((p) => p.path).join(" "));
 
   /* 3b) Wissens-Hub kopieren (bereits mit absoluten Pfaden geschrieben) */
   if (existsSync(WISSEN_DIR)) {
@@ -204,7 +234,9 @@ async function main() {
   /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
         Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
   const BUILD_STAMP = Date.now().toString(36);
-  const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"], ["print", "pager"], ["werkbank", "human"]];
+  const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"], ["print", "pager"], ["werkbank", "human"],
+    /* Variante 2 der Endkunden-Vorschauen */
+    ["objektseite2", "objekt2"], ["explore2", "explore2"]];
   for (const [kit, out] of UX_KITS) {
     const kitDir = join(ROOT, "ui_kits", kit);
     if (!existsSync(kitDir)) continue;
@@ -214,7 +246,7 @@ async function main() {
       let s = readFileSync(join(kitDir, f), "utf8");
       /* Einheiten-Links der Projekt-Ueberseite bleiben in der geschuetzten UX-Vorschau */
       s = s.replaceAll('href="projekt.html"', 'href="/ux/objekt"');
-      s = rewriteUrls(s);
+      s = rewriteUrls(s, kit.endsWith("2"));
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
       /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
          relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite).
@@ -308,7 +340,7 @@ ${wissenLinks.join("\n")}
     }).listen(4899);
 
     const browser = await puppeteer.launch({ channel: "chrome", headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
-    for (const p of PAGES.filter((x) => !x.static)) {
+    for (const p of [...PAGES, ...V2_PAGES].filter((x) => !x.static)) {
       const page = await browser.newPage();
       await page.setViewport({ width: 1440, height: 900 });
       await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);

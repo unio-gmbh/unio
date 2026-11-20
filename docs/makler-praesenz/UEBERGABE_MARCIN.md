@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 2 (reduzierte Fassung: ein Makler-Element pro Fläche) |
+| Stand dieses Dokuments | 20.11.2026, Version 3 (ein Makler-Element pro Fläche, CIRCLE-Gesichter als Porträt-Streifen, Variante 2 unter eigenen Adressen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -191,24 +191,37 @@ Vor der Umsetzung offen: Du oder Sie, Rollenbezeichnung, juristische Prüfung.
 
 ### MP-14 CIRCLE-Gesichter
 
-Status: Entwurf · Aufwand: klein · Referenz gebaut
+Status: Entwurf · Aufwand: klein bis mittel · Referenz gebaut (Fassung 3)
 
 Wo live: Startseite direkt nach der Objekt-Vorschau, und `/makler` nach dem Abschnitt zur eigenen Marke.
 
-Referenz: Komponente `CircleGesichter` in `ui_kits/homepage/site-shared.jsx`, Einbau in `homepage.jsx` (`fuer="suchende"`) und `page-makler.jsx` (`fuer="makler"`). Bilder: [Startseite](bilder/v2-circle-startseite.jpg), [CIRCLE-Seite](bilder/v2-circle-seite.jpg), [mobil](bilder/v2-circle-mobil.jpg).
+Referenz: Komponenten `CircleGesichter` und `CirclePortraet` in `ui_kits/homepage/site-shared.jsx`, Einbau in `homepage.jsx` (`fuer="suchende"`) und `page-makler.jsx` (`fuer="makler"`). Ansehen: `/2` und `/makler2`. Bilder: [Startseite](bilder/v3-circle-startseite.jpg), [CIRCLE-Seite](bilder/v3-circle-seite.jpg), [mobil](bilder/v3-circle-mobil.jpg).
 
-Aufbau: links Überschrift, ein Absatz, ein Knopf. Rechts eine Reihe von Kreisen (96 Pixel, mobil 84), darunter Name und Region. Jeder Kreis verlinkt auf die Maklerseite. Mobil seitlich schiebbar mit Einrasten. Auf der CIRCLE-Seite endet die Reihe mit einem gestrichelten leeren Kreis "Dein Platz", der zur Bewerbung führt.
+Aufbau:
+- Kopfzeile: links die Überschrift, rechts ein Absatz und ein Knopf.
+- Darunter ein Streifen aus Porträt-Karten im Format 4:5, vier nebeneinander am Desktop (Abstand 16 Pixel), am Handy 72 Prozent der Bildschirmbreite je Karte, seitlich schiebbar mit Einrasten.
+- In der Karte: Standbild vollflächig, darüber ein Film gleicher Größe (unsichtbar, bis er läuft), unten ein dunkler Verlauf. Name einzeilig unten links (18 bis 22 Pixel), darunter die Region in kleinen Versalien. Rechts unten ein kleiner Pfeil, wenn es eine Maklerseite gibt.
+- Kein Text außerhalb der Karte.
+
+Verhalten:
+- Desktop: Beim Überfahren oder Tastaturfokus blendet der Film ein und läuft in Schleife, das Bild wächst auf 103 Prozent. Beim Verlassen pausiert er.
+- Handy: Der Film läuft, sobald mindestens 70 Prozent der Karte sichtbar sind.
+- Bei eingestellter reduzierter Bewegung: nur Standbild.
+- Film erst laden, wenn er gebraucht wird (`preload="none"`). Stumm, ohne Bedienelemente.
+
+Dateien je Person: Standbild 928 mal 1152 Pixel (JPG, rund 70 KB) und Film 720 Pixel breit, 5 Sekunden, ohne Ton (MP4, rund 0,5 bis 0,7 MB). Vorlagen in `assets/team/editorial/`, Originale im Drive-Ordner von Daniel.
 
 Texte:
 - Startseite: "Hinter jedem Objekt steht ein Mensch." · "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar." · Knopf "CIRCLE entdecken"
 - CIRCLE-Seite: "Der CIRCLE wächst." · "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte." · Knopf "Platz im CIRCLE anfragen"
 
-Daten: alle Partner mit Foto und Freigabe für die öffentliche Darstellung, Reihenfolge nicht nach Leistung (Vorschlag: nach Eintritt oder zufällig je Aufruf). Braucht ein Feld "öffentlich zeigen" je Makler.
+Daten: Partner mit Editorial-Material und Freigabe für die öffentliche Darstellung. Reihenfolge nicht nach Leistung. Braucht je Makler die Felder Standbild, Film und "öffentlich zeigen".
 
 Abnahme:
-1. Ein neuer Partner mit Foto erscheint ohne Code-Änderung.
-2. Partner ohne Maklerseite erscheinen ohne Link.
-3. Ab etwa neun Partnern bricht die Reihe am Desktop sauber in eine zweite Zeile um.
+1. Kein Name bricht um oder wird abgeschnitten (längster heutiger Name: Marcus Anthofer-Weiss).
+2. Ein neuer Partner mit Material erscheint ohne Code-Änderung, ab fünf Karten lässt sich der Streifen am Desktop seitlich schieben.
+3. Partner ohne Maklerseite erscheinen ohne Link und ohne Pfeil.
+4. Die Seite lädt keine Filme, solange niemand eine Karte berührt oder sieht.
 
 ### MP-08 bis MP-13
 
@@ -227,22 +240,23 @@ Nicht Teil der Makler-Präsenz, aber beim Prüfen gesehen:
 7. Verkaufte Objekte auf Maklerseiten haben keinen Link. Als Leistungsnachweis wären sie mit einer einfachen Ansicht wertvoller.
 8. Objektseite: Fußzeile "© 2026 Unio" in gemischter Schreibweise, sonst "UNIO".
 
-## 7. Schutz vor versehentlichem Livegang
+## 7. Wo man die Entwürfe ansieht: Variante 2
 
-- Alle Änderungen liegen nur auf dem Branch `claude/vibrant-edison-th7jx0`. Kein Merge nach `main`, kein Pull Request.
-- Auf den öffentlichen Seiten des Repos (Startseite, `/makler`, `/immobilien`) sind Makler-Kreis und CIRCLE-Gesichter abgeschaltet. Sie erscheinen nur, wenn `?makler=1` an der Adresse hängt. Der Schalter heißt `MAKLER_SICHTBAR` in `ui_kits/homepage/site-shared.jsx`.
-- Explore-Feed und Objektseite liegen wie bisher im passwortgeschützten Bereich `/ux`.
-- Empfehlung für die Plattform: jedes Paket hinter einem eigenen Schalter ausliefern und erst auf einer Testumgebung zeigen.
+Die Entwürfe liegen als Variante 2 auf der Vorschau-Seite des Repos, `unio-verse.vercel.app`. Jede Seite gibt es zweimal: die bisherige Fassung unter der gewohnten Adresse, die neue unter derselben Adresse mit einer 2 am Ende. Innerhalb von Variante 2 führen alle Links wieder auf Variante 2, man kann also komplett durchklicken.
 
-So siehst du die Vorschau (nach lokalem Start oder auf einer Vorschau-Adresse des Branches):
+| Fläche | Variante 1 (unverändert) | Variante 2 (neu) |
+|---|---|---|
+| Startseite mit Makler-Kreis und CIRCLE-Gesichtern | `/` | `/2` |
+| CIRCLE-Seite mit Gesichtern | `/makler` | `/makler2` |
+| Objektsuche mit Makler-Kreis auf den Karten | `/immobilien` (leitet in die App) | `/immobilien2` |
+| Objektseite mit Makler-Zeile | `/projekt` | `/projekt2` |
+| Explore-Feed (Passwort wie bisher) | `/ux/explore` | `/ux/explore2` |
+| Objektseite mit Chat (Passwort wie bisher) | `/ux/objekt` | `/ux/objekt2` |
+| Übrige Seiten | `/bautraeger`, `/story`, `/kontakt` | `/bautraeger2`, `/story2`, `/kontakt2` (inhaltlich gleich) |
 
-| Fläche | Adresse |
-|---|---|
-| Startseite mit Makler-Kreis und CIRCLE-Gesichtern | `/?makler=1`, dann zu "Finde dein nächstes Zuhause" |
-| CIRCLE-Seite mit Gesichtern | `/makler?makler=1` |
-| Explore-Feed und Liste | `/ux/explore` |
-| Objektseite mit Makler-Zeile | `/ux/objekt` |
-| Quelltext | `ui_kits/homepage/`, `ui_kits/explore/`, `ui_kits/objektseite/` |
+Technik: Der Build (`build/build.mjs`) erzeugt die 2er-Seiten aus denselben Quellen, mit eigenem Skript-Satz unter `/assets/js2/` und dem Schalter `window.UNIO_V2`. Eigene Quelldateien für Variante 2 gibt es nur dort, wo ganze Seiten abweichen: `ui_kits/homepage/projekt2.html`, `ui_kits/explore2/`, `ui_kits/objektseite2/`. Die 2er-Seiten sind von Suchmaschinen ausgeschlossen und stehen nicht in der Sitemap.
+
+Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadurch nichts. Empfehlung für die Plattform: jedes Paket hinter einem eigenen Schalter ausliefern und erst auf einer Testumgebung zeigen.
 
 ## 8. Offene Fragen an Marcin
 
@@ -271,3 +285,4 @@ So siehst du die Vorschau (nach lokalem Start oder auf einer Vorschau-Adresse de
 |---|---|---|
 | 20.11.2026 | 1 | Erste Fassung. Live-Stand geprüft. Im Repo gebaut: Makler-Register, Makler-Kreis, Makler-Zeile auf Objektkarte, Startseite, Explore-Feed und Liste. Makler-Signatur und Makler-Modul auf der Objektseite. Erfundene Maklernamen entfernt, Klickziel korrigiert (vorher Anwerbeseite `/makler`). Schalter `?makler=1` für öffentliche Seiten. Pakete MP-01 bis MP-07 beschrieben. |
 | 20.11.2026 | 2 | Reduzierte Fassung nach Rückmeldung Daniel: ein Makler-Element pro Fläche. Karte: nur Kreis im Bild (MP-02 neu gefasst). Objektseite: eine randlose Zeile, Modul gestrichen (MP-04 neu, MP-05 verworfen). Explore: Kreis in der Aktionsleiste und am Vorschaubild. Neu: CIRCLE-Gesichter auf Startseite und CIRCLE-Seite (MP-14). Bilder ersetzt (`bilder/v2-*`). |
+| 20.11.2026 | 3 | CIRCLE-Gesichter neu als Porträt-Streifen mit Name im Bild und Film beim Überfahren (MP-14 neu gefasst), Editorial-Material aus dem Drive eingebunden, Makler-Kreise aus derselben Serie. Variante 2 unter eigenen Adressen (`/2`, `/makler2`, `/immobilien2`, `/projekt2`, `/ux/explore2`, `/ux/objekt2`), Variante 1 unverändert. Der Schalter `?makler=1` gilt nur noch lokal. |

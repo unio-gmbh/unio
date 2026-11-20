@@ -1,0 +1,872 @@
+<!-- @dsCard group="Objektseite" viewport="390x844" name="Explore" subtitle="Vertikaler Immobilien-Feed — lernt aus Herzen und angesehenen Objekten" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explore — UNIO</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32.png">
+<meta name="theme-color" content="#0B0A09">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<style>
+  :root{ --ink:#0B0A09; --paper:#F7F5F1; --orange:#FFAA09; --ease:cubic-bezier(.32,.72,0,1);}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;}
+  body{background:#151312;font-family:var(--font-display),'Helvetica Neue',Helvetica,sans-serif;-webkit-font-smoothing:antialiased;color:var(--paper);overflow:hidden;}
+  .mono{font-family:var(--font-mono),'SF Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+
+  /* Buehne: mobil vollflaechig, Desktop als zentrierte Phone-Buehne */
+  .stage{position:fixed;inset:0;display:flex;justify-content:center;background:#151312;}
+  .feedwrap{position:relative;width:100%;height:100%;max-width:none;}
+  @media(min-width:768px){
+    .feedwrap{max-width:520px;}
+    .stage::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(60% 50% at 50% 20%, rgba(255,170,9,.07), transparent 70%);}
+  }
+
+  .feed{height:100%;overflow-y:scroll;scrollbar-width:none;overscroll-behavior:contain;}
+  @media(pointer:coarse){.feed{scroll-snap-type:y mandatory;}} /* Snap nur auf Touch; Desktop scrollt frei */
+  .feed::-webkit-scrollbar{display:none;}
+
+  .card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#1B1917;}
+  .card img,.card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .card.aktiv img{animation:kenburns 9s var(--ease) forwards;}
+  .card .info,.card .rail{opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease) .1s,transform .6s var(--ease) .1s;}
+  .card.aktiv .info,.card.aktiv .rail{opacity:1;transform:none;}
+  @keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
+  .burst{position:absolute;left:50%;top:50%;z-index:6;pointer-events:none;color:var(--orange);
+    transform:translate(-50%,-50%) scale(.4);opacity:0;filter:drop-shadow(0 6px 24px rgba(0,0,0,.4));}
+  .burst.go{animation:burst .8s var(--ease) forwards;}
+  @keyframes burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}55%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-56%) scale(1.05)}}
+  @media(prefers-reduced-motion:reduce){.card.aktiv img{animation:none;}.burst.go{animation:none;opacity:0;}.card .info,.card .rail{opacity:1!important;transform:none!important;transition:none;}}
+  .card .tint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.42) 0%,rgba(11,10,9,0) 26%,rgba(11,10,9,0) 52%,rgba(11,10,9,.72) 100%);}
+
+  /* Info unten links */
+  .info{position:absolute;left:18px;right:92px;bottom:calc(24px + env(safe-area-inset-bottom));}
+  .info .why{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(247,245,241,.9);background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.2);border-radius:99px;padding:6px 12px;margin-bottom:12px;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .info .why i{width:6px;height:6px;border-radius:50%;background:var(--orange);font-style:normal;}
+  .info h2{font-size:clamp(26px,6.4vw,34px);font-weight:500;line-height:1.05;letter-spacing:-.025em;text-shadow:0 2px 26px rgba(0,0,0,.45);}
+  .info .meta{margin-top:8px;font-family:var(--font-mono),monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.85);}
+  .info .preis{margin-top:10px;font-size:21px;font-weight:500;letter-spacing:-.01em;}
+  .ekkarte{display:grid;place-items:center;background:radial-gradient(90% 70% at 50% 20%, rgba(255,170,9,.12), transparent 60%), #141210;}
+  .ekkarte .ekinhalt{max-width:420px;padding:0 30px;text-align:center;}
+  .ekkarte .ekkicker{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.16em;color:var(--orange);}
+  .ekkarte h2{font-size:clamp(28px,6vw,40px);font-weight:600;letter-spacing:-.02em;line-height:1.08;margin:14px 0 10px;}
+  .ekkarte p{font-size:14.5px;line-height:1.6;color:rgba(247,245,241,.72);margin:0 0 22px;}
+  .ekkarte .ekbtn{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#1A1305;border:none;cursor:pointer;
+    border-radius:99px;padding:13px 24px;font:700 14px/1 inherit;font-family:inherit;text-decoration:none;}
+  .info .rchip{display:inline-flex;margin-top:9px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.13em;
+    color:var(--orange);background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.35);border-radius:99px;padding:5px 10px;}
+  .info .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;text-decoration:none;color:#1A1305;background:var(--orange);
+    font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
+
+  /* Aktionen rechts */
+  /* Makler am Objekt: EIN Kreis. Im Feed als oberster Punkt der Rail, in der Liste am Vorschaubild.
+     Kein Zusatztext im Infoblock. Tippen fuehrt zur Partnerseite. */
+  .rail .mkr{width:52px;height:52px;border-radius:50%;display:block;padding:0;overflow:hidden;border:2px solid rgba(247,245,241,.95);background:#141210;}
+  .card .rail .mkr img{position:static;inset:auto;width:100%;height:100%;animation:none!important;transform:none;object-fit:cover;object-position:center 30%;display:block;}
+  .srow{position:relative;}
+  .srow .mkr{position:absolute;left:74px;top:50px;width:28px;height:28px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px #FFFFFF,0 3px 10px rgba(20,18,16,.22);background:#141210;display:block;transition:transform .25s var(--ease);}
+  .srow .mkr img{width:100%;height:100%;border-radius:0;object-fit:cover;object-position:center 30%;display:block;}
+  .srow a.mkr:hover{transform:scale(1.12);}
+  .rail{position:absolute;right:14px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;align-items:center;}
+  .rail button,.rail a{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;text-decoration:none;
+    background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.22);color:var(--paper);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .25s var(--ease);}
+  .rail button:active{transform:scale(.9);}
+  .rail .lbl{font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;color:rgba(247,245,241,.7);margin-top:-8px;text-transform:uppercase;}
+  .rail .herz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
+  .rail .herz svg{transition:transform .3s var(--ease);}
+  .rail .herz.on svg{transform:scale(1.15);}
+
+  /* Topbar */
+  .topbar{position:absolute;left:0;right:0;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 12px;}
+  .topbar img{height:15px;display:block;}
+  .topbar .mono{color:rgba(247,245,241,.85);}
+  .topbar a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  html.embed .topbar{display:none!important;}
+  html.embed .gridwrap,html.embed .feedwrap,html.embed .such{padding-top:0!important;}
+  .topbar .avapill{background:var(--orange)!important;color:#1A1305!important;border-color:transparent!important;
+    font-weight:700;min-width:34px;text-align:center;}
+  .topbar .hub{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(247,245,241,.75);
+    border:1px solid rgba(247,245,241,.25);border-radius:99px;padding:6px 12px;background:rgba(11,10,9,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+
+  /* Bottom-Tabbar: Entdecken (Grid) / Feed */
+  .tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;
+    display:flex;gap:4px;padding:5px;border-radius:99px;background:rgba(11,10,9,.62);border:1px solid rgba(247,245,241,.18);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+  .tabbar button{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:inherit;
+    font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:99px;background:transparent;color:rgba(247,245,241,.7);transition:all .25s var(--ease);}
+  .tabbar button.on{background:var(--orange);color:#1A1305;}
+
+  /* Grid-Ansicht (Instagram-Explore) */
+  .grid{display:none;height:100%;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;
+    padding:calc(56px + env(safe-area-inset-top)) 2px calc(86px + env(safe-area-inset-bottom));}
+  .grid::-webkit-scrollbar{display:none;}
+  .gwrap{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:calc((min(100vw,520px) - 8px)/3);gap:2px;grid-auto-flow:dense;}
+  .gtile{position:relative;overflow:hidden;border:none;padding:0;cursor:pointer;background:#1B1917;}
+  .gtile img,.gtile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .gtile.reel{grid-row:span 2;}
+  .gtile .gbadge{position:absolute;right:7px;top:7px;color:#fff;filter:drop-shadow(0 1px 6px rgba(0,0,0,.5));}
+  .gtile .gherz{position:absolute;left:7px;bottom:7px;display:inline-flex;align-items:center;gap:5px;color:#fff;
+    font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.08em;filter:drop-shadow(0 1px 6px rgba(0,0,0,.6));opacity:0;transition:opacity .25s;}
+  .gtile:hover .gherz,.gtile.geliked .gherz{opacity:1;}
+  .gtile .gscrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(11,10,9,.5));opacity:0;transition:opacity .25s;}
+  .gtile:hover .gscrim{opacity:1;}
+  @media(pointer:coarse){.gtile .gscrim{opacity:.5;}}
+
+  /* Feed-Inhalte ueber der Tabbar */
+  .info{bottom:calc(78px + env(safe-area-inset-bottom))!important;}
+  .rail{bottom:calc(84px + env(safe-area-inset-bottom))!important;}
+
+  /* Liste + Karte: hell, angelehnt an den Dashboard-Look (Paper, weisse Karten) */
+  .such{display:none;height:100%;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain;
+    background:#F2EFE9;color:#141210;
+    padding:calc(54px + env(safe-area-inset-top)) 0 calc(86px + env(safe-area-inset-bottom));}
+  .such::-webkit-scrollbar{display:none;}
+  .smap{position:sticky;top:0;z-index:3;height:40svh;min-height:260px;margin:0 10px;border-radius:18px;overflow:hidden;
+    border:1px solid rgba(20,18,16,.12);background:#EDEBE6;box-shadow:0 18px 44px -24px rgba(20,18,16,.35);}
+  .smap .leaflet-container{width:100%;height:100%;background:#EDEBE6;font-family:inherit;}
+  .u-xpin{display:block;width:14px;height:14px;border-radius:50%;background:var(--orange);
+    box-shadow:0 0 0 2px #FFFFFF,0 2px 8px rgba(20,18,16,.35);transition:transform .25s var(--ease);}
+  .u-xpin.on{transform:scale(1.5);box-shadow:0 0 0 2px #FFFFFF,0 0 0 6px rgba(255,170,9,.3),0 2px 10px rgba(20,18,16,.4);}
+  .leaflet-control-attribution{background:rgba(247,245,241,.75)!important;color:rgba(20,18,16,.5)!important;font-size:8px!important;}
+  .leaflet-control-attribution a{color:rgba(20,18,16,.65)!important;}
+  .slist{padding:12px 10px 0;display:flex;flex-direction:column;gap:8px;}
+  .srow{display:grid;grid-template-columns:84px 1fr auto;gap:13px;align-items:center;text-align:left;
+    background:#FFFFFF;border:1px solid rgba(20,18,16,.1);border-radius:16px;padding:10px;cursor:pointer;
+    color:#141210;font-family:inherit;transition:border-color .25s,transform .25s var(--ease),box-shadow .25s var(--ease);}
+  .srow:hover{transform:translateY(-1px);box-shadow:0 14px 30px -18px rgba(20,18,16,.25);}
+  .srow.on{border-color:rgba(255,170,9,.8);}
+  .srow img{width:84px;height:66px;border-radius:11px;object-fit:cover;display:block;}
+  .srow .t{font-size:15px;font-weight:500;letter-spacing:-.01em;color:#141210;}
+  .srow .m{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#A19A91;margin-top:4px;}
+  .srow .p{font-size:13.5px;font-weight:500;color:#141210;margin-top:4px;}
+  .srow .sherz{width:38px;height:38px;border-radius:50%;border:1px solid rgba(20,18,16,.18);background:transparent;color:#6E6862;
+    display:grid;place-items:center;cursor:pointer;}
+  .srow .sherz.on{background:var(--orange);border-color:var(--orange);color:#1A1305;}
+  .srow .rbadge{display:inline-block;margin-left:7px;font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;
+    color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:3px 8px;vertical-align:1px;}
+  .srow.ueber{opacity:.55;}
+  .such.traum .srow.ueber{opacity:1;}
+  .srow .rbadge.budget{color:#8A5A00;background:rgba(20,18,16,.06);border-color:rgba(20,18,16,.18);}
+  .such.traum .srow .rbadge.budget{display:none;}
+  /* KI-Suche: Kriterien stehen offen über der Liste */
+  .skiband{margin:12px 14px 0;background:#141210;color:#F7F5F1;border-radius:16px;padding:14px 16px;}
+  .skiband .skitop{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .skiband .skitop .mono{color:var(--orange);}
+  .skiband .skitop button{border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;
+    padding:7px 13px;border-radius:99px;background:rgba(247,245,241,.12);color:#F7F5F1;}
+  .skiband p{margin-top:9px;font-size:14px;line-height:1.45;}
+  .skiband .skichips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}
+  .skiband .skichips span{background:rgba(247,245,241,.12);border-radius:99px;padding:6px 11px;
+    font-size:12px;font-weight:500;}
+  .sfilter{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 0;}
+  .sfilter button{font-family:inherit;font-size:12px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;
+    border:1px solid rgba(20,18,16,.15);background:#FFFFFF;color:#6E6862;transition:all .25s var(--ease);}
+  .sfilter button.on{background:#141210;color:#F7F5F1;border-color:#141210;}
+  .such .scount{padding:14px 14px 4px;font-family:var(--font-mono),monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#6E6862;}
+  /* Topbar auf hellem Grund: dunkles Logo + dunkle Labels */
+  .feedwrap.hell .topbar .mono{color:rgba(20,18,16,.7);}
+  .feedwrap.hell .topbar .hub{color:rgba(20,18,16,.75);border-color:rgba(20,18,16,.22);background:rgba(255,255,255,.6);}
+
+  /* Erst-Besuch-Hinweis */
+  .hint{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:rgba(11,10,9,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    opacity:1;transition:opacity .5s var(--ease);}
+  .hint.weg{opacity:0;pointer-events:none;}
+  .hint .box{text-align:center;padding:0 34px;max-width:340px;}
+  .hint .box .arrows{font-size:26px;color:var(--orange);animation:hop 1.6s var(--ease) infinite;}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .hint h3{font-size:24px;font-weight:500;letter-spacing:-.02em;margin-top:14px;}
+  .hint p{margin-top:10px;font-size:14.5px;line-height:1.6;color:rgba(247,245,241,.8);}
+  .hint button{margin-top:22px;border:none;cursor:pointer;border-radius:99px;padding:13px 26px;background:var(--orange);color:#1A1305;font-weight:600;font-size:14px;font-family:inherit;}
+
+  /* Merk-Toast */
+  .toast{position:absolute;pointer-events:none;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-8px);z-index:8;
+    background:rgba(11,10,9,.75);border:1px solid rgba(247,245,241,.2);color:var(--paper);border-radius:99px;padding:9px 18px;
+    font-size:12.5px;font-weight:500;opacity:0;transition:all .4s var(--ease);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast.zeig{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast b{color:var(--orange);font-weight:600;}
+
+  .likesbtn{cursor:pointer;font-family:var(--font-mono),monospace;}
+  .likesbtn b{color:var(--orange);font-weight:600;}
+
+  /* Merkliste: dunkles Sheet von unten */
+  .liste{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none;}
+  .liste .lback{position:absolute;inset:0;background:rgba(11,10,9,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .4s var(--ease);}
+  .liste.open{pointer-events:auto;}
+  .liste.open .lback{opacity:1;}
+  .liste .sheet{position:relative;max-height:76%;background:#1B1917;border-radius:22px 22px 0 0;border:1px solid rgba(247,245,241,.14);border-bottom:none;
+    transform:translateY(104%);transition:transform .5s var(--ease);display:flex;flex-direction:column;overflow:hidden;}
+  .liste.open .sheet{transform:translateY(0);}
+  .liste .lhead{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px 14px;border-bottom:1px solid rgba(247,245,241,.1);}
+  .liste .lhead .mono{color:rgba(247,245,241,.8);}
+  .liste .lx{width:36px;height:36px;border-radius:50%;border:1px solid rgba(247,245,241,.22);background:rgba(247,245,241,.06);color:var(--paper);cursor:pointer;font-family:inherit;}
+  .liste .lbody{overflow-y:auto;padding:10px 14px calc(20px + env(safe-area-inset-bottom));}
+  .lrow{display:grid;grid-template-columns:64px 1fr auto;gap:13px;align-items:center;padding:10px 8px;border-radius:14px;}
+  .lrow:hover{background:rgba(247,245,241,.05);}
+  .lrow img{width:64px;height:64px;border-radius:12px;object-fit:cover;}
+  .lrow .t{font-size:15px;font-weight:500;letter-spacing:-.01em;}
+  .lrow .m{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(247,245,241,.6);margin-top:4px;}
+  .lrow .p{font-size:13px;font-weight:500;color:rgba(247,245,241,.9);margin-top:3px;}
+  .lrow .acts{display:flex;gap:8px;align-items:center;}
+  .lrow .acts a{font-size:12.5px;font-weight:600;color:#1A1305;background:var(--orange);border-radius:99px;padding:8px 14px;text-decoration:none;white-space:nowrap;}
+  .lrow .acts button{width:34px;height:34px;border-radius:50%;border:1px solid rgba(247,245,241,.22);background:transparent;color:var(--orange);cursor:pointer;display:grid;place-items:center;}
+  .lleer{padding:44px 24px;text-align:center;color:rgba(247,245,241,.7);font-size:14.5px;line-height:1.6;}
+  .lfoot{padding:0 20px 14px;font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(247,245,241,.45);text-align:center;}
+
+  @media(prefers-reduced-motion:reduce){.hint .box .arrows{animation:none;}.rail button,.toast{transition:none;}.liste .sheet,.liste .lback{transition:none;}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="feedwrap">
+    <div class="topbar">
+      <a href="/ux"><img src="/assets/logo/unio-logo-white.svg" alt="UNIO"></a>
+      <span class="mono">EXPLORE · <span id="posZaehler" style="color:var(--orange)">01</span></span>
+      <span style="display:inline-flex;gap:8px;align-items:center;">
+        <button class="hub likesbtn" id="likesBtn" type="button" aria-label="Merkliste öffnen">♥ <b id="likesCount">0</b></button>
+        <a class="hub" href="/ux">UX-HUB</a>
+        <a class="hub avapill" href="/ux/backend?rolle=endkunde" aria-label="Mein Portal">VH</a>
+      </span>
+    </div>
+    <div class="feed" id="feed"></div>
+    <div class="grid" id="grid"><div class="gwrap" id="gwrap"></div></div>
+    <div class="such" id="such">
+      <div class="smap" id="suchMap"></div>
+      <!-- Banner der KI-Suche: zeigt offen, wonach gefiltert wird, und lässt sich verlassen -->
+      <div class="skiband" id="skiband" hidden>
+        <div class="skitop">
+          <span class="mono">KI-Suche</span>
+          <button id="skiweg">Suche verlassen</button>
+        </div>
+        <p id="skitext"></p>
+        <div class="skichips" id="skichips"></div>
+      </div>
+      <div class="sfilter" id="suchFilter" role="group" aria-label="Suchparameter">
+        <button data-f="alle" class="on">Alle</button>
+        <button data-f="r3">Rendite ≥ 3 %</button>
+        <button data-f="r35">Rendite ≥ 3,5 %</button>
+        <button data-f="u15">bis € 1,5 Mio</button>
+        <button data-f="leistbar" id="leistbarChip" style="display:none">Leistbar für dich</button>
+        <button data-f="traum" id="traumChip" style="display:none">Träumen ✨</button>
+      </div>
+      <div class="scount" id="suchCount"></div>
+      <div class="slist" id="slist"></div>
+    </div>
+    <div class="tabbar" role="tablist" aria-label="Ansicht">
+      <button id="tabGrid" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="1" width="5.6" height="5.6" rx="1"/><rect x="1" y="9.4" width="5.6" height="5.6" rx="1"/><rect x="9.4" y="9.4" width="5.6" height="5.6" rx="1"/></svg>Entdecken</button>
+      <button id="tabFeed" role="tab" aria-selected="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="1.5" width="11" height="13" rx="2"/><path d="m7 5.5 3.5 2.5L7 10.5z" fill="currentColor" stroke="none"/></svg>Feed</button>
+      <button id="tabSuch" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 14.5s-4.8-4.2-4.8-8a4.8 4.8 0 1 1 9.6 0c0 3.8-4.8 8-4.8 8z"/><circle cx="8" cy="6.3" r="1.7"/></svg>Liste</button>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="liste" id="liste" aria-hidden="true">
+      <div class="lback" id="listeBack"></div>
+      <div class="sheet" role="dialog" aria-label="Deine Merkliste">
+        <div class="lhead">
+          <span class="mono">DEINE MERKLISTE · <b id="listeCount" style="color:var(--orange)">0</b> OBJEKTE</span>
+          <button class="lx" id="listeZu" aria-label="Schließen">✕</button>
+        </div>
+        <div class="lbody" id="listeBody"></div>
+        <div class="lfoot">DER FEED LERNT AUS DEINER MERKLISTE</div>
+      </div>
+    </div>
+    <div class="hint" id="hint">
+      <div class="box">
+        <div class="arrows">↑</div>
+        <h3>Scroll dich durch Wien.</h3>
+        <p>Herz gedrückt heißt mehr davon: Der Feed lernt aus deinen Merkungen und den Objekten, die du dir ansiehst.</p>
+        <button id="hintWeg">Los geht's</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---------- Objekt-Pool mit Tags fuer die Empfehlung ---------- */
+  var rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var POOL = [
+    { id:"beheim", preisNum:1700000, mieteJahr:52800, ll:[48.2212, 16.3168],     img:"/assets/img/beheim.jpg",              t:"Penthouse Beheim",          ort:"1170 Wien · Hernals",     preis:"€ 1,70 Mio",   tags:["dach","neubau","1170","premium"] },
+    { id:"beheim2", preisNum:1650000, mieteJahr:54000, ll:[48.2239, 16.3121],    img:"/assets/img/beheim-2.jpg",            t:"Beheim · Rooftop",          ort:"1170 Wien · Hernals",     preis:"€ 1,65 Mio",   tags:["dach","terrasse","1170","premium"] },
+    { id:"albrecht", preisNum:470000, mieteJahr:16800, ll:[48.2266, 16.3079],   img:"/assets/img/albrechts-fassade.jpg",   t:"Das Albrecht",              ort:"1170 Wien · Hernals",     preis:"ab € 470.000", tags:["neubau","1170","projekt","hof"] },
+    { id:"albrecht-dg", preisNum:1490000, mieteJahr:49200, ll:[48.2288, 16.3035],img:"/assets/img/albrechts-dachgeschoss.jpg",t:"Albrecht · Dachgeschoss", ort:"1170 Wien · Hernals",     preis:"€ 1,49 Mio",   tags:["dach","neubau","1170","terrasse"] },
+    { id:"ecoluxe", preisNum:2400000, mieteJahr:66000, ll:[48.2262, 16.1972],    img:"/assets/img/ecoluxe.jpg",             t:"Villa Ecoluxe",             ort:"1140 Wien · Hadersdorf",  preis:"€ 2,40 Mio",   tags:["villa","garten","1140","premium"] },
+    { id:"ecoluxe-w", preisNum:2400000, mieteJahr:66000, ll:[48.2253, 16.1941],  img:"/assets/img/ecoluxe-wide.jpg",        t:"Ecoluxe · Gartenseite",     ort:"1140 Wien · Hadersdorf",  preis:"€ 2,40 Mio",   tags:["villa","garten","pool","1140"] },
+    { id:"obenzwei", preisNum:2100000, mieteJahr:63600, ll:[48.2192, 16.3949],   img:"/assets/img/obenzwei.jpg",            t:"ObenZwei",                  ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020","premium"] },
+    { id:"obenzwei-t", preisNum:2100000, mieteJahr:63600, ll:[48.2222, 16.4013], img:"/assets/img/obenzwei-terrasse.jpg",   t:"ObenZwei · Terrasse",       ort:"1020 Wien · Leopoldstadt",preis:"Auf Anfrage",  tags:["dach","terrasse","1020"] },
+    { id:"penthouse", preisNum:4000000, mieteJahr:100800, ll:[48.2089, 16.3719],  img:"/assets/img/penthouse.jpg",           t:"Penthouse über den Dächern",ort:"1010 Wien · Innenstadt",  preis:"€ 4,00 Mio",   tags:["dach","premium","1010","altbau"] },
+    { id:"maxing", preisNum:980000, mieteJahr:33600, ll:[48.1862, 16.2998],     img:"/assets/img/maxingstrasse-zimmer.jpg",t:"Maxingstraße 72",           ort:"1130 Wien · Hietzing",    preis:"Bieterverfahren",tags:["altbau","1130","stil"] },
+    { id:"hufhaus", preisNum:2400000, mieteJahr:60000, ll:[48.1974, 16.2352],    img:"/assets/photos/hufhaus-front.jpg",    t:"Refugium am Waldrand",      ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","garten","wald","1140"] },
+    { id:"hufhaus-p", preisNum:2400000, mieteJahr:60000, ll:[48.2001, 16.2291],  img:"/assets/photos/hufhaus-pool-abend.jpg",t:"Refugium · Pool",          ort:"1140 Wien · Penzing",     preis:"€ 2,40 Mio",   tags:["villa","pool","garten","1140"] },
+    { id:"schoenbrunn", preisNum:890000, mieteJahr:31200, ll:[48.1921, 16.3671],img:"/assets/img/schoenbrunn.jpg",         t:"Stadtwohnung mit Charakter",ort:"1040 Wien · Wieden",      preis:"€ 890.000",    tags:["altbau","1040","stil"] },
+    { id:"facade", preisNum:1100000, mieteJahr:39600, ll:[48.2224, 16.3549],     img:"/assets/img/vienna-facade.jpg",       t:"Gründerzeit · Erstbezug",   ort:"1090 Wien · Alsergrund",  preis:"€ 1,10 Mio",   tags:["altbau","1090","stil","saniert"] },
+    /* Reels: Videoclips im Feed und als grosse Grid-Kacheln */
+    { id:"reel-hufhaus", video:"/assets/video/hufhaus.mp4",        img:"/assets/photos/hufhaus-front.jpg", t:"Refugium · Reel", ort:"1140 Wien · Penzing", preis:"€ 2,40 Mio", tags:["villa","garten","wald","1140","reel"] },
+    { id:"reel-riffel",  video:"/assets/video/transition-riffel-a.mp4", img:"/assets/img/penthouse.jpg", t:"UNIO · Reel",   ort:"Wien · Innenstadt",   preis:"€ 4,00 Mio", tags:["dach","premium","1010","reel"] },
+    { id:"reel-riffel-b",video:"/assets/video/transition-riffel-b.mp4", img:"/assets/img/obenzwei.jpg",  t:"ObenZwei · Reel", ort:"1020 Wien · Leopoldstadt", preis:"Auf Anfrage", tags:["dach","terrasse","1020","reel"] },
+    { id:"reel-kling",   video:"/assets/video/explore-kling-c.mp4", img:"/assets/img/albrechts-fassade.jpg", t:"Das Albrecht · Reel", ort:"1170 Wien · Hernals", preis:"ab € 470.000", tags:["neubau","1170","projekt","reel"] },
+    { id:"reel-design",  video:"/assets/video/explore-design.mp4",  img:"/assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
+  ];
+  /* Makler-Register (Demo-Zuordnung): echte UNIO Partner mit Live-Seite auf www.unio.at.
+     url: null heisst: noch keine eigene Seite, dann ist die Zeile kein Link.
+     In der Plattform kommt das aus agents[] des Objekts (docs/makler-praesenz). */
+  var MAKLER = {
+    "marcus-weiss":     { name:"Marcus Anthofer-Weiss", img:"/assets/team/makler/marcus-anthofer-weiss.jpg", url:"https://www.unio.at/marcus-weiss" },
+    "lara-jonas":       { name:"Lara Jonas",            img:"/assets/team/makler/lara-jonas.jpg",            url:"https://www.unio.at/lara-jonas" },
+    "alexander-maurer": { name:"Alexander Maurer",      img:"/assets/team/makler/alexander-maurer.jpg",      url:"https://www.unio.at/alexander-maurer" },
+    "wenzel-waechter":  { name:"Wenzel Wächter",        img:"/assets/team/makler/wenzel-waechter.jpg",       url:null }
+  };
+  var MK_ZU = [["beheim","wenzel-waechter"],["penthouse","wenzel-waechter"],["reel-riffel","wenzel-waechter"],["albrecht","marcus-weiss"],["reel-kling","marcus-weiss"],
+    ["ecoluxe","marcus-weiss"],["hufhaus","alexander-maurer"],["reel-hufhaus","alexander-maurer"],["obenzwei","lara-jonas"],["maxing","lara-jonas"],
+    ["schoenbrunn","lara-jonas"],["facade","lara-jonas"],["reel-design","lara-jonas"]];
+  function maklerVon(o){
+    for (var i = 0; i < MK_ZU.length; i++) if (o.id === MK_ZU[i][0] || o.id.indexOf(MK_ZU[i][0] + "-") === 0 || o.id.indexOf(MK_ZU[i][0]) === 0 && /\d$/.test(o.id)) return MAKLER[MK_ZU[i][1]];
+    return null;
+  }
+  function maklerKreis(o){
+    var m = maklerVon(o); if (!m) return "";
+    var bild = '<img src="' + m.img + '" alt="" loading="lazy">';
+    return m.url
+      ? '<a class="mkr" href="' + m.url + '" target="_blank" rel="noopener" aria-label="' + m.name + ', betreut dieses Objekt. Profil ansehen" title="' + m.name + '">' + bild + '</a>'
+      : '<span class="mkr" title="' + m.name + '">' + bild + '</span>';
+  }
+  function maklerVorname(o){ var m = maklerVon(o); return m ? m.name.split(" ")[0] : ""; }
+  /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
+  /* Embed-Modus: laeuft als nativer Tab im Endkunden-Portal (iframe), eigene Topbar weg */
+  if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");
+  var ekProfil = (function(){ try { return JSON.parse(localStorage.getItem("unio_ek_profil")) || {}; } catch(e){ return {}; } })();
+  function ueberBudget(o){ return !!(ekProfil.kaufkraft && o.preisNum && o.preisNum > ekProfil.kaufkraft.budget); }
+  function kkRate(o){
+    var kk = ekProfil.kaufkraft;
+    if (!kk || !o.preisNum) return null;
+    var rest = o.preisNum * 1.102 - kk.ek;
+    return rest <= 0 ? 0 : Math.round(rest * 0.00466 / 10) * 10;
+  }
+  function kkLeistbar(o){ var r = kkRate(o); return r !== null && r <= ekProfil.kaufkraft.rate; }
+  var eurK = function(n){ return "€ " + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+  /* Rendite aus UNIO-Vermietdaten: Jahresnettomiete / Kaufpreis (Demo-Kalkulation) */
+  function rendite(o){
+    if (!o.preisNum || !o.mieteJahr) return null;
+    return (o.mieteJahr / o.preisNum * 100).toFixed(1).replace(".", ",");
+  }
+  var DETAIL = "/ux/objekt2?von=explore";
+
+  /* ---------- Zustand: Herzen + Gesehen (localStorage) ---------- */
+  var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
+  var seen = JSON.parse(localStorage.getItem("unio_explore_seen") || "{}");
+  var saveLikes = function(){ localStorage.setItem("unio_explore_likes", JSON.stringify([...likes])); };
+  var saveSeen = function(){ localStorage.setItem("unio_explore_seen", JSON.stringify(seen)); };
+
+  /* Tag-Gewichte aus Herzen (x3) und Ansichten (x1) */
+  function tagGewichte(){
+    var w = {};
+    POOL.forEach(function(o){
+      var lk = likes.has(o.id) ? 3 : 0;
+      var sn = Math.min(2, seen[o.id] || 0);
+      o.tags.forEach(function(t){ w[t] = (w[t] || 0) + lk + sn * 0.5; });
+    });
+    return w;
+  }
+  function score(o, w){
+    var s = 0;
+    o.tags.forEach(function(t){ s += w[t] || 0; });
+    if (likes.has(o.id)) s -= 2;                    /* Gemerktes nicht staendig wiederholen */
+    s -= Math.min(3, (seen[o.id] || 0)) * 1.2;      /* oft Gesehenes zuruecknehmen */
+    s += Math.random() * 0.9;                       /* Entdecker-Rauschen */
+    if (ekProfil.kaufkraft && o.preisNum) s += kkLeistbar(o) ? 1.5 : -0.8; /* Leistbares nach vorn */
+    return s;
+  }
+  function naechsteBatch(n, ausschluss){
+    var w = tagGewichte();
+    return POOL
+      .filter(function(o){ return !ausschluss.has(o.id); })
+      .map(function(o){ return [score(o, w), o]; })
+      .sort(function(a, b){ return b[0] - a[0]; })
+      .slice(0, n).map(function(x){ return x[1]; });
+  }
+  function grund(o){
+    if (!likes.size && !Object.keys(seen).length) return null;
+    var w = tagGewichte();
+    var best = null, bw = 0;
+    o.tags.forEach(function(t){ if ((w[t] || 0) > bw) { bw = w[t]; best = t; } });
+    if (!best || bw < 1) return null;
+    var NAMEN = { dach:"Dachgeschoss", terrasse:"Terrasse", garten:"Garten", villa:"Villen", altbau:"Altbau", neubau:"Neubau", pool:"Pool", premium:"Premium", stil:"Stilaltbau", hof:"Hoflage", wald:"Am Grünen", saniert:"Saniert", projekt:"Projekte" };
+    return "Weil dir " + (NAMEN[best] || best) + " gefällt";
+  }
+
+  /* ---------- Feed-Aufbau ---------- */
+  var feed = document.getElementById("feed");
+  var geladen = new Set();
+  var HERZ = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z" transform="scale(.92) translate(1 .5)"/></svg>';
+  function karte(o){
+    var g = grund(o);
+    var like = likes.has(o.id);
+    var el = document.createElement("section");
+    el.className = "card"; el.dataset.id = o.id;
+    el.innerHTML =
+      (o.video
+        ? '<video src="' + o.video + '" poster="' + o.img + '" muted loop playsinline preload="metadata"></video>'
+        : '<img src="' + o.img + '" alt="' + o.t + '" loading="lazy">') +
+      '<div class="tint"></div>' +
+      '<div class="info">' +
+        (g ? '<span class="why"><i></i>' + g + '</span><br>' : '') +
+        '<h2>' + o.t + '</h2>' +
+        '<div class="meta">' + o.ort + '</div>' +
+        '<div class="preis">' + o.preis + '</div>' +
+        (ekProfil.kaufkraft && o.preisNum && kkLeistbar(o)
+          ? '<div class="rchip">≈ ' + eurK(kkRate(o)) + '/MONAT · LEISTBAR</div>'
+          : (rendite(o) ? '<div class="rchip">RENDITE ' + rendite(o) + ' %</div>' : '')) +
+        '<a class="more" href="' + DETAIL + '&obj=' + o.id + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
+      '</div>' +
+      '<div class="rail">' +
+        (maklerVon(o) ? maklerKreis(o) + '<span class="lbl">' + maklerVorname(o) + '</span>' : '') +
+        '<button class="herz' + (like ? " on" : "") + '" aria-label="Merken">' + HERZ + '</button>' +
+        '<span class="lbl">Merken</span>' +
+        '<button class="share" aria-label="Teilen"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6.5 10 2.5 6 6.5M10 3v10M4 11v4.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></button>' +
+        '<span class="lbl">Teilen</span>' +
+        '<a href="' + DETAIL + '&obj=' + o.id + '" aria-label="Details"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 16 4m0 0H7.5M16 4v8.5"/></svg></a>' +
+        '<span class="lbl">Details</span>' +
+      '</div>';
+    el.querySelector(".herz").addEventListener("click", function(){
+      var on = this.classList.toggle("on");
+      if (on) { likes.add(o.id); zeigToast("Gemerkt · der Feed <b>lernt mit</b>"); }
+      else likes.delete(o.id);
+      saveLikes();
+    });
+    el.querySelector(".share").addEventListener("click", function(){
+      var url = location.origin + DETAIL + "&obj=" + o.id;
+      var daten = { title: o.t + " · UNIO", text: o.t + " · " + o.ort + " · " + o.preis, url: url };
+      if (navigator.share) { navigator.share(daten).catch(function(){}); }
+      else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function(){ zeigToast("Link kopiert · <b>teil es weiter</b>"); }, function(){ zeigToast(url); });
+      } else zeigToast(url);
+    });
+    /* Doppeltipp/Doppelklick = Like mit Herz-Burst (wie bei TikTok) */
+    var burst = document.createElement("span");
+    burst.className = "burst";
+    burst.innerHTML = HERZ.replace('width="22" height="22"', 'width="96" height="96"');
+    el.appendChild(burst);
+    var likeBurst = function(){
+      if (!likes.has(o.id)) { likes.add(o.id); saveLikes(); el.querySelector(".herz").classList.add("on"); zeigToast("Gemerkt · der Feed <b>lernt mit</b>"); }
+      burst.classList.remove("go"); void burst.offsetWidth; burst.classList.add("go");
+      if (window.__zaehlerUpd) window.__zaehlerUpd();
+    };
+    el.addEventListener("dblclick", function(e){ if (!e.target.closest(".rail, .info .more")) likeBurst(); });
+    /* Doppeltipp nur bei echten Tipps: Wischgesten (Bewegung/Dauer) NIE anfassen,
+       sonst wuergt preventDefault auf iOS das Scroll-Momentum ab. */
+    var letzterTap = 0, tapStart = null;
+    el.addEventListener("touchstart", function(e){
+      tapStart = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() } : null;
+    }, { passive: true });
+    el.addEventListener("touchend", function(e){
+      if (!tapStart || e.target.closest(".rail, .info .more")) { tapStart = null; letzterTap = 0; return; }
+      var t = e.changedTouches[0];
+      var bewegt = Math.abs(t.clientX - tapStart.x) > 12 || Math.abs(t.clientY - tapStart.y) > 12;
+      var dauer = Date.now() - tapStart.t;
+      tapStart = null;
+      if (bewegt || dauer > 280) { letzterTap = 0; return; }
+      var jetzt = Date.now();
+      if (jetzt - letzterTap < 320) { e.preventDefault(); likeBurst(); letzterTap = 0; }
+      else letzterTap = jetzt;
+    }, { passive: false });
+    return el;
+  }
+  /* Ereignis-Karten und Caught-up-Moment: Ereignisse sind Content (Hemnet-Prinzip),
+     der ehrliche Endpunkt ist ein Trust-Signal (kein Endless-Scroll ohne Marker) */
+  var EK_FEEDKARTEN = [
+    { art: "ereignis", k: "PREIS GESENKT", h: "Villa Ecoluxe", s: "€ 2,50 Mio auf € 2,40 Mio, der Verkäufer bewegt sich.", cta: "Objekt ansehen", href: "/ux/objekt2?von=explore&obj=ecoluxe" },
+    { art: "caughtup", k: "DU BIST AUF DEM STAND", h: "Alles Neue hast du gesehen.", s: "Neue Treffer melden sich von selbst, versprochen. Ab hier zeigen wir dir Ähnliches.", cta: "Merkliste ansehen" },
+    { art: "ereignis", k: "NEU FÜR DEIN SUCHPROFIL", h: "3 Treffer für Anlage bis 500k", s: "Frisch eingespielt, Rendite ab 3,5 %.", cta: "Objekt ansehen", href: "/ux/objekt2?von=explore&obj=albrecht" }
+  ];
+  var ekFeedIdx = 0, ekRunde = 0;
+  function ekFeedKarte(def){
+    var sec = document.createElement("section");
+    sec.className = "card ekkarte"; sec.dataset.id = "ek-" + (ekFeedIdx);
+    sec.innerHTML = '<div class="ekinhalt">' +
+      '<span class="ekkicker">' + def.k + '</span>' +
+      '<h2>' + def.h + '</h2><p>' + def.s + '</p>' +
+      (def.art === "caughtup"
+        ? '<button class="ekbtn" type="button" data-ek="merk">' + def.cta + '</button>'
+        : '<a class="ekbtn" href="' + def.href + '">' + def.cta + '</a>') +
+      '</div>';
+    var mb = sec.querySelector('[data-ek="merk"]');
+    if (mb) mb.addEventListener("click", function(){ listeAuf(); });
+    return sec;
+  }
+  function anhaengen(n){
+    var batch = naechsteBatch(n, geladen);
+    if (!batch.length) { geladen = new Set([...likes]); batch = naechsteBatch(n, geladen); } /* Pool durch: neu mischen */
+    batch.forEach(function(o){ geladen.add(o.id); feed.appendChild(karte(o)); });
+    ekRunde++;
+    if (ekRunde % 2 === 1) { feed.appendChild(ekFeedKarte(EK_FEEDKARTEN[ekFeedIdx % EK_FEEDKARTEN.length])); ekFeedIdx++; }
+  }
+  anhaengen(5);
+
+  /* Gesehen-Tracking + Nachladen */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var vid = e.target.querySelector("video");
+      if (!e.isIntersecting) {
+        e.target.classList.remove("aktiv");
+        if (vid) vid.pause();
+        return;
+      }
+      e.target.classList.add("aktiv");
+      if (vid && !rm) { var pl = vid.play(); if (pl && pl.catch) pl.catch(function(){}); }
+      var id = e.target.dataset.id;
+      seen[id] = (seen[id] || 0) + 1; saveSeen();
+      var alle = [...feed.children];
+      var pz = document.getElementById("posZaehler");
+      if (pz) pz.textContent = String(alle.indexOf(e.target) + 1).padStart(2, "0");
+      if (e.target === feed.lastElementChild) anhaengen(4);
+    });
+  }, { root: feed, threshold: 0.6 });
+  new MutationObserver(function(){ [...feed.children].forEach(function(c){ io.observe(c); }); }).observe(feed, { childList: true });
+  [...feed.children].forEach(function(c){ io.observe(c); });
+
+  /* Toast + Erst-Hinweis */
+  var toastEl = document.getElementById("toast"), toastT;
+  function zeigToast(html){
+    toastEl.innerHTML = html; toastEl.classList.add("zeig");
+    clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("zeig"); }, 2200);
+  }
+  var hint = document.getElementById("hint");
+  if (localStorage.getItem("unio_explore_hint")) hint.classList.add("weg");
+  document.getElementById("hintWeg").addEventListener("click", function(){
+    hint.classList.add("weg"); localStorage.setItem("unio_explore_hint", "1");
+  });
+
+  /* ---------- Merkliste (Sheet) ---------- */
+  var liste = document.getElementById("liste"), listeBody = document.getElementById("listeBody");
+  function zaehler(){
+    document.getElementById("likesCount").textContent = likes.size;
+    document.getElementById("listeCount").textContent = likes.size;
+  }
+  function renderListe(){
+    zaehler();
+    if (!likes.size) { listeBody.innerHTML = '<div class="lleer">Noch keine Herzen.<br>Merk dir Objekte im Feed, dann tauchen sie hier auf.</div>'; return; }
+    listeBody.innerHTML = "";
+    [...likes].reverse().forEach(function(id){
+      var o = POOL.find(function(x){ return x.id === id; });
+      if (!o) return;
+      var row = document.createElement("div");
+      row.className = "lrow";
+      row.innerHTML = '<img src="' + o.img + '" alt="">' +
+        '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis + '</div></div>' +
+        '<div class="acts"><button aria-label="Herz entfernen">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>' +
+        '<a href="' + DETAIL + '&obj=' + o.id + '">Ansehen</a></div>';
+      row.querySelector("a").addEventListener("click", function(){ sessionStorage.setItem("unio_explore_pos", o.id); });
+      row.querySelector("button").addEventListener("click", function(){
+        likes.delete(o.id); saveLikes(); renderListe();
+        var h = feed.querySelector('.card[data-id="' + o.id + '"] .herz');
+        if (h) h.classList.remove("on");
+      });
+      listeBody.appendChild(row);
+    });
+  }
+  function listeAuf(){ renderListe(); liste.classList.add("open"); liste.setAttribute("aria-hidden", "false"); }
+  function listeZu(){ liste.classList.remove("open"); liste.setAttribute("aria-hidden", "true"); }
+  document.getElementById("likesBtn").addEventListener("click", listeAuf);
+  document.getElementById("listeZu").addEventListener("click", listeZu);
+  document.getElementById("listeBack").addEventListener("click", listeZu);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") listeZu(); });
+  zaehler();
+
+  /* Zaehler bei jedem Herz aktualisieren */
+  window.__zaehlerUpd = zaehler;
+  feed.addEventListener("click", function(e){
+    if (e.target.closest(".herz")) setTimeout(zaehler, 0);
+    var a = e.target.closest('a[href*="/ux/objekt2"]');
+    if (a) {
+      var c = e.target.closest(".card");
+      if (c) {
+        sessionStorage.setItem("unio_explore_pos", c.dataset.id);
+        var next = c.nextElementSibling;
+        if (next && next.dataset.id) {
+          var no = POOL.find(function(x){ return x.id === next.dataset.id; });
+          if (no) sessionStorage.setItem("unio_explore_next", JSON.stringify({ id: no.id, t: no.t, img: no.img, ort: no.ort, preis: no.preis }));
+        } else sessionStorage.removeItem("unio_explore_next");
+      }
+    }
+  });
+  /* Desktop scrollt frei (kein Snap, kein Wheel-Abfangen); das kartenweise
+     Einrasten gibt es nur auf Touch-Geraeten via CSS-Snap. blaettern() dient
+     den Pfeiltasten. */
+  var blaettern = function(richtung){
+    if (blaettern.lock) return;
+    var idx = Math.round(feed.scrollTop / feed.clientHeight);
+    var ziel = Math.max(0, Math.min(idx + richtung, feed.children.length - 1)) * feed.clientHeight;
+    if (Math.abs(ziel - feed.scrollTop) < 2) return;
+    blaettern.lock = true;
+    if (rm) { feed.scrollTop = ziel; blaettern.frei(); return; }
+    var start = feed.scrollTop, diff = ziel - start, t0 = performance.now(), D = 520;
+    var step = function(now){
+      var k = Math.min(1, (now - t0) / D);
+      feed.scrollTop = start + diff * (1 - Math.pow(1 - k, 3));
+      if (k < 1) requestAnimationFrame(step); else blaettern.frei();
+    };
+    requestAnimationFrame(step);
+  };
+  blaettern.lock = false;
+  blaettern.frei = function(){
+    clearTimeout(blaettern.tail);
+    blaettern.tail = setTimeout(function(){ blaettern.lock = false; }, 150);
+  };
+  /* Desktop: Pfeiltasten blaettern durch den Feed */
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      blaettern(e.key === "ArrowDown" ? 1 : -1);
+    }
+  });
+
+  /* ---------- Ansichten: Entdecken-Grid vs. Feed ---------- */
+  var grid = document.getElementById("grid"), gwrap = document.getElementById("gwrap");
+  var tabGrid = document.getElementById("tabGrid"), tabFeed = document.getElementById("tabFeed");
+  var such = document.getElementById("such"), tabSuch = document.getElementById("tabSuch");
+  function zeigeAnsicht(welche){
+    var karten = { grid: [grid, tabGrid], feed: [feed, tabFeed], such: [such, tabSuch] };
+    Object.keys(karten).forEach(function(k){
+      karten[k][0].style.display = k === welche ? "block" : "none";
+      karten[k][1].classList.toggle("on", k === welche);
+      karten[k][1].setAttribute("aria-selected", k === welche);
+    });
+    if (welche === "grid") {
+      feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      gwrap.querySelectorAll("video").forEach(function(v){
+        var r = v.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight && !rm) { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); }
+      });
+    } else if (welche === "feed") {
+      gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      var akt = feed.querySelector(".card.aktiv video");
+      if (akt && !rm) { var pl2 = akt.play(); if (pl2 && pl2.catch) pl2.catch(function(){}); }
+    } else {
+      gwrap.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      feed.querySelectorAll("video").forEach(function(v){ v.pause(); });
+      bauSuche();
+    }
+    /* Listen-Tab ist hell: Topbar-Logo und Labels auf dunkel umschalten */
+    var wrap = document.querySelector(".feedwrap");
+    var logo = document.querySelector(".topbar img");
+    wrap.classList.toggle("hell", welche === "such");
+    logo.src = welche === "such" ? "/assets/logo/unio-logo-black.svg" : "/assets/logo/unio-logo-white.svg";
+    localStorage.setItem("unio_explore_view", welche);
+  }
+  tabGrid.addEventListener("click", function(){ zeigeAnsicht("grid"); });
+  tabFeed.addEventListener("click", function(){ zeigeAnsicht("feed"); });
+  tabSuch.addEventListener("click", function(){ zeigeAnsicht("such"); });
+
+  /* ---------- Liste + Karte (Leaflet, dunkle CARTO-Tiles) ---------- */
+  var suchMap = null, suchMarker = {}, suchGebaut = false;
+  function bauSuche(){
+    var objekte = POOL.filter(function(o){ return o.ll; });
+    if (!suchGebaut) {
+      suchGebaut = true;
+      document.getElementById("suchCount").textContent = objekte.length + " OBJEKTE · WIEN & UMGEBUNG";
+      var slist = document.getElementById("slist");
+      var w = tagGewichte();
+      objekte.slice().sort(function(a, b){ return score(b, w) - score(a, w); }).forEach(function(o){
+        var row = document.createElement("div");
+        row.className = "srow"; row.dataset.id = o.id; row.setAttribute("role", "button"); row.tabIndex = 0;
+        if (ueberBudget(o)) row.classList.add("ueber");
+        row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
+          '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
+          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' + maklerKreis(o) +
+          '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
+        row.addEventListener("click", function(e){
+          if (e.target.closest(".sherz, a.mkr")) return;
+          insFeed(o.id);
+        });
+        row.addEventListener("mouseenter", function(){ aktivPin(o.id, false); });
+        row.querySelector(".sherz").addEventListener("click", function(){
+          var on = this.classList.toggle("on");
+          if (on) likes.add(o.id); else likes.delete(o.id);
+          saveLikes(); zaehler();
+          var h = feed.querySelector('.card[data-id="' + o.id + '"] .herz');
+          if (h) h.classList.toggle("on", on);
+        });
+        slist.appendChild(row);
+      });
+    }
+    if (!suchMap && window.L) {
+      suchMap = L.map(document.getElementById("suchMap"), { scrollWheelZoom: false, zoomControl: false });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
+      }).addTo(suchMap);
+      var pts = [];
+      objekte.forEach(function(o){
+        pts.push(o.ll);
+        var icon = L.divIcon({ className: "", html: '<span class="u-xpin" data-pin="' + o.id + '"></span>', iconSize: [14, 14], iconAnchor: [7, 7] });
+        var m = L.marker(o.ll, { icon: icon, title: o.t, keyboard: false }).addTo(suchMap);
+        m.on("click", function(){
+          aktivPin(o.id, true);
+          var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+          if (row) row.scrollIntoView({ block: "center", behavior: rm ? "auto" : "smooth" });
+        });
+        suchMarker[o.id] = m;
+      });
+      suchMap.fitBounds(L.latLngBounds(pts).pad(0.2));
+    }
+    if (suchMap) setTimeout(function(){ suchMap.invalidateSize(); }, 60);
+  }
+  /* Suchparameter: filtern Zeilen und Pins gleichzeitig */
+  if (ekProfil.kaufkraft) { ["traumChip", "leistbarChip"].forEach(function(id){ var c = document.getElementById(id); if (c) c.style.display = ""; }); }
+  document.getElementById("suchFilter").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.f === "traum") {
+      b.classList.toggle("on");
+      document.querySelector(".such").classList.toggle("traum", b.classList.contains("on"));
+      return;
+    }
+    this.querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    var f = b.dataset.f, sichtbar = 0;
+    POOL.filter(function(o){ return o.ll; }).forEach(function(o){
+      var r = o.mieteJahr && o.preisNum ? o.mieteJahr / o.preisNum * 100 : 0;
+      var ok = f === "alle" || (f === "r3" && r >= 3) || (f === "r35" && r >= 3.5) || (f === "u15" && o.preisNum <= 1500000) || (f === "leistbar" && kkLeistbar(o));
+      var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+      if (row) row.style.display = ok ? "grid" : "none";
+      var m = suchMarker[o.id];
+      if (m) { var el = m.getElement(); if (el) el.style.display = ok ? "" : "none"; }
+      if (ok) sichtbar++;
+    });
+    document.getElementById("suchCount").textContent = sichtbar + " OBJEKTE · WIEN & UMGEBUNG";
+  });
+
+  /* ===== KI-Suche aus dem Portal (?ki=…) =====
+     Die Kriterien kommen als Parameter herein, werden sichtbar angezeigt und
+     auf Zeilen und Kartenpins gleichzeitig angewandt. */
+  function kiAnwenden(k){
+    var band = document.getElementById("skiband");
+    document.getElementById("skitext").textContent = "„" + (k.text || "Deine Suche") + "“";
+    var chips = document.getElementById("skichips");
+    chips.innerHTML = "";
+    var lesbar = [];
+    if (k.zimmer) lesbar.push(k.zimmer + " Zimmer oder mehr");
+    if (k.maxPreis) lesbar.push("bis € " + Math.round(k.maxPreis / 1000) + "k");
+    if (k.rendite) lesbar.push("Rendite ab " + String(k.rendite).replace(".", ",") + " %");
+    if (k.aussen) lesbar.push("Balkon, Terrasse oder Garten");
+    if (k.ruhig) lesbar.push("ruhige Lage");
+    if (k.oeffi) lesbar.push("gute Öffi-Anbindung");
+    lesbar.forEach(function(t){ var s = document.createElement("span"); s.textContent = t; chips.appendChild(s); });
+    band.hidden = false;
+
+    var sichtbar = 0;
+    POOL.filter(function(o){ return o.ll; }).forEach(function(o){
+      var r = o.mieteJahr && o.preisNum ? o.mieteJahr / o.preisNum * 100 : 0;
+      var ok = true;
+      if (k.maxPreis && o.preisNum > k.maxPreis) ok = false;
+      if (k.zimmer && o.zimmer && o.zimmer < k.zimmer) ok = false;
+      if (k.rendite && r < k.rendite) ok = false;
+      var row = document.querySelector('.srow[data-id="' + o.id + '"]');
+      if (row) row.style.display = ok ? "grid" : "none";
+      var m = suchMarker[o.id];
+      if (m) { var el = m.getElement(); if (el) el.style.display = ok ? "" : "none"; }
+      if (ok) sichtbar++;
+    });
+    document.getElementById("suchCount").textContent = sichtbar + " TREFFER · KI-SUCHE";
+    document.querySelectorAll("#suchFilter button").forEach(function(x){ x.classList.remove("on"); });
+  }
+  document.getElementById("skiweg").addEventListener("click", function(){
+    document.getElementById("skiband").hidden = true;
+    var alle = document.querySelector('#suchFilter button[data-f="alle"]');
+    if (alle) alle.click();
+  });
+  (function(){
+    var roh = new URLSearchParams(location.search).get("ki");
+    if (!roh) return;
+    var k;
+    try { k = JSON.parse(decodeURIComponent(roh)); } catch (e) { return; }
+    zeigeAnsicht("such");
+    /* Die Liste wird beim Ansichtswechsel gebaut, deshalb einen Tick später filtern */
+    setTimeout(function(){ kiAnwenden(k); }, 120);
+  })();
+  function aktivPin(id, mitZoom){
+    document.querySelectorAll(".u-xpin").forEach(function(x){ x.classList.toggle("on", x.dataset.pin === id); });
+    document.querySelectorAll(".srow").forEach(function(x){ x.classList.toggle("on", x.dataset.id === id); });
+    if (mitZoom && suchMap) { var o = POOL.find(function(x){ return x.id === id; }); if (o) suchMap.panTo(o.ll); }
+  }
+
+  function insFeed(id){
+    var o = POOL.find(function(x){ return x.id === id; });
+    /* Erst die Feed-Ansicht einblenden, DANN positionieren: auf einem
+       versteckten Element verpufft scrollTop und der Browser stellt beim
+       Einblenden die alte Position wieder her (Klick zeigte falschen Beitrag). */
+    zeigeAnsicht("feed");
+    if (o) {
+      var alte = feed.querySelector('.card[data-id="' + id + '"]');
+      if (alte) feed.prepend(alte);
+      else { geladen.add(id); feed.prepend(karte(o)); }
+      feed.scrollTop = 0;
+      requestAnimationFrame(function(){ feed.scrollTop = 0; });
+    }
+  }
+
+  /* Grid fuellen: Reels als hohe Kacheln, Fotos als Quadrate, Reihenfolge nach
+     Empfehlung. Endlos: am unteren Rand kommt die naechste, neu gemischte Runde.
+     Videos spielen nur, wenn ihre Kachel sichtbar ist (Performance). */
+  var gridIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var v = e.target.querySelector("video");
+      if (!v) return;
+      if (e.isIntersecting && !rm && grid.style.display !== "none") { var pl = v.play(); if (pl && pl.catch) pl.catch(function(){}); }
+      else v.pause();
+    });
+  }, { root: grid, threshold: 0.25 });
+  function baueGridRunde(){
+    var w = tagGewichte();
+    var sortiert = POOL.slice().sort(function(a, b){ return score(b, w) - score(a, w); });
+    sortiert.forEach(function(o){
+      var tile = document.createElement("button");
+      tile.className = "gtile" + (o.video ? " reel" : "") + (likes.has(o.id) ? " geliked" : "");
+      tile.setAttribute("aria-label", o.t);
+      tile.innerHTML =
+        (o.video
+          ? '<video src="' + o.video + '" poster="' + o.img + '" muted loop playsinline preload="metadata"></video>' +
+            '<span class="gbadge"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.8v10.4c0 .6.7 1 1.2.7l8.2-5.2c.5-.3.5-1 0-1.3L5.7 2.1c-.5-.3-1.2.1-1.2.7z"/></svg></span>'
+          : '<img src="' + o.img + '" alt="" loading="lazy">') +
+        '<span class="gscrim"></span>' +
+        '<span class="gherz">♥ ' + (likes.has(o.id) ? "Gemerkt" : o.t) + '</span>';
+      tile.addEventListener("click", function(){ insFeed(o.id); });
+      gwrap.appendChild(tile);
+      gridIO.observe(tile);
+    });
+  }
+  baueGridRunde();
+  var gridLaedt = false;
+  grid.addEventListener("scroll", function(){
+    if (gridLaedt) return;
+    if (grid.scrollTop + grid.clientHeight > grid.scrollHeight - 700) {
+      gridLaedt = true;
+      baueGridRunde();
+      setTimeout(function(){ gridLaedt = false; }, 200);
+    }
+  }, { passive: true });
+
+  /* Rueckkehr von der Objektseite: zuletzt gesehene Karte wieder nach oben, direkt im Feed */
+  var pos = sessionStorage.getItem("unio_explore_pos");
+  if (pos) {
+    sessionStorage.removeItem("unio_explore_pos");
+    var oPos = POOL.find(function(x){ return x.id === pos; });
+    if (oPos) {
+      var alte = feed.querySelector('.card[data-id="' + pos + '"]');
+      if (alte) feed.prepend(alte);
+      else { geladen.add(pos); feed.prepend(karte(oPos)); }
+    }
+    zeigeAnsicht("feed");
+  } else {
+    /* Einstieg wie bei Instagram: das Entdecken-Grid, ausser man war zuletzt im Feed */
+    var merkView = localStorage.getItem("unio_explore_view");
+    zeigeAnsicht(merkView === "feed" || merkView === "such" ? merkView : "grid");
+  }
+})();
+</script>
+</body>
+</html>

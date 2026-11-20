@@ -14,8 +14,8 @@
 
 <!--
   1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
-  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler: Wenzel Wächter (wie live).
-  Inhalte: app.unio.at/property/2 · Marktdaten Demo · eine Makler-Zeile unter dem Titel.
+  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler-Foto Platzhalter.
+  Inhalte: app.unio.at/property/2 · Marktdaten Demo · [Makler-Name] Platzhalter.
 -->
 <style>
   :root{ --bg:#F2EFE9; --card:#FBFAF6; --ink:#141210; --fg2:#6E6862; --fg3:#A19A91;
@@ -214,18 +214,11 @@
   .tile span{display:block;margin-top:6px;font-size:11px;color:var(--fg2);line-height:1.45;}
   .tile .ta{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:99px;
     border:1px solid var(--hair);display:grid;place-items:center;color:var(--fg2);}
-  /* Makler am Objekt: EINE randlose Zeile unter dem Titel. Kein Kasten, keine zweite Stelle.
-     Kreis, Name, eine Aussage, ein Textlink. Die Kontaktwege liegen im Chat dahinter. */
-  .mksig{display:flex;align-items:center;gap:11px;margin-top:20px;}
-  .mksig img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
-  .mksig .wer{min-width:0;font-size:14.5px;line-height:1.35;color:var(--fg2);}
-  .mksig .wer b{font-weight:600;color:var(--ink);}
-  .mksig .wer i{font-style:normal;}
-  .mksig button{flex:none;margin-left:6px;padding:8px 0;border:none;background:none;cursor:pointer;
-    font:500 14.5px var(--font-display);color:var(--ink);text-decoration:underline;text-decoration-color:rgba(20,18,16,.25);text-underline-offset:4px;
-    transition:text-decoration-color .3s var(--ease);}
-  .mksig button:hover{text-decoration-color:var(--ink);}
-  @media (max-width:520px){.mksig .wer i{display:none;}.mksig button{margin-left:auto;}}
+  .agent{display:flex;gap:13px;align-items:center;background:var(--card);border:1px solid var(--hair);
+    border-radius:20px;padding:16px;margin-top:12px;}
+  .agent img{width:50px;height:50px;border-radius:14px;object-fit:cover;object-position:center 20%;}
+  .agent b{display:block;font-size:14px;font-weight:600;}
+  .agent .mono{display:block;margin-top:3px;}
   .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
   .ctabar{display:none;}
   .foot{margin-top:34px;text-align:center;}
@@ -586,12 +579,6 @@
             <span class="mono">Zum Verkauf · Wohnung · Top 29 · 1170 Wien</span>
           </div>
         </div>
-        <!-- Makler am Objekt: eine Zeile, bevor die erste Zahl kommt -->
-        <div class="mksig">
-          <img src="../../assets/team/makler/wenzel-waechter.jpg" alt="">
-          <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
-          <button type="button" data-mkfrage>Frage stellen</button>
-        </div>
         <div class="figs">
           <div class="fg dark">
             <div class="r1"><b>Wohnfläche</b><span class="mono">m²</span></div>
@@ -766,6 +753,12 @@
         </div>
       </div>
 
+      <div class="agent">
+        <img src="../../assets/team/portrait-02.jpg?v=2" alt="">
+        <div><b>[Makler-Name]</b>
+          <span class="mono">UNIO Partner · Boom Living</span></div>
+      </div>
+      <p class="lock">Kontaktdaten geschützt — nach Login sichtbar.</p>
     </aside>
   </div>
 
@@ -816,11 +809,11 @@
   <div class="back" id="mkback"></div>
   <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
     <div class="kopf">
-      <img id="mkfoto" src="../../assets/team/makler/wenzel-waechter.jpg" alt=""
+      <img id="mkfoto" src="../../assets/team/portrait-02.jpg?v=2" alt=""
         style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
       <div>
-        <b id="mkname">Wenzel Wächter</b>
-        <span class="mono" style="font-size:8.5px">Immobilienberater · antwortet meist in unter 2 Stunden</span>
+        <b id="mkname">Lukas Brandtner</b>
+        <span class="mono" style="font-size:8.5px">Makler · antwortet in unter 2 Stunden</span>
       </div>
       <button class="x" id="mkx" aria-label="Schließen">✕</button>
     </div>
@@ -834,7 +827,7 @@
     </a>
     <div class="verlauf" id="mkverlauf"></div>
     <div class="fuss">
-      <input id="mkinput" placeholder="Frage an Wenzel …" aria-label="Nachricht an Wenzel Wächter">
+      <input id="mkinput" placeholder="Nachricht an den Makler …" aria-label="Nachricht an den Makler">
       <button id="mksend">Senden</button>
     </div>
   </div>
@@ -1159,7 +1152,7 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(heroimg.complete)heroimg.classList.add('ld');
 else heroimg.addEventListener('load',()=>heroimg.classList.add('ld'));
 
-const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .lock')];
+const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .agent, .lock')];
 rvEls.forEach(el=>el.classList.add('rv'));
 document.querySelectorAll('.trow .t').forEach((el,i)=>el.style.transitionDelay=(i*70)+'ms');
 const io=new IntersectionObserver(es=>es.forEach(e=>{
@@ -1520,7 +1513,7 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   }
   function chatMsg(ich, txt){
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "../../assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · " + o.t, img: "../../assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
   }
@@ -1888,8 +1881,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     if (!t) return;
     input.value = "";
     var chats = lese("unio_ek_chats", {});
-    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · Traum Penthouse in Hernals",
-      img: "../../assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+    if (!chats[objId]) chats[objId] = { name: "Lukas Brandtner", rolle: "Makler · Traum Penthouse in Hernals",
+      img: "../../assets/team/portrait-02.jpg?v=2", antwortzeit: "< 2 h", msgs: [] };
     chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
     schreibe("unio_ek_chats", chats);
     zeichne();
@@ -1908,8 +1901,6 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
     auf();
     if (frage) { input.value = frage; }
   };
-  /* Signatur und Modul fuehren in denselben Chat am Objekt */
-  document.querySelectorAll("[data-mkfrage]").forEach(function(b){ b.addEventListener("click", function(){ auf(); input.focus(); }); });
 })();
 </script>
 </body>

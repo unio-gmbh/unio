@@ -66,14 +66,6 @@
     font-size:13.5px;font-weight:600;border-radius:99px;padding:11px 20px;}
 
   /* Aktionen rechts */
-  /* Makler am Objekt: EIN Kreis. Im Feed als oberster Punkt der Rail, in der Liste am Vorschaubild.
-     Kein Zusatztext im Infoblock. Tippen fuehrt zur Partnerseite. */
-  .rail .mkr{width:52px;height:52px;border-radius:50%;display:block;padding:0;overflow:hidden;border:2px solid rgba(247,245,241,.95);background:#141210;}
-  .card .rail .mkr img{position:static;inset:auto;width:100%;height:100%;animation:none!important;transform:none;object-fit:cover;object-position:center 30%;display:block;}
-  .srow{position:relative;}
-  .srow .mkr{position:absolute;left:74px;top:50px;width:28px;height:28px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px #FFFFFF,0 3px 10px rgba(20,18,16,.22);background:#141210;display:block;transition:transform .25s var(--ease);}
-  .srow .mkr img{width:100%;height:100%;border-radius:0;object-fit:cover;object-position:center 30%;display:block;}
-  .srow a.mkr:hover{transform:scale(1.12);}
   .rail{position:absolute;right:14px;bottom:calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;align-items:center;}
   .rail button,.rail a{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;text-decoration:none;
     background:rgba(11,10,9,.42);border:1px solid rgba(247,245,241,.22);color:var(--paper);
@@ -314,30 +306,6 @@
     { id:"reel-kling",   video:"/assets/video/explore-kling-c.mp4", img:"/assets/img/albrechts-fassade.jpg", t:"Das Albrecht · Reel", ort:"1170 Wien · Hernals", preis:"ab € 470.000", tags:["neubau","1170","projekt","reel"] },
     { id:"reel-design",  video:"/assets/video/explore-design.mp4",  img:"/assets/img/vienna-facades.jpg", t:"UNIO · Wien",  ort:"Wien · Gründerzeit",  preis:"Auf Anfrage", tags:["altbau","stil","premium","reel"] },
   ];
-  /* Makler-Register (Demo-Zuordnung): echte UNIO Partner mit Live-Seite auf www.unio.at.
-     url: null heisst: noch keine eigene Seite, dann ist die Zeile kein Link.
-     In der Plattform kommt das aus agents[] des Objekts (docs/makler-praesenz). */
-  var MAKLER = {
-    "marcus-weiss":     { name:"Marcus Anthofer-Weiss", img:"/assets/team/makler/marcus-anthofer-weiss.jpg", url:"https://www.unio.at/marcus-weiss" },
-    "lara-jonas":       { name:"Lara Jonas",            img:"/assets/team/makler/lara-jonas.jpg",            url:"https://www.unio.at/lara-jonas" },
-    "alexander-maurer": { name:"Alexander Maurer",      img:"/assets/team/makler/alexander-maurer.jpg",      url:"https://www.unio.at/alexander-maurer" },
-    "wenzel-waechter":  { name:"Wenzel Wächter",        img:"/assets/team/makler/wenzel-waechter.jpg",       url:null }
-  };
-  var MK_ZU = [["beheim","wenzel-waechter"],["penthouse","wenzel-waechter"],["reel-riffel","wenzel-waechter"],["albrecht","marcus-weiss"],["reel-kling","marcus-weiss"],
-    ["ecoluxe","marcus-weiss"],["hufhaus","alexander-maurer"],["reel-hufhaus","alexander-maurer"],["obenzwei","lara-jonas"],["maxing","lara-jonas"],
-    ["schoenbrunn","lara-jonas"],["facade","lara-jonas"],["reel-design","lara-jonas"]];
-  function maklerVon(o){
-    for (var i = 0; i < MK_ZU.length; i++) if (o.id === MK_ZU[i][0] || o.id.indexOf(MK_ZU[i][0] + "-") === 0 || o.id.indexOf(MK_ZU[i][0]) === 0 && /\d$/.test(o.id)) return MAKLER[MK_ZU[i][1]];
-    return null;
-  }
-  function maklerKreis(o){
-    var m = maklerVon(o); if (!m) return "";
-    var bild = '<img src="' + m.img + '" alt="" loading="lazy">';
-    return m.url
-      ? '<a class="mkr" href="' + m.url + '" target="_blank" rel="noopener" aria-label="' + m.name + ', betreut dieses Objekt. Profil ansehen" title="' + m.name + '">' + bild + '</a>'
-      : '<span class="mkr" title="' + m.name + '">' + bild + '</span>';
-  }
-  function maklerVorname(o){ var m = maklerVon(o); return m ? m.name.split(" ")[0] : ""; }
   /* Kaufkraft aus dem Endkunden-Portal (unio_ek_profil): Budget-Marker, ein Badge pro Karte */
   /* Embed-Modus: laeuft als nativer Tab im Endkunden-Portal (iframe), eigene Topbar weg */
   if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");
@@ -426,7 +394,6 @@
         '<a class="more" href="' + DETAIL + '&obj=' + o.id + '">Objekt ansehen <span aria-hidden="true">→</span></a>' +
       '</div>' +
       '<div class="rail">' +
-        (maklerVon(o) ? maklerKreis(o) + '<span class="lbl">' + maklerVorname(o) + '</span>' : '') +
         '<button class="herz' + (like ? " on" : "") + '" aria-label="Merken">' + HERZ + '</button>' +
         '<span class="lbl">Merken</span>' +
         '<button class="share" aria-label="Teilen"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6.5 10 2.5 6 6.5M10 3v10M4 11v4.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></button>' +
@@ -679,10 +646,10 @@
         if (ueberBudget(o)) row.classList.add("ueber");
         row.innerHTML = '<img src="' + o.img + '" alt="" loading="lazy">' +
           '<div><div class="t">' + o.t + '</div><div class="m">' + o.ort + '</div><div class="p">' + o.preis +
-          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' + maklerKreis(o) +
+          (ueberBudget(o) ? ' <span class="rbadge budget">ÜBER BUDGET</span>' : (rendite(o) ? ' <span class="rbadge">RENDITE ' + rendite(o) + ' %</span>' : '')) + '</div></div>' +
           '<button class="sherz' + (likes.has(o.id) ? " on" : "") + '" aria-label="Merken">' + HERZ.replace('width="22" height="22"', 'width="16" height="16"') + '</button>';
         row.addEventListener("click", function(e){
-          if (e.target.closest(".sherz, a.mkr")) return;
+          if (e.target.closest(".sherz")) return;
           insFeed(o.id);
         });
         row.addEventListener("mouseenter", function(){ aktivPin(o.id, false); });

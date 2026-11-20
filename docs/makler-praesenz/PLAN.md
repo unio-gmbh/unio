@@ -1,6 +1,6 @@
 # Makler-Präsenz: Plan
 
-Stand: 20.11.2026 · Version 2 · Status: Entwurf zur Abstimmung, nichts davon ist live
+Stand: 20.11.2026 · Version 3 · Status: Entwurf zur Abstimmung, nichts davon ist live
 
 **Änderung in Version 2 (Rückmeldung Daniel): weniger Ebenen.** Pro Fläche gibt es genau ein Makler-Element, und zwar einen Kreis. Keine eigene Zeile unter der Karte, kein eigener Kasten auf der Objektseite. Neu dazu: der Bereich CIRCLE-Gesichter auf Startseite und CIRCLE-Seite.
 
@@ -165,16 +165,20 @@ Nach der ersten Anfrage: Kreis in der Navigation des Kontos, gemeinsame Merklist
 
 ### M12 CIRCLE-Gesichter
 
-Ein ruhiger Bereich mit den Partnern als Reihe von Kreisen (96 Pixel), Name und Region darunter. Jeder Kreis führt zur Maklerseite. Eine Komponente, zwei Einsätze:
+Fassung 3 (nach Rückmeldung: Namen unter Kreisen wirken unsauber). Vorbild sind Team-Bereiche ausgezeichneter Seiten (Awwwards-Sammlungen zu Team-Hover und Namens-Einblendung): große Porträts als Streifen, der Name steht im Bild, das Bild reagiert auf die Maus.
 
-- Startseite, direkt nach der Objekt-Vorschau: "Hinter jedem Objekt steht ein Mensch." mit Knopf "CIRCLE entdecken".
-- CIRCLE-Seite (`/makler`), nach dem Abschnitt zur eigenen Marke: "Der CIRCLE wächst." mit einem freien Kreis "Dein Platz" am Ende und Knopf "Platz im CIRCLE anfragen".
+- Ein Streifen aus vier großen Editorial-Porträts im Format 4:5. Der Name steht einzeilig unten links im Bild, darunter klein die Region. Kein Text außerhalb des Bilds.
+- Am Desktop wird das Porträt beim Überfahren zum Film (5 Sekunden, stumm, Menschen ziehen vorbei, die Person bleibt scharf). Am Handy läuft der Film, sobald die Karte im Bild steht. Wer reduzierte Bewegung eingestellt hat, sieht nur das Standbild.
+- Die Karte führt zur Maklerseite, wenn es eine gibt (kleiner Pfeil rechts unten).
+- Startseite, nach der Objekt-Vorschau: "Hinter jedem Objekt steht ein Mensch." mit Knopf "CIRCLE entdecken".
+- CIRCLE-Seite, nach dem Abschnitt zur eigenen Marke: "Der CIRCLE wächst." mit Knopf "Platz im CIRCLE anfragen".
+- Am Handy seitlich schiebbar mit Einrasten.
 
-Die Reihe speist sich aus den Makler-Daten. Kommt ein Partner dazu, wächst sie von selbst. Am Handy lässt sie sich seitlich schieben. Bewusst keine Zahlen, keine Rangfolge, keine Abzeichen.
+Bildquelle: die Editorial-Serie aus dem Drive (Standbild und Film je Person), verkleinert in `assets/team/editorial/`. Aus denselben Bildern stammen jetzt auch die kleinen Makler-Kreise, damit alle Gesichter gleich aussehen.
 
-Stand: gebaut, zeigt die vier Partner mit Foto. Bilder: [Startseite](bilder/v2-circle-startseite.jpg), [CIRCLE-Seite](bilder/v2-circle-seite.jpg), [mobil](bilder/v2-circle-mobil.jpg).
+Stand: gebaut mit Marcus Anthofer-Weiss, Lara Jonas, Wenzel Wächter und Nikita Neznamov. Bilder: [Startseite](bilder/v3-circle-startseite.jpg), [CIRCLE-Seite](bilder/v3-circle-seite.jpg), [mobil](bilder/v3-circle-mobil.jpg).
 
-Offen: Für diesen Bereich liegen im Drive einheitliche Editorial-Porträts und kurze Videos (auch Willkommens-Videos). Sie wären die bessere Bildquelle als die jetzigen Ausschnitte. Die Dateien ließen sich aus der Arbeitsumgebung nicht herunterladen, sie müssen ins Repo gelegt oder per Link freigegeben werden.
+Offen: Im Drive liegen sechs weitere Porträts (Johannes, Florian, Fabian, Jacob, Daniel, Marcin). Wer davon als CIRCLE-Partner gezeigt werden soll, ist zu entscheiden. Alexander Maurer hat noch kein Editorial-Porträt und fehlt deshalb im Streifen.
 
 ### M11 Makler auf Projektseiten und in der Übersicht
 
@@ -260,8 +264,7 @@ Stand: Zeile im Repo gebaut, Leiste offen. Ergebnis: Die Person steht mobil im e
 
 ### Schritt 2b: Die Community zeigen
 
-- CIRCLE-Gesichter (M12) auf der Startseite und auf der CIRCLE-Seite.
-- Editorial-Porträts aus dem Drive als einheitliche Bildquelle einbinden.
+- CIRCLE-Gesichter (M12) auf der Startseite und auf der CIRCLE-Seite, mit den Editorial-Porträts und Filmen aus dem Drive.
 
 Stand: im Repo gebaut. Ergebnis: Die Startseite führt sichtbar zu den Menschen und zum CIRCLE, die CIRCLE-Seite zeigt eine Community, die wächst. Aufwand: klein.
 

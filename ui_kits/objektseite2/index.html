@@ -1,0 +1,1916 @@
+<!-- @dsCard group="Homepage" viewport="1440x900" name="Projekt-Detailseite" subtitle="1:1 nach Prototyp: Kennzahlen · Raumprofil · Marktdaten · Galerie-Overlay" -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Traum Penthouse in Hernals — UNIO</title>
+<link rel="stylesheet" href="../../styles.css">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/favicon-192.png">
+<link rel="apple-touch-icon" href="../../assets/favicon/apple-touch-icon.png">
+<meta name="theme-color" content="#F7F5F1">
+<script defer src="/_vercel/insights/script.js"></script>
+
+<!--
+  1:1-Nachbau von uploads/unio-projekt-detailseite.html (verbindliche Referenz, Briefing 04.07.).
+  Nur geändert: Base64-Demo-Fotos → echte Objektfotos aus assets/ · Makler: Wenzel Wächter (wie live).
+  Inhalte: app.unio.at/property/2 · Marktdaten Demo · eine Makler-Zeile unter dem Titel.
+-->
+<style>
+  :root{ --bg:#F2EFE9; --card:#FBFAF6; --ink:#141210; --fg2:#6E6862; --fg3:#A19A91;
+    --orange:#FFAA09; --hair:rgba(20,18,16,.1); --ease:cubic-bezier(.32,.72,0,1);}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);
+    font-family:var(--font-display),'Helvetica Neue',Helvetica,sans-serif;-webkit-font-smoothing:antialiased;}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:.03;z-index:99;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+  svg{display:block}
+  .mono{font-family:var(--font-mono),'SF Mono',ui-monospace,monospace;font-size:10.5px;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--fg3);}
+  .shell{max-width:1140px;margin:0 auto;padding:0 20px 40px;}
+
+  .top{position:sticky;top:0;z-index:40;display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding:14px 0;background:linear-gradient(rgba(242,239,233,.92),rgba(242,239,233,.75));
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+  .topnav{display:flex;gap:24px;font-weight:500;font-size:14px;}
+  .topnav a{color:var(--fg2);text-decoration:none;padding-bottom:3px;border-bottom:1px solid transparent;transition:color .3s var(--ease);}
+  .topnav a:hover{color:var(--ink);}
+  .topnav a.on{color:var(--ink);border-bottom-color:var(--orange);}
+  @media (max-width:860px){.topnav{display:none;}}
+  /* Mobiles Menü (Burger + Overlay) */
+  .mburger{display:none;}
+  .mmenu{display:none;}
+  @media (max-width:860px){
+    .mburger{display:grid;position:relative;z-index:81;}
+    .mmenu{position:fixed;inset:0;z-index:80;background:rgba(242,239,233,.94);
+      backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      opacity:0;pointer-events:none;transition:opacity .4s var(--ease);
+      display:flex;flex-direction:column;padding:96px 28px 34px;}
+    .mmenu.open{opacity:1;pointer-events:auto;}
+    .mmenu a{display:flex;align-items:baseline;gap:14px;text-decoration:none;color:var(--fg2);
+      font-size:28px;font-weight:500;letter-spacing:-.02em;padding:15px 0;
+      border-bottom:1px solid var(--hair);}
+    .mmenu a.on{color:var(--ink);}
+    .mmenu a .nr{font-family:var(--font-mono),ui-monospace,monospace;font-size:11px;color:var(--fg3);}
+    .mmenu a.on .nr{color:var(--orange);}
+    .mburger svg line{transition:transform .35s var(--ease);transform-origin:center;}
+    .mburger.x svg .l1{transform:translateY(3px) rotate(45deg);}
+    .mburger.x svg .l2{transform:translateY(-3px) rotate(-45deg);}
+    body.mopen .top{z-index:82;}
+    body.mopen .ctabar{display:none!important;}
+  }
+  .cir{width:44px;height:44px;border-radius:99px;display:grid;place-items:center;cursor:pointer;
+    background:var(--card);border:1px solid var(--hair);color:var(--ink);transition:transform .3s var(--ease);}
+  .cir:active{transform:scale(.92)}
+  .cir.liked{color:var(--orange)}
+  .brand{font-weight:500;font-size:15px;letter-spacing:-.02em;display:flex;align-items:center;}
+  .brand img{height:15px;width:auto;display:block;}
+  .toprow{display:flex;gap:8px;}
+
+  .hero{border-radius:22px;overflow:hidden;position:relative;background:var(--card);cursor:pointer;}
+  /* Ambient-Video: Position 1 der Galerie, Loop ohne Ton, Ton erst auf Tipp */
+  .hero .ambient{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
+  .hero .ambientb{position:absolute;left:14px;bottom:14px;padding:8px 14px;border-radius:99px;cursor:pointer;
+    background:rgba(20,18,16,.72);color:#F7F5F1;font-family:var(--font-mono),monospace;font-size:9px;
+    letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  .hero img{display:block;width:100%;aspect-ratio:16/9.4;object-fit:cover;
+    transition:transform .6s var(--ease);}
+  .hero:hover img{transform:scale(1.015)}
+  .hero .count{position:absolute;right:14px;bottom:14px;padding:8px 14px;border-radius:99px;
+    background:rgba(20,18,16,.5);color:#fff;font-size:12px;font-weight:600;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.18);}
+  /* Kachelreihe traegt jetzt auch Video und Tour, deshalb intrinsisch statt vier fix */
+  .trow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,116px),1fr));gap:8px;margin-top:8px;}
+  .trow .t{border-radius:14px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;}
+  .trow img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+  .trow .t:hover img{transform:scale(1.04)}
+
+  .cols{display:grid;grid-template-columns:1fr;margin-top:36px;}
+  .content{min-width:0;max-width:660px;}
+  .sec{padding:26px 0;}
+  .sec + .sec{border-top:1px solid var(--hair);}
+  h2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:18px;}
+
+  .headrow{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 28px;flex-wrap:wrap;}
+  h1{font-size:clamp(30px,4.2vw,48px);font-weight:600;letter-spacing:-.03em;line-height:1.04;}
+  h1 em{font-style:normal;color:var(--orange);}
+  .headmeta{display:flex;align-items:center;gap:14px;padding-bottom:7px;}
+  .pillstat{padding:7px 14px;border-radius:99px;background:rgba(255,170,9,.12);
+    color:var(--orange);font-size:12px;font-weight:700;}
+  .figs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:28px;}
+  .fg{border:1px solid var(--hair);background:var(--card);border-radius:16px;padding:15px 16px 14px;}
+  .fg .r1{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .fg .r1 b{font-size:12.5px;font-weight:600;letter-spacing:-.005em;}
+  .fg i{font-style:normal;display:block;margin-top:18px;
+    font-size:clamp(23px,2.4vw,30px);font-weight:600;letter-spacing:-.03em;line-height:1;}
+  .fg.dark{background:var(--ink);border-color:var(--ink);color:#F3F0EA;}
+  .fg.dark .mono{color:rgba(243,240,234,.4);}
+  .desc p{font-size:15px;line-height:1.7;color:var(--fg2);}
+  .desc p + p{margin-top:14px;}
+  .more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:14px;
+    font-weight:600;color:var(--ink);cursor:pointer;background:none;border:none;font-family:inherit;}
+
+  .hl div{display:flex;justify-content:space-between;gap:16px;padding:13px 0;font-size:14.5px;
+    border-bottom:1px solid var(--hair);}
+  .hl div:last-child{border-bottom:none;}
+  .hl span{color:var(--fg2);}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;}
+  .kv div{display:flex;justify-content:space-between;gap:14px;padding:12px 0;font-size:14px;
+    border-bottom:1px solid var(--hair);}
+  .kv div span{color:var(--fg3);}
+  .kv div b{font-weight:600;text-align:right;}
+  .plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .plan{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:16px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;
+    transition:transform .3s var(--ease);}
+  .plan:hover{transform:translateY(-1px)}
+  .plan b{font-size:13.5px;font-weight:600;display:block;}
+  .plan span{display:block;margin-top:4px;}
+  .arrbtn{width:36px;height:36px;border-radius:99px;border:1px solid var(--hair);
+    display:grid;place-items:center;flex-shrink:0;color:var(--ink);}
+  .energy{display:flex;align-items:center;gap:18px;}
+  .badge{width:56px;height:56px;border-radius:18px;border:1.5px solid var(--ink);
+    display:grid;place-items:center;font-size:22px;font-weight:700;flex-shrink:0;}
+  .energy .mono{display:block;margin-top:5px;}
+  .energy p{font-size:14.5px;font-weight:600;}
+
+  /* ===== RAUMPROFIL (berechnet) — Lineal-Skalen im Radio-Dial-Stil ===== */
+  .rp{display:flex;flex-direction:column;gap:26px;}
+  .rpitem{display:grid;grid-template-columns:1fr auto;gap:6px 28px;align-items:end;}
+  .rpitem .lab{font-size:13.5px;font-weight:600;}
+  .rpitem .val{font-size:clamp(23px,2.4vw,30px);font-weight:600;letter-spacing:-.03em;line-height:1;
+    grid-row:1 / span 2;align-self:center;text-align:right;}
+  .rpitem .val em{font-style:normal;font-size:.5em;font-weight:600;color:var(--fg3);margin-left:2px;}
+  .rpscale{grid-column:1;position:relative;height:30px;margin-top:4px;}
+  .rpscale .ticks{position:absolute;inset:8px 0 0;border-top:1px solid var(--hair);
+    background:repeating-linear-gradient(90deg,rgba(20,18,16,.2) 0 1px,transparent 1px calc((100% - 1px)/24));
+    background-size:100% 7px;background-repeat:no-repeat;}
+  .rpscale .ind{position:absolute;top:4px;width:2.5px;height:18px;border-radius:99px;
+    background:var(--orange);transform:translateX(-50%);
+    transition:left 1s var(--ease);}
+  .rppoles{grid-column:1;display:flex;justify-content:space-between;margin-top:2px;}
+  .rpnote{grid-column:1 / -1;font-size:13px;color:var(--fg2);line-height:1.55;margin-top:2px;}
+  .rpprice{grid-column:1 / -1;margin-top:2px;}
+
+  .rail{margin-top:8px;}
+  .price{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;}
+  .price .mono{display:block;}
+  .price b{font-size:clamp(26px,2.6vw,32px);font-weight:600;letter-spacing:-.02em;display:block;margin-top:8px;}
+  .price .sub{font-size:13px;color:var(--fg2);margin-top:6px;}
+  .btn{display:flex;align-items:center;justify-content:center;width:100%;margin-top:20px;
+    background:var(--ink);color:#F3F0EA;border:none;border-radius:99px;padding:16px;
+    font-weight:600;font-size:14.5px;cursor:pointer;font-family:inherit;transition:transform .3s var(--ease);}
+  .btn:hover{transform:translateY(-1px)} .btn:active{transform:scale(.98)}
+  .ghost{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;
+    background:none;border:none;padding:10px;font-size:13.5px;font-weight:600;color:var(--ink);
+    cursor:pointer;font-family:inherit;}
+
+  /* ===== MARKTDATEN — hell, Orange als Akzent ===== */
+  .stat{background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:24px;
+    position:relative;margin-top:12px;}
+  .stat .shead2{display:flex;align-items:center;gap:10px;}
+  .livepill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;
+    border:1px solid rgba(255,170,9,.35);color:var(--orange);
+    font-family:var(--font-mono),ui-monospace,monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;}
+  .livepill i{width:6px;height:6px;border-radius:99px;background:var(--orange);
+    animation:lp 2.2s infinite;}
+  @keyframes lp{0%,100%{opacity:1}50%{opacity:.25}}
+  .stat .arr{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:99px;
+    border:1px solid var(--hair);display:grid;place-items:center;color:var(--ink);}
+  .bignum{display:flex;align-items:baseline;gap:10px;margin-top:18px;}
+  .bignum b{font-size:46px;font-weight:600;letter-spacing:-.03em;line-height:1;}
+  .bignum b .ghost{color:rgba(20,18,16,.14);font-weight:600;}
+  .delta{padding:5px 10px;border-radius:99px;background:rgba(255,170,9,.12);color:var(--orange);
+    font-size:12px;font-weight:700;}
+  .bignum + .mono{display:block;margin-top:8px;}
+  .bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:20px;padding:0 1px;}
+  .bars i{flex:1;max-width:10px;border-radius:99px;background:rgba(20,18,16,.1);
+    transition:background .25s var(--ease);min-height:10%;}
+  .bars i.on{background:var(--orange);}
+  .ruler{position:relative;margin-top:10px;height:26px;}
+  .ruler .ticks{position:absolute;inset:0 1px;border-top:1px solid var(--hair);
+    background:repeating-linear-gradient(90deg,rgba(20,18,16,.22) 0 1px,transparent 1px calc((100% - 1px)/13));
+    background-size:100% 8px;background-repeat:no-repeat;background-position:0 0;}
+  .scrub{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:100%;
+    background:transparent;cursor:pointer;margin:0;}
+  .scrub::-webkit-slider-runnable-track{height:100%;background:transparent;}
+  .scrub::-webkit-slider-thumb{-webkit-appearance:none;width:2.5px;height:22px;border-radius:99px;
+    background:var(--orange);margin-top:2px;box-shadow:none;}
+  .scrub::-moz-range-track{height:100%;background:transparent;}
+  .scrub::-moz-range-thumb{width:2.5px;height:22px;border-radius:99px;background:var(--orange);border:none;}
+  .scrubcap{display:block;margin-top:4px;min-height:14px;color:var(--fg2);}
+  .srows{margin-top:16px;}
+  .srows div{display:flex;justify-content:space-between;gap:12px;padding:11px 0;font-size:13px;
+    border-bottom:1px solid var(--hair);}
+  .srows div:last-child{border-bottom:none;}
+  .srows span{color:var(--fg3);}
+  .srows b{font-weight:600;}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+  .tile{background:rgba(20,18,16,.035);border-radius:14px;padding:14px;position:relative;}
+  .tile b{font-size:22px;font-weight:600;letter-spacing:-.02em;display:block;}
+  .tile b em{font-style:normal;color:var(--orange);}
+  .tile span{display:block;margin-top:6px;font-size:11px;color:var(--fg2);line-height:1.45;}
+  .tile .ta{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:99px;
+    border:1px solid var(--hair);display:grid;place-items:center;color:var(--fg2);}
+  /* Makler am Objekt: EINE randlose Zeile unter dem Titel. Kein Kasten, keine zweite Stelle.
+     Kreis, Name, eine Aussage, ein Textlink. Die Kontaktwege liegen im Chat dahinter. */
+  .mksig{display:flex;align-items:center;gap:11px;margin-top:20px;}
+  .mksig img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
+  .mksig .wer{min-width:0;font-size:14.5px;line-height:1.35;color:var(--fg2);}
+  .mksig .wer b{font-weight:600;color:var(--ink);}
+  .mksig .wer i{font-style:normal;}
+  .mksig button{flex:none;margin-left:6px;padding:8px 0;border:none;background:none;cursor:pointer;
+    font:500 14.5px var(--font-display);color:var(--ink);text-decoration:underline;text-decoration-color:rgba(20,18,16,.25);text-underline-offset:4px;
+    transition:text-decoration-color .3s var(--ease);}
+  .mksig button:hover{text-decoration-color:var(--ink);}
+  @media (max-width:520px){.mksig .wer i{display:none;}.mksig button{margin-left:auto;}}
+  .lock{font-size:12px;color:var(--fg3);margin-top:10px;text-align:center;line-height:1.5;}
+  .ctabar{display:none;}
+  .foot{margin-top:34px;text-align:center;}
+
+  /* ===== GALERIE-OVERLAY ===== */
+  .ov{position:fixed;inset:0;z-index:200;display:none;}
+  .ov.open{display:block;animation:ovin .45s var(--ease);}
+  .ov.open .bgimg{animation:bgz 1.1s var(--ease);}
+  @keyframes bgz{from{transform:scale(1.06)}to{transform:scale(1)}}
+  .ov.open .strip{animation:supi .55s var(--ease) .1s backwards;}
+  .ov.open .obar{animation:supi .5s var(--ease) backwards;}
+  @keyframes supi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes ovin{from{opacity:0}to{opacity:1}}
+  .ov .bgimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transition:opacity .5s var(--ease);}
+  .ov .tint{position:absolute;inset:0;background:rgba(14,12,10,.42);
+    backdrop-filter:blur(26px) saturate(1.2);-webkit-backdrop-filter:blur(26px) saturate(1.2);}
+  .ov .inner{position:absolute;inset:0;display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) 18px calc(env(safe-area-inset-bottom,0px) + 16px);}
+  .ov .obar{display:flex;justify-content:space-between;align-items:center;color:#fff;}
+  .ov .obar .t b{font-size:14.5px;font-weight:600;display:block;}
+  .ov .obar .t span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:rgba(255,255,255,.5);display:block;margin-top:3px;}
+  .gcir{width:46px;height:46px;border-radius:99px;display:grid;place-items:center;cursor:pointer;
+    background:rgba(20,18,16,.4);border:1px solid rgba(255,255,255,.22);color:#fff;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .3s var(--ease);}
+  .gcir:active{transform:scale(.9)}
+  .ov .mid{flex:1;display:flex;align-items:center;justify-content:center;}
+  .deck{position:relative;width:min(82vw,380px);aspect-ratio:3/4;
+    transition:opacity .6s var(--ease),transform .6s var(--ease);}
+  @media (min-width:740px){.deck{width:min(64vw,560px);aspect-ratio:4/3;}}
+  @media (min-width:1000px){.deck{width:min(52vw,680px);aspect-ratio:16/10;}}
+  .dcard{position:absolute;inset:0;border-radius:20px;overflow:hidden;cursor:pointer;
+    border:1px solid rgba(255,255,255,.3);box-shadow:0 26px 60px -20px rgba(0,0,0,.6);
+    transition:transform .5s var(--ease),opacity .5s var(--ease);background:#111;}
+  .dcard img{width:100%;height:100%;object-fit:cover;}
+  .dcard .cap{position:absolute;left:12px;bottom:12px;padding:6px 12px;border-radius:99px;
+    background:rgba(20,18,16,.45);border:1px solid rgba(255,255,255,.2);color:#fff;
+    font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .ov .strip{display:flex;gap:8px;justify-content:center;padding:6px;border-radius:18px;
+    background:rgba(20,18,16,.4);border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    margin:0 auto;max-width:100%;overflow-x:auto;scrollbar-width:none;}
+  .ov .strip::-webkit-scrollbar{display:none}
+  .ov .strip .st{flex:0 0 auto;width:64px;height:48px;border-radius:12px;overflow:hidden;
+    cursor:pointer;border:1.5px solid transparent;transition:border-color .3s var(--ease);}
+  .ov .strip .st img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ov .strip .st.on{border-color:#fff;}
+
+  @media (min-width:1000px){
+    .cols{grid-template-columns:1fr 340px;gap:56px;}
+    .rail{position:sticky;top:80px;align-self:start;margin-top:26px;}
+  }
+  @media (max-width:999px){
+    .rail .price .btn,.rail .price .ghost{display:none;}
+    .ctabar{display:flex;position:fixed;left:12px;right:12px;
+      bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:50;border-radius:22px;
+      padding:10px 10px 10px 20px;align-items:center;justify-content:space-between;gap:12px;
+      background:rgba(20,18,16,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      box-shadow:0 18px 50px -16px rgba(20,18,16,.5);}
+    .ctabar{padding:10px;gap:8px;}
+    .ctabar .l{display:none;} /* Preis steht im Exposé; unten zaehlen nur die Aktionen */
+    .ctabar button{flex:1 1 0;min-width:0;background:#F3F0EA;color:var(--ink);border:none;border-radius:16px;
+      padding:14px 8px;font-weight:700;font-size:13px;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ctabar .feedrund{flex:0 0 46px;width:46px;height:46px;padding:0;border-radius:50%;
+      background:rgba(247,245,241,.14);color:var(--orange);border:1px solid rgba(247,245,241,.28);display:none;place-items:center;}
+    .expback{display:none!important;} /* mobil: Rueckweg sitzt in der Aktionsleiste */
+    body{padding-bottom:90px;}
+  }
+  @media (max-width:720px){
+    .hero img{aspect-ratio:4/3;}
+    .kv{grid-template-columns:1fr;}
+    .plans{grid-template-columns:1fr;}
+    .figs{grid-template-columns:1fr 1fr;}
+    .headmeta{padding-bottom:0;flex-wrap:wrap;gap:10px 14px;}
+    .tiles{grid-template-columns:1fr 1fr;}
+  }
+  /* Scroll-Reveals */
+  .rv{opacity:0;transform:translateY(18px);}
+  .rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .hero img{opacity:0;transform:scale(1.05);}
+  .hero img.ld{opacity:1;transform:scale(1);transition:opacity .9s var(--ease),transform 1.2s var(--ease);}
+  .hero:hover img.ld{transform:scale(1.015);}
+  .bars i{transform:scaleY(.06);transform-origin:bottom;
+    transition:transform .7s var(--ease),background .25s var(--ease);}
+  .stat.grown .bars i{transform:scaleY(1);}
+  .delta{opacity:0;transform:scale(.7);}
+  .stat.grown .delta{opacity:1;transform:scale(1);transition:opacity .4s var(--ease) .5s,transform .4s var(--ease) .5s;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+    .rv,.hero img,.bars i,.delta{opacity:1!important;transform:none!important}}
+
+  /* ===== Dokumente ===== */
+  .docs{max-width:1140px;margin:64px auto 0;padding:0 20px;}
+  .docs h2{font-size:clamp(24px,3vw,34px);font-weight:500;letter-spacing:-.02em;margin-bottom:6px;}
+  .docs .dsub{font-size:14.5px;color:var(--fg2);margin:0 0 22px;}
+  .doclist{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:720px){.doclist{grid-template-columns:1fr;}}
+  .docrow{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);
+    border-radius:14px;padding:16px 18px;text-decoration:none;color:inherit;transition:transform .3s var(--ease),box-shadow .3s var(--ease);}
+  .docrow:hover{transform:translateY(-2px);box-shadow:0 14px 30px -18px rgba(20,18,16,.25);}
+  .docrow .dico{flex:0 0 40px;width:40px;height:40px;border-radius:11px;background:rgba(184,116,0,.1);
+    color:#B87400;display:grid;place-items:center;}
+  .docrow .dmain{flex:1;min-width:0;}
+  .docrow .dmain b{display:block;font-size:15px;font-weight:500;letter-spacing:-.01em;}
+  .docrow .dmain span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg2);}
+  .docrow .dget{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
+  .docrow.locked{opacity:.86;}
+  .docrow.locked .dget{color:var(--fg2);font-weight:500;}
+  .docstat{display:inline-block;margin-left:8px;font-family:var(--font-mono),ui-monospace,monospace;font-size:8px;letter-spacing:.1em;
+    text-transform:uppercase;color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:3px 8px;vertical-align:2px;}
+
+  /* ===== Ähnliche Objekte + Eigentümer-Hook ===== */
+  .similar{max-width:1140px;margin:64px auto 0;padding:0 20px;}
+  .similar h2{font-size:clamp(24px,3vw,34px);font-weight:500;letter-spacing:-.02em;margin-bottom:22px;}
+  .simgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  @media (max-width:720px){.simgrid{grid-template-columns:1fr;}}
+  .simcard{display:block;position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3;text-decoration:none;background:var(--card);}
+  .simcard img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+  .simcard:hover img{transform:scale(1.03);}
+  .simcard .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,16,.05),transparent 40%,rgba(20,18,16,.55));}
+  .simcard .cap{position:absolute;left:16px;right:16px;bottom:14px;color:#fff;}
+  .simcard .cap b{display:block;font-size:17px;font-weight:500;letter-spacing:-.01em;}
+  .simcard .cap span{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .ownerhook{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px;
+    background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:20px 22px;}
+  .ownerhook p{font-size:15px;color:var(--fg2);margin:0;}
+  .ownerhook a{display:inline-flex;align-items:center;gap:9;white-space:nowrap;background:var(--ink);color:#F3F0EA;text-decoration:none;
+    border-radius:99px;padding:12px 20px;font-weight:500;font-size:13.5px;}
+
+  /* ===== Footer (Site-konform, Ember-Glow) ===== */
+  .pfoot{position:relative;overflow:hidden;background:#F0EDE6;margin-top:34px;padding:110px 20px 44px;}
+  .pfoot-glow{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(60% 62% at 86% 26%, rgba(184,116,0,.30) 0%, transparent 62%),
+      radial-gradient(46% 54% at 82% 30%, rgba(255,170,9,.42) 0%, rgba(255,170,9,.12) 42%, transparent 70%);
+    -webkit-mask-image:radial-gradient(120% 120% at 86% 26%, #000 40%, transparent 78%);
+    mask-image:radial-gradient(120% 120% at 86% 26%, #000 40%, transparent 78%);
+    animation:pglow 14s var(--ease) infinite alternate;}
+  @keyframes pglow{from{transform:translate3d(-2%,-2%,0) scale(1)}to{transform:translate3d(3%,3%,0) scale(1.1)}}
+  .pfoot-in{position:relative;z-index:1;max-width:1140px;margin:0 auto;}
+  .pfoot h2{font-size:clamp(44px,5.4vw,88px);font-weight:500;letter-spacing:-.03em;line-height:.98;}
+  .pfoot-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px;}
+  .pfoot-btn{display:inline-flex;align-items:center;gap:12px;background:var(--card);color:var(--ink);
+    text-decoration:none;font-weight:500;font-size:15px;padding:14px 14px 14px 24px;border-radius:99px;
+    box-shadow:0 12px 44px -14px rgba(20,18,16,.28);}
+  .pfoot-btn span{width:30px;height:30px;border-radius:99px;background:var(--ink);color:var(--card);
+    display:grid;place-items:center;font-family:var(--font-mono),monospace;font-size:13px;}
+  .pfoot-ghost{display:inline-flex;align-items:center;text-decoration:none;font-weight:500;font-size:15px;
+    color:var(--ink);padding:14px 24px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--hair);}
+  .pfoot-links{display:flex;flex-wrap:wrap;gap:12px 40px;margin-top:72px;font-size:14.5px;}
+  .pfoot-links a{color:var(--fg2);text-decoration:none;}
+  .pfoot-bar{display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--hair);margin-top:56px;padding-top:24px;}
+  .pfoot-bar img{height:18px;width:auto;}
+
+  /* ===== Medien: Video und 360-Tour liegen als eigene Kacheln in der Galerie.
+     Regel aus dem Research: Bild 1 bleibt Bild (Ladezeit), kein Autoplay,
+     Tour-iframe erst auf Klick. ===== */
+  .trow .t{position:relative;}
+  .trow .t .medb{position:absolute;left:8px;bottom:8px;display:inline-flex;align-items:center;gap:5px;
+    padding:5px 10px;border-radius:99px;background:rgba(20,18,16,.72);color:#F7F5F1;
+    font-family:var(--font-mono),monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    backdrop-filter:blur(8px);}
+  .trow .t.tour .medb{background:var(--orange);color:#1A1305;}
+  .medstage{position:absolute;inset:0;z-index:5;background:#0B0B0C;display:none;}
+  .medstage.on{display:block;}
+  .medstage video,.medstage iframe{position:absolute;inset:0;width:100%;height:100%;border:none;
+    object-fit:contain;background:#0B0B0C;}
+  .medstage .zu{position:absolute;right:12px;top:12px;z-index:3;border:none;cursor:pointer;
+    padding:9px 15px;border-radius:99px;background:rgba(247,245,241,.94);color:var(--ink);
+    font-weight:500;font-size:12.5px;font-family:inherit;}
+  .medplay{position:absolute;inset:0;width:100%;height:100%;border:none;padding:0;cursor:pointer;
+    background:#0B0B0C;display:grid;place-items:center;}
+  .medplay img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.8;}
+  .medplay .knopf{position:relative;width:66px;height:66px;border-radius:99px;background:rgba(247,245,241,.95);
+    color:var(--ink);display:grid;place-items:center;font-size:23px;
+    box-shadow:0 14px 40px -12px rgba(11,10,9,.6);}
+  .medplay .lab{position:absolute;left:14px;bottom:14px;padding:7px 13px;border-radius:99px;
+    background:rgba(20,18,16,.7);color:#F7F5F1;font-family:var(--font-mono),monospace;font-size:9px;
+    letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px);}
+
+  /* ===== Lage und Infrastruktur ===== */
+  .lg{padding:34px 0;border-top:1px solid var(--hair);}
+  .lg .lgtop{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;}
+  .lg h2{font-weight:500;font-size:22px;letter-spacing:-.02em;}
+  .lg .lgscores{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));
+    gap:14px;margin-top:20px;}
+  .lg .sc{background:var(--card);border-radius:16px;padding:20px;box-shadow:inset 0 0 0 1px var(--hair);
+    display:flex;align-items:center;gap:16px;}
+  .lg .sc .ring{position:relative;width:58px;height:58px;flex:0 0 auto;}
+  .lg .sc .ring b{position:absolute;inset:0;display:grid;place-items:center;font-weight:500;font-size:15px;}
+  .lg .sc .txt b{display:block;font-weight:500;font-size:14.5px;}
+  .lg .sc .txt .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--fg3);}
+  .lg .sc .txt p{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--fg2);}
+  /* Karte volle Breite oben, Umgebungsinfos zweispaltig darunter */
+  .lg .lgsplit{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:14px;}
+  .lg .poi{background:var(--card);border-radius:16px;padding:22px;box-shadow:inset 0 0 0 1px var(--hair);
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 32px;align-items:start;}
+  @media (max-width:820px){ .lg .poi{grid-template-columns:minmax(0,1fr);} }
+  .lg .poigrp .h{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);}
+  .lg .poigrp .z{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:13.5px;}
+  .lg .poigrp .z span:last-child{font-family:var(--font-mono),monospace;font-size:11.5px;color:var(--fg2);
+    white-space:nowrap;}
+  .lg .karte{position:relative;border-radius:16px;overflow:hidden;background:var(--card);
+    box-shadow:inset 0 0 0 1px var(--hair);min-height:340px;display:grid;place-items:center;}
+  @media (max-width:820px){ .lg .karte{min-height:260px;} }
+  .lg .karte .platz{text-align:center;padding:26px;}
+  .lg .karte .platz b{display:block;font-weight:500;font-size:15px;margin-bottom:8px;}
+  .lg .karte .platz p{font-size:12.5px;color:var(--fg2);max-width:280px;margin:0 auto 16px;line-height:1.5;}
+  .lg .karte iframe{width:100%;height:100%;border:none;min-height:280px;}
+  .lg .oeffi{margin-top:14px;background:var(--card);color:var(--ink);border-radius:16px;padding:18px 22px;
+    font-size:13.5px;line-height:1.5;box-shadow:inset 0 0 0 1px var(--hair);}
+  .lg .oeffi .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);display:block;margin-bottom:7px;}
+  .lg .wie{margin-top:12px;}
+  .lg .wie button{border:none;background:none;cursor:pointer;font-family:inherit;font-weight:500;
+    font-size:13px;color:var(--fg2);padding:0;text-decoration:underline;text-underline-offset:3px;}
+  .lg .wie p{margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--fg2);max-width:640px;}
+
+  /* ===== UNIO Concierge ===== */
+  /* Helle Flaeche: schwarze Bloecke passen nicht in die Objektseite */
+  .cc{background:var(--card);border-radius:20px;padding:24px;margin-top:26px;
+    box-shadow:inset 0 0 0 1px var(--hair);}
+  .cc .cchead{display:flex;align-items:center;gap:12px;}
+  .cc .ccav{width:38px;height:38px;border-radius:99px;background:var(--orange);color:#1A1305;
+    display:grid;place-items:center;flex:0 0 auto;font-size:17px;}
+  .cc .lab{font-family:var(--font-mono),monospace;font-size:9px;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--orange);}
+  .cc h3{margin-top:4px;font-weight:500;font-size:19px;letter-spacing:-.02em;}
+  .cc .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .cc .chips button{border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;
+    padding:10px 15px;border-radius:99px;background:var(--bg);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--hair);transition:background .2s var(--ease);}
+  .cc .chips button:hover{background:#EFEBE3;}
+  .cc .chips button.mk{background:var(--orange);color:#1A1305;box-shadow:none;}
+  .ccl{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:60;
+    width:60px;height:60px;border-radius:99px;border:none;cursor:pointer;background:var(--orange);
+    color:#1A1305;font-size:22px;box-shadow:0 18px 44px -14px rgba(20,18,16,.4);}
+  .ccw{position:fixed;inset:0;z-index:130;pointer-events:none;}
+  .ccw.auf{pointer-events:auto;}
+  .ccw .back{position:absolute;inset:0;background:rgba(11,10,9,.42);opacity:0;transition:opacity .25s;}
+  .ccw.auf .back{opacity:1;}
+  .ccs{position:absolute;right:20px;bottom:20px;width:min(400px,calc(100% - 40px));max-height:70vh;
+    background:var(--bg);border-radius:20px;display:flex;flex-direction:column;overflow:hidden;
+    transform:translateY(16px) scale(.98);opacity:0;transition:all .28s var(--ease);
+    box-shadow:0 30px 70px -20px rgba(11,10,9,.5);}
+  .ccw.auf .ccs{transform:none;opacity:1;}
+  @media (max-width:760px){ .ccs{left:0;right:0;bottom:0;width:auto;max-height:88vh;border-radius:20px 20px 0 0;} }
+  .ccs .kopf{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--hair);}
+  .ccs .kopf .av{width:34px;height:34px;border-radius:99px;background:var(--orange);color:#1A1305;
+    display:grid;place-items:center;flex:0 0 auto;}
+  .ccs .kopf b{display:block;font-weight:500;font-size:14.5px;}
+  .ccs .verlauf{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:9px;}
+  .ccs .m{max-width:84%;padding:11px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;}
+  .ccs .m.du{align-self:flex-end;background:var(--ink);color:#F3F0EA;}
+  .ccs .m.ai{align-self:flex-start;background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);}
+  .ccs .m.hand{align-self:stretch;max-width:100%;background:rgba(255,170,9,.14);
+    box-shadow:inset 0 0 0 1px rgba(255,170,9,.35);}
+  .ccs .m.hand button{margin-top:10px;border:none;cursor:pointer;font-family:inherit;font-weight:500;
+    font-size:13px;padding:10px 16px;border-radius:99px;background:var(--orange);color:#1A1305;}
+  .ccs .fuss{padding:12px;border-top:1px solid var(--hair);display:flex;gap:8px;}
+  .ccs .fuss input{flex:1;min-width:0;border:none;border-radius:99px;padding:11px 15px;
+    background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);font-family:inherit;font-size:13.5px;color:var(--ink);}
+  .ccs .fuss button{border:none;cursor:pointer;font-family:inherit;font-weight:500;font-size:13px;
+    padding:11px 18px;border-radius:99px;background:var(--ink);color:#F3F0EA;}
+  .ccs .x{margin-left:auto;width:34px;height:34px;border-radius:99px;border:none;cursor:pointer;
+    background:var(--card);box-shadow:inset 0 0 0 1px var(--hair);color:var(--ink);font-size:15px;}
+  /* Objektbezug im Makler-Chat: immer sichtbar, immer ein Weg zurück */
+  .mkobj{display:flex;align-items:center;gap:11px;padding:11px 16px;text-decoration:none;color:var(--ink);
+    background:var(--card);border-bottom:1px solid var(--hair);}
+  .mkobj img{width:44px;height:34px;border-radius:8px;object-fit:cover;flex:0 0 auto;}
+  .mkobj b{display:block;font-weight:500;font-size:13.5px;}
+  .mkobj .mono{font-size:8.5px;color:var(--orange);}
+
+  /* ===== Einbettungs-Modus (?embed=1) =====
+     Wird die Seite in einer anderen Oberflaeche gezeigt (Makler-Vorschau, Portal),
+     traegt die Huelle schon Navigation und Rahmen. Dann faellt hier die eigene Chrome weg,
+     der Inhalt selbst bleibt exakt derselbe. */
+  html.embed .top,
+  html.embed .pfoot,
+  html.embed .weiter,
+  html.embed .mmenu,
+  html.embed .ctabar{display:none!important;}
+  html.embed,html.embed body{background:transparent;}
+  html.embed .shell{padding-top:0;}
+  /* Ohne eigene Kopfzeile darf die Preis-Spalte weiter oben kleben */
+  html.embed .rail{top:16px;}
+  html.embed body::after{display:none;}
+</style>
+</head>
+<body>
+
+<script>
+  /* Einbettungs-Modus so früh wie möglich setzen, damit die Chrome nicht aufblitzt */
+  if (new URLSearchParams(location.search).get("embed") === "1") document.documentElement.classList.add("embed");
+</script>
+<div class="shell">
+  <div class="top">
+    <div class="cir" onclick="history.length>1?history.back():location.assign('immobilien.html')"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg></div>
+    <div class="brand"><img src="../../assets/logo/unio-logo-black.svg" alt="UNIO"></div>
+    <nav class="topnav">
+      <a href="bautraeger.html">Bauträger</a>
+      <a href="makler.html">Makler</a>
+      <a href="immobilien.html" class="on">Immobilien</a>
+      <a href="story.html">Story</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+    <div class="toprow">
+      <div class="cir" id="like"><svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M10 16.5S3 12.5 3 7.8C3 5.5 4.8 4 6.7 4c1.4 0 2.6.8 3.3 2 .7-1.2 1.9-2 3.3-2C15.2 4 17 5.5 17 7.8c0 4.7-7 8.7-7 8.7Z"/></svg></div>
+      <div class="cir"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h-.5A1.5 1.5 0 0 0 3 6.5v7A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V13M8 10 15 3m0 0h-4.2M15 3v4.2"/></svg></div>
+      <div class="cir mburger" id="mburger" role="button" aria-label="Menü öffnen" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <line class="l1" x1="2.5" y1="6" x2="15.5" y2="6"/>
+          <line class="l2" x1="2.5" y1="12" x2="15.5" y2="12"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <nav class="mmenu" id="mmenu" aria-hidden="true">
+    <a href="makler.html"><span class="nr">01</span>Makler</a>
+    <a href="bautraeger.html"><span class="nr">02</span>Bauträger</a>
+    <a href="immobilien.html" class="on"><span class="nr">03</span>Immobilien</a>
+    <a href="story.html"><span class="nr">04</span>Story</a>
+    <a href="kontakt.html"><span class="nr">05</span>Kontakt</a>
+  </nav>
+  <script>
+    (function(){
+      var b=document.getElementById('mburger'),m=document.getElementById('mmenu');
+      if(!b||!m)return;
+      b.addEventListener('click',function(){
+        var open=m.classList.toggle('open');
+        b.classList.toggle('x',open);
+        b.setAttribute('aria-expanded',open?'true':'false');
+        m.setAttribute('aria-hidden',open?'false':'true');
+        document.body.classList.toggle('mopen',open);
+        document.documentElement.style.overflow=open?'hidden':'';
+      });
+    })();
+  </script>
+
+  <div class="hero" id="heroBtn">
+    <img src="../../assets/photos/skyline-terrasse.png" alt="Dachterrasse mit Blick über Wien" id="heroimg">
+    <span class="count">1 / 33 · Galerie öffnen</span>
+    <!-- Bühne für Video und 360-Tour, liegt über dem Hero und lädt erst auf Klick -->
+    <div class="medstage" id="medstage"></div>
+  </div>
+  <div class="trow" id="trow"></div>
+
+  <div class="cols">
+    <div class="content">
+      <div class="sec head" style="padding-top:6px">
+        <div class="headrow">
+          <h1>Traum Penthouse<br>in Hernals<em>.</em></h1>
+          <div class="headmeta">
+            <span class="pillstat">Aktiv</span>
+            <span class="mono">Zum Verkauf · Wohnung · Top 29 · 1170 Wien</span>
+          </div>
+        </div>
+        <!-- Makler am Objekt: eine Zeile, bevor die erste Zahl kommt -->
+        <div class="mksig">
+          <img src="../../assets/team/makler/wenzel-waechter.jpg" alt="">
+          <div class="wer"><b>Wenzel Wächter</b><i> berät zu diesem Objekt</i></div>
+          <button type="button" data-mkfrage>Frage stellen</button>
+        </div>
+        <div class="figs">
+          <div class="fg dark">
+            <div class="r1"><b>Wohnfläche</b><span class="mono">m²</span></div>
+            <i>140,95</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Zimmer</b><span class="mono">Gesamt</span></div>
+            <i>3</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Bäder</b><span class="mono">+ 2 WC</span></div>
+            <i>2</i>
+          </div>
+          <div class="fg">
+            <div class="r1"><b>Baujahr</b><span class="mono">Erstbezug</span></div>
+            <i>2025</i>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec desc">
+        <h2>Über dieses Objekt</h2>
+        <p>Dieses außergewöhnliche Penthouse in Hernals vereint großzügigen Wohnkomfort mit
+        spektakulären Außenflächen und unverbaubarem Blick auf Kahlenberg und Stephansdom.
+        Rund 140,95 m² Wohnfläche und 51,28 m² Terrassen- und Balkonflächen — inklusive
+        direktem Liftzugang in die Wohnung.</p>
+        <p>Das Raumkonzept umfasst ein großzügiges Wohnzimmer mit Kamin, einen Masterbereich
+        mit freistehender Badewanne sowie ein Gästezimmer. Bei Bedarf lassen sich zwei
+        weitere Schlafzimmer realisieren.</p>
+        <div id="descMehr" hidden>
+          <p>Die Ausstattung: Eichenparkett in Fischgrät, Fußbodenheizung mit Raumklima-Steuerung,
+          bodentiefe Verglasung mit Dreifach-Isolierung und außenliegender Beschattung. Küche von
+          eggersmann mit Miele-Geräten, beide Bäder mit freistehender Wanne beziehungsweise
+          Regendusche.</p>
+          <p>Zum Penthouse gehören ein Kellerabteil, ein Fahrradraum mit Ladepunkt und die Option
+          auf zwei Tiefgaragenplätze. Die Übergabe ist ab Mai 2026 möglich, auf Wunsch früher in
+          Absprache mit dem Bauträger.</p>
+        </div>
+        <button class="more" id="descBtn" aria-expanded="false">Vollständige Beschreibung
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5 7 9.5l4-4"/></svg></button>
+        <script>
+          document.getElementById('descBtn').addEventListener('click', function(){
+            var m = document.getElementById('descMehr');
+            var auf = m.hidden;
+            m.hidden = !auf;
+            this.setAttribute('aria-expanded', auf ? 'true' : 'false');
+            this.firstChild.textContent = auf ? 'Weniger anzeigen' : 'Vollständige Beschreibung';
+            this.querySelector('svg').style.transform = auf ? 'rotate(180deg)' : '';
+          });
+        </script>
+
+        <!-- Concierge dort, wo beim Lesen die Fragen entstehen -->
+        <div class="cc">
+          <div class="cchead">
+            <span class="ccav">✦</span>
+            <div>
+              <span class="lab">UNIO Concierge · KI-Assistent</span>
+              <h3>Fragen zu diesem Objekt?</h3>
+            </div>
+          </div>
+          <div class="chips" id="ccchips"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Raumprofil</h2>
+        <div class="rp">
+          <div class="rpitem">
+            <div class="lab">Fläche je Zimmer</div>
+            <div class="val" id="rpv1">47<em>m²</em></div>
+            <div class="rpscale"><div class="ticks"></div><div class="ind" id="rpi1" style="left:0%"></div></div>
+            <div class="rppoles"><span class="mono">Effizient</span><span class="mono">Großzügig</span></div>
+            <p class="rpnote" id="rpn1"></p>
+          </div>
+          <div class="rpitem">
+            <div class="lab">Außenflächen-Anteil</div>
+            <div class="val" id="rpv2">36<em>%</em></div>
+            <div class="rpscale"><div class="ticks"></div><div class="ind" id="rpi2" style="left:0%"></div></div>
+            <div class="rppoles"><span class="mono">Innenorientiert</span><span class="mono">Außenorientiert</span></div>
+            <p class="rpnote" id="rpn2"></p>
+            <span class="rpprice mono" id="rpp"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Highlights</h2>
+        <div class="hl">
+          <div>Terrassen- &amp; Balkonflächen<span>ca. 51,28 m²</span></div>
+          <div>Direkter Liftzugang<span>in die Wohnung</span></div>
+          <div>Kamin, Fußbodenheizung &amp; Klimaanlage<span>Vorhanden</span></div>
+          <div>Erstbezug<span>Baujahr 2025</span></div>
+          <div>Kellerabteil<span>Inklusive</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Ausstattung</h2>
+        <div class="kv">
+          <div><span>Etage</span><b>2. DG</b></div>
+          <div><span>Heizung</span><b>Zentralheizung</b></div>
+          <div><span>Energieträger</span><b>Luftwärmepumpe</b></div>
+          <div><span>Ausrichtung</span><b>Nord / Süd</b></div>
+          <div><span>Außenbereiche</span><b>Dachterrasse, Balkon</b></div>
+          <div><span>Klimaanlage</span><b>Vorhanden</b></div>
+          <div><span>Zustand</span><b>Erstbezug</b></div>
+          <div><span>Verfügbar ab</span><b>11.05.2026</b></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Grundrisse</h2>
+        <div class="plans">
+          <div class="plan"><div><b>Ebene 1 · Wohngeschoß</b><span class="mono">PDF · Grundriss</span></div>
+            <span class="arrbtn"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+          <div class="plan"><div><b>Ebene 2 · Dachterrasse</b><span class="mono">PDF · Grundriss</span></div>
+            <span class="arrbtn"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Energieausweis</h2>
+        <div class="energy">
+          <div class="badge">B</div>
+          <div><p>Bedarfsausweis</p>
+            <span class="mono">fGEE 0,73 · HWB ca. 25 kWh/m²a</span></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="price">
+        <span class="mono">Kaufpreis</span>
+        <span class="mono" id="objStatus" style="display:none;margin-top:6px;color:#B87400;background:rgba(255,170,9,.14);border:1px solid rgba(255,170,9,.4);border-radius:99px;padding:5px 10px;width:max-content;"></span>
+        <b>€ 1.749.000</b>
+        <button id="rateZeile" style="display:none;margin:2px 0 4px;text-align:left;background:none;border:none;cursor:pointer;padding:0;font-family:inherit;font-size:12.5px;line-height:1.5;color:var(--fg2);text-decoration:underline;text-decoration-color:rgba(20,18,16,.25);text-underline-offset:3px;"></button>
+        <p class="sub">Verfügbar ab 11.05.2026 · Doppelmakler: Boom Living GmbH &amp; Co KG</p>
+        <button class="btn" id="besichtRail">Besichtigung buchen</button>
+        <button class="btn btn-angebot" id="angebotOpen">Angebot legen</button>
+        <button class="ghost" id="objHerz" style="gap:8px;">
+          <svg id="objHerzIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z"/></svg>
+          <span id="objHerzTxt">Merken</span>
+          <span class="mono" id="objLikes" style="color:var(--fg2);"></span>
+        </button>
+        <button class="ghost">Exposé erhalten
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7m0 0 3-3M7 9 4 6m-1.5 5.5h9"/></svg></button>
+      </div>
+
+      <!-- Marktdaten: hell mit Orange-Akzent -->
+      <div class="stat">
+        <div class="shead2"><span class="mono">Marktdaten</span>
+          <span class="livepill"><i></i>Live</span></div>
+        <span class="arr"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span>
+        <div class="bignum"><b><span class="ghost">0</span><span id="bn">18</span></b><span class="delta">+6</span></div>
+        <span class="mono">Anfragen · letzte 7 Tage</span>
+        <div class="bars" id="bars"></div>
+        <div class="ruler">
+          <div class="ticks"></div>
+          <input class="scrub" id="scrub" type="range" min="0" max="13" value="13">
+        </div>
+        <span class="mono scrubcap" id="scap"></span>
+        <div class="srows">
+          <div><span>Besichtigungen geplant</span><b>12</b></div>
+          <div><span>Ø Antwortzeit</span><b>&lt; 24 h</b></div>
+          <div><span>Exposé-Abrufe</span><b>118</b></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><b>72<em> %</em></b><span>Nachfrage über Bezirksschnitt 1170</span>
+            <span class="ta"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+          <div class="tile"><b>46</b><span>Auf Merklisten vorgemerkt</span>
+            <span class="ta"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10 10 4m0 0H5.5M10 4v4.5"/></svg></span></div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <p class="foot mono">Demo-Ansicht · Fotos Platzhalter · Marktdaten Demo · Objektdaten: app.unio.at/property/2</p>
+</div>
+
+<!-- Lage und Infrastruktur: nach der Beschreibung, vor den Dokumenten -->
+<!-- Erscheint erst, wenn berechnete Daten zur Adresse geladen sind. Ein Demo-
+     Fallback wuerde falsche Verbindungen behaupten, deshalb lieber keine Sektion. -->
+<section class="shell lg" id="lage" aria-label="Lage und Infrastruktur" hidden>
+  <div class="lgtop">
+    <div>
+      <span class="mono">Lage und Infrastruktur</span>
+      <h2 style="margin-top:8px">Wie es sich hier lebt</h2>
+    </div>
+    <span class="mono" id="lgort">1170 Wien, Hernals</span>
+  </div>
+  <div class="lgscores" id="lgscores"></div>
+  <div class="lgsplit">
+    <div>
+      <div class="karte" id="lgkarte">
+        <div class="platz">
+          <b>Karte ansehen</b>
+          <p>Die Karte lädt erst auf Klick, damit die Seite schnell bleibt.</p>
+          <button class="pfoot-ghost" id="lgkbtn" style="cursor:pointer;border:none;background:var(--card);font-family:inherit">Karte laden</button>
+        </div>
+      </div>
+      <div class="oeffi">
+        <span class="lab">Öffentlich unterwegs</span>
+      </div>
+    </div>
+    <div class="poi" id="lgpoi"></div>
+  </div>
+  <div class="wie">
+    <button id="lgwie" aria-expanded="false">Wie wird das berechnet?</button>
+    <p id="lgwiep" hidden>Die Werte kommen aus offenen Daten und werden je Objekt neu berechnet:
+    Haltestellen, Linien und Takte aus den Fahrplandaten der Wiener Linien, Gehzeiten über ein
+    Routing auf dem Straßennetz, Nahversorgung, Schulen, Ärzte und Grünflächen aus dem
+    Stadt-Wien-Datenkatalog und OpenStreetMap, Ruhe aus der strategischen Lärmkarte der Stadt.
+    Kein Schätzwert und keine Handeingabe.</p>
+    <p class="mono" style="margin-top:12px">Datenquellen: Stadt Wien · Wiener Linien · OpenStreetMap</p>
+  </div>
+</section>
+
+<!-- Makler-Chat direkt am Objekt: die Verbindung zur Immobilie bleibt sichtbar,
+     dieselbe Unterhaltung erscheint im Portal unter Aktivität. -->
+<div class="ccw" id="mkw" aria-hidden="true">
+  <div class="back" id="mkback"></div>
+  <div class="ccs" role="dialog" aria-modal="true" aria-label="Chat mit dem Makler">
+    <div class="kopf">
+      <img id="mkfoto" src="../../assets/team/makler/wenzel-waechter.jpg" alt=""
+        style="width:38px;height:38px;border-radius:99px;object-fit:cover;flex:0 0 auto">
+      <div>
+        <b id="mkname">Wenzel Wächter</b>
+        <span class="mono" style="font-size:8.5px">Immobilienberater · antwortet meist in unter 2 Stunden</span>
+      </div>
+      <button class="x" id="mkx" aria-label="Schließen">✕</button>
+    </div>
+    <!-- Objektbezug: der Chat gehört sichtbar zu dieser Immobilie -->
+    <a class="mkobj" id="mkobj" href="#top">
+      <img src="../../assets/photos/skyline-terrasse.png" alt="">
+      <span>
+        <b>Traum Penthouse in Hernals</b>
+        <span class="mono">Zum Objekt zurück</span>
+      </span>
+    </a>
+    <div class="verlauf" id="mkverlauf"></div>
+    <div class="fuss">
+      <input id="mkinput" placeholder="Frage an Wenzel …" aria-label="Nachricht an Wenzel Wächter">
+      <button id="mksend">Senden</button>
+    </div>
+  </div>
+</div>
+
+<!-- Persistenter Concierge-Einstieg -->
+<button class="ccl" id="ccl" aria-label="UNIO Concierge öffnen">✦</button>
+<div class="ccw" id="ccw" aria-hidden="true">
+  <div class="back" id="ccback"></div>
+  <div class="ccs" role="dialog" aria-modal="true" aria-label="UNIO Concierge">
+    <div class="kopf">
+      <span class="av">✦</span>
+      <div>
+        <b>UNIO Concierge</b>
+        <span class="mono" style="font-size:8.5px">KI-Assistent · Antworten können Fehler enthalten</span>
+      </div>
+      <button class="x" id="ccx" aria-label="Schließen">✕</button>
+    </div>
+    <div class="verlauf" id="ccverlauf"></div>
+    <div class="fuss">
+      <input id="ccinput" placeholder="Frage zum Objekt …" aria-label="Frage zum Objekt">
+      <button id="ccsend">Fragen</button>
+    </div>
+  </div>
+</div>
+
+<section class="docs" id="dokumente">
+  <h2>Dokumente zum Objekt</h2>
+  <p class="dsub">Alle Unterlagen zentral am Objekt, immer in der aktuellen Version. Auch gesammelt im Dokumenten-Bereich deines UNIO-Kontos.</p>
+  <div class="doclist">
+    <a class="docrow" href="#" onclick="return false">
+      <span class="dico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span class="dmain"><b>Bau- und Ausstattungsbeschreibung</b><span>PDF · 24 Seiten · Stand 06/2026</span></span>
+      <span class="dget">Ansehen →</span>
+    </a>
+    <a class="docrow" href="#" onclick="return false">
+      <span class="dico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></span>
+      <span class="dmain"><b>Energieausweis</b><span>PDF · HWB 24,8 · Klasse A</span></span>
+      <span class="dget">Ansehen →</span>
+    </a>
+    <a class="docrow" href="#" onclick="return false">
+      <span class="dico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h9V3M12 21v-6h9"/></svg></span>
+      <span class="dmain"><b>Grundriss Top 12</b><span>PDF · Maßstab 1:100</span></span>
+      <span class="dget">Ansehen →</span>
+    </a>
+    <a class="docrow locked" href="#" onclick="return false">
+      <span class="dico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+      <span class="dmain"><b>Kaufanbot<span class="docstat">Nach Angebot</span></b><span>Wird nach gelegtem Angebot freigeschaltet</span></span>
+      <span class="dget">Gesperrt</span>
+    </a>
+  </div>
+</section>
+
+<section class="similar">
+  <h2>Ähnliche Objekte</h2>
+  <div class="simgrid">
+    <a class="simcard" href="/ux/objekt2?von=objekt&obj=obenzwei">
+      <img src="../../assets/img/obenzwei.jpg" alt="ObenZwei — Penthouse, Wien 1020" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>ObenZwei — Penthouse</b><span>Wien · 1020 · Auf Anfrage</span></span>
+    </a>
+    <a class="simcard" href="/ux/objekt2?von=objekt&obj=beheim">
+      <img src="../../assets/img/beheim.jpg" alt="Penthouse Beheim, Wien 1170" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>Penthouse Beheim</b><span>Wien · 1170 · € 1,7 Mio</span></span>
+    </a>
+    <a class="simcard" href="/ux/objekt2?von=objekt&obj=penthouse">
+      <img src="../../assets/img/penthouse.jpg" alt="Penthouse über den Dächern, Wien Innenstadt" loading="lazy">
+      <span class="scrim" aria-hidden="true"></span>
+      <span class="cap"><b>Penthouse über den Dächern</b><span>Wien · Innenstadt · € 4 Mio</span></span>
+    </a>
+  </div>
+  <div class="ownerhook">
+    <p>Sie besitzen eine ähnliche Immobilie? Wir sagen Ihnen, was sie wert ist — kostenlos, datenbasiert, in 48 Stunden.</p>
+    <a href="https://bewertung.unio.at" rel="noopener">Immobilie bewerten <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<footer class="pfoot">
+  <div class="pfoot-glow" aria-hidden="true"></div>
+  <div class="pfoot-in">
+    <h2>Raum. Technologie.<br>Mensch.</h2>
+    <div class="pfoot-cta">
+      <a class="pfoot-btn" href="kontakt.html?demo=1">Demo buchen <span>→</span></a>
+      <a class="pfoot-ghost" href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="pfoot-links">
+      <a href="bautraeger.html">Bauträger</a><a href="makler.html">Makler</a><a href="immobilien.html">Immobilien</a><a href="story.html">Story</a><a href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="pfoot-bar">
+      <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO">
+      <span style="display:inline-flex;gap:24px;align-items:center;">
+        <a href="impressum.html" style="color:var(--fg2);text-decoration:none;font-size:13px;">Impressum</a>
+        <a href="datenschutz.html" style="color:var(--fg2);text-decoration:none;font-size:13px;">Datenschutz</a>
+        <span class="mono">© 2026 UNIO · Wien · Arbeitsstand</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll-Through: am Seitenende wartet das naechste Objekt aus dem Feed.
+     Ein zusaetzlicher Zug nach unten wechselt in den Feed; ein leichter Scroll
+     nach oben laesst dich im Expose, exakt dort, wo du warst. -->
+<style>
+  .weiter{display:none;position:relative;height:88svh;min-height:480px;overflow:hidden;background:#141210;color:#F7F5F1;}
+  .weiter img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;}
+  .weiter .wtint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,16,.86) 0%,rgba(20,18,16,.25) 45%,rgba(20,18,16,.55) 100%);}
+  .weiter .winner{position:absolute;left:0;right:0;top:clamp(26px,7vh,64px);text-align:center;padding:0 24px;}
+  .weiter .wkick{font-family:var(--font-mono),ui-monospace,monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,245,241,.75);}
+  .weiter h2{font-size:clamp(30px,7.5vw,52px);font-weight:500;letter-spacing:-.025em;line-height:1.04;margin-top:12px;text-shadow:0 2px 30px rgba(0,0,0,.5);}
+  .weiter .wmeta{font-family:var(--font-mono),ui-monospace,monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:rgba(247,245,241,.85);margin-top:10px;}
+  .weiter .wpfeil{font-size:24px;color:var(--orange);margin-top:18px;animation:wHop 1.6s var(--ease) infinite;}
+  @keyframes wHop{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  .weiter .whint{position:absolute;left:24px;right:24px;bottom:calc(96px + env(safe-area-inset-bottom));text-align:center;
+    font-size:12.5px;line-height:1.6;color:rgba(247,245,241,.75);}
+  @media(prefers-reduced-motion:reduce){.weiter .wpfeil{animation:none;}}
+</style>
+<section class="weiter" id="weiterPanel" aria-label="Nächstes Objekt im Feed">
+  <img id="weiterImg" src="" alt="">
+  <div class="wtint"></div>
+  <div class="winner">
+    <span class="wkick">ALS NÄCHSTES IN DEINEM FEED</span>
+    <h2 id="weiterT"></h2>
+    <div class="wmeta" id="weiterM"></div>
+    <div class="wpfeil" aria-hidden="true">↓</div>
+  </div>
+  <span class="whint">Zieh weiter nach unten für das nächste Objekt · ein kurzer Scroll hinauf und du bist wieder im Exposé</span>
+</section>
+
+<div class="ctabar">
+  <div class="l"><b>€ 1.749.000</b><span>Verfügbar ab 11.05.2026</span></div>
+  <button class="ctabar-angebot" id="angebotOpenMobil">Angebot legen</button>
+  <button id="besichtMobil">Besichtigung</button>
+</div>
+
+<!-- Galerie-Overlay -->
+<div class="ov" id="ov">
+  <img class="bgimg" id="ovbg" src="../../assets/photos/skyline-terrasse.png" alt="">
+  <div class="tint"></div>
+  <div class="inner">
+    <div class="obar">
+      <div class="t"><b>Traum Penthouse in Hernals</b><span id="ovcount">1 / 5 · Demo-Galerie</span></div>
+      <div class="gcir" id="ovclose"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg></div>
+    </div>
+    <div class="mid"><div class="deck" id="deck"></div></div>
+    <div class="strip" id="strip"></div>
+  </div>
+</div>
+
+<script>
+const HERO='../../assets/photos/skyline-terrasse.png',
+      THUMBS=['../../assets/img/int-kitchen.jpg','../../assets/img/int-bath.jpg',
+              '../../assets/photos/dachlounge.jpg','../../assets/img/vienna-facades.jpg'];
+const ALL=[HERO,...THUMBS];
+const CAPS=['Dachterrasse','Küche','Bad','Dachlounge','Umgebung'];
+
+/* Medien am Objekt: Video und 360-Tour stehen als eigene Kacheln neben den Fotos.
+   Sie liegen vor den Foto-Thumbs, damit sie nicht untergehen. Fehlt ein Medium,
+   entfaellt die Kachel einfach, es bleibt keine Leerstelle. */
+const MEDIEN=[
+  {typ:'video',src:'../../assets/video/explore-kling-c.mp4',poster:'../../assets/photos/dachlounge.jpg',dauer:'1:12'},
+  {typ:'tour',embed:'about:blank',poster:'../../assets/img/int-bath.jpg'}
+];
+
+const trow=document.getElementById('trow'),heroimg=document.getElementById('heroimg'),
+      medstage=document.getElementById('medstage');
+
+function medZu(){ medstage.classList.remove('on'); medstage.innerHTML=''; }
+function medAuf(m){
+  medstage.innerHTML='';
+  const zu=document.createElement('button');
+  zu.className='zu'; zu.textContent='Zurück zum Foto';
+  zu.addEventListener('click',e=>{e.stopPropagation();medZu();});
+  if(m.typ==='video'){
+    const v=document.createElement('video');
+    v.src=m.src; v.poster=m.poster; v.controls=true; v.autoplay=true; v.playsInline=true;
+    medstage.appendChild(v);
+  }else{
+    const f=document.createElement('iframe');
+    f.src=m.embed; f.title='360-Grad-Tour'; f.allow='xr-spatial-tracking; fullscreen'; f.allowFullscreen=true;
+    medstage.appendChild(f);
+  }
+  medstage.appendChild(zu);
+  medstage.classList.add('on');
+  medstage.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+/* Ambient-Regel: ein hinterlegtes Video steht an Position 1 der Galerie und
+   laeuft als Loop ohne Ton ueber dem Hero; Ton und Controls erst auf Tipp. */
+const ambientVid=MEDIEN.find(m=>m.typ==='video');
+if(ambientVid){
+  const held=heroimg.parentElement;
+  const v=document.createElement('video');
+  v.className='ambient'; v.src=ambientVid.src; v.poster=ambientVid.poster;
+  v.muted=true; v.loop=true; v.autoplay=true; v.playsInline=true;
+  v.setAttribute('muted',''); v.setAttribute('playsinline','');
+  v.addEventListener('click',e=>{e.stopPropagation();medAuf(ambientVid);});
+  const b=document.createElement('span');
+  b.className='ambientb'; b.textContent='▶ Video · '+ambientVid.dauer+' · Tippen für Ton';
+  b.addEventListener('click',e=>{e.stopPropagation();medAuf(ambientVid);});
+  /* direkt nach dem Hero-Bild einfuegen: der Galerie-Zaehler und die
+     Medien-Buehne bleiben darueber klickbar */
+  held.insertBefore(v, heroimg.nextSibling);
+  held.insertBefore(b, v.nextSibling);
+}
+
+/* Medien-Kacheln zuerst */
+MEDIEN.forEach(m=>{
+  const t=document.createElement('div');
+  t.className='t'+(m.typ==='tour'?' tour':'');
+  t.innerHTML='<img src="'+m.poster+'" alt=""><span class="medb">'+
+    (m.typ==='video'?'▶ Video · '+m.dauer:'⟳ 360-Tour')+'</span>';
+  t.addEventListener('click',e=>{e.stopPropagation();medAuf(m);});
+  trow.appendChild(t);
+});
+
+/* Foto-Thumbs */
+THUMBS.forEach((s,i)=>{
+  const t=document.createElement('div');t.className='t';
+  t.innerHTML='<img src="'+s+'" alt="">';
+  t.addEventListener('click',e=>{e.stopPropagation();medZu();openOv(i+1);});
+  trow.appendChild(t);
+});
+
+/* Marktdaten-Chart + Scrubber */
+const VALS=[1,2,1,3,2,2,3,1,2,4,2,3,4,5];
+const DAYS=['Fr','Sa','So','Mo','Di','Mi','Do','Fr','Sa','So','Mo','Di','Mi','Do'];
+const bars=document.getElementById('bars'),scrub=document.getElementById('scrub'),
+      scap=document.getElementById('scap');
+const mx=Math.max(...VALS);
+VALS.forEach(v=>{const i=document.createElement('i');i.style.height=(v/mx*100)+'%';bars.appendChild(i);});
+function setBar(k){
+  bars.querySelectorAll('i').forEach((b,j)=>b.classList.toggle('on',j===k));
+  scap.textContent=DAYS[k]+' · '+VALS[k]+' Anfragen';
+}
+scrub.addEventListener('input',()=>setBar(+scrub.value));
+setBar(13);
+
+/* Galerie-Overlay mit Foto-Stack */
+const ov=document.getElementById('ov'),ovbg=document.getElementById('ovbg'),
+      ovcount=document.getElementById('ovcount'),deck=document.getElementById('deck'),
+      strip=document.getElementById('strip');
+let order=[...ALL.keys()], built=false;
+function build(){
+  ALL.forEach((s,i)=>{
+    const c=document.createElement('div');c.className='dcard';c.dataset.i=i;
+    c.innerHTML='<img src="'+s+'" alt=""><span class="cap">'+CAPS[i]+'</span>';
+    c.addEventListener('click',()=>{order.push(order.shift());layout();});
+    deck.appendChild(c);
+    const t=document.createElement('div');t.className='st';
+    t.innerHTML='<img src="'+s+'" alt="">';
+    t.addEventListener('click',()=>{while(order[0]!==i)order.push(order.shift());layout();});
+    strip.appendChild(t);
+  });
+  built=true;
+}
+const ROT=[0,-4.5,3.5,-2,5],OX=[0,-12,14,-6,8],OY=[0,10,7,14,4];
+function layout(){
+  order.forEach((idx,pos)=>{
+    const c=deck.querySelector('[data-i="'+idx+'"]');
+    const p=Math.min(pos,ROT.length-1);
+    c.style.zIndex=String(20-pos);
+    c.style.opacity=pos>3?0:1;
+    c.style.transform='translate('+OX[p]+'px,'+OY[p]+'px) rotate('+ROT[p]+'deg) scale('+(1-pos*0.03)+')';
+  });
+  ovbg.style.opacity=0;
+  setTimeout(()=>{ovbg.src=ALL[order[0]];ovbg.style.opacity=1;},220);
+  ovcount.textContent=(order[0]+1)+' / '+ALL.length+' · Demo-Galerie';
+  strip.querySelectorAll('.st').forEach((t,j)=>t.classList.toggle('on',j===order[0]));
+}
+let openOv=function(start=0){
+  if(!built)build();
+  while(order[0]!==start)order.push(order.shift());
+  ov.classList.add('open');document.body.style.overflow='hidden';layout();
+}
+document.getElementById('ovclose').addEventListener('click',()=>{
+  ov.classList.remove('open');document.body.style.overflow='';});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.classList.contains('open')){
+  ov.classList.remove('open');document.body.style.overflow='';}});
+
+/* ===== Raumprofil: automatische Kalkulation ===== */
+const PROP={wohnflaeche:140.95,zimmer:3,aussenflaeche:51.28,kaufpreis:1749000,gewicht:0.3};
+(function(){
+  const P=PROP, eur=n=>'€ '+Math.round(n).toLocaleString('de-AT');
+  if(P.zimmer>0&&P.wohnflaeche>0){
+    const v=P.wohnflaeche/P.zimmer, pos=Math.max(0,Math.min(1,(v-15)/(50-15)));
+    document.getElementById('rpv1').innerHTML=Math.round(v)+'<em>m²</em>';
+    document.getElementById('rpi1').dataset.pos=(pos*100).toFixed(1);
+    document.getElementById('rpn1').textContent=
+      v<25?'Effiziente Grundrisse — viel Raumprogramm auf kompakter Fläche.'
+      :v<=35?'Ausgewogenes Verhältnis von Fläche und Zimmern.'
+      :'Sehr großzügige Raumzuschnitte.';
+  }
+  if(P.wohnflaeche>0){
+    const a=(P.aussenflaeche||0)/P.wohnflaeche*100, pos=Math.max(0,Math.min(1,a/50));
+    document.getElementById('rpv2').innerHTML=Math.round(a)+'<em>%</em>';
+    document.getElementById('rpi2').dataset.pos=(pos*100).toFixed(1);
+    document.getElementById('rpn2').textContent=
+      (P.aussenflaeche||0)===0?'Keine eigenen Freiflächen.'
+      :a<10?'Geringer Freiflächenanteil.'
+      :a<=25?'Solider Freiflächenanteil.'
+      :'Außergewöhnlich viel Freifläche — hebt die Wohnqualität, erklärt aber einen höheren Preis je m² Wohnfläche.';
+    if(P.kaufpreis>0){
+      const p1=P.kaufpreis/P.wohnflaeche,
+            p2=P.kaufpreis/(P.wohnflaeche+(P.aussenflaeche||0)*P.gewicht);
+      document.getElementById('rpp').textContent=
+        'Preis je m² Wohnfläche '+eur(p1)+' · inkl. gewichteter Freiflächen (0,3) '+eur(p2);
+    }
+  }
+  const rio=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.ind').forEach(i=>{
+      requestAnimationFrame(()=>i.style.left=(i.dataset.pos||0)+'%');});
+    rio.unobserve(e.target);
+  }),{threshold:.4});
+  document.querySelectorAll('.rpscale').forEach(el=>rio.observe(el.closest('.rpitem')));
+})();
+
+/* ===== Animationen ===== */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if(heroimg.complete)heroimg.classList.add('ld');
+else heroimg.addEventListener('load',()=>heroimg.classList.add('ld'));
+
+const rvEls=[...document.querySelectorAll('.trow .t, .sec, .price, .stat, .lock')];
+rvEls.forEach(el=>el.classList.add('rv'));
+document.querySelectorAll('.trow .t').forEach((el,i)=>el.style.transitionDelay=(i*70)+'ms');
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+rvEls.forEach(el=>io.observe(el));
+
+const statEl=document.querySelector('.stat'),bn=document.getElementById('bn');
+bars.querySelectorAll('i').forEach((b,i)=>b.style.transitionDelay=(i*45)+'ms');
+const sio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  statEl.classList.add('grown');sio.unobserve(statEl);
+  setTimeout(()=>bars.querySelectorAll('i').forEach(b=>b.style.transitionDelay='0ms'),1400);
+  if(RM)return;
+  const T=900,t0=performance.now(),target=18;
+  (function cu(now){const k=Math.min(1,(now-t0)/T),e2=1-Math.pow(1-k,3);
+    bn.textContent=String(Math.round(target*e2));
+    if(k<1)requestAnimationFrame(cu);})(t0);
+}),{threshold:.35});
+sio.observe(statEl);
+
+const _openOv=openOv;
+openOv=function(start=0){
+  _openOv(start);
+  if(RM)return;
+  deck.style.opacity='0';deck.style.transform='translateY(34px) scale(.96)';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    deck.style.opacity='1';deck.style.transform='none';}));
+};
+document.getElementById('heroBtn').onclick=null;
+document.getElementById('heroBtn').addEventListener('click',()=>openOv(0));
+
+const like=document.getElementById('like');
+like.addEventListener('click',()=>{like.classList.toggle('liked');
+  like.querySelector('path').setAttribute('fill',like.classList.contains('liked')?'currentColor':'none');});
+</script>
+
+<!-- ===== Angebot legen: Slide-in-Drawer von rechts ===== -->
+<style>
+  .btn-angebot{background:var(--orange);color:#1A1305;margin-top:10px;}
+  .ctabar-angebot{background:var(--orange)!important;color:#1A1305!important;}
+  .adw{position:fixed;inset:0;z-index:120;pointer-events:none;}
+  .adw.open{pointer-events:auto;}
+  .adw .back{position:absolute;inset:0;background:rgba(20,18,16,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;transition:opacity .4s var(--ease);}
+  .adw.open .back{opacity:1;}
+  .adw aside{position:absolute;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--bg);
+    box-shadow:-30px 0 80px -30px rgba(20,18,16,.5);transform:translateX(105%);
+    transition:transform .52s var(--ease);display:flex;flex-direction:column;overflow-y:auto;}
+  .adw.open aside{transform:translateX(0);}
+  .adw .ahead{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid var(--hair);}
+  .adw .ahead .mono{color:var(--fg2);}
+  .adw .ax{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);background:var(--card);cursor:pointer;
+    display:grid;place-items:center;font-size:14px;color:var(--ink);font-family:inherit;}
+  .adw .abody{padding:24px;display:flex;flex-direction:column;gap:18px;}
+  .adw h3{font-size:26px;font-weight:600;letter-spacing:-.02em;}
+  .adw h3 i{color:var(--orange);font-style:normal;}
+  .adw .aintro{font-size:13.5px;line-height:1.6;color:var(--fg2);}
+  .adw .afield{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:13px 16px;}
+  .adw .afield input,.adw .afield select{width:100%;border:none;outline:none;background:transparent;font-family:inherit;color:var(--ink);font-size:15px;}
+  .adw .afield select{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;padding-right:26px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%236E6862' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 4px center;}
+  .adw .afield:focus-within{border-color:rgba(255,170,9,.55);box-shadow:0 0 0 3px rgba(255,170,9,.14);}
+  .adw .afield select:focus-visible,.adw .afield input:focus-visible{outline:none!important;}
+  .adw .asumme input{font-family:var(--font-mono),ui-monospace,monospace;font-size:24px;font-weight:500;letter-spacing:-.01em;}
+  .adw .apresets{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .adw .apresets button{font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:99px;cursor:pointer;
+    border:1px solid var(--hair);background:transparent;color:var(--fg2);transition:all .25s var(--ease);}
+  .adw .apresets button.on{background:var(--ink);color:#F3F0EA;border-color:var(--ink);}
+  .adw .adiff{margin-top:9px;}
+  .adw .asend{display:flex;align-items:center;justify-content:center;width:100%;background:var(--orange);color:#1A1305;
+    border:none;border-radius:99px;padding:16px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:inherit;transition:transform .3s var(--ease);}
+  .adw .asend:hover{transform:translateY(-1px);}
+  .adw .alegal{font-size:11.5px;line-height:1.6;color:var(--fg3);}
+  .adw .adone{padding:52px 28px;text-align:center;display:none;flex-direction:column;gap:13px;align-items:center;}
+  .adw.done .adone{display:flex;}
+  .adw.done .abody{display:none;}
+  .adw .adone .ok{width:56px;height:56px;border-radius:50%;background:rgba(255,170,9,.16);color:#B87400;display:grid;place-items:center;}
+  .adw .adone b{font-size:24px;font-weight:600;letter-spacing:-.02em;}
+  .adw .adone p{font-size:14px;line-height:1.6;color:var(--fg2);max-width:300px;}
+  @media(prefers-reduced-motion:reduce){.adw .back,.adw aside,.adw .asend{transition:none;}}
+</style>
+<div class="adw" id="adw" aria-hidden="true">
+  <div class="back" id="adwBack"></div>
+  <aside role="dialog" aria-modal="true" aria-label="Kaufangebot legen">
+    <div class="ahead">
+      <span class="mono">Traum Penthouse · Wien 1170</span>
+      <button class="ax" id="adwClose" aria-label="Schließen">✕</button>
+    </div>
+    <div class="abody">
+      <div>
+        <h3>Angebot legen<i>.</i></h3>
+        <p class="aintro" style="margin-top:8px;">Unverbindlich: Du signalisierst dein Angebot, wir stimmen alles Weitere persönlich mit dir ab.</p>
+      </div>
+      <div>
+        <span class="mono" style="display:block;margin-bottom:8px;">Dein Angebot</span>
+        <div class="afield asumme"><input id="adwSumme" inputmode="numeric" aria-label="Angebotssumme in Euro" value="€ 1.749.000"></div>
+        <div class="apresets" id="adwPresets">
+          <button data-v="1749000" class="on">Kaufpreis</button>
+          <button data-v="1714020">−2 %</button>
+          <button data-v="1661550">−5 %</button>
+        </div>
+        <span class="mono adiff" id="adwDiff" style="display:block;">Kaufpreis € 1.749.000 · Abweichung ±0 %</span>
+      </div>
+      <div>
+        <span class="mono" style="display:block;margin-bottom:8px;">Finanzierung</span>
+        <div class="afield"><select aria-label="Finanzierung"><option>Finanzierung mit Zusage</option><option>Eigenkapital</option><option>Finanzierung in Klärung</option></select></div>
+      </div>
+      <div>
+        <span class="mono" style="display:block;margin-bottom:8px;">Name</span>
+        <div class="afield"><input placeholder="Vor- und Nachname" autocomplete="name"></div>
+      </div>
+      <div>
+        <span class="mono" style="display:block;margin-bottom:8px;">E-Mail</span>
+        <div class="afield"><input type="email" placeholder="name@firma.at" autocomplete="email"></div>
+      </div>
+      <button class="asend" id="adwSend">Angebot übermitteln</button>
+      <p class="alegal">Kein rechtsverbindliches Kaufanbot: Die Abgabe signalisiert dein Interesse, alles Rechtliche passiert danach, gemeinsam und dokumentiert.</p>
+    </div>
+    <div class="adone">
+      <span class="ok"><svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10.5 4 4 8-9"></path></svg></span>
+      <b>Angebot übermittelt.</b>
+      <p id="adwDoneTxt">Dein Angebot ist bei uns. Wir melden uns zur Bestätigung, mit Daten, nicht mit Floskeln.</p>
+      <span class="mono">Antwort in &lt; 24 h · Unverbindlich</span>
+    </div>
+  </aside>
+</div>
+<script>
+(function(){
+  var KP = window.__EK_KP || 1749000;
+  var adw = document.getElementById("adw"), inp = document.getElementById("adwSumme"),
+      diff = document.getElementById("adwDiff"), presets = document.getElementById("adwPresets");
+  var eur = function(n){ return "€ " + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+  var val = function(){ var d = parseInt(String(inp.value).replace(/\D/g, ""), 10); return isNaN(d) ? 0 : d; };
+  var upd = function(){
+    var v = val();
+    var p = Math.abs(Math.round((v / KP - 1) * 1000) / 10).toLocaleString("de-AT");
+    diff.textContent = "Kaufpreis " + eur(KP) + " · Abweichung " + (v >= KP ? "+" : "−") + p + " %";
+    Array.prototype.forEach.call(presets.children, function(b){ b.classList.toggle("on", parseInt(b.dataset.v, 10) === v); });
+  };
+  inp.addEventListener("input", function(){ inp.value = eur(val()); upd(); });
+  presets.addEventListener("click", function(e){ var b = e.target.closest("button"); if (!b) return; inp.value = eur(parseInt(b.dataset.v, 10)); upd(); });
+  var open = function(){ adw.classList.add("open"); adw.setAttribute("aria-hidden", "false"); document.documentElement.style.overflow = "hidden"; };
+  var close = function(){ adw.classList.remove("open"); adw.setAttribute("aria-hidden", "true"); document.documentElement.style.overflow = ""; };
+  ["angebotOpen", "angebotOpenMobil"].forEach(function(id){ var b = document.getElementById(id); if (b) b.addEventListener("click", open); });
+  document.getElementById("adwClose").addEventListener("click", close);
+  document.getElementById("adwBack").addEventListener("click", close);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") close(); });
+  document.getElementById("adwSend").addEventListener("click", function(){
+    document.getElementById("adwDoneTxt").innerHTML = "Dein Angebot über <b style='color:var(--ink)'>" + eur(val()) + "</b> ist bei uns. Wir melden uns zur Bestätigung, mit Daten, nicht mit Floskeln.";
+    adw.classList.add("done");
+  });
+})();
+</script>
+
+<!-- Rueckweg zu Explore: erscheint nur, wenn man aus dem Feed kommt -->
+<style>
+  .expback{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:110;display:none;align-items:center;gap:8px;
+    background:rgba(20,18,16,.82);color:#F7F5F1;border:1px solid rgba(247,245,241,.2);border-radius:99px;padding:11px 18px;
+    font-size:13px;font-weight:600;text-decoration:none;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 14px 34px -14px rgba(20,18,16,.6);font-family:inherit;cursor:pointer;}
+  .expback i{font-style:normal;color:var(--orange);}
+  @media(max-width:760px){.expback{bottom:calc(76px + env(safe-area-inset-bottom));}}
+</style>
+<a class="expback" id="expBack" href="/ux/explore2"><i>♥</i> Zurück zu Explore</a>
+<script>
+(function(){
+  /* Merken + Like-Zahl: synchron mit dem Explore-Feed (localStorage) */
+  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "beheim";
+  var likes = new Set(JSON.parse(localStorage.getItem("unio_explore_likes") || "[]"));
+  var basis = 0; for (var i = 0; i < objId.length; i++) basis = (basis * 31 + objId.charCodeAt(i)) % 997;
+  basis = 40 + (basis % 190); /* deterministische Demo-Basis pro Objekt */
+  var btn = document.getElementById("objHerz"), txt = document.getElementById("objHerzTxt"),
+      zahl = document.getElementById("objLikes"), icon = document.getElementById("objHerzIcon");
+  function mal(){
+    var on = likes.has(objId);
+    txt.textContent = on ? "Gemerkt" : "Merken";
+    zahl.textContent = "♥ " + (basis + (on ? 1 : 0));
+    icon.setAttribute("fill", on ? "var(--orange)" : "none");
+    icon.style.color = on ? "var(--orange)" : "inherit";
+  }
+  btn.addEventListener("click", function(){
+    if (likes.has(objId)) likes.delete(objId); else likes.add(objId);
+    localStorage.setItem("unio_explore_likes", JSON.stringify([...likes]));
+    mal();
+  });
+  mal();
+
+  var vonExplore = /[?&]von=explore/.test(location.search) || /\/ux\/explore/.test(document.referrer);
+  if (!vonExplore) return;
+  var b = document.getElementById("expBack");
+  b.style.display = "inline-flex";
+  var zurueck = function(e){
+    if (e) e.preventDefault();
+    if (history.length > 1 && /\/ux\/explore/.test(document.referrer)) history.back();
+    else location.href = "/ux/explore2";
+  };
+  b.addEventListener("click", zurueck);
+
+  /* Mobil: runder Feed-Button vorne in der Aktionsleiste */
+  var bar = document.querySelector(".ctabar");
+  if (bar) {
+    var fr = document.createElement("button");
+    fr.className = "feedrund"; fr.setAttribute("aria-label", "Zurück zu Explore");
+    fr.style.display = "grid";
+    fr.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.8-10-9.3C.4 8.8 2 5.4 5.2 5c2-.2 3.6.8 4.6 2.3h4.4c1-1.5 2.6-2.5 4.6-2.3 3.2.4 4.8 3.8 3.2 6.7C19.5 16.2 12 21 12 21z"/></svg>';
+    fr.addEventListener("click", zurueck);
+    bar.insertBefore(fr, bar.firstChild);
+  }
+
+  /* Scroll-Through: naechstes Objekt am Seitenende — nur auf Touch-Geraeten.
+     Am Desktop endet die Seite am Footer (Rueckweg: die Explore-Pill links unten). */
+  try {
+    var next = JSON.parse(sessionStorage.getItem("unio_explore_next") || "null");
+    if (!next || !matchMedia("(pointer: coarse)").matches) return;
+    var panel = document.getElementById("weiterPanel");
+    document.getElementById("weiterImg").src = next.img;
+    document.getElementById("weiterT").textContent = next.t;
+    document.getElementById("weiterM").textContent = next.ort + " · " + next.preis;
+    panel.style.display = "block";
+    var amEnde = function(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 24; };
+    var los = false;
+    var commit = function(){
+      if (los) return; los = true;
+      sessionStorage.setItem("unio_explore_pos", next.id);
+      location.href = "/ux/explore2";
+    };
+    window.addEventListener("wheel", function(e){ if (e.deltaY > 14 && amEnde()) commit(); }, { passive: true });
+    var tY = null;
+    window.addEventListener("touchstart", function(e){ tY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener("touchmove", function(e){
+      if (tY === null) return;
+      if (tY - e.touches[0].clientY > 30 && amEnde()) { tY = null; commit(); }
+    }, { passive: true });
+  } catch (e) {}
+})();
+</script>
+<!-- ===== Endkunden-State: Objekttausch, CTA-State-Machine, Slot-Picker, Dokument-Viewer ===== -->
+<style>
+  .eksheet{position:fixed;inset:0;z-index:130;pointer-events:none;font-family:inherit;}
+  .eksheet.open{pointer-events:auto;}
+  .eksheet .back{position:absolute;inset:0;background:rgba(20,18,16,.45);opacity:0;transition:opacity .3s var(--ease);}
+  .eksheet.open .back{opacity:1;}
+  .eksheet aside{position:absolute;left:50%;bottom:0;transform:translate(-50%,105%);width:min(560px,100vw);max-height:86vh;overflow-y:auto;
+    background:var(--bg);border-radius:22px 22px 0 0;padding:14px 22px calc(24px + env(safe-area-inset-bottom));
+    transition:transform .35s cubic-bezier(0.32,0.72,0,1);}
+  .eksheet.open aside{transform:translate(-50%,0);}
+  .eksheet .griff{width:38px;height:4px;border-radius:99px;background:var(--hair);margin:0 auto 14px;}
+  .eksheet h3{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
+  .eksheet .esub{font-size:13.5px;color:var(--fg2);line-height:1.55;margin:0 0 16px;}
+  .eksheet .slots{display:grid;gap:9px;}
+  .eksheet .slots button{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--hair);background:var(--card);
+    border-radius:14px;padding:14px 17px;cursor:pointer;font:600 14px/1 inherit;font-family:inherit;color:var(--ink);}
+  .eksheet .slots .frei{font-family:var(--font-mono),monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#2E7D46;}
+  .eksheet .ghostbtn{display:block;width:100%;margin-top:12px;text-align:center;border:1px solid var(--hair);background:var(--card);color:var(--ink);
+    border-radius:99px;padding:13px 20px;font:600 13.5px inherit;font-family:inherit;cursor:pointer;text-decoration:none;box-sizing:border-box;}
+  .eksheet .docbox{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:24px 20px;margin-bottom:14px;}
+  .eksheet .docbox .kopf{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:12px;}
+  .eksheet .docbox .zl{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--hair);color:var(--fg2);}
+  .eksheet .docbox .zl b{color:var(--ink);font-weight:600;}
+</style>
+<div class="eksheet" id="ekSlot" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <div id="ekSlotWahl">
+      <h3 id="ekSlotTitel">Besichtigung buchen</h3>
+      <p class="esub">Drei bestätigbare Slots von deinem Makler. Du wählst, der Rest läuft automatisch.</p>
+      <div class="slots" id="ekSlotListe"></div>
+      <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=akt">Anderen Termin im Chat vereinbaren</a>
+    </div>
+    <div id="ekSlotFertig" style="display:none;text-align:center;padding:24px 0 10px;">
+      <h3 style="margin-bottom:6px;">Fixiert ✓</h3>
+      <p class="esub" id="ekSlotFertigTxt"></p>
+      <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=akt">Im Portal ansehen</a>
+    </div>
+  </aside>
+</div>
+<div class="eksheet" id="ekRate" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <h3>Was kostet dich das im Monat?</h3>
+    <p class="esub" id="ekRateSub"></p>
+    <div class="docbox" id="ekRateBox"></div>
+    <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=profil" id="ekRateCta">Kaufkraft anpassen</a>
+  </aside>
+</div>
+<div class="eksheet" id="ekDoc" aria-hidden="true">
+  <div class="back"></div>
+  <aside>
+    <div class="griff"></div>
+    <h3 id="ekDocTitel">Dokument</h3>
+    <p class="esub" id="ekDocSub"></p>
+    <div class="docbox" id="ekDocBox"></div>
+    <a class="ghostbtn" href="/ux/backend?rolle=endkunde&tab=profil">In meinem Dokumenten-Archiv</a>
+  </aside>
+</div>
+<script>
+(function(){
+  /* Geteilter Endkunden-State: derselbe localStorage-Contract wie Portal und Explore */
+  var KATALOG = {
+    "beheim":{t:"Penthouse Beheim",ort:"1170 Wien · Hernals",preisNum:1700000,img:"../../assets/img/beheim.jpg"},
+    "beheim2":{t:"Beheim · Garten-Maisonette",ort:"1170 Wien · Hernals",preisNum:1650000,img:"../../assets/img/beheim-2.jpg"},
+    "albrecht":{t:"Das Albrecht · Top 12",ort:"1180 Wien · Währing",preisNum:470000,img:"../../assets/img/albrecht.jpg"},
+    "albrecht-dg":{t:"Das Albrecht · Dachgeschoss",ort:"1180 Wien · Währing",preisNum:1490000,img:"../../assets/img/albrechts-dachgeschoss.jpg"},
+    "ecoluxe":{t:"Villa Ecoluxe",ort:"1140 Wien · Hadersdorf",preisNum:2400000,img:"../../assets/img/ecoluxe.jpg"},
+    "obenzwei":{t:"ObenZwei · Penthouse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei.jpg"},
+    "obenzwei-t":{t:"ObenZwei · Terrasse",ort:"1020 Wien · Leopoldstadt",preisNum:2100000,img:"../../assets/img/obenzwei-terrasse.jpg"},
+    "penthouse":{t:"Penthouse über den Dächern",ort:"1010 Wien · Innere Stadt",preisNum:4000000,img:"../../assets/img/penthouse.jpg"},
+    "maxing":{t:"Maxingstraße 22 · Top 7",ort:"1130 Wien · Hietzing",preisNum:980000,img:"../../assets/img/maxingstrasse-zimmer.jpg"},
+    "schoenbrunn":{t:"Schönbrunn-Blick",ort:"1130 Wien · Hietzing",preisNum:890000,img:"../../assets/img/schoenbrunn.jpg"},
+    "facade":{t:"Gründerzeit-Juwel",ort:"1050 Wien · Margareten",preisNum:1100000,img:"../../assets/img/vienna-facade.jpg"}
+  };
+  var objId = (location.search.match(/[?&]obj=([a-z0-9-]+)/i) || [])[1] || "beheim";
+  var o = KATALOG[objId] || KATALOG["beheim"];
+  var eur = function(n){ return "€ " + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+  var lese = function(k, fb){ try { return JSON.parse(localStorage.getItem(k)) || fb; } catch(e){ return fb; } };
+  var schreibe = function(k, v){ localStorage.setItem(k, JSON.stringify(v)); };
+  var PORTAL = "/ux/backend?rolle=endkunde";
+  var obenNav = function(u){ try { (window.top || window).location.href = u; } catch(e){ location.href = u; } };
+  if (window.self !== window.top) {
+    document.addEventListener("click", function(e){
+      var a = e.target.closest('a[href^="/ux/backend"]');
+      if (a) { e.preventDefault(); obenNav(a.getAttribute("href")); }
+    });
+  }
+
+  /* Objekttausch aus dem Katalog */
+  window.__EK_KP = o.preisNum;
+  var heroimg = document.getElementById("heroimg");
+  if (heroimg && KATALOG[objId]) heroimg.src = o.img;
+  var h1 = document.querySelector(".head h1");
+  if (h1) h1.innerHTML = o.t.replace(" · ", "<br>") + "<em>.</em>";
+  var hm = document.querySelector(".headmeta .mono");
+  if (hm) hm.textContent = "Zum Verkauf · Wohnung · " + o.ort;
+  document.querySelectorAll(".price > b, .ctabar .l b").forEach(function(b){ b.textContent = eur(o.preisNum); });
+  var inp = document.getElementById("adwSumme");
+  if (inp) inp.value = eur(o.preisNum);
+  var pres = document.getElementById("adwPresets");
+  if (pres) {
+    pres.innerHTML = "";
+    [[o.preisNum, "Kaufpreis"], [Math.round(o.preisNum * 0.97 / 1000) * 1000, null], [Math.round(o.preisNum * 0.95 / 1000) * 1000, null]].forEach(function(x, i){
+      var b = document.createElement("button");
+      b.dataset.v = x[0]; b.textContent = x[1] || eur(x[0]); if (i === 0) b.classList.add("on");
+      pres.appendChild(b);
+    });
+  }
+  var adiff = document.getElementById("adwDiff");
+  if (adiff) adiff.textContent = "Kaufpreis " + eur(o.preisNum) + " · Abweichung ±0 %";
+
+  /* Ereignis + Chat in den geteilten State schreiben */
+  function ereignis(typ, titel, sub){
+    var evs = lese("unio_ek_events", []);
+    evs.unshift({ id: Date.now(), typ: typ, objId: objId, titel: titel, sub: sub, zeit: "Jetzt", gelesen: false });
+    schreibe("unio_ek_events", evs);
+  }
+  function chatMsg(ich, txt){
+    var chats = lese("unio_ek_chats", {});
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · " + o.t, img: "../../assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+    chats[objId].msgs.push({ ich: ich, txt: txt, t: "Jetzt" });
+    schreibe("unio_ek_chats", chats);
+  }
+
+  /* Slot-Picker */
+  var slotEl = document.getElementById("ekSlot");
+  var SLOTS = ["Di 19.08. · 09:00", "Mi 20.08. · 14:00", "Fr 22.08. · 10:30"];
+  function slotsAuf(){
+    var l = document.getElementById("ekSlotListe"); l.innerHTML = "";
+    SLOTS.forEach(function(t){
+      var b = document.createElement("button");
+      b.innerHTML = t + '<span class="frei">Sofort fixierbar</span>';
+      b.addEventListener("click", function(){
+        var bez = lese("unio_ek_beziehungen", {});
+        bez[objId] = Object.assign(bez[objId] || {}, { zustand: "termin", termin: t });
+        schreibe("unio_ek_beziehungen", bez);
+        ereignis("termin", "Besichtigung fixiert", o.t + " · " + t);
+        chatMsg(false, "Besichtigung fixiert: " + t + ". Ich freue mich, Adresse und Details kommen per Mail.");
+        document.getElementById("ekSlotWahl").style.display = "none";
+        document.getElementById("ekSlotFertig").style.display = "block";
+        document.getElementById("ekSlotFertigTxt").textContent = o.t + " · " + t + ". Dein Makler ist informiert, Reminder kommen automatisch.";
+        ctaAnwenden();
+      });
+      l.appendChild(b);
+    });
+    document.getElementById("ekSlotWahl").style.display = "block";
+    document.getElementById("ekSlotFertig").style.display = "none";
+    slotEl.classList.add("open"); slotEl.setAttribute("aria-hidden", "false");
+  }
+  slotEl.querySelector(".back").addEventListener("click", function(){ slotEl.classList.remove("open"); slotEl.setAttribute("aria-hidden", "true"); });
+
+  /* Dokument-Viewer */
+  var docEl = document.getElementById("ekDoc");
+  docEl.querySelector(".back").addEventListener("click", function(){ docEl.classList.remove("open"); docEl.setAttribute("aria-hidden", "true"); });
+  document.querySelectorAll(".docrow").forEach(function(row){
+    if (row.classList.contains("locked")) return;
+    row.addEventListener("click", function(ev){
+      ev.preventDefault();
+      var name = row.querySelector(".dmain b").childNodes[0].textContent.trim();
+      var sub = row.querySelector(".dmain span").textContent;
+      document.getElementById("ekDocTitel").textContent = name;
+      document.getElementById("ekDocSub").textContent = o.t + " · " + sub;
+      document.getElementById("ekDocBox").innerHTML =
+        '<div class="kopf"><b>' + name + '</b><span class="mono">UNIO · ' + o.ort + '</span></div>' +
+        [["Objekt", o.t], ["Adresse", o.ort], ["Kaufpreis", eur(o.preisNum)], ["Stand", "08/2026"]].map(function(z){
+          return '<div class="zl"><span>' + z[0] + '</span><b>' + z[1] + '</b></div>';
+        }).join("") +
+        '<p class="mono" style="margin-top:12px;color:var(--fg2);">DEMO-VORSCHAU · VOLLVERSION IM DATENRAUM</p>';
+      docEl.classList.add("open"); docEl.setAttribute("aria-hidden", "false");
+    });
+  });
+
+  /* Kaufkraft: personalisierte Rate direkt an der Preis-Karte (BuyAbility-Prinzip) */
+  var kk = (lese("unio_ek_profil", {}) || {}).kaufkraft || null;
+  function rateFuer(preis){ if (!kk) return null; var rest = preis * 1.102 - kk.ek; return rest <= 0 ? 0 : Math.round(rest * 0.00466 / 10) * 10; }
+  (function(){
+    var z = document.getElementById("rateZeile"); if (!z) return;
+    z.style.display = "block";
+    if (kk) {
+      var r = rateFuer(o.preisNum), passt = r <= kk.rate;
+      z.innerHTML = "Deine Rate: ≈ <b style='color:var(--ink)'>" + eur(r) + "/Monat</b> · " +
+        (passt ? "<span style='color:#2E7D46'>in deinem Rahmen" + (kk.status === "verifiziert" ? " · verifiziert ✓" : "") + "</span>" : "<span style='color:#B84A00'>über deinem Rahmen</span>") + " · Rechenweg";
+    } else {
+      z.textContent = "Was kostet dich das im Monat? Kaufkraft hinterlegen →";
+    }
+    var sheet = document.getElementById("ekRate");
+    sheet.querySelector(".back").addEventListener("click", function(){ sheet.classList.remove("open"); sheet.setAttribute("aria-hidden", "true"); });
+    z.addEventListener("click", function(){
+      if (!kk) { obenNav("/ux/backend?rolle=endkunde&tab=profil"); return; }
+      var nk = Math.round(o.preisNum * 0.102), kredit = Math.max(0, o.preisNum * 1.102 - kk.ek), r = rateFuer(o.preisNum);
+      document.getElementById("ekRateSub").textContent = o.t + " · transparente Demo-Rechnung, keine Finanzberatung.";
+      document.getElementById("ekRateBox").innerHTML = [
+        ["Kaufpreis", eur(o.preisNum)],
+        ["+ Nebenkosten (~10,2 %: GrESt, Grundbuch, Vertrag, Provision)", eur(nk)],
+        ["- Dein Eigenkapital", eur(kk.ek)],
+        ["= Kreditbedarf", eur(kredit)],
+        ["Rate (3,8 % eff., 30 Jahre)", "≈ " + eur(r) + "/Monat"],
+        ["Dein Rahmen (Wunschrate)", eur(kk.rate) + "/Monat"]
+      ].map(function(x){ return '<div class="zl"><span>' + x[0] + '</span><b>' + x[1] + '</b></div>'; }).join("") +
+      '<p class="mono" style="margin-top:12px;color:var(--fg2);">' + (r <= kk.rate ? "PASST IN DEINEN RAHMEN ✓" : "ÜBER DEINEM RAHMEN · DER CONCIERGE PRÜFT GERN ALTERNATIVEN") + '</p>';
+      sheet.classList.add("open"); sheet.setAttribute("aria-hidden", "false");
+    });
+  })();
+
+  /* Zustandsabhaengige CTA-Leiste (Tabelle 5 der Prozesslogik) */
+  function neuBinden(id, label, fn){
+    var alt = document.getElementById(id); if (!alt) return;
+    var neu = alt.cloneNode(true); neu.textContent = label;
+    alt.parentNode.replaceChild(neu, alt);
+    neu.addEventListener("click", fn);
+  }
+  function ctaAnwenden(){
+    var bez = lese("unio_ek_beziehungen", {});
+    var z = (bez[objId] || {}).zustand || null;
+    var termin = (bez[objId] || {}).termin;
+    var pill = document.getElementById("objStatus");
+    var PILLS = { termin: "Termin fixiert", besichtigt: "Besichtigt", anbot_aktiv: "Anbot in Prüfung", gegenangebot: "Gegenangebot · Frist läuft", angenommen: "In Abwicklung", abwicklung: "In Abwicklung", eigentum: "Dein Eigentum" };
+    if (pill) { pill.style.display = PILLS[z] ? "inline-block" : "none"; pill.textContent = (PILLS[z] || "").toUpperCase(); }
+    var zurKaufreise = function(){ obenNav(PORTAL + "&kaufreise=" + objId); };
+    /* Der Chat öffnet am Objekt, nicht im Portal: so bleibt der Bezug zur
+       Immobilie erhalten und man landet nicht in einer fremden Ansicht. */
+    var zumChat = function(){ if (window.mkChatAuf) window.mkChatAuf(); else obenNav(PORTAL + "&tab=akt&chat=" + objId); };
+    if (z === "anbot_aktiv") {
+      neuBinden("angebotOpen", "Anbot ansehen", zurKaufreise); neuBinden("angebotOpenMobil", "Anbot ansehen", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "gegenangebot") {
+      neuBinden("angebotOpen", "Auf Gegenangebot reagieren", zurKaufreise); neuBinden("angebotOpenMobil", "Reagieren", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "angenommen" || z === "abwicklung") {
+      neuBinden("angebotOpen", "Kaufreise öffnen", zurKaufreise); neuBinden("angebotOpenMobil", "Kaufreise", zurKaufreise);
+      neuBinden("besichtRail", "Chat mit Makler", zumChat); neuBinden("besichtMobil", "Chat", zumChat);
+    } else if (z === "eigentum") {
+      neuBinden("angebotOpen", "Mein Objekt öffnen", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("angebotOpenMobil", "Mein Objekt", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("besichtRail", "Dokumente ansehen", function(){ obenNav(PORTAL + "&tab=profil"); });
+      neuBinden("besichtMobil", "Dokumente", function(){ obenNav(PORTAL + "&tab=profil"); });
+    } else if (z === "termin") {
+      neuBinden("besichtRail", "Termin: " + termin, slotsAuf); neuBinden("besichtMobil", "Termin ✓", slotsAuf);
+    } else if (z === "besichtigt") {
+      neuBinden("besichtRail", "Feedback geben", function(){ obenNav(PORTAL + "&tab=akt"); });
+      neuBinden("besichtMobil", "Feedback", function(){ obenNav(PORTAL + "&tab=akt"); });
+    } else {
+      neuBinden("besichtRail", "Besichtigung buchen", slotsAuf);
+      neuBinden("besichtMobil", "Besichtigung", slotsAuf);
+    }
+  }
+  ctaAnwenden();
+
+  /* Anbot aus dem Drawer landet im geteilten State (zusaetzlicher Listener) */
+  var send = document.getElementById("adwSend");
+  if (send) send.addEventListener("click", function(){
+    var v = parseInt(String(document.getElementById("adwSumme").value).replace(/\D/g, ""), 10) || o.preisNum;
+    var bez = lese("unio_ek_beziehungen", {});
+    var alt = bez[objId] || {};
+    var verlauf = (alt.anbot && alt.anbot.verlauf) ? alt.anbot.verlauf : [];
+    verlauf.push({ wer: "du", betrag: v, zeit: "Jetzt" });
+    bez[objId] = Object.assign(alt, { zustand: "anbot_aktiv", anbot: { betrag: v, frist: new Date(Date.now() + 10 * 86400000).toISOString(), gegen: null, verlauf: verlauf } });
+    schreibe("unio_ek_beziehungen", bez);
+    ereignis("anbot", "Anbot übermittelt", o.t + " · " + eur(v) + " · 10 Tage bindend");
+    chatMsg(false, "Ihr Anbot über " + eur(v) + " ist eingegangen. Ich lege es dem Verkäufer heute noch vor.");
+    setTimeout(ctaAnwenden, 400);
+  });
+})();
+</script>
+
+<!-- Lage und Infrastruktur: Ringe, POI-Listen, Karte auf Klick.
+     Die Werte kommen im Betrieb aus offenen Daten (siehe "Wie wird das berechnet?"). -->
+<script>
+(function(){
+  var LAGE = {
+    ort: "1170 Wien, Hernals",
+    scores: [
+      { k: "Öffi-Anbindung", wert: 92, label: "Hervorragend", sub: "U4 und zwei Buslinien im Gehradius" },
+      { k: "Alltag zu Fuß", wert: 78, label: "Sehr gut", sub: "Nahversorgung, Arzt, Schule unter 10 Min" },
+      { k: "Ruhe", wert: 64, label: "Gut", sub: "Wohnstraße, kein Durchzugsverkehr" }
+    ],
+    poi: [
+      ["Öffentlich", [["U4 Meidling Hauptstraße", "4 Min zu Fuß"], ["Bus 10A Steinbruchstraße", "2 Min zu Fuß"], ["S-Bahn Hernals", "11 Min zu Fuß"]]],
+      ["Nahversorgung", [["Billa Plus", "5 Min zu Fuß"], ["Apotheke zur Hoffnung", "6 Min zu Fuß"], ["Bäckerei Grimm", "3 Min zu Fuß"]]],
+      ["Bildung", [["Volksschule Rosensteingasse", "7 Min zu Fuß"], ["Kindergarten Wichtelhaus", "4 Min zu Fuß"], ["Gymnasium Geblergasse", "12 Min zu Fuß"]]],
+      ["Grün und Freizeit", [["Schwarzenbergpark", "9 Min zu Fuß"], ["Sportanlage Hernals", "8 Min zu Fuß"], ["Wienerwald-Einstieg", "14 Min zu Fuß"]]]
+    ]
+  };
+  var farbe = function(w){ return w >= 85 ? "#2E7D46" : w >= 65 ? "var(--orange)" : "#B87400"; };
+  var sc = document.getElementById("lgscores");
+  if (!sc) return;
+
+  /* Berechnete Werte aus offenen Daten nachladen (build/lage.mjs schreibt sie).
+     Fehlt die Datei, bleiben die eingebauten Werte stehen. */
+  /* Die Lage-Datei folgt der Objekt-Kennung aus der URL. So zeigt jedes Objekt
+     seine eigene Adresse und nicht die eines anderen. */
+  var lgObj = new URLSearchParams(location.search).get("obj") || "beheim";
+  fetch("/assets/data/lage/" + lgObj + ".json").then(function(a){ return a.ok ? a.json() : null; })
+    .then(function(d){
+      if (!d || !d.scores) return; /* keine Daten: Sektion bleibt versteckt */
+      document.getElementById("lage").hidden = false;
+      LAGE.ort = d.ort;
+      LAGE.scores = d.scores;
+      LAGE.poi = d.poi.map(function(g){ return [g.kat, g.zeilen]; });
+      sc.innerHTML = ""; document.getElementById("lgpoi").innerHTML = "";
+      zeichne();
+      var oe = document.querySelector(".lg .oeffi");
+      if (oe) oe.innerHTML = '<span class="lab">Öffentlich unterwegs</span>' + d.oeffiSatz;
+      var q = document.querySelector(".lg .wie p + p, .lg .wie .mono");
+      if (q) q.textContent = "Berechnet am " + d.stand.split("-").reverse().join(".") + " · Datenquellen: " + d.quellen.join(" · ");
+    }).catch(function(){ /* offline oder noch nicht berechnet */ });
+
+  function zeichne(){
+  document.getElementById("lgort").textContent = LAGE.ort;
+  LAGE.scores.forEach(function(s){
+    var R = 22, U = 2 * Math.PI * R;
+    var d = document.createElement("div");
+    d.className = "sc";
+    d.innerHTML =
+      '<div class="ring"><svg viewBox="0 0 58 58" width="58" height="58">' +
+        '<circle cx="29" cy="29" r="' + R + '" fill="none" stroke="var(--hair)" stroke-width="5"></circle>' +
+        '<circle cx="29" cy="29" r="' + R + '" fill="none" stroke="' + farbe(s.wert) + '" stroke-width="5" ' +
+          'stroke-linecap="round" stroke-dasharray="' + U + '" stroke-dashoffset="' + (U * (1 - s.wert / 100)) + '" ' +
+          'transform="rotate(-90 29 29)"></circle>' +
+      '</svg><b>' + s.wert + '</b></div>' +
+      '<div class="txt"><span class="lab">' + s.k + '</span><b>' + s.label + '</b><p>' + s.sub + '</p></div>';
+    sc.appendChild(d);
+  });
+  var poi = document.getElementById("lgpoi");
+  LAGE.poi.forEach(function(g){
+    if (!g[1] || !g[1].length) return; /* Kategorie ohne Treffer nicht anzeigen */
+    var w = document.createElement("div");
+    w.className = "poigrp";
+    var h = '<div class="h">' + g[0] + '</div>';
+    g[1].forEach(function(z){ h += '<div class="z"><span>' + z[0] + '</span><span>' + z[1] + '</span></div>'; });
+    w.innerHTML = h;
+    poi.appendChild(w);
+  });
+  }
+  /* Karte laedt erst auf Klick: schnelle Seite, kein Drittanbieter vor der Zustimmung */
+  var kbtn = document.getElementById("lgkbtn");
+  kbtn.addEventListener("click", function(){
+    var k = document.getElementById("lgkarte");
+    k.innerHTML = '<iframe title="Karte" loading="lazy" referrerpolicy="no-referrer-when-downgrade" ' +
+      'src="https://www.openstreetmap.org/export/embed.html?bbox=16.30%2C48.21%2C16.34%2C48.23&amp;layer=mapnik"></iframe>';
+  });
+  var wie = document.getElementById("lgwie"), wiep = document.getElementById("lgwiep");
+  wie.addEventListener("click", function(){
+    var auf = wiep.hidden;
+    wiep.hidden = !auf;
+    wie.setAttribute("aria-expanded", auf ? "true" : "false");
+  });
+})();
+</script>
+
+<!-- UNIO Concierge: Chips im Text, dazu ein persistenter Einstieg unten rechts.
+     Kennzeichnung als KI-Assistent (EU AI Act), Übergabe an den Makler bei Unsicherheit. -->
+<script>
+(function(){
+  var CHIPS = [
+    ["Was kostet der Betrieb?", "Die Betriebskosten liegen bei rund € 2,90 je m² und Monat, also etwa € 410 für diese Wohnung, plus Rücklage. Die genaue Abrechnung des Vorjahres liegt in den Dokumenten."],
+    ["Wann ist Bezug möglich?", "Die Übergabe ist ab 11.05.2026 geplant. Bei einem Anbot im laufenden Monat ist ein früherer Bezug in Absprache mit dem Bauträger möglich."],
+    ["Ist ein Parkplatz dabei?", "Zwei Tiefgaragenplätze sind optional zubuchbar, je € 28.000. Ein Platz ist aktuell noch frei."],
+    ["Wie ist die Anbindung?", "Die U4 Meidling Hauptstraße erreichst du in 4 Minuten zu Fuß, den Stephansplatz in 21 Minuten. Der Öffi-Score liegt bei 92 von 100."]
+  ];
+  var chips = document.getElementById("ccchips"), verlauf = document.getElementById("ccverlauf"),
+      w = document.getElementById("ccw"), input = document.getElementById("ccinput");
+  if (!chips) return;
+
+  function add(wer, txt){
+    var d = document.createElement("div");
+    d.className = "m " + wer;
+    d.textContent = txt;
+    verlauf.appendChild(d);
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+  function handoff(){
+    var d = document.createElement("div");
+    d.className = "m hand";
+    d.innerHTML = "Das kann ich nicht sicher beantworten. Wenzel Wächter, dein Makler für dieses Objekt, " +
+      "antwortet im Schnitt in unter zwei Stunden.<br><button>Frage an den Makler geben</button>";
+    d.querySelector("button").addEventListener("click", function(){
+      this.disabled = true; this.textContent = "Übergeben ✓ · Chat geöffnet";
+      /* Direkt in den Makler-Chat am Objekt, nicht in eine fremde Ansicht */
+      zu();
+      if (window.mkChatMitFrage) window.mkChatMitFrage("");
+    });
+    verlauf.appendChild(d);
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+  function auf(){
+    w.classList.add("auf"); w.setAttribute("aria-hidden", "false");
+    if (!verlauf.childElementCount) add("ai", "Ich bin ein KI-Assistent und kenne die Daten zu diesem Penthouse. Frag mich nach Kosten, Ausstattung, Lage oder Terminen.");
+  }
+  function zu(){ w.classList.remove("auf"); w.setAttribute("aria-hidden", "true"); }
+
+  CHIPS.forEach(function(c){
+    var b = document.createElement("button");
+    b.textContent = c[0];
+    b.addEventListener("click", function(){ auf(); add("du", c[0]); setTimeout(function(){ add("ai", c[1]); }, 260); });
+    chips.appendChild(b);
+  });
+  var mk = document.createElement("button");
+  mk.className = "mk"; mk.textContent = "Mit Makler sprechen";
+  mk.addEventListener("click", function(){ auf(); handoff(); });
+  chips.appendChild(mk);
+
+  document.getElementById("ccl").addEventListener("click", auf);
+  document.getElementById("ccx").addEventListener("click", zu);
+  document.getElementById("ccback").addEventListener("click", zu);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") zu(); });
+
+  function frage(){
+    var t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    add("du", t);
+    var tr = CHIPS.filter(function(c){
+      var wort = t.toLowerCase();
+      return (c[0].toLowerCase().split(" ").some(function(x){ return x.length > 4 && wort.indexOf(x) > -1; }));
+    })[0];
+    setTimeout(function(){ tr ? add("ai", tr[1]) : handoff(); }, 300);
+  }
+  document.getElementById("ccsend").addEventListener("click", frage);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") frage(); });
+})();
+</script>
+
+<!-- Makler-Chat am Objekt. Liest und schreibt unio_ek_chats, dieselbe
+     Unterhaltung erscheint im Portal unter Aktivität. -->
+<script>
+(function(){
+  var w = document.getElementById("mkw"), verlauf = document.getElementById("mkverlauf"),
+      input = document.getElementById("mkinput");
+  if (!w) return;
+  var objId = new URLSearchParams(location.search).get("obj") || "beheim";
+
+  function lese(k, f){ try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? f : v; } catch (e) { return f; } }
+  function schreibe(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* Speicher gesperrt */ } }
+
+  function zeichne(){
+    var chats = lese("unio_ek_chats", {});
+    var c = chats[objId];
+    verlauf.innerHTML = "";
+    if (!c || !c.msgs.length) {
+      var leer = document.createElement("div");
+      leer.className = "m ai";
+      leer.textContent = "Guten Tag! Ich bin Ihr Ansprechpartner für dieses Penthouse. Fragen zum Objekt, zum Preis oder zu einem Termin beantworte ich gern persönlich.";
+      verlauf.appendChild(leer);
+      return;
+    }
+    if (c.name) document.getElementById("mkname").textContent = c.name;
+    c.msgs.forEach(function(m){
+      var d = document.createElement("div");
+      d.className = "m " + (m.ich ? "du" : "ai");
+      d.textContent = m.txt;
+      verlauf.appendChild(d);
+    });
+    verlauf.scrollTop = verlauf.scrollHeight;
+  }
+
+  function auf(){ w.classList.add("auf"); w.setAttribute("aria-hidden", "false"); zeichne(); }
+  function zu(){ w.classList.remove("auf"); w.setAttribute("aria-hidden", "true"); }
+  window.mkChatAuf = auf;
+
+  document.getElementById("mkx").addEventListener("click", zu);
+  document.getElementById("mkback").addEventListener("click", zu);
+  /* Titel und Bild der Objektzeile aus der Seite uebernehmen, damit der Chat
+     zum wirklich gezeigten Objekt gehoert und nicht zu einem festen Text. */
+  (function(){
+    var h1 = document.querySelector(".head h1");
+    var titel = h1 ? h1.textContent.replace(/\.$/, "").replace(/\s+/g, " ").trim() : null;
+    if (titel) {
+      var b = document.querySelector("#mkobj b");
+      if (b) b.textContent = titel;
+    }
+    var hero = document.getElementById("heroimg");
+    var mini = document.querySelector("#mkobj img");
+    if (hero && mini) mini.src = hero.getAttribute("src");
+  })();
+
+  document.getElementById("mkobj").addEventListener("click", function(e){
+    e.preventDefault(); zu();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") zu(); });
+
+  function senden(){
+    var t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    var chats = lese("unio_ek_chats", {});
+    if (!chats[objId]) chats[objId] = { name: "Wenzel Wächter", rolle: "Makler · Traum Penthouse in Hernals",
+      img: "../../assets/team/makler/wenzel-waechter.jpg", antwortzeit: "< 2 h", msgs: [] };
+    chats[objId].msgs.push({ ich: true, txt: t, t: "Jetzt" });
+    schreibe("unio_ek_chats", chats);
+    zeichne();
+    setTimeout(function(){
+      var c2 = lese("unio_ek_chats", {});
+      c2[objId].msgs.push({ ich: false, txt: "Danke für Ihre Nachricht, ich melde mich heute noch dazu. Wenn es dringend ist, erreichen Sie mich auch telefonisch.", t: "Jetzt" });
+      schreibe("unio_ek_chats", c2);
+      zeichne();
+    }, 900);
+  }
+  document.getElementById("mksend").addEventListener("click", senden);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") senden(); });
+
+  /* Handoff aus dem Concierge landet ebenfalls hier, nicht in einer fremden Ansicht */
+  window.mkChatMitFrage = function(frage){
+    auf();
+    if (frage) { input.value = frage; }
+  };
+  /* Signatur und Modul fuehren in denselben Chat am Objekt */
+  document.querySelectorAll("[data-mkfrage]").forEach(function(b){ b.addEventListener("click", function(){ auf(); input.focus(); }); });
+})();
+</script>
+</body>
+</html>
