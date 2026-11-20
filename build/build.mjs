@@ -136,7 +136,11 @@ function ohneStriche(t) {
   return t
     .replace(/(\d)\s?[\u2013\u2014]\s?(\d)/g, "$1 bis $2")
     .replace(/\s[\u2013\u2014]\s/g, ", ")
-    .replace(/[\u2013\u2014]/g, "-");
+    .replace(/[\u2013\u2014]/g, "-")
+    /* esbuild schreibt Sonderzeichen im Skript als \\uXXXX: dieselben Regeln fuer diese Schreibweise */
+    .replace(/(\d)\s?\\u201[34]\s?(\d)/g, "$1 bis $2")
+    .replace(/\s\\u201[34]\s/g, ", ")
+    .replace(/\\u201[34]/g, "-");
 }
 
 /* React dev-CDN → production */
@@ -398,6 +402,7 @@ ${wissenLinks.join("\n")}
       s = s.replace(/<div id="root">[\s\S]*?<\/div>\n<script/, `<div id="root">${snap.root}</div>\n<script`);
       if (snap.faq) s = s.replace("</head>", snap.faq + "\n</head>");
       if (snap.styles) s = s.replace("</head>", snap.styles + "\n</head>");
+      if (p.path.endsWith("2")) s = ohneStriche(s);
       writeFileSync(join(DIST, p.out), s);
       console.log("✓ prerendered:", p.path);
     }
