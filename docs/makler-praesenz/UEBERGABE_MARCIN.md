@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 3 (ein Makler-Element pro Fläche, CIRCLE-Gesichter als Porträt-Streifen, Variante 2 unter eigenen Adressen) |
+| Stand dieses Dokuments | 20.11.2026, Version 4 (zusätzlich: Partner-Übersicht, einheitliches Raster, Vorschläge für die Suchseite) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -223,6 +223,62 @@ Abnahme:
 3. Partner ohne Maklerseite erscheinen ohne Link und ohne Pfeil.
 4. Die Seite lädt keine Filme, solange niemand eine Karte berührt oder sieht.
 
+### MP-15 Suchseite `/listing` beruhigen
+
+Status: Entwurf · Aufwand: mittel · Referenz für die Karte: `/immobilien2`
+
+Befund am Live-Stand (Bildschirmfoto von Daniel, 20.11.2026): Die Seite wirkt unruhig, weil gleichartige Dinge verschieden aussehen und Karten verschieden hoch sind.
+
+| Stelle | Heute | Vorschlag |
+|---|---|---|
+| Kartenhöhe | Jede Karte ist so hoch wie ihr Text: mal mit Beschreibung, mal ohne, mal ein-, mal zweizeilig. Die Reihen springen | Feste Zeilen: Preis, Titel (eine Zeile), Ort, eine Datenzeile. Beschreibung raus aus der Karte |
+| Preis | "€ 1.900.000 - € 1.950.000" und an anderer Stelle "€ 499.000,00" mit Cent | Ohne Cent. Bei Projekten "ab € 349.800" statt Spanne |
+| Zusatzangaben | "2 EINHEITEN", "16/27 VERFÜGBAR", "7 EINHEITEN" stehen mal unter, mal neben dem Preis | Immer an derselben Stelle: eine Datenzeile unten, zum Beispiel "27 Einheiten · 16 verfügbar" |
+| Marken im Bild | Zwei Marken nebeneinander: "Projekt" (dunkel) und "Zum Verkauf" (hell). "Zum Verkauf" ist durch den Filter Kaufen ohnehin klar | Nur noch eine Marke und nur, wenn sie etwas sagt ("Projekt", "Neu", "Reserviert") |
+| Titel | Abgeschnitten mit drei Punkten, teils in Versalien | Eine Zeile, Schreibweise normalisieren, Länge schon bei der Anlage begrenzen |
+| Karten-Pins | Drei Sorten: schwarze Preis-Pille, orange Preis-Pille, orange Sammel-Pille. Sie überlappen sich | Eine Form. Ruhe: hell mit dunklem Text. Aktiv oder überfahren: dunkel. Sammel-Pins als Kreis mit Zahl |
+| Karte | Kräftig bunte Standardkarte | Entsättigter Kartenstil in den Farben der Seite, damit die Pins führen |
+| Filter | Zahlenfelder mit kleinen Pfeiltasten, viele einzelne Kästen untereinander | Felder ohne Pfeiltasten, Preis und Fläche als je eine Zeile "von bis", Filter am Desktop als schmale Leiste über der Liste statt eigener Spalte. Das gibt der Karte und den Objekten mehr Raum |
+| Kopf der Liste | "48 Objekte gefunden" und Sortierung in einem eigenen Kasten | Eine ruhige Zeile ohne Rahmen |
+| Person | fehlt | Makler-Kreis rechts oben im Bild (MP-02) |
+
+Vorbilder: Airbnb (Karte mit einer Pin-Form, feste Kartenzeilen, nur ein Abzeichen), Compass und Zillow (Filter als Leiste über der Liste).
+
+Abnahme:
+1. Alle Karten einer Reihe sind gleich hoch, unabhängig vom Inhalt.
+2. Es gibt genau eine Pin-Form mit zwei Zuständen.
+3. Kein Preis zeigt Cent-Stellen.
+
+### MP-16 Übersicht aller Partner
+
+Status: Entwurf · Aufwand: klein · Referenz gebaut: `/partner2` (`ui_kits/homepage/page-partner.jsx`)
+
+Eine Seite mit allen Partnern als Raster großer Porträts (4:5, vier Spalten, mobil zwei), Name im Bild, Klick zur Maklerseite. Die letzte Reihe wird immer gefüllt: Der freie Rest ist eine orange Fläche "Dein Platz im CIRCLE." mit Link zur Bewerbung. Erreichbar über "Alle Partner ansehen" im CIRCLE-Bereich. Vorschlag für die Adresse in der Plattform: `/partner` oder `/circle`.
+
+Offen: Alexander Maurer hat kein Porträt aus der Editorial-Serie, sein Bild fällt optisch heraus.
+
+### MP-17 Raster und Seitenrand
+
+Status: Entwurf · Aufwand: klein
+
+Befund: Die Abschnitte der Marketingseiten nutzen gemischt 5, 6, 7 und 8 Prozent Seitenrand. Dadurch springen linke Kanten von Abschnitt zu Abschnitt. In Variante 2 sind alle auf 6 Prozent gezogen (im Build, Funktion `einRand` in `build/build.mjs`). Kopfzeilen neuer Abschnitte nutzen dasselbe Spaltenmaß wie die Komponente `Chapter`.
+
+Prüfwerkzeug: `?raster=1` an jeder Seite oder Taste G blendet ein Raster mit 12 Spalten ein.
+
+Für die Plattform: einen Rand und ein Spaltenmaß als feste Größen festlegen und in allen Abschnitten verwenden.
+
+### MP-18 Story-Grafik
+
+Status: Entwurf · Aufwand: sehr klein · Referenz: `/story2`
+
+In der Grafik "wie UNIO sich zusammensetzt" steht die Beschriftung des untersten Knotens ("Technologie & Automation") jetzt unter dem Knoten. Darüber liefen die Linien durch den Text.
+
+### MP-19 Makler im Bewegtbild
+
+Status: Entwurf · Referenz: `/ux/explore2` (erster Film "Jardin Hermes")
+
+Im Feed erscheinen Filme, in denen der Makler selbst durch das Objekt führt (Material von Daniel: Rundgang mit Wenzel Wächter). Derselbe Film gehört später auf die Objektseite direkt zur Makler-Zeile.
+
 ### MP-08 bis MP-13
 
 Status: Entwurf, noch ohne Referenz. Beschreibung in [PLAN.md](PLAN.md), Abschnitt 6 (M3, M7 bis M11) und Abschnitt 9 (Schritte 3 bis 7). Werden hier ausgearbeitet, sobald die vorherigen Schritte abgestimmt sind.
@@ -252,6 +308,7 @@ Die Entwürfe liegen als Variante 2 auf der Vorschau-Seite des Repos, `unio-vers
 | Objektseite mit Makler-Zeile | `/projekt` | `/projekt2` |
 | Explore-Feed (Passwort wie bisher) | `/ux/explore` | `/ux/explore2` |
 | Objektseite mit Chat (Passwort wie bisher) | `/ux/objekt` | `/ux/objekt2` |
+| Übersicht aller Partner | gibt es nicht | `/partner2` |
 | Übrige Seiten | `/bautraeger`, `/story`, `/kontakt` | `/bautraeger2`, `/story2`, `/kontakt2` (inhaltlich gleich) |
 
 Technik: Der Build (`build/build.mjs`) erzeugt die 2er-Seiten aus denselben Quellen, mit eigenem Skript-Satz unter `/assets/js2/` und dem Schalter `window.UNIO_V2`. Eigene Quelldateien für Variante 2 gibt es nur dort, wo ganze Seiten abweichen: `ui_kits/homepage/projekt2.html`, `ui_kits/explore2/`, `ui_kits/objektseite2/`. Die 2er-Seiten sind von Suchmaschinen ausgeschlossen und stehen nicht in der Sitemap.
@@ -286,3 +343,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 1 | Erste Fassung. Live-Stand geprüft. Im Repo gebaut: Makler-Register, Makler-Kreis, Makler-Zeile auf Objektkarte, Startseite, Explore-Feed und Liste. Makler-Signatur und Makler-Modul auf der Objektseite. Erfundene Maklernamen entfernt, Klickziel korrigiert (vorher Anwerbeseite `/makler`). Schalter `?makler=1` für öffentliche Seiten. Pakete MP-01 bis MP-07 beschrieben. |
 | 20.11.2026 | 2 | Reduzierte Fassung nach Rückmeldung Daniel: ein Makler-Element pro Fläche. Karte: nur Kreis im Bild (MP-02 neu gefasst). Objektseite: eine randlose Zeile, Modul gestrichen (MP-04 neu, MP-05 verworfen). Explore: Kreis in der Aktionsleiste und am Vorschaubild. Neu: CIRCLE-Gesichter auf Startseite und CIRCLE-Seite (MP-14). Bilder ersetzt (`bilder/v2-*`). |
 | 20.11.2026 | 3 | CIRCLE-Gesichter neu als Porträt-Streifen mit Name im Bild und Film beim Überfahren (MP-14 neu gefasst), Editorial-Material aus dem Drive eingebunden, Makler-Kreise aus derselben Serie. Variante 2 unter eigenen Adressen (`/2`, `/makler2`, `/immobilien2`, `/projekt2`, `/ux/explore2`, `/ux/objekt2`), Variante 1 unverändert. Der Schalter `?makler=1` gilt nur noch lokal. |
+| 20.11.2026 | 4 | Makler-Kreise neutraler (weniger Orange). Neu: Partner-Übersicht `/partner2` (MP-16), einheitlicher Seitenrand und Raster-Werkzeug in Variante 2 (MP-17), Story-Grafik korrigiert (MP-18), Makler-Film im Feed (MP-19), Vorschläge für die Suchseite (MP-15). Kopfzeilen der neuen Abschnitte auf das Spaltenmaß von `Chapter` gelegt. |

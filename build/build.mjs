@@ -79,13 +79,19 @@ const PAGES = [
     og: "/assets/img/penthouse.jpg",
     noindex: true, static: true,
   },
+  {
+    src: "partner.html", out: "partner.html", path: "/partner", nurV2: true,
+    title: "Partner im CIRCLE | UNIO",
+    description: "Die Makler im CIRCLE von UNIO: persönliche Beratung in Wien und Umgebung, jede und jeder mit eigener Seite.",
+    og: "/assets/team/editorial/lara-jonas.jpg", noindex: true,
+  },
   { src: "agb.html", out: "agb.html", path: "/agb", title: "Allgemeine Geschäftsbedingungen | UNIO", description: "Allgemeine Geschäftsbedingungen der UNIO Immobilienvermittlung.", noindex: true, static: true },
   { src: "impressum.html", out: "impressum.html", path: "/impressum", title: "Impressum | UNIO", description: "Impressum der UNIO Website.", noindex: true, static: true },
   { src: "datenschutz.html", out: "datenschutz.html", path: "/datenschutz", title: "Datenschutzerklärung | UNIO", description: "Datenschutzerklärung der UNIO Website.", noindex: true, static: true },
 ];
 
 /* Variante 2 der Hauptseiten: Adresse mit 2, immer noindex */
-const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story|kontakt|projekt)\.html$/.test(p.src)).map((p) => ({
+const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story|kontakt|projekt|partner)\.html$/.test(p.src)).map((p) => ({
   ...p, noindex: true, extraSchema: undefined,
   out: p.src === "index.html" ? "2.html" : p.src.replace(".html", "2.html"),
   path: p.path === "/" ? "/2" : p.path + "2",
@@ -94,12 +100,12 @@ const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story
 /* Wissens-Hub: statische Seiten unter /wissen (werden separat gepflegt) */
 const WISSEN_DIR = join(ROOT, "wissen");
 
-const JSX_FILES = ["site-shared.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx"];
+const JSX_FILES = ["site-shared.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx", "page-partner.jsx"];
 
 /* interne Links + Asset-Pfade auf saubere URLs umschreiben */
 /* v2 = Variante 2: gleiche Seiten unter Adressen mit einer 2 am Ende
    (/2, /makler2, /immobilien2, /projekt2 ...). Variante 1 bleibt unveraendert. */
-const V2_SEITEN = "makler|bautraeger|immobilien|story|kontakt|projekt";
+const V2_SEITEN = "makler|bautraeger|immobilien|story|kontakt|projekt|partner";
 function rewriteUrls(s, v2 = false) {
   s = s.replaceAll("../../assets/", "/assets/");
   s = s.replaceAll("../../styles.css", "/styles.css");
@@ -109,6 +115,19 @@ function rewriteUrls(s, v2 = false) {
   s = s.replace(/\b(makler|bautraeger|immobilien|story|kontakt|projekt|impressum|datenschutz|agb)\.html/g, "/$1");
   s = s.replaceAll('href="/#', 'href="/#');
   return s;
+}
+
+/* Variante 2, Raster: ein einheitlicher Seitenrand. In den Quellen stehen gemischt
+   5vw, 7vw und 8vw neben 6vw, dadurch springen die Abschnitte gegeneinander.
+   Hier werden sie fuer Variante 2 auf 6vw gezogen. Ausgenommen: Werte in Funktionen
+   wie clamp() oder min() (Schriftgroessen, Breiten) und der ueberbreite Bildstreifen. */
+function einRand(code, datei) {
+  if (datei === "strecke.jsx") return code;
+  return code.replace(/(?<![\d.])[578]vw/g, (m, pos) => {
+    const davor = code.slice(Math.max(0, pos - 60), pos);
+    const abZitat = davor.slice(Math.max(davor.lastIndexOf('"'), davor.lastIndexOf("`"), davor.lastIndexOf("'")) + 1);
+    return abZitat.includes("(") ? m : "6vw";
+  });
 }
 
 /* React dev-CDN → production */
@@ -153,7 +172,7 @@ async function main() {
     writeFileSync(join(DIST, "assets", "js", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code) + "})();");
     /* Variante 2: eigener Satz Skripte, interne Links zeigen auf die 2er-Adressen */
     mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code, true) + "})();");
+    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + einRand(rewriteUrls(out.code, true), f) + "})();");
   }
   console.log("✓ JSX precompiled:", JSX_FILES.length, "Dateien");
 
@@ -165,7 +184,7 @@ async function main() {
   console.log("✓ Assets kopiert");
 
   /* 3) HTML-Seiten transformieren */
-  for (const p of PAGES) {
+  for (const p of PAGES.filter((x) => !x.nurV2)) {
     let s = readFileSync(join(SRC, p.src), "utf8");
     s = productionReact(s);
     s = rewriteUrls(s);
@@ -340,7 +359,7 @@ ${wissenLinks.join("\n")}
     }).listen(4899);
 
     const browser = await puppeteer.launch({ channel: "chrome", headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
-    for (const p of [...PAGES, ...V2_PAGES].filter((x) => !x.static)) {
+    for (const p of [...PAGES.filter((x) => !x.nurV2), ...V2_PAGES].filter((x) => !x.static)) {
       const page = await browser.newPage();
       await page.setViewport({ width: 1440, height: 900 });
       await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);

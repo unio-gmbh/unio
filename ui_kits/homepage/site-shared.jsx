@@ -288,11 +288,11 @@ function Chapter({ nr, title, copy, tone = "light", style }) {
    In der Plattform kommt das aus agents[] des Objekts (siehe docs/makler-praesenz). */
 const MAKLER_BASIS = "https://www.unio.at/";
 const MAKLER_DB = {
-  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", ed: "../../assets/team/editorial/marcus-anthofer-weiss", region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
-  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", ed: "../../assets/team/editorial/lara-jonas", region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
-  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", ed: "../../assets/team/editorial/wenzel-waechter", region: "Wien", url: null },
-  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg", ed: "../../assets/team/editorial/nikita-neznamov", region: "Wien", url: null },
-  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
+  "marcus-weiss": { name: "Marcus Anthofer-Weiss", img: "../../assets/team/makler/marcus-anthofer-weiss.jpg", ed: "../../assets/team/editorial/marcus-anthofer-weiss", film: true, region: "Wien und Umgebung", url: MAKLER_BASIS + "marcus-weiss" },
+  "lara-jonas": { name: "Lara Jonas", img: "../../assets/team/makler/lara-jonas.jpg", ed: "../../assets/team/editorial/lara-jonas", film: true, region: "Wien", url: MAKLER_BASIS + "lara-jonas" },
+  "wenzel-waechter": { name: "Wenzel Wächter", img: "../../assets/team/makler/wenzel-waechter.jpg", ed: "../../assets/team/editorial/wenzel-waechter", film: true, region: "Wien", url: null },
+  "nikita-neznamov": { name: "Nikita Neznamov", img: "../../assets/team/makler/nikita-neznamov.jpg", ed: "../../assets/team/editorial/nikita-neznamov", film: true, region: "Wien", url: null },
+  "alexander-maurer": { name: "Alexander Maurer", img: "../../assets/team/makler/alexander-maurer.jpg", ed: "../../assets/team/editorial/alexander-maurer", region: "Bezirk Mödling", url: MAKLER_BASIS + "alexander-maurer" },
 };
 /* Variante 2: Seiten mit einer 2 in der Adresse (/2, /makler2, /immobilien2 ...).
    Der Build setzt dort window.UNIO_V2. Variante 1 bleibt unveraendert, dort sind
@@ -362,7 +362,7 @@ function CirclePortraet({ m, breite }) {
   const inhalt = (
     <React.Fragment>
       <img src={m.ed + ".jpg"} alt={"Porträt von " + m.name} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: an ? "scale(1.03)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
-      <video ref={vid} src={m.ed + ".mp4"} muted loop playsInline preload="none" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: an && !ruhig ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></video>
+      {m.film && <video ref={vid} src={m.ed + ".mp4"} muted loop playsInline preload="none" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: an && !ruhig ? 1 : 0, transition: "opacity var(--dur-fast) var(--ease-unio)" }}></video>}
       <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 52%, rgba(11,10,9,0.66) 100%)" }}></span>
       <span style={{ position: "absolute", left: 20, right: 20, bottom: 18, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12, color: "var(--text-inverse)" }}>
         <span style={{ minWidth: 0 }}>
@@ -381,25 +381,27 @@ function CircleGesichter({ fuer = "suchende" }) {
   const mob = useMobile();
   if (!MAKLER_SICHTBAR) return null;
   const makler = fuer === "makler";
-  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.ed);
+  const liste = Object.keys(MAKLER_DB).map((slug) => ({ slug, ...MAKLER_DB[slug] })).filter((m) => m.film);
   const breite = mob ? "72vw" : "calc((100% - 48px) / 4)";
   return (
     <section data-screen-label="CIRCLE Gesichter" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "84px 6vw 96px" : "140px 6vw 150px" }}>
       <div style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 32, flexWrap: "wrap", marginBottom: mob ? 36 : 64 }}>
-          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8.4vw, 40px)" : "clamp(40px, 4.2vw, 68px)"}/1.02 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
+        {/* Kopf im selben Spaltenmass wie Chapter: Ueberschrift links, Text rechts auf derselben Linie */}
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 1.35fr) minmax(0, 1fr)", gap: mob ? 16 : 44, alignItems: mob ? "start" : "end", marginBottom: mob ? 36 : 72 }}>
+          <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.6vw, 60px)"}/1.06 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
             {makler ? <span>Der CIRCLE<br />wächst.</span> : <span>Hinter jedem Objekt<br />steht ein Mensch.</span>}
           </h2>
-          <div style={{ maxWidth: 400 }}>
+          <div style={{ maxWidth: 440 }}>
             <p style={{ margin: 0, font: `400 ${mob ? 15.5 : 17}px/1.7 var(--font-display)`, color: "var(--text-muted)" }}>
               {makler
                 ? "Im CIRCLE steht deine Person vorn: mit eigener Seite, eigenem Auftritt und sichtbar bei jedem deiner Objekte."
                 : "Die Makler im CIRCLE kennen ihre Objekte und ihr Grätzl. Sie beraten persönlich, von der ersten Frage bis zum Notar."}
             </p>
-            <div style={{ marginTop: 22 }}>
+            <div style={{ marginTop: 22, display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
               {makler
                 ? <Button variant="signal" knob onClick={() => (location.hash = "bewerben")}>Platz im CIRCLE anfragen</Button>
                 : <Button variant="solid" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Button>}
+              <a href="partner.html" style={{ font: "500 14.5px var(--font-display)", color: "var(--ink)", textDecoration: "underline", textDecorationColor: "rgba(11,10,9,0.25)", textUnderlineOffset: 4 }}>Alle Partner ansehen</a>
             </div>
           </div>
         </div>
@@ -814,10 +816,32 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
   );
 }
 
+/* Raster zur Kontrolle: ?raster=1 legt 12 Spalten ueber die Seite
+   (Rand 6vw, Abstand 24 Pixel). Taste G blendet es ein und aus. Nur ein Pruefwerkzeug. */
+(function () {
+  if (typeof document === "undefined") return;
+  let el = null;
+  const zeig = (an) => {
+    if (!el) {
+      el = document.createElement("div");
+      el.setAttribute("aria-hidden", "true");
+      el.style.cssText = "position:fixed;inset:0;z-index:99999;pointer-events:none;padding:0 6vw;display:grid;grid-template-columns:repeat(12,1fr);gap:24px;";
+      for (let i = 0; i < 12; i++) { const c = document.createElement("div"); c.style.cssText = "background:rgba(255,170,9,0.10);box-shadow:inset 1px 0 0 rgba(255,120,0,0.45),inset -1px 0 0 rgba(255,120,0,0.45);"; el.appendChild(c); }
+      document.body.appendChild(el);
+    }
+    el.style.display = an ? "grid" : "none";
+  };
+  let an = /[?&]raster=1(&|$)/.test(location.search);
+  if (an) { if (document.body) zeig(true); else document.addEventListener("DOMContentLoaded", () => zeig(true)); }
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "g" || e.key === "G") && !e.metaKey && !e.ctrlKey && !/input|textarea|select/i.test((e.target.tagName || ""))) { an = !an; zeig(an); }
+  });
+})();
+
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
-  MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter,
+  MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
 });

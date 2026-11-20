@@ -208,7 +208,7 @@ function FusionFlow() {
             <g key={nm}>
               <line x1="400" y1={nodeY(i)} x2="700" y2="200" stroke="var(--hairline-dark)" strokeWidth="1.2" style={draw(stC(l2 * 1.3 - i * 0.1), 330)} />
               <circle cx="400" cy={nodeY(i)} r="6" fill="none" stroke="var(--ink)" strokeWidth="1.5" opacity={0.25 + 0.75 * stC(l1 * 1.6 - 0.4)} />
-              <text x="400" y={nodeY(i) - 16} textAnchor="middle" style={{ font: "10.5px var(--font-mono)", letterSpacing: "0.1em", fill: "var(--ink)", textTransform: "uppercase", opacity: 0.3 + 0.7 * l1 }}>{nm}</text>
+              <text x="400" y={window.UNIO_V2 && i === KNOTEN.length - 1 ? nodeY(i) + 26 : nodeY(i) - 16} textAnchor="middle" style={{ font: "10.5px var(--font-mono)", letterSpacing: "0.1em", fill: "var(--ink)", textTransform: "uppercase", opacity: 0.3 + 0.7 * l1 }}>{nm}</text>
             </g>
           ))}
           <circle cx="700" cy="200" r={fin ? 11 : 5} fill="var(--signal)" style={{ transition: "r 400ms var(--ease-unio)" }} />

@@ -1,6 +1,6 @@
 # Makler-Präsenz: Plan
 
-Stand: 20.11.2026 · Version 3 · Status: Entwurf zur Abstimmung, nichts davon ist live
+Stand: 20.11.2026 · Version 4 · Status: Entwurf zur Abstimmung, nichts davon ist live
 
 **Änderung in Version 2 (Rückmeldung Daniel): weniger Ebenen.** Pro Fläche gibt es genau ein Makler-Element, und zwar einen Kreis. Keine eigene Zeile unter der Karte, kein eigener Kasten auf der Objektseite. Neu dazu: der Bereich CIRCLE-Gesichter auf Startseite und CIRCLE-Seite.
 
@@ -183,6 +183,19 @@ Offen: Im Drive liegen sechs weitere Porträts (Johannes, Florian, Fabian, Jacob
 ### M11 Makler auf Projektseiten und in der Übersicht
 
 Projektseiten zeigen das Vertriebsteam des Projekts als zwei bis drei Kreise mit Namen. Optional eine Übersichtsseite aller Partner. Zurückgestellt, siehe Abschnitt 8.
+
+### M13 Wo die Makler noch stärker werden können (Ideen, Stand Version 4)
+
+1. Makler im Bewegtbild: Rundgänge, in denen die Person selbst durch das Objekt führt, im Feed und auf der Objektseite. Erstes Beispiel gebaut (`/ux/explore2`).
+2. Übersicht aller Partner. Gebaut (`/partner2`).
+3. Der betreuende Makler in jeder Nachricht der Plattform: Bestätigung der Anfrage, Terminerinnerung und Exposé-Mail tragen Gesicht und Namen statt "UNIO Team".
+4. Auf Projektseiten das Vertriebsteam des Projekts als zwei bis drei Porträts im selben Stil.
+5. In den Ratgebern unter `/wissen` ein Makler als Autor oder Ansprechperson je Thema ("Fragen dazu? Lara Jonas, Hietzing").
+6. Geteilte Links: Wird ein Objekt per Link geteilt, zeigt das Vorschaubild Objekt und Makler gemeinsam.
+7. Das Editorial-Porträt als Kopfbild der Maklerseiten, damit Plattform und Maklerseite dieselbe Bildsprache haben.
+8. Willkommens-Filme aus dem Drive auf der CIRCLE-Seite: neue Partner werden mit Gesicht vorgestellt.
+
+Bildmaterial an die neue Bildsprache anpassen: Die Editorial-Serie (scharfe Person, bewegte Menge, warmes Licht) ist jetzt die Leitlinie. Anzupassen wären das Porträt von Alexander Maurer, das Gruppenbild im Kopf der CIRCLE-Seite, das Porträt im CIRCLE-Block der Startseite und die Bilder der Story-Seite. Dafür braucht es entweder ein Shooting im selben Aufbau oder eine Freigabe, Porträts echter Personen mit Bild-KI in diesen Stil zu übertragen.
 
 ## 7. Wording: Experten und Berater
 
