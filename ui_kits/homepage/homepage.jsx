@@ -358,15 +358,19 @@ function Produkte() {
 
 /* ---------- Produkte-Ende ---------- */
 function App() {
+  /* Mit dem bisherigen Hero (?hero=alt) stehen die CIRCLE-Gesichter weiter unten:
+     nach dem System-Bereich, direkt vor den Zielgruppen. Sonst folgen sie auf die Objekte. */
+  const heroAlt = window.IST_V2 && /[?&]hero=alt(&|$)/.test(location.search);
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="index.html" />
       {window.IST_V2 ? <window.HeroWahl alt={<Hero />} /> : <Hero />}
       <SucheHighlights />
-      <window.CircleGesichter fuer="suchende" />
+      {!heroAlt && <window.CircleGesichter fuer="suchende" />}
       <Markt />
       <Produkte />
       <window.SystemBento />
+      {heroAlt && <window.CircleGesichter fuer="suchende" />}
       <Zielgruppen />
       <SiteFooter />
     </div>
