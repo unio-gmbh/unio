@@ -175,8 +175,8 @@ function aufRaster(code) {
     return `"${sp(1)} ${sp(n)} minmax(0, 1fr)"` + neu;
   });
   code = code.replace(/"64px minmax\(0, 1\.5fr\) minmax\(0, 1fr\)"(,gap:\w+\?"12px 0":)"0 40px"/g, (g, mitte) => `"${sp(1)} ${sp(6)} minmax(0, 1fr)"${mitte}"0 24px"`);
-  /* Hero-Karten von Bautraeger und Story: Kartenkante auf den Seitenrand */
-  code = code.replaceAll('"98px 40px 0"', '"98px 6vw 0"');
+  /* Hero-Karten von Bautraeger und Story bleiben so breit wie die Navigation darueber (40 Pixel Rand).
+     Sie wandern erst mit der Navigation auf den Rasterrand, wenn die neue Navigation gewaehlt ist. */
   /* Eingerueckte Tafeln der festgehaltenen Abschnitte: Einzug = Beginn von Spalte 2 */
   const sp2 = "calc(6vw + (88vw - 264px) / 12 + 24px)";
   code = code.replaceAll('11vw"', sp2 + '"').replaceAll('"0 9vw 0 ', '"0 6vw 0 ');

@@ -43,7 +43,7 @@ function HeroBt() {
   }, []);
   const statSize = mob ? "clamp(60px, 16vw, 80px)" : "clamp(84px, 8.4vw, 148px)";
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: "relative", background: "var(--paper)", padding: mob ? "82px 14px 0" : "98px 40px 0" }}>
+    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: window.IST_V2 && !mob && !window.BT.BT_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : (window.IST_V2 ? "98px 40px 6vh" : "98px 40px 0") }}>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         {/* Links: Off-White, Treppen-Satz */}
         <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "175px 4vw 120px 7vw" }}>
@@ -1031,7 +1031,7 @@ function StoererBt() {
     return () => removeEventListener("scroll", on);
   }, []);
   return (
-    <section data-screen-label="Referenzen" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "200px 0", overflow: "hidden" }}>
+    <section data-screen-label="Referenzen" className="u-grain" style={{ position: "relative", background: "var(--paper)", padding: "200px 0", overflow: "hidden", ...(window.IST_V2 ? { zIndex: 2, borderRadius: "28px 28px 0 0", marginTop: "-4vh", boxShadow: "0 -30px 60px -30px rgba(11,10,9,0.4)" } : {}) }}>
       <p ref={stRef} style={{ maxWidth: 1000, margin: "0 auto", padding: "0 7vw", textAlign: "center", font: "500 clamp(26px, 3vw, 52px)/1.3 var(--font-display)", letterSpacing: "-0.02em" }}>
         {words.map((w, i) => (
           <span key={i} style={{ color: i < lit ? "var(--ink)" : "rgba(11,10,9,0.16)", transition: "color 300ms var(--ease-unio)" }}>{w}{i < words.length - 1 ? " " : ""}</span>

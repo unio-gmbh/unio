@@ -152,8 +152,8 @@ function HeroMkV2() {
     return () => clearTimeout(t);
   }, []);
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" className="u-grain" style={{ position: "relative", zIndex: 0, background: "var(--paper)", padding: mob ? "112px 6vw 64px" : "clamp(120px, 17vh, 180px) 6vw clamp(64px, 9vh, 110px)" }}>
-      <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 36 : 24, alignItems: "end" }}>
+    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" className="u-grain" style={{ position: mob || H2_RUHIG ? "relative" : "sticky", top: 0, zIndex: 0, minHeight: mob ? 0 : "100svh", display: "flex", alignItems: "center", background: "var(--paper)", padding: mob ? "112px 6vw 64px" : "clamp(104px, 13vh, 150px) 6vw clamp(56px, 9vh, 110px)" }}>
+      <div style={{ position: "relative", zIndex: 1, width: "100%", display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 36 : 24, alignItems: "end" }}>
         <div>
           <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(40px, 12vw, 58px)" : "clamp(52px, 6.6vw, 120px)"}/0.96 var(--font-display)`, letterSpacing: "-0.04em", color: "var(--ink)" }}>
             <H2Zeile da={da} i={0}>Agent-First</H2Zeile>
@@ -179,7 +179,7 @@ function HeroMkV2() {
           </div>
         </div>
         {/* Rechts ueber 5 Spalten: der geschnittene Film */}
-        <CircleFilm stil={{ aspectRatio: "4 / 5", borderRadius: "var(--r-panel)", clipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", WebkitClipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} 120ms, -webkit-clip-path 1200ms ${H2_EASE} 120ms` }} />
+        <CircleFilm stil={{ aspectRatio: "4 / 5", maxHeight: mob ? "none" : "calc(100svh - 230px)", borderRadius: "var(--r-panel)", clipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", WebkitClipPath: da ? "inset(0 round 24px)" : "inset(100% 0 0 0 round 24px)", transition: H2_RUHIG ? "none" : `clip-path 1200ms ${H2_EASE} 120ms, -webkit-clip-path 1200ms ${H2_EASE} 120ms` }} />
       </div>
     </section>
   );

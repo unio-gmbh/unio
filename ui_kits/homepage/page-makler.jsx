@@ -134,8 +134,9 @@ const PILLARS_MK = [
 function FragenMk() {
   const mob = window.useMobile();
   return (
-    <section data-track="chapter_view_02" data-screen-label="Vorteile" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "96px 6vw 100px" : "150px 7vw 160px", borderRadius: "28px 28px 0 0", marginTop: -28, boxShadow: "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
-      <GridLines />
+    <section data-track="chapter_view_02" data-screen-label="Vorteile" className="u-grain" style={{ position: "relative", zIndex: 2, background: "var(--paper)", padding: mob ? "96px 6vw 100px" : "150px 7vw 160px", borderRadius: "28px 28px 0 0", marginTop: window.IST_V2 ? "-4vh" : -28, boxShadow: window.IST_V2 ? "0 -30px 60px -30px rgba(11,10,9,0.4)" : "0 -20px 44px -26px rgba(11,10,9,0.3)" }}>
+      {/* Variante 2: ohne die senkrechten Linien */}
+      {!window.IST_V2 && <GridLines />}
       <Kap nr="02" label="Vorteile" />
       <div style={{ maxWidth: 900, marginBottom: mob ? 44 : 80 }}>
         <h2 style={{ margin: 0, font: `500 ${mob ? "clamp(30px, 8vw, 38px)" : "clamp(34px, 3.8vw, 64px)"}/1.05 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--ink)" }}>
