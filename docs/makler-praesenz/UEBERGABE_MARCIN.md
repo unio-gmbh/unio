@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 4 (zusätzlich: Partner-Übersicht, einheitliches Raster, Vorschläge für die Suchseite) |
+| Stand dieses Dokuments | 20.11.2026, Version 5 (zusätzlich: Objektkarte neu, alle Menschen in der Übersicht, Raster innen, Auswahlseite für Animationen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -147,6 +147,24 @@ Abnahme:
 2. Mit Tastatur sind beide Links getrennt erreichbar. Beschriftung des Makler-Links: "{Name}, betreut dieses Objekt. Profil ansehen".
 3. Die Trefferfläche des Kreises ist mindestens 44 mal 44 Pixel groß.
 4. Alle drei Zustände sehen sauber aus.
+
+### MP-20 Objektkarte: Status und Projekt (Version 5)
+
+Status: Entwurf · Referenz gebaut: `/immobilien2` (`PropCard` in `ui_kits/homepage/site-shared.jsx`)
+
+Rückmeldung Daniel: Die Marke "Aktiv" mit Punkt wirkt wie aus einem Baukasten, die Nachfrage-Zahl soll vorerst weg, und ein Projekt muss sofort als Projekt erkennbar sein.
+
+- Kein Status-Abzeichen, kein Punkt, keine Nachfrage-Zahl.
+- Einzelobjekt: Datenzeile beginnt mit dem Status als schlichtem Wort ("Verfügbar", "Reserviert"), dann Fläche und Zimmer, rechts der Preis.
+- Projekt: dunkle Marke "Projekt" links oben im Bild, Datenzeile nennt die Einheiten ("9 Einheiten", wenn bekannt auch "4 verfügbar"), der Preis beginnt mit "ab".
+- Titel einzeilig, keine Symbole in der Datenzeile.
+- Die endgültige Form der Karte (mit Rahmen, ohne Rahmen oder als Zeile) wählt Daniel auf der Auswahlseite.
+
+### MP-21 Auswahl für Animationen und Darstellung (Version 5)
+
+Status: wartet auf Auswahl durch Daniel
+
+Bestandsaufnahme aller Animationen und Vorschläge je Element liegen als Auswahlseite vor (Hero, Erscheinen der Abschnitte, Objektkarte, Makler auf der Objektseite, Navigation, festgehaltene Abschnitte, Dauerbewegung). Nach der Auswahl werden die gewählten Wege in Variante 2 gebaut und hier als Pakete beschrieben. Wichtigste Befunde: Überschriften blenden doppelt und bei jedem Scrollen neu ein, die Navigation ändert beim Scrollen ihre Maße, festgehaltene Abschnitte sind bis zu 8,2 Bildschirmhöhen lang, zehn Animationen laufen im System-Bereich endlos.
 
 ### MP-03 Link von der Objektseite zur Maklerseite
 
@@ -344,3 +362,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 2 | Reduzierte Fassung nach Rückmeldung Daniel: ein Makler-Element pro Fläche. Karte: nur Kreis im Bild (MP-02 neu gefasst). Objektseite: eine randlose Zeile, Modul gestrichen (MP-04 neu, MP-05 verworfen). Explore: Kreis in der Aktionsleiste und am Vorschaubild. Neu: CIRCLE-Gesichter auf Startseite und CIRCLE-Seite (MP-14). Bilder ersetzt (`bilder/v2-*`). |
 | 20.11.2026 | 3 | CIRCLE-Gesichter neu als Porträt-Streifen mit Name im Bild und Film beim Überfahren (MP-14 neu gefasst), Editorial-Material aus dem Drive eingebunden, Makler-Kreise aus derselben Serie. Variante 2 unter eigenen Adressen (`/2`, `/makler2`, `/immobilien2`, `/projekt2`, `/ux/explore2`, `/ux/objekt2`), Variante 1 unverändert. Der Schalter `?makler=1` gilt nur noch lokal. |
 | 20.11.2026 | 4 | Makler-Kreise neutraler (weniger Orange). Neu: Partner-Übersicht `/partner2` (MP-16), einheitlicher Seitenrand und Raster-Werkzeug in Variante 2 (MP-17), Story-Grafik korrigiert (MP-18), Makler-Film im Feed (MP-19), Vorschläge für die Suchseite (MP-15). Kopfzeilen der neuen Abschnitte auf das Spaltenmaß von `Chapter` gelegt. |
+| 20.11.2026 | 5 | Objektkarte ohne "Aktiv" und ohne Nachfrage, Projekte klar markiert (MP-20). Übersicht `/partner2` zeigt alle elf Menschen, Porträt Alexander Maurer per Bild-KI in den Editorial-Stil übertragen (von Daniel freigegeben). Innenkanten in Variante 2 auf dem 12-Spalten-Raster (Helfer `spalten(n)`). Versionskennung an v2-Skripten und Makler-Bildern: Ohne sie zeigte der Browser nach Änderungen den alten Stand, weil `/assets` ein Jahr gehalten wird. Gedankenstriche in den Texten von Variante 2 ersetzt. Auswahlseite für Animationen erstellt (MP-21). |
