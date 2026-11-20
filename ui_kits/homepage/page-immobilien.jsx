@@ -69,8 +69,8 @@ function SucheIm() {
   );
   const mob = window.useMobile();
   return (
-    <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: mob ? "100px 6vw 110px" : "175px 6vw 175px" }}>
-      <Chapter title={<span>Ich suche.</span>} copy="Jedes Objekt hier wird von einem Menschen betreut und mit Live-Daten vermarktet. Du siehst, was dahintersteckt, bevor du anfragst." style={{ marginBottom: mob ? 40 : 72 }} />
+    <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: mob ? (window.IST_V2 ? "120px 6vw 110px" : "100px 6vw 110px") : (window.IST_V2 ? "150px 6vw 140px" : "175px 6vw 175px") }}>
+      <Chapter title={<span>{window.IST_V2 ? "Immobilien." : "Ich suche."}</span>} copy="Jedes Objekt hier wird von einem Menschen betreut und mit Live-Daten vermarktet. Du siehst, was dahintersteckt, bevor du anfragst." style={{ marginBottom: mob ? 40 : 72 }} />
       {/* Suchfeld */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
@@ -181,6 +181,14 @@ function VerkaufenIm() {
 }
 
 function App() {
+  /* Variante 2: kein Hero und kein zweiter Abschnitt, nur die Suche (Vorgabe Daniel, 20.11.2026) */
+  if (window.IST_V2) return (
+    <div style={{ fontFamily: "var(--font-display)" }}>
+      <SiteNav active="immobilien.html" />
+      <SucheIm />
+      <SiteFooter />
+    </div>
+  );
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="immobilien.html" />

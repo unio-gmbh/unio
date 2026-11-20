@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 10 (zusätzlich: Effekt-Studie "Menschen ziehen am Motiv vorbei" als Baukasten, Reiter Effekt auf `/vorlagen2`) |
+| Stand dieses Dokuments | 20.11.2026, Version 11 (zusätzlich: bewegte Bilder als Störer, Teaser und Karte auf `/vorlagen2#effekt`, `/immobilien2` nur noch mit Suche) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -183,27 +183,29 @@ CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
 
-### MP-27 Effekt "Menschen ziehen vorbei" als Baukasten (Version 10)
+### MP-27 Bewegte Bilder als Störer, Teaser und Karte (Version 11, ersetzt die Fassung aus Version 10)
 
-Status: Vorschlag zur Auswahl · Aufwand: klein bis mittel · Referenz gebaut: `/vorlagen2#effekt`
+Status: Vorschlag zur Auswahl · Aufwand: klein · Referenz gebaut: `/vorlagen2#effekt`
 
-Der Effekt der Makler-Porträts (Motiv scharf, Passanten unscharf, Wechsel beim Verdecken) als wiederverwendbare Bausteine. Quelle: `ui_kits/homepage/page-vorlagen.jsx`, Abschnitt "Effekt".
+Die erste Fassung (künstliche Gestalten per CSS, Blende, Projektstart) hat Daniel verworfen und ist aus dem Repo entfernt. Neue Fassung: echte Straßenansichten, in denen das Haus still steht und nur die Menschen gehen.
 
-| Baustein | Was er tut | Technik |
+| Vorlage | Was | Verhalten |
 |---|---|---|
-| `Gestalt` | Eine weichgezeichnete Figur (Kopf und Körper, `filter: blur`) | zwei `div`, kein Bild |
-| `Passanten` | Figuren laufen endlos über ein beliebiges Bild (Vorlage E1 B, E3) | CSS-Animation `fxLauf`, nur `transform` |
-| `useBlende` und `Blende` | Neuer Inhalt wird hinter einer vorbeigehenden Figur aufgedeckt (E2, E5) | `clip-path: inset()` und `transform` laufen mit derselben Dauer und Kurve |
-| Karte `.fx-karte` | Dasselbe beim Darüberfahren, ohne JavaScript (E4) | reine CSS-Regeln in `FX_CSS` |
-| Film (E1 A) | Erzeugte Filme aus echten Projektbildern | `assets/video/effekt-albrecht.mp4`, `effekt-fassade.mp4`, je mit Standbild `.jpg` |
+| L1 A | Breiter Störer in der Trefferliste über zwei Kartenplätze ("Du willst verkaufen?") | Film läuft, solange sichtbar |
+| L1 B | Störer im Format einer Objektkarte, dunkel ("Zuerst bei UNIO") | Film nur beim Darüberfahren |
+| L1 C | Schmale Zeile zwischen zwei Kartenreihen ("Nichts Passendes dabei?") | Film läuft, solange sichtbar |
+| L2 A | Breites Teaser-Bild 21:9 mit Satz und Knopf | solange sichtbar |
+| L2 B | Zwei Türen: Suchen und Verkaufen | beim Darüberfahren |
+| L2 C | Bild sieben Spalten, Text fünf Spalten | solange sichtbar |
+| L3 A | Objektkarte, deren Bild beim Darüberfahren lebt | beim Darüberfahren |
+| L3 B | Große Karte "Projekt im Fokus" | solange sichtbar |
+| L4 A | Kleiner Störer unten rechts, schließbar | solange sichtbar |
 
-Für die Plattform wichtig:
+Baustein: `LebBild` in `ui_kits/homepage/page-vorlagen.jsx`. Ein `img` als Standbild, darüber ein `video` (stumm, Schleife, `playsInline`), das erst geladen wird, wenn es gebraucht wird, und per `IntersectionObserver` oder beim Darüberfahren startet und stoppt. Das Standbild ist das erste Bild des Films, deshalb springt beim Start nichts. Bei `prefers-reduced-motion` bleibt nur das Standbild.
 
-- Die Blende braucht zwei Ebenen: alter Inhalt unten, neuer Inhalt oben mit `clip-path`. In Next.js eignet sich dafür die View Transitions API oder ein Wrapper im Layout (E5 Seitenwechsel). Empfehlung: nur an einer Stelle einsetzen (Liste zu Objekt).
-- Bei `prefers-reduced-motion` entfällt die Figur, der Inhalt wechselt direkt. `Passanten` rendert dann nichts.
-- E3 (Projektstart) braucht am Projekt ein Feld für den Zustand: `angekuendigt`, `start`, `verfuegbar`, dazu ein Startdatum. Im Zustand `angekuendigt` wird das Bild mit `filter: blur(16px)` gezeigt und der Knopf heißt "Vormerken".
-- Die Zuordnung Makler zu Objekt in E2 B kommt aus dem Feld `mk` (siehe MP-01).
-- Die Filme sind KI-erzeugt aus den echten Renderings. Vor einem Einsatz auf der Live-Seite je Projekt mit dem Bauträger abstimmen.
+Dateien: `assets/video/leb-fruehling.mp4`, `leb-herbst.mp4`, `leb-cafe.mp4`, je mit `.jpg`. Die Filme sind aus drei Bildern von Daniel per Bild-KI erzeugt (5 Sekunden, Schleife mit Überblendung). Die Bilder sind Beispiele ohne Projektnamen, darum zeigen die Vorlagen keine Namen, Adressen oder Preise. Für die Plattform: am Objekt ein optionales Feld `film` (Adresse der mp4) und `film_poster`.
+
+Außerdem in Version 11: `/immobilien2` zeigt nur noch die Suche. Hero und der Abschnitt "Ich verkaufe" sind in Variante 2 entfernt. Der Hinweis für Eigentümer kann als Störer L1 A in die Trefferliste zurückkommen.
 
 ### MP-26 Vorlagen-Seite und Seitenstruktur (Version 9)
 
@@ -484,3 +486,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 9b | CIRCLE und Bauträger in Variante 2: Der Hero bleibt stehen, der zweite Abschnitt schiebt sich mit runden Ecken und Schatten darüber (wie auf der Startseite mit dem bisherigen Hero). Auf der CIRCLE-Seite sind die senkrechten Linien im zweiten Abschnitt entfernt. Am Handy und bei reduzierter Bewegung bleibt der Hero nicht stehen. |
 | 20.11.2026 | 9c | Hero-Karten von Bauträger und Story sind wieder so breit wie die Navigation (40 Pixel Rand). Die Umstellung auf den Rasterrand hatte sie schmaler als die Navigation gemacht. Beides wandert gemeinsam aufs Raster, sobald die neue Navigation (Vorlage 6A) gewählt ist. |
 | 20.11.2026 | 10 | Effekt-Studie: Der Effekt der Makler-Porträts als Baukasten für Objekte (MP-27). Neuer Reiter Effekt auf `/vorlagen2` mit sieben Vorlagen (Film, Ebene über jedem Foto, Galerie, Mensch und Objekt, Projektstart in drei Zuständen, Objektkarte, Seitenwechsel) und einer Liste von dreizehn Einsatzorten. Zwei Filme aus echten Projektbildern erzeugt. |
+| 20.11.2026 | 11 | Fassung aus Version 10 verworfen und entfernt. Neu: bewegte Bilder aus echten Straßenansichten als Störer, Teaser und Karte, neun Vorlagen L1 A bis L4 A (MP-27). `/immobilien2` ohne Hero und ohne zweiten Abschnitt, nur die Suche. |
