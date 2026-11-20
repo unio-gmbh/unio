@@ -18,4 +18,4 @@ Vorgabe von Daniel, 20.11.2026: Bevor ein Element gestaltet wird, immer zuerst a
 
 ## Bauen
 
-`node build/build.mjs` erzeugt `dist/` (Variante 1 und Variante 2). Die Vorschau-Seite `unio-verse.vercel.app` zeigt den Stand von `main`.
+`node build/build.mjs` erzeugt `dist/` (Variante 1, Variante 2 und Variante 3). Variante 3 (Adresse mit 3 am Ende) entsteht automatisch aus Variante 2 und unterscheidet sich nur in den Filmen: 2 zeigt die ruhigen, 3 die schnelleren im Stil der Makler-Filme. Die Vorschau-Seite `unio-verse.vercel.app` zeigt den Stand von `main`.

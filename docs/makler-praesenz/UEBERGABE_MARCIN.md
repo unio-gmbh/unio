@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 13 (zusätzlich: Startscreens mit Film auf Bauträger, Story und Startseite, Störer-Band auf der Startseite, weniger Störer und mehr Beispielobjekte in der Suche) |
+| Stand dieses Dokuments | 20.11.2026, Version 14 (zusätzlich: Variante 3 unter Adressen mit 3, gleich wie Variante 2, aber mit den schnelleren Filmen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -202,15 +202,17 @@ Prinzip: echte Straßenansichten, in denen das Haus still steht und nur die Mens
 
 `/immobilien2` zeigt nur die Suche: kein Hero, kein Abschnitt "Ich verkaufe". Der Einstieg für Eigentümer ist `StoererBreit`.
 
-**Startscreens mit Film in den Seiten (Version 13)**: Baustein `HeroFilm` in `site-shared.jsx` (Karte so breit wie die Navigation, Film über `LebBild`, Überschrift sieben Spalten, Text und Knöpfe fünf Spalten). Umschalter `HeroSchalter` unten links mit `?hero=film` (ruhig, Voreinstellung), `?hero=filmc` (Stil der Makler-Filme), `?hero=alt` (bisheriger Hero).
+**Startscreens mit Film in den Seiten (Version 13)**: Baustein `HeroFilm` in `site-shared.jsx` (Karte so breit wie die Navigation, Film über `LebBild`, Überschrift sieben Spalten, Text und Knöpfe fünf Spalten). Umschalter `HeroSchalter` unten links mit `?hero=film` (Voreinstellung) und `?hero=alt` (bisheriger Hero). Welche Film-Fassung läuft, bestimmt seit Version 14 die Variante: Adressen mit 2 zeigen die ruhigen Filme, Adressen mit 3 die schnelleren im Stil der Makler-Filme.
 
 | Seite | Motiv | Adresse |
 |---|---|---|
-| `/bautraeger2` | Herbst | `?hero=film`, `filmc`, `alt` |
-| `/story2` | Straße | `?hero=film`, `filmc`, `alt` |
-| `/2` (Test) | Eckhaus | `?hero=film`, `filmc`, dazu wie bisher `a`, `d`, `e`, `f`, `alt` |
+| `/bautraeger2`, `/bautraeger3` | Herbst | `?hero=film`, `alt` |
+| `/story2`, `/story3` | Straße | `?hero=film`, `alt` |
+| `/2`, `/3` (Test) | Eckhaus | `?hero=film`, dazu wie bisher `a`, `d`, `e`, `f`, `alt` |
 
 Auf Bauträger und Story bleibt der Startscreen am Desktop stehen und der nächste Abschnitt schiebt sich darüber, auf der Startseite scrollt er normal mit.
+
+**Variante 3 (Version 14)**: Jede Seite der Variante 2 gibt es zusätzlich unter einer Adresse mit 3 (`/3`, `/makler3`, `/bautraeger3`, `/immobilien3`, `/story3`, `/kontakt3`, `/projekt3`, `/partner3`, `/vorlagen3`). Einziger Unterschied sind die Filme: `leb-<name>-circle` statt `leb-<name>`. Technik: `build/build.mjs` kopiert am Ende die fertigen Seiten und Skripte der Variante 2 (Schritt 6, `assets/js3/`), schreibt die Links auf 3 um und setzt `window.UNIO_FILM = "circle"`. `LebBild` hängt dann `-circle` an den Filmnamen. Es gibt keine eigene Quelle für Variante 3, jede Änderung an Variante 2 gilt automatisch für beide.
 
 **Störer auf der Startseite (Version 13)**: `StoererBand` direkt nach dem Abschnitt "Das UNIO-Versprechen": flaches Band (260 bis 340 Pixel hoch) mit Film, Satz "Entdecke weitere Immobilien in unserer Suche." und Knopf "Alle Immobilien", führt auf die Immobilien-Seite.
 
@@ -500,3 +502,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 11 | Fassung aus Version 10 verworfen und entfernt. Neu: bewegte Bilder aus echten Straßenansichten als Störer, Teaser und Karte, neun Vorlagen L1 A bis L4 A (MP-27). `/immobilien2` ohne Hero und ohne zweiten Abschnitt, nur die Suche. |
 | 20.11.2026 | 12 | Störer in die Suche `/immobilien2` eingebaut: breit mit Designsystem-Knopf, Karte auf Akzentfläche statt dunkel, schmale Zeile (MP-27). Bausteine nach `site-shared.jsx` verschoben. Drei weitere Filme im Stil der Makler-Filme. Vorlagen: Startscreens mit Film für Startseite, Bauträger und Story, dazu je zwei bis vier Elemente pro Seite. |
 | 20.11.2026 | 13 | Suche `/immobilien2`: nur noch zwei Störer, elf Beispielobjekte. Startseite: Störer-Band mit Film nach dem UNIO-Versprechen. Startscreens mit Film eingebaut und umschaltbar: Bauträger (Herbst), Story (Straße), Startseite zum Test (Eckhaus). Nebenbei behoben: Der Filter Objektart ließ die Suche abstürzen, weil den Objekten das Feld `tags` fehlt. |
+| 20.11.2026 | 14 | Variante 3 angelegt: alle Seiten der Variante 2 unter Adressen mit 3, mit den Filmen im Stil der Makler-Filme. Variante 2 zeigt nur noch die ruhigen Filme, der Umschalter kennt nur noch Film und Bisher. |

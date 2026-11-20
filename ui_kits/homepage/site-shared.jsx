@@ -875,7 +875,9 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
    von leb-<name>.mp4). wann: "sicht" (laeuft, solange sichtbar), "hover" (laeuft nur bei an=true), "nie".
    Namen: fruehling, herbst, cafe, dazu je eine Fassung im Stil der Makler-Filme: fruehling-circle, herbst-circle, cafe-circle. */
 const LEB_ALT = { fruehling: "Straßenansicht mit Altbau und ausgebautem Dach", herbst: "Straßenansicht im Herbst mit Neubau und Altbau", cafe: "Eckhaus mit Café im Erdgeschoss" };
-function LebBild({ bild, wann = "sicht", an, pos, stil }) {
+function LebBild({ bild: wunsch, wann = "sicht", an, pos, stil, genau }) {
+  /* Variante 3 (window.UNIO_FILM === "circle") zeigt ueberall die schnellere Fassung. genau: Name unveraendert nehmen. */
+  const bild = !genau && window.UNIO_FILM === "circle" && !/-circle$/.test(wunsch) ? wunsch + "-circle" : wunsch;
   const ruhig = U_RM;
   const ref = React.useRef(null);
   const vid = React.useRef(null);
@@ -966,13 +968,14 @@ function HeroFilm({ bild, zeilen, marke, text, knoepfe = [], unten, klein, fest 
     </section>
   );
 }
-/* Umschalter unten links: Film ruhig, Film im Stil der Makler-Filme, bisheriger Hero. Adresse: ?hero=film | filmc | alt */
+/* Umschalter unten links: Film oder bisheriger Hero. Adresse: ?hero=film | alt.
+   Welche Film-Fassung laeuft, bestimmt die Variante: /…2 ruhig, /…3 schneller im Stil der Makler-Filme. */
 function HeroSchalter({ alt, film }) {
-  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "film";
-  const liste = [["film", "Ruhig", "Film, ruhige Fassung"], ["filmc", "Makler-Stil", "Film im Stil der Makler-Filme"], ["alt", "Bisher", "Bisheriger Hero"]];
+  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] === "alt" ? "alt" : "film";
+  const liste = [["film", "Film", "Startscreen mit Film"], ["alt", "Bisher", "Bisheriger Hero"]];
   return (
     <React.Fragment>
-      {m === "alt" ? alt : film(m === "filmc" ? "-circle" : "")}
+      {m === "alt" ? alt : film("")}
       <nav aria-label="Hero-Fassungen" style={{ position: "fixed", left: 16, bottom: 16, zIndex: 80, display: "flex", alignItems: "center", gap: 4, padding: "6px 8px 6px 14px", borderRadius: 999, background: "var(--ink)", color: "var(--paper)", boxShadow: "0 10px 30px rgba(11,10,9,0.25)" }}>
         <span className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.7)", marginRight: 6 }}>Hero</span>
         {liste.map(([k, z, t]) => <a key={k} href={"?hero=" + k} title={t} aria-current={k === m ? "true" : undefined} style={{ height: 30, padding: "0 12px", borderRadius: 999, display: "grid", placeItems: "center", textDecoration: "none", whiteSpace: "nowrap", font: "500 12.5px var(--font-display)", background: k === m ? "var(--signal)" : "transparent", color: k === m ? "#1A1305" : "var(--paper)" }}>{z}</a>)}

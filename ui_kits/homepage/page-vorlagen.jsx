@@ -455,7 +455,7 @@ function StartScreen({ zeilen, text, knopf, zweiter, start = "herbst" }) {
   return (
     <div style={{ padding: "44px 6vw" }}>
       <div style={{ position: "relative", height: mob ? 560 : "min(86vh, 820px)", minHeight: 520, borderRadius: 24, overflow: "hidden", background: "var(--ink)" }}>
-        <LebBild bild={bild} stil={{ position: "absolute", inset: 0 }} />
+        <LebBild genau bild={bild} stil={{ position: "absolute", inset: 0 }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.28), rgba(11,10,9,0.05) 34%, rgba(11,10,9,0.72))" }}></div>
         <div style={{ position: "absolute", left: mob ? 22 : 44, right: mob ? 22 : 44, bottom: mob ? 26 : 44, display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 7fr) minmax(0, 5fr)", gap: 24, alignItems: "end" }}>
           <h3 style={{ margin: 0, font: `500 ${mob ? "clamp(38px, 11vw, 56px)" : "clamp(48px, 6vw, 108px)"}/0.96 ` + G, letterSpacing: "-0.04em", color: "var(--text-inverse)" }}>
@@ -486,7 +486,7 @@ function FilmVergleich() {
     <div style={{ padding: "44px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, minmax(0, 1fr))", gap: 24 }}>
       {["", "-circle"].map((s) => LB_ORTE.map(([k, t]) => (
         <div key={k + s}>
-          <LebBild bild={k + s} stil={{ aspectRatio: "16 / 9", borderRadius: 16 }} />
+          <LebBild genau bild={k + s} stil={{ aspectRatio: "16 / 9", borderRadius: 16 }} />
           <div style={{ font: "400 14px " + G, color: "var(--text-muted)", marginTop: 10 }}>{t}, {s ? "wie die Makler-Filme" : "ruhig"}</div>
         </div>
       )))}

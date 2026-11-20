@@ -452,6 +452,25 @@ ${wissenLinks.join("\n")}
     console.log("· Prerender übersprungen (--no-prerender)");
   }
 
+  /* 6) Variante 3: dieselben Seiten wie Variante 2 unter Adressen mit 3 (/3, /makler3 ...).
+        Einziger Unterschied: die Filme laufen in der schnelleren Fassung im Stil der Makler-Filme
+        (leb-<name>-circle statt leb-<name>). Gesteuert ueber window.UNIO_FILM, siehe LebBild in site-shared.jsx. */
+  const zuDrei = (t) => t
+    .replace(new RegExp("([\"'`(=])/(" + V2_SEITEN + ")2(?=[\"'`#?)])", "g"), "$1/$23")
+    .replace(/(["'`=])\/2(?=["'`#?])/g, "$1/3");
+  mkdirSync(join(DIST, "assets", "js3"), { recursive: true });
+  for (const f of readdirSync(join(DIST, "assets", "js2"))) writeFileSync(join(DIST, "assets", "js3", f), zuDrei(readFileSync(join(DIST, "assets", "js2", f), "utf8")));
+  for (const p of V2_PAGES) {
+    let s = zuDrei(readFileSync(join(DIST, p.out), "utf8"));
+    s = s.replaceAll("/assets/js2/", "/assets/js3/");
+    s = s.replace("window.UNIO_V2=true;", 'window.UNIO_V2=true;window.UNIO_FILM="circle";');
+    s = s.replace(/leb-(fruehling|herbst|cafe)\.(jpg|mp4)/g, "leb-$1-circle.$2");
+    s = s.replace(" · Variante 2</title>", " · Variante 3</title>");
+    s = s.replace(new RegExp("(" + ORIGIN.replace(/[.]/g, "\\.") + ")/(" + V2_SEITEN + ")2(?=\")", "g"), "$1/$23");
+    writeFileSync(join(DIST, p.out === "2.html" ? "3.html" : p.out.replace("2.html", "3.html")), s);
+  }
+  console.log("✓ Variante 3:", V2_PAGES.map((p) => (p.path === "/2" ? "/3" : p.path.replace(/2$/, "3"))).join(" "));
+
   console.log("\nBuild fertig → dist/");
 }
 
