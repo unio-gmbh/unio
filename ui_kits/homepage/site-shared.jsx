@@ -488,6 +488,15 @@ const OBJEKT_DB = [
   { img: "../../assets/img/penthouse.jpg", t: "Penthouse über den Dächern", adr: "Wien 1010, Innere Stadt", qm: 178, zi: 5, score: 96, price: "€ 4,00 Mio", q: "penthouse dachterrasse innenstadt wohnung luxus", ll: [48.2091, 16.3713], mk: "marcus-weiss" },
   { img: "../../assets/img/int-kitchen.jpg", t: "Stadtwohnung mit Charakter", adr: "Wien 1040, Wieden", qm: 96, zi: 3, score: 88, price: "€ 890.000", q: "altbau wohnung saniert 1040 wieden kueche", ll: [48.1926, 16.3665], mk: "lara-jonas" },
 ];
+/* Weitere Beispielobjekte, nur fuer die Suche in Variante 2 (Vorgabe Daniel, 20.11.2026: mehr Beispiele).
+   Namen aus dem Repo (Startseite, Bautraeger-Seite). Flaeche, Zimmer, Lage und Makler sind Demo-Werte, Preise bewusst offen. */
+const OBJEKT_MEHR = [
+  { img: "../../assets/img/ecoluxe.jpg", t: "Villa Ecoluxe", adr: "Wien, Neubau mit Pool", qm: 240, zi: 6, price: "Auf Anfrage", q: "villa ecoluxe haus neubau pool garten", ll: [48.2455, 16.2710], mk: "marcus-weiss" },
+  { img: "../../assets/img/maxingstrasse-zimmer.jpg", t: "Maxingstraße 72", adr: "Wien 1130, Hietzing", qm: 118, zi: 4, status: "Bieterverfahren", price: "Auf Anfrage", q: "maxingstrasse stilaltbau altbau wohnung 1130 hietzing", ll: [48.1820, 16.2990], mk: "nikita-neznamov" },
+  { img: "../../assets/img/albrechts-fassade.jpg", t: "Albrechts Townhouses", adr: "Wien, Stilhaus mit Dachausbau", qm: 132, zi: 4, price: "Auf Anfrage", q: "albrechts townhouse haus neubau", ll: [48.2210, 16.3080], mk: "wenzel-waechter" },
+  { img: "../../assets/img/albrechts-dachgeschoss.jpg", t: "Albrechts Dachgeschoss", adr: "Wien, Dachgeschoss im Stilhaus", qm: 104, zi: 3, price: "Auf Anfrage", q: "albrechts dachgeschoss penthouse wohnung", ll: [48.2222, 16.3105], mk: "wenzel-waechter" },
+  { img: "../../assets/img/albrechts-wohnen.jpg", t: "Albrechts Gartenwohnung", adr: "Wien, Erdgeschoss mit Garten", qm: 96, zi: 3, price: "Auf Anfrage", q: "albrechts garten wohnung erdgeschoss", ll: [48.2198, 16.3060], mk: "alexander-maurer" },
+];
 
 /* Footer */
 function SiteFooter() {
@@ -933,11 +942,67 @@ function StoererZeile({ bild = "cafe", pos = "60% 70%", stil }) {
 }
 
 
+/* Startscreen mit Film (Variante 2). Karte so breit wie die Navigation, bleibt am Desktop stehen, der naechste Abschnitt schiebt sich darueber. */
+function HeroFilm({ bild, zeilen, marke, text, knoepfe = [], unten, klein, fest }) {
+  const mob = useMobile();
+  return (
+    <section id="top" data-screen-label="Hero" style={{ position: fest && !mob && !U_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : `98px 40px ${unten || "0"}` }}>
+      <div style={{ position: "relative", height: mob ? "min(78svh, 620px)" : "calc(100svh - 120px)", minHeight: mob ? 480 : 520, borderRadius: mob ? 18 : 22, overflow: "hidden", background: "var(--ink)" }}>
+        <LebBild bild={bild} stil={{ position: "absolute", inset: 0 }} />
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.3), rgba(11,10,9,0.04) 30%, rgba(11,10,9,0.5) 68%, rgba(11,10,9,0.82))" }}></div>
+        <div style={{ position: "absolute", left: mob ? 22 : "calc(6vw - 40px)", right: mob ? 22 : "calc(6vw - 40px)", bottom: mob ? 26 : "clamp(36px, 6vh, 64px)", display: "grid", gridTemplateColumns: mob ? "1fr" : `${spalten(7)} minmax(0, 1fr)`, gap: 24, alignItems: "end" }}>
+          <h1 style={{ margin: 0, font: `500 ${mob ? (klein ? "clamp(30px, 8.4vw, 42px)" : "clamp(36px, 10.5vw, 54px)") : (klein ? "clamp(38px, 4.3vw, 78px)" : "clamp(48px, 6vw, 108px)")}/${klein ? 1.02 : 0.96} var(--font-display)`, letterSpacing: "-0.04em", color: "var(--text-inverse)" }}>
+            {zeilen.map((z, k) => <span key={z} style={{ display: "block", whiteSpace: mob ? "normal" : "nowrap" }}>{z}{k === zeilen.length - 1 && <span style={{ color: "var(--signal)" }}>.</span>}</span>)}
+          </h1>
+          <div>
+            {marke && <p className="u-label" style={{ margin: "0 0 12px", fontSize: 10, color: "rgba(247,245,241,0.8)" }}>{marke}</p>}
+            <p style={{ margin: 0, maxWidth: 440, font: `400 ${mob ? 15.5 : 17}px/1.6 var(--font-display)`, color: "rgba(247,245,241,0.92)" }}>{text}</p>
+            {knoepfe.length > 0 && <div style={{ display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }}>
+              {knoepfe.map(([t, auf], k) => k === 0 ? <Button key={t} size="lg" variant="paper" knob data-track="hero_cta_primary" onClick={auf}>{t}</Button> : <Button key={t} size="lg" variant="glass" tone="dark" data-track="hero_cta_secondary" onClick={auf}>{t}</Button>)}
+            </div>}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+/* Umschalter unten links: Film ruhig, Film im Stil der Makler-Filme, bisheriger Hero. Adresse: ?hero=film | filmc | alt */
+function HeroSchalter({ alt, film }) {
+  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "film";
+  const liste = [["film", "Ruhig", "Film, ruhige Fassung"], ["filmc", "Makler-Stil", "Film im Stil der Makler-Filme"], ["alt", "Bisher", "Bisheriger Hero"]];
+  return (
+    <React.Fragment>
+      {m === "alt" ? alt : film(m === "filmc" ? "-circle" : "")}
+      <nav aria-label="Hero-Fassungen" style={{ position: "fixed", left: 16, bottom: 16, zIndex: 80, display: "flex", alignItems: "center", gap: 4, padding: "6px 8px 6px 14px", borderRadius: 999, background: "var(--ink)", color: "var(--paper)", boxShadow: "0 10px 30px rgba(11,10,9,0.25)" }}>
+        <span className="u-label" style={{ fontSize: 9.5, color: "rgba(247,245,241,0.7)", marginRight: 6 }}>Hero</span>
+        {liste.map(([k, z, t]) => <a key={k} href={"?hero=" + k} title={t} aria-current={k === m ? "true" : undefined} style={{ height: 30, padding: "0 12px", borderRadius: 999, display: "grid", placeItems: "center", textDecoration: "none", whiteSpace: "nowrap", font: "500 12.5px var(--font-display)", background: k === m ? "var(--signal)" : "transparent", color: k === m ? "#1A1305" : "var(--paper)" }}>{z}</a>)}
+      </nav>
+    </React.Fragment>
+  );
+}
+/* Flacher Stoerer mit Film, fuehrt in die Suche (Startseite nach dem Versprechen) */
+function StoererBand({ bild = "herbst", pos = "center 60%" }) {
+  const mob = useMobile();
+  return (
+    <section data-screen-label="Stoerer Immobilien" style={{ background: "var(--paper-2)", padding: mob ? "0 6vw 90px" : "0 6vw 140px" }}>
+      <div style={{ position: "relative", height: mob ? 300 : "clamp(260px, 34vh, 340px)", borderRadius: "var(--r-panel)", overflow: "hidden" }}>
+        <LebBild bild={bild} pos={pos} stil={{ position: "absolute", inset: 0 }} />
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(11,10,9,0.7), rgba(11,10,9,0.2) 60%, rgba(11,10,9,0.08))" }}></div>
+        <div style={{ position: "absolute", inset: 0, padding: mob ? 24 : "0 clamp(28px, 3.4vw, 56px)", display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", justifyContent: mob ? "flex-end" : "space-between", gap: 20 }}>
+          <p style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(30px, 3.2vw, 52px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--text-inverse)" }}>Entdecke weitere Immobilien<br />in unserer Suche.</p>
+          <Button size="lg" variant="paper" knob data-track="stoerer_immobilien" onClick={() => location.assign("immobilien.html")}>Alle Immobilien</Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,
   useTick, useMobile, Reveal, SiteNav, PageHero, Chapter, PropCard, OBJEKT_DB, SiteFooter, FaqBlock,
   MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet, spalten, RASTER_ABSTAND, IST_V2,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
-  LebBild, StoererBreit, StoererKarte, StoererZeile,
+  LebBild, StoererBreit, StoererKarte, StoererZeile, StoererBand, HeroFilm, HeroSchalter, OBJEKT_MEHR,
 });

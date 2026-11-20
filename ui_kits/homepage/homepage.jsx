@@ -368,6 +368,7 @@ function App() {
       <SucheHighlights />
       {!heroAlt && <window.CircleGesichter fuer="suchende" />}
       <Markt />
+      {window.IST_V2 && <window.StoererBand />}
       <Produkte />
       <window.SystemBento />
       {heroAlt && <window.CircleGesichter fuer="suchende" />}

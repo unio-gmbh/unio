@@ -463,7 +463,7 @@ function App() {
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="story.html" />
-      <HeroSt />
+      {window.IST_V2 ? <window.HeroSchalter alt={<HeroSt />} film={(s) => <window.HeroFilm fest bild={"fruehling" + s} zeilen={["Move as one"]} marke="Die Geschichte hinter UNIO · Wien" text="Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie Freunde und gründeten gemeinsam ein Unternehmen." />} /> : <HeroSt />}
       <ErkenntnisSt />
       <StatementSt />
       <FusionFlow />

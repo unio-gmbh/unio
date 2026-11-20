@@ -2,7 +2,9 @@
 const {
   GlassPanel: GPi, Button: Bi, Input: Ini, Select: Seli,
 } = window.UNIODesignSystem_b6216a;
-const { SiteNav, SiteFooter, PageHero, Chapter, Reveal, PropCard, OBJEKT_DB, StoererBreit, StoererKarte, StoererZeile } = window;
+const { SiteNav, SiteFooter, PageHero, Chapter, Reveal, PropCard, StoererBreit, StoererKarte } = window;
+/* Variante 2 zeigt mehr Beispielobjekte, Variante 1 bleibt bei den sechs bisherigen */
+const OBJEKT_DB = window.IST_V2 ? window.OBJEKT_DB.concat(window.OBJEKT_MEHR) : window.OBJEKT_DB;
 
 /* Kartenpanel (Leaflet, helle CARTO-Tiles): Marker = Signal-Punkte auf
    ungefährer Bezirkslage. Hover in der Liste hebt den Pin hervor,
@@ -53,7 +55,7 @@ function SucheIm() {
   const priceVal = (o) => { const m = (o.price || "").match(/([\d.,]+)\s*Mio/); if (m) return parseFloat(m[1].replace(".", "").replace(",", ".")) * 1e6; const n = (o.price || "").replace(/[^\d]/g, ""); return n ? +n : null; };
   const treffer = OBJEKT_DB.filter((o) => {
     if (q.trim() && !(o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase())) return false;
-    if (typ !== "Alle" && !(o.tags.join(" ") + " " + o.q).toLowerCase().includes(typ.toLowerCase())) return false;
+    if (typ !== "Alle" && !((o.tags || []).join(" ") + " " + o.q).toLowerCase().includes(typ.toLowerCase())) return false;
     if (bezirk !== "Alle" && !(o.adr || "").includes(bezirk.replace("Wien ", ""))) return false;
     if (preis !== "Alle") { const v = priceVal(o); if (v == null) return false; if (preis === "bis 1 Mio" && v > 1e6) return false; if (preis === "1–2 Mio" && (v < 1e6 || v > 2e6)) return false; if (preis === "ab 2 Mio" && v < 2e6) return false; }
     return true;
@@ -104,15 +106,14 @@ function SucheIm() {
                 </div>
               </Reveal>
             );
-            /* Variante 2: Stoerer zwischen den Treffern. Nach dem 2. Objekt breit, nach dem 3. als Karte, nach dem 5. als Zeile. */
+            /* Variante 2: zwei Stoerer in der ganzen Liste. Nach dem 4. Objekt breit, nach dem 9. als Karte. */
             if (!window.IST_V2) return karte;
             const breit = { gridColumn: mob ? "auto" : "span 2" };
             return (
               <React.Fragment key={o.t}>
                 {karte}
-                {i === 1 && <StoererBreit stil={breit} />}
-                {i === 2 && <StoererKarte />}
-                {i === 4 && <StoererZeile stil={breit} />}
+                {i === 3 && <StoererBreit stil={breit} />}
+                {i === 8 && <StoererKarte />}
               </React.Fragment>
             );
           })}

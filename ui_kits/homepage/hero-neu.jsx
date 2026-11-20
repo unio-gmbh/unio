@@ -494,10 +494,12 @@ function InternationalMk() {
 /* Umschalter fuer die Abstimmung: /2?hero=a|b|c|d, mit ?hero=alt der bisherige Hero.
    Eine kleine Leiste unten links fuehrt durch die Vorschlaege. Nur in Variante 2. */
 function HeroWahl({ alt }) {
-  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "a";
+  /* Zum Test ist der Film-Startscreen (Eckhaus) voreingestellt, Vorgabe Daniel vom 20.11.2026. */
+  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "film";
+  const filmHero = (s) => <window.HeroFilm bild={"cafe" + s} unten="22px" zeilen={["Real Estate", "Finally Simple"]} text="Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst." knoepfe={[["Immobilie finden", () => (location.hash = "suche")], ["Wie es funktioniert", () => (location.hash = "produkte")]]} />;
   /* B, C und G sind nach Rueckmeldung vom 20.11.2026 aus der Auswahl genommen (Code bleibt als Referenz). */
-  const liste = [["a", "A", "Film wird zur Karte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["alt", "Alt", "Bisheriger Hero"]];
-  const hero = m === "alt" ? alt : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : <HeroV2 />;
+  const liste = [["film", "Film", "Eckhaus, ruhig"], ["filmc", "Film M", "Eckhaus im Stil der Makler-Filme"], ["a", "A", "Film wird zur Karte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["alt", "Alt", "Bisheriger Hero"]];
+  const hero = m === "film" ? filmHero("") : m === "filmc" ? filmHero("-circle") : m === "alt" ? alt : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : <HeroV2 />;
   return (
     <React.Fragment>
       {hero}

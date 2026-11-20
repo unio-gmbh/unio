@@ -1080,7 +1080,7 @@ function App() {
   return (
     <div style={{ fontFamily: "var(--font-display)" }}>
       <SiteNav active="bautraeger.html" cta={{ label: "Projekt prüfen lassen", onClick: () => (location.hash = "funnel") }} />
-      <HeroBt />
+      {window.IST_V2 ? <window.HeroSchalter alt={<HeroBt />} film={(s) => <window.HeroFilm klein fest bild={"herbst" + s} unten="6vh" zeilen={["Makler und Marketing,", "verbunden zu", "einem System"]} text="Die stärksten Makler der Stadt, das beste Marketing und volle Transparenz: verbunden für deinen Abverkauf." knoepfe={[["Projekt prüfen lassen", () => (location.hash = "funnel")], ["So arbeiten wir", () => (location.hash = "system")]]} />} /> : <HeroBt />}
       <StoererBt />
       <ProblemBt />
       {/* ProofBt (Case-Stoererbild), FunnelGraphBt (Performance Marketing), ModellBt (100 %)

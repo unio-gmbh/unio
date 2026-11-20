@@ -606,7 +606,7 @@ function EffektSeite() {
       <Vorlage nr="H" variante="C" titel="Story" was="Die Stadt als Bühne" vorbild="apple.com"><StartScreen start="cafe" zeilen={["Move", "as one"]} text="Vertrieb, Marketing und Technologie haben einander jahrelang zugearbeitet. 2026 wurden sie ein Unternehmen." knopf="Die Menschen ansehen" /></Vorlage>
       <Vorlage nr="H" variante="Filme" titel="Alle sechs Filme" was="Oben ruhig, unten wie die Makler-Filme"><FilmVergleich /></Vorlage>
 
-      <Gruppe nr="L1" titel="Störer in der Trefferliste" text="So eingebaut auf /immobilien2: breit nach dem zweiten Objekt, orange Karte nach dem dritten, Zeile nach dem fünften." />
+      <Gruppe nr="L1" titel="Störer in der Trefferliste" text="Auf /immobilien2 laufen zwei davon: breit nach dem vierten Objekt, orange Karte nach dem neunten. Die Zeile bleibt als Baustein in Reserve." />
       <Vorlage nr="L1" variante="A, B, C" titel="Gemischt zwischen den Treffern" was="Breit mit Knopf, Karte in Orange, schmale Zeile" vorbild="airbnb.com, compass.com"><StoererListe /></Vorlage>
 
       <Gruppe nr="ST" titel="Startseite" text="Drei Stellen, an denen ein lebendes Bild ein heutiges Element ersetzen kann." />
