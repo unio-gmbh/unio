@@ -85,13 +85,17 @@ const PAGES = [
     description: "Die Makler im CIRCLE von UNIO: persönliche Beratung in Wien und Umgebung, jede und jeder mit eigener Seite.",
     og: "/assets/team/editorial/lara-jonas.jpg", noindex: true,
   },
+  {
+    src: "vorlagen.html", out: "vorlagen.html", path: "/vorlagen", nurV2: true, static: true,
+    title: "Vorlagen | UNIO", description: "Vorlagen für die Abstimmung: Elemente der UNIO Website in mehreren Varianten.", noindex: true,
+  },
   { src: "agb.html", out: "agb.html", path: "/agb", title: "Allgemeine Geschäftsbedingungen | UNIO", description: "Allgemeine Geschäftsbedingungen der UNIO Immobilienvermittlung.", noindex: true, static: true },
   { src: "impressum.html", out: "impressum.html", path: "/impressum", title: "Impressum | UNIO", description: "Impressum der UNIO Website.", noindex: true, static: true },
   { src: "datenschutz.html", out: "datenschutz.html", path: "/datenschutz", title: "Datenschutzerklärung | UNIO", description: "Datenschutzerklärung der UNIO Website.", noindex: true, static: true },
 ];
 
 /* Variante 2 der Hauptseiten: Adresse mit 2, immer noindex */
-const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story|kontakt|projekt|partner)\.html$/.test(p.src)).map((p) => ({
+const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story|kontakt|projekt|partner|vorlagen)\.html$/.test(p.src)).map((p) => ({
   ...p, noindex: true, extraSchema: undefined,
   out: p.src === "index.html" ? "2.html" : p.src.replace(".html", "2.html"),
   path: p.path === "/" ? "/2" : p.path + "2",
@@ -100,12 +104,12 @@ const V2_PAGES = PAGES.filter((p) => /^(index|makler|bautraeger|immobilien|story
 /* Wissens-Hub: statische Seiten unter /wissen (werden separat gepflegt) */
 const WISSEN_DIR = join(ROOT, "wissen");
 
-const JSX_FILES = ["site-shared.jsx", "hero-neu.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx", "page-partner.jsx"];
+const JSX_FILES = ["site-shared.jsx", "hero-neu.jsx", "bento.jsx", "strecke.jsx", "bt-system.jsx", "homepage.jsx", "page-makler.jsx", "page-bautraeger.jsx", "page-immobilien.jsx", "page-story.jsx", "page-kontakt.jsx", "page-partner.jsx", "page-vorlagen.jsx"];
 
 /* interne Links + Asset-Pfade auf saubere URLs umschreiben */
 /* v2 = Variante 2: gleiche Seiten unter Adressen mit einer 2 am Ende
    (/2, /makler2, /immobilien2, /projekt2 ...). Variante 1 bleibt unveraendert. */
-const V2_SEITEN = "makler|bautraeger|immobilien|story|kontakt|projekt|partner";
+const V2_SEITEN = "makler|bautraeger|immobilien|story|kontakt|projekt|partner|vorlagen";
 function rewriteUrls(s, v2 = false) {
   s = s.replaceAll("../../assets/", "/assets/");
   s = s.replaceAll("../../styles.css", "/styles.css");

@@ -495,8 +495,9 @@ function InternationalMk() {
    Eine kleine Leiste unten links fuehrt durch die Vorschlaege. Nur in Variante 2. */
 function HeroWahl({ alt }) {
   const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "a";
-  const liste = [["a", "A", "Film wird zur Karte"], ["b", "B", "Mensch und Raum"], ["c", "C", "Mensch in der Mitte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["g", "G", "Zeile im Balken"], ["alt", "Alt", "Bisheriger Hero"]];
-  const hero = m === "alt" ? alt : m === "b" ? <HeroB /> : m === "c" ? <HeroC /> : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : m === "g" ? <HeroG /> : <HeroV2 />;
+  /* B, C und G sind nach Rueckmeldung vom 20.11.2026 aus der Auswahl genommen (Code bleibt als Referenz). */
+  const liste = [["a", "A", "Film wird zur Karte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["alt", "Alt", "Bisheriger Hero"]];
+  const hero = m === "alt" ? alt : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : <HeroV2 />;
   return (
     <React.Fragment>
       {hero}

@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 8 (zusätzlich: Schnitt mit zwölf Menschen, Hero A bis G, Internationalisierung, zehn Vorschläge) |
+| Stand dieses Dokuments | 20.11.2026, Version 9 (zusätzlich: Vorlagen-Seite mit allen Bausteinen in Varianten, Vorschlag zur Seitenstruktur) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,29 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-26 Vorlagen-Seite und Seitenstruktur (Version 9)
+
+Status: Entwurf, Auswahl durch Daniel offen · Referenz: `/vorlagen2` (`ui_kits/homepage/page-vorlagen.jsx`)
+
+Alle zehn Vorschläge aus MP-25 sind als echte Bausteine gebaut, je in zwei bis drei Varianten, mit Kennungen wie 1A oder 3B. Reiter: Startseite, CIRCLE, Bauträger, Story, Struktur.
+
+| Kennung | Baustein | Varianten |
+|---|---|---|
+| 1 | Objekte in Reihen | A drei Reihen mit Pfeilen · B eine Reihe mit Themen als Reiter · C ein großes und vier kleine Objekte |
+| 2 | Zahlenzeile | A drei Spalten mit Linien · B Zeilen auf dem Raster · C ein Satz |
+| 3 | Aussage-Abschnitt | A mittig mit Bild darunter · B Satz links, Bild rechts · C Satz im Bild |
+| 4 | Objekt im Fokus | A helle, B dunkle, C Akzentfläche |
+| 5 | System mit Reitern | A Reiter über dem Bild · B Liste links, Bild rechts |
+| 6 | Navigation | A Form bleibt, Grund blendet ein · B volle Breite mit Linie · Alt wie heute |
+| 7 | Verwaltung (CIRCLE) | A Tafeln zum Schieben · B Überschrift bleibt stehen, Schritte laufen |
+| 8 | Zuerst bei UNIO | A dunkle Reihe · B Liste mit Vormerken |
+| 9 und 10 | Schalter Bewegung, Fuß der Seite | A heller Fuß, Schalter als Text · B dunkler Fuß, Schalter als Schieber |
+| BH, SH | Hero Bauträger, Hero Story | je A und B in der Form der neuen Startseite |
+
+Hero-Auswahl der Startseite: B, C und G sind entfernt, es bleiben A, D, E, F und der bisherige Hero.
+
+Seitenstruktur (Reiter Struktur): Gemessen bei 1440 Pixel Breite ist die Startseite rund 8.600, die CIRCLE-Seite rund 24.200, Bauträger 12.600 und Story 13.400 Pixel hoch. Vorschlag: Verkaufen als eigene Seite, Plattform als eigene Seite (System, LENS, Smart Exposé und NOVA stehen heute auf drei Seiten), Provisionsrechner und Internationalisierung als Unterseiten von Makler, Menschen als eigene Seite. Navigation: Immobilien, Verkaufen, Makler, Bauträger, Story.
 
 ### MP-25 Stand Version 8: Schnitt neu, Hero A bis G, Internationalisierung, Vorschläge
 
@@ -394,6 +417,7 @@ Die Entwürfe liegen als Variante 2 auf der Vorschau-Seite des Repos, `unio-vers
 | Explore-Feed (Passwort wie bisher) | `/ux/explore` | `/ux/explore2` |
 | Objektseite mit Chat (Passwort wie bisher) | `/ux/objekt` | `/ux/objekt2` |
 | Übersicht aller Partner | gibt es nicht | `/partner2` |
+| Vorlagen zur Auswahl | gibt es nicht | `/vorlagen2` |
 | Übrige Seiten | `/bautraeger`, `/story`, `/kontakt` | `/bautraeger2`, `/story2`, `/kontakt2` (inhaltlich gleich) |
 
 Technik: Der Build (`build/build.mjs`) erzeugt die 2er-Seiten aus denselben Quellen, mit eigenem Skript-Satz unter `/assets/js2/` und dem Schalter `window.UNIO_V2`. Eigene Quelldateien für Variante 2 gibt es nur dort, wo ganze Seiten abweichen: `ui_kits/homepage/projekt2.html`, `ui_kits/explore2/`, `ui_kits/objektseite2/`. Die 2er-Seiten sind von Suchmaschinen ausgeschlossen und stehen nicht in der Sitemap.
@@ -433,3 +457,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 6 | Kreise wieder mit natürlichen Originalfotos. Philipp Trattner ergänzt (verlinkt auf trattner-soehne.at), Film für Alexander Maurer erzeugt. Neue Heroes für Startseite und CIRCLE-Seite (MP-22). Objektseite mit Zeile und Karte (MP-23). Raster: zweispaltige Aufteilungen und Kartenreihen in allen Abschnitten von Variante 2 liegen auf ganzen Spalten (Funktion `aufRaster` im Build). Noch neben dem Raster: Hero Bauträger, Hero Story, die festgehaltenen Abschnitte Verwaltung und Bewegung auf der CIRCLE-Seite, die Listen Vorteile und Bewerbung. |
 | 20.11.2026 | 7 | Hero der CIRCLE-Seite mit geschnittenem Film: Die Person wechselt, wenn vorne jemand vorbeigeht. Vier Hero-Vorschläge für die Startseite mit Umschalter (MP-24). Founder tragen im CIRCLE-Bereich die Position von der Story-Seite ("Founder · Vertrieb" usw.). Raster: Hero-Karten von Bauträger und Story auf dem Seitenrand, Liste Vorteile exakt in Spalte 2, Einzug der festgehaltenen Tafeln auf Spalte 2. |
 | 20.11.2026 | 8 | Film neu geschnitten: zwölf Menschen, schneller, Gesichter deckungsgleich. Hero A angepasst (Knöpfe nebeneinander, Zeile darunter entfernt), neue Vorschläge E, F, G. Abschnitt Internationalisierung auf der CIRCLE-Seite. Zehn weitere Vorschläge mit Vorbildern (MP-25). |
+| 20.11.2026 | 9 | Vorlagen-Seite `/vorlagen2` mit zehn Bausteinen in je zwei bis drei Varianten, dazu Vorlagen für CIRCLE, Bauträger und Story und ein Vorschlag zur Seitenstruktur (MP-26). Hero-Vorschläge B, C und G aus der Auswahl genommen. |
