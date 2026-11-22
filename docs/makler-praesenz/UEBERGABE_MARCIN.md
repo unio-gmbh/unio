@@ -522,3 +522,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 14a | Menüpunkt Immobilien führt in Variante 2 und 3 auf die neue Suche (`/immobilien2`, `/immobilien3`) statt in die App. Variante 1 unverändert. |
 | 22.11.2026 | 15 | Trennpunkte in Variante 2 und 3 überall durch Kommas ersetzt (MP-28). Störer-Band der Startseite über die volle Breite, ohne Kasten, Film unten bündig. Fünf weitere Vorlagen für die Highlight-Objekte (1D bis 1H). |
 | 22.11.2026 | 15a | Störer-Band: Text und Knopf unten links statt oben. |
+| 22.11.2026 | 15b | Bauträger, Abschnitt "Projekte planbar und erfolgreich machen." (System): senkrechte Linien im Hintergrund entfernt, in Variante 2 und 3. |

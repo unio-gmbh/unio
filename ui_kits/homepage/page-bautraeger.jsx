@@ -174,7 +174,8 @@ function ProblemBt() {
   return (
     <section id="system" ref={secRef} data-track="chapter_view_02" data-screen-label="System" style={{ height: "300vh", position: "relative", background: "var(--paper)" }}>
       <div className="u-grain" style={{ position: "sticky", top: 0, minHeight: "100svh", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(70px, 11vh, 120px) 7vw clamp(36px, 6vh, 70px)" }}>
-        <GridLines />
+        {/* Variante 2: ohne die senkrechten Linien (Vorgabe Daniel, 22.11.2026) */}
+        {!window.IST_V2 && <GridLines />}
         <Kap nr="02" label="System" />
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.8fr) minmax(0, 1.2fr)", gap: 56, alignItems: "start", position: "relative" }}>
           <div>
