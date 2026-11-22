@@ -985,14 +985,15 @@ function HeroSchalter({ alt, film }) {
   );
 }
 /* Flacher Stoerer mit Film ueber die ganze Seitenbreite, ohne Kasten. Fuehrt in die Suche (Startseite nach dem Versprechen).
-   Der Film sitzt unten buendig, damit die Menschen auf dem Gehsteig im Ausschnitt bleiben. Der Text steht oben, frei davon. */
+   Der Film sitzt unten buendig, damit die Menschen auf dem Gehsteig im Ausschnitt bleiben.
+   Text und Knopf stehen unten links untereinander (Vorgabe Daniel, 22.11.2026), die rechte Bildhaelfte bleibt frei fuer die Menschen. */
 function StoererBand({ bild = "herbst", pos = "center 100%" }) {
   const mob = useMobile();
   return (
-    <section data-screen-label="Stoerer Immobilien" style={{ position: "relative", zIndex: 1, height: mob ? 380 : "clamp(340px, 44vh, 460px)", overflow: "hidden", background: "var(--ink)" }}>
+    <section data-screen-label="Stoerer Immobilien" style={{ position: "relative", zIndex: 1, height: mob ? 400 : "clamp(340px, 44vh, 460px)", overflow: "hidden", background: "var(--ink)" }}>
       <LebBild bild={bild} pos={pos} stil={{ position: "absolute", inset: 0 }} />
-      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.74), rgba(11,10,9,0.42) 34%, rgba(11,10,9,0) 62%)" }}></div>
-      <div style={{ position: "absolute", left: "6vw", right: "6vw", top: mob ? 28 : "clamp(30px, 5vh, 52px)", display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", justifyContent: "space-between", gap: 20 }}>
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: mob ? "linear-gradient(180deg, rgba(11,10,9,0.1) 20%, rgba(11,10,9,0.78))" : "linear-gradient(90deg, rgba(11,10,9,0.8), rgba(11,10,9,0.5) 32%, rgba(11,10,9,0) 58%)" }}></div>
+      <div style={{ position: "absolute", left: "6vw", right: "6vw", bottom: mob ? 28 : "clamp(30px, 5vh, 52px)", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: mob ? 18 : 22 }}>
         <p style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(30px, 3.2vw, 52px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--text-inverse)" }}>Entdecke weitere Immobilien<br />in unserer Suche.</p>
         <Button size="lg" variant="paper" knob data-track="stoerer_immobilien" onClick={() => location.assign("immobilien.html")}>Alle Immobilien</Button>
       </div>
