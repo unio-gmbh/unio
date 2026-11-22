@@ -223,6 +223,12 @@
 
   @media(prefers-reduced-motion:reduce){.hint .box .arrows{animation:none;}.rail button,.toast{transition:none;}.liste .sheet,.liste .lback{transition:none;}}
 </style>
+<style>
+@font-face{font-family:"UNIO Symbole";src:url("/assets/fonts/symbole/unio-symbole.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+2190-21FF,U+2212,U+2215,U+2219,U+221E,U+2248,U+2260,U+2264-2265,U+2300-23FF,U+25A0-25FF,U+2600-26FF,U+2700-27BF,U+27F0-27FF;}
+:root{--font-display:"Power Grotesk","UNIO Symbole","Helvetica Neue",sans-serif;--font-mono:"Outfit","UNIO Symbole",system-ui,sans-serif;}
+.leaflet-container,.leaflet-container .leaflet-bar a,.leaflet-container .leaflet-control-attribution{font-family:var(--font-mono);}
+:where(button,input,select,textarea){font-family:inherit;}
+</style>
 </head>
 <body>
 <div class="stage">

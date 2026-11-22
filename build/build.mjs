@@ -150,6 +150,19 @@ function ohneStriche(t) {
     .replace(/\s*(?:[\u00B7\u2022\u2219\u22C5\u30FB]|&middot;|&bull;|&#183;|&#xB7;|\\xB7|\\u00B7|\\u2022)\s*/gi, ", ");
 }
 
+/* Variante 2 und 3: eigene Symbol-Schrift. Power Grotesk und Outfit enthalten Zeichen wie Haekchen, Kreuz, Herz oder
+   Dreieck nicht, dann zeichnet jedes Geraet sie mit seiner Systemschrift. "UNIO Symbole" (Ausschnitt aus DejaVu Sans,
+   assets/fonts/symbole) steht in beiden Schrift-Stapeln direkt hinter der Marken-Schrift und springt nur fuer fehlende
+   Zeichen ein. unicode-range sorgt dafuer, dass die Datei nur geladen wird, wenn ein solches Zeichen vorkommt.
+   Auch die Kartensteuerung (Leaflet) sowie Knoepfe und Eingabefelder ohne eigene Angabe nutzen danach die Marken-Schrift
+   (Browser geben Knoepfen sonst die Systemschrift). */
+const SYMBOL_STIL = `<style>
+@font-face{font-family:"UNIO Symbole";src:url("/assets/fonts/symbole/unio-symbole.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+2190-21FF,U+2212,U+2215,U+2219,U+221E,U+2248,U+2260,U+2264-2265,U+2300-23FF,U+25A0-25FF,U+2600-26FF,U+2700-27BF,U+27F0-27FF;}
+:root{--font-display:"Power Grotesk","UNIO Symbole","Helvetica Neue",sans-serif;--font-mono:"Outfit","UNIO Symbole",system-ui,sans-serif;}
+.leaflet-container,.leaflet-container .leaflet-bar a,.leaflet-container .leaflet-control-attribution{font-family:var(--font-mono);}
+:where(button,input,select,textarea){font-family:inherit;}
+</style>`;
+
 /* Variante 2, Raster innen: zweispaltige Aufteilungen mit freien Verhaeltnissen (1.4fr zu 1fr,
    0.9fr zu 1.1fr ...) werden auf ganze Spalten des 12er-Rasters gelegt, der Abstand auf 24 Pixel.
    Gleich breite Kartenreihen (repeat(n, 1fr)) bekommen ebenfalls 24 Pixel Abstand.
@@ -273,7 +286,7 @@ async function main() {
     s = s.replace("/assets/js/_ds_bundle.js", `/assets/js2/_ds_bundle.js?v=${V2_STAMP}`);
     s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} | Variante 2</title>`);
     s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
-    s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n</head>");
+    s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n" + SYMBOL_STIL + "\n</head>");
     s = ohneStriche(s);
     writeFileSync(join(DIST, p.out), s);
   }
@@ -329,7 +342,7 @@ async function main() {
       /* Einheiten-Links der Projekt-Ueberseite bleiben in der geschuetzten UX-Vorschau */
       s = s.replaceAll('href="projekt.html"', 'href="/ux/objekt"');
       s = rewriteUrls(s, kit.endsWith("2"));
-      if (kit.endsWith("2") && f.endsWith(".html")) s = ohneStriche(s);
+      if (kit.endsWith("2") && f.endsWith(".html")) s = ohneStriche(s).replace("</head>", SYMBOL_STIL + "\n</head>");
       s = s.replaceAll("../homepage/site-shared.jsx", "site-shared.jsx");
       /* JSX-Pfade absolut machen: Vercel liefert /ux/backend ohne Slash aus,
          relative Pfade wuerden sonst gegen /ux/ aufgeloest (404, weisse Seite).

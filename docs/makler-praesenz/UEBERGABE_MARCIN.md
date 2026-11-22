@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 22.11.2026, Version 15 (zusätzlich: keine Trennpunkte in Variante 2 und 3, Störer-Band über die volle Breite, fünf weitere Formen für Highlight-Objekte) |
+| Stand dieses Dokuments | 22.11.2026, Version 16 (zusätzlich: Schriften geprüft, keine Claude-Schriften, eigene Symbol-Schrift für fehlende Zeichen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,23 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-29 Schriften: nur Marken-Schriften, eigene Symbol-Schrift (Version 16)
+
+Status: umgesetzt in Variante 2 und 3 · geprüft am 22.11.2026
+
+**Prüfung.** Daniel wollte wissen, ob irgendwo Claude- oder Anthropic-Schriften verwendet werden. Ergebnis: nein. Im Repo liegen nur Power Grotesk (`assets/fonts/PowerGrotesk-*`), Outfit (`assets/fonts/outfit/`) und eine alte, nicht mehr eingebundene JetBrains Mono. Keine Styrene, Tiempos, Copernicus, Anthropic Sans/Serif oder ähnliches, auch nicht über Google Fonts oder andere externe Quellen. Gemessen wurde im Browser über Chrome (`CSS.getPlatformFontsForNode`), welche Schrift je Textstelle wirklich gezeichnet wird: 32 Seitenzustände von Variante 2 und 3, rund 131.000 Zeichen.
+
+**Befund.** 99,8 Prozent der Zeichen erschienen in Power Grotesk und Outfit. Der Rest waren einzelne Symbole, die beide Marken-Schriften nicht enthalten (✓ ✕ ▾ ✦ ♥ ▶ ▷ ⟳ ✳ und das Minuszeichen), dazu Knöpfe ohne Schriftangabe und die Kartensteuerung von Leaflet. Diese zeichnete der Browser mit der jeweiligen Systemschrift, also auf jedem Gerät anders.
+
+**Lösung.** Eigene Symbol-Schrift "UNIO Symbole" (`assets/fonts/symbole/unio-symbole.woff2`, 47 KB, Ausschnitt aus DejaVu Sans mit Pfeilen, geometrischen Formen, Symbolen und Dingbats, umbenannt, Lizenz in `LIZENZ.txt`). Der Bau-Schritt fügt in Variante 2 und 3 einen Stilblock ein (`SYMBOL_STIL` in `build/build.mjs`):
+
+- `@font-face` mit `unicode-range`, die Datei wird nur geladen, wenn ein solches Zeichen auf der Seite vorkommt
+- Schrift-Stapel: `--font-display: "Power Grotesk", "UNIO Symbole", …` und `--font-mono: "Outfit", "UNIO Symbole", …`, die Symbol-Schrift springt also nur für Zeichen ein, die der Marken-Schrift fehlen
+- Leaflet-Karte (Zoom-Knöpfe, Quellenangabe) auf `var(--font-mono)`
+- `:where(button, input, select, textarea) { font-family: inherit }`, damit Knöpfe ohne eigene Angabe nicht die Systemschrift bekommen
+
+Nach der Änderung: 0 Zeichen in Systemschrift. Für die Plattform: dieselbe Symbol-Schrift in den globalen Stilen einbinden und hinter die Marken-Schriften in den Stapel setzen, Knöpfe und Formularfelder auf `font-family: inherit`. Variante 1 ist unverändert.
 
 ### MP-28 Keine Trennpunkte, weitere Formen für Highlight-Objekte (Version 15)
 
@@ -523,3 +540,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 22.11.2026 | 15 | Trennpunkte in Variante 2 und 3 überall durch Kommas ersetzt (MP-28). Störer-Band der Startseite über die volle Breite, ohne Kasten, Film unten bündig. Fünf weitere Vorlagen für die Highlight-Objekte (1D bis 1H). |
 | 22.11.2026 | 15a | Störer-Band: Text und Knopf unten links statt oben. |
 | 22.11.2026 | 15b | Bauträger, Abschnitt "Projekte planbar und erfolgreich machen." (System): senkrechte Linien im Hintergrund entfernt, in Variante 2 und 3. |
+| 22.11.2026 | 16 | Schriften geprüft: keine Claude- oder Anthropic-Schriften. Symbole, die Power Grotesk und Outfit fehlen, kommen in Variante 2 und 3 aus der eigenen Schrift "UNIO Symbole" statt aus der Systemschrift. Knöpfe und Kartensteuerung nutzen die Marken-Schrift (MP-29). |
