@@ -134,7 +134,7 @@ function einRand(code, datei) {
   });
 }
 
-/* Variante 2, Texte: keine Gedankenstriche. Aus " — " wird ein Komma, aus Zahlenspannen "bis". */
+/* Variante 2, Texte: keine Gedanken- oder Halbgeviertstriche. Ein Strich mit Leerzeichen davor und danach wird ein Komma, aus Zahlenspannen wird "bis". */
 const V2_STAMP = Date.now().toString(36);
 function ohneStriche(t) {
   return t
