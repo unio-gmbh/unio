@@ -14,6 +14,7 @@ Vorgabe von Daniel, 20.11.2026: Bevor ein Element gestaltet wird, immer zuerst a
 ## Schreibregeln
 
 - Keine Geviertstriche oder Halbgeviertstriche, auch nicht in Kommentaren.
+- Keine Trennpunkte (Mittelpunkt als Trenner zwischen Angaben). Stattdessen Komma oder eigene Zeile. Vorgabe von Daniel, 22.11.2026. Der Bau-Schritt ersetzt sie in Variante 2 und 3 als Sicherheitsnetz, neue Texte kommen trotzdem ohne aus.
 - Keine erfundenen Namen, Zahlen oder Stimmen. Echte Partner aus `MAKLER_DB` in `ui_kits/homepage/site-shared.jsx`.
 
 ## Bauen

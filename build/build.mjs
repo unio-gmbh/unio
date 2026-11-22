@@ -144,7 +144,10 @@ function ohneStriche(t) {
     /* esbuild schreibt Sonderzeichen im Skript als \\uXXXX: dieselben Regeln fuer diese Schreibweise */
     .replace(/(\d)\s?\\u201[34]\s?(\d)/g, "$1 bis $2")
     .replace(/\s\\u201[34]\s/g, ", ")
-    .replace(/\\u201[34]/g, "-");
+    .replace(/\\u201[34]/g, "-")
+    /* Keine Trennpunkte (Vorgabe Daniel, 22.11.2026): Mittelpunkt und Aufzaehlungspunkt werden zu einem Komma,
+       in allen Schreibweisen (Zeichen, HTML-Entity, Escape im Skript). */
+    .replace(/\s*(?:[\u00B7\u2022\u2219\u22C5\u30FB]|&middot;|&bull;|&#183;|&#xB7;|\\xB7|\\u00B7|\\u2022)\s*/gi, ", ");
 }
 
 /* Variante 2, Raster innen: zweispaltige Aufteilungen mit freien Verhaeltnissen (1.4fr zu 1fr,
@@ -234,6 +237,8 @@ async function main() {
   cpSync(join(ROOT, "styles.css"), join(DIST, "styles.css"));
   cpSync(join(ROOT, "tokens"), join(DIST, "tokens"), { recursive: true });
   cpSync(join(ROOT, "_ds_bundle.js"), join(DIST, "assets", "js", "_ds_bundle.js"));
+  mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
+  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")));
   console.log("✓ Assets kopiert");
 
   /* 3) HTML-Seiten transformieren */
@@ -264,10 +269,12 @@ async function main() {
     /* Versionskennung: /assets/* wird ein Jahr lang im Browser gehalten (vercel.json),
        ohne Kennung saehe man nach einer Aenderung weiter den alten Stand. */
     s = s.replace(/<script type="text\/babel" src="([a-z-]+)\.jsx"><\/script>/g, `<script src="/assets/js2/$1.js?v=${V2_STAMP}"></script>`);
-    s = ohneStriche(s);
-    s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} · Variante 2</title>`);
+    /* Auch das Designsystem-Bundle kommt fuer Variante 2 bereinigt (ohne Striche und Trennpunkte) */
+    s = s.replace("/assets/js/_ds_bundle.js", `/assets/js2/_ds_bundle.js?v=${V2_STAMP}`);
+    s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} | Variante 2</title>`);
     s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
     s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n</head>");
+    s = ohneStriche(s);
     writeFileSync(join(DIST, p.out), s);
   }
   console.log("✓ Variante 2:", V2_PAGES.map((p) => p.path).join(" "));
@@ -465,7 +472,7 @@ ${wissenLinks.join("\n")}
     s = s.replaceAll("/assets/js2/", "/assets/js3/");
     s = s.replace("window.UNIO_V2=true;", 'window.UNIO_V2=true;window.UNIO_FILM="circle";');
     s = s.replace(/leb-(fruehling|herbst|cafe)\.(jpg|mp4)/g, "leb-$1-circle.$2");
-    s = s.replace(" · Variante 2</title>", " · Variante 3</title>");
+    s = s.replace(" | Variante 2</title>", " | Variante 3</title>");
     s = s.replace(new RegExp("(" + ORIGIN.replace(/[.]/g, "\\.") + ")/(" + V2_SEITEN + ")2(?=\")", "g"), "$1/$23");
     writeFileSync(join(DIST, p.out === "2.html" ? "3.html" : p.out.replace("2.html", "3.html")), s);
   }

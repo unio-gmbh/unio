@@ -984,23 +984,21 @@ function HeroSchalter({ alt, film }) {
     </React.Fragment>
   );
 }
-/* Flacher Stoerer mit Film, fuehrt in die Suche (Startseite nach dem Versprechen) */
-function StoererBand({ bild = "herbst", pos = "center 60%" }) {
+/* Flacher Stoerer mit Film ueber die ganze Seitenbreite, ohne Kasten. Fuehrt in die Suche (Startseite nach dem Versprechen).
+   Der Film sitzt unten buendig, damit die Menschen auf dem Gehsteig im Ausschnitt bleiben. Der Text steht oben, frei davon. */
+function StoererBand({ bild = "herbst", pos = "center 100%" }) {
   const mob = useMobile();
   return (
-    <section data-screen-label="Stoerer Immobilien" style={{ background: "var(--paper-2)", padding: mob ? "0 6vw 90px" : "0 6vw 140px" }}>
-      <div style={{ position: "relative", height: mob ? 300 : "clamp(260px, 34vh, 340px)", borderRadius: "var(--r-panel)", overflow: "hidden" }}>
-        <LebBild bild={bild} pos={pos} stil={{ position: "absolute", inset: 0 }} />
-        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(11,10,9,0.7), rgba(11,10,9,0.2) 60%, rgba(11,10,9,0.08))" }}></div>
-        <div style={{ position: "absolute", inset: 0, padding: mob ? 24 : "0 clamp(28px, 3.4vw, 56px)", display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", justifyContent: mob ? "flex-end" : "space-between", gap: 20 }}>
-          <p style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(30px, 3.2vw, 52px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--text-inverse)" }}>Entdecke weitere Immobilien<br />in unserer Suche.</p>
-          <Button size="lg" variant="paper" knob data-track="stoerer_immobilien" onClick={() => location.assign("immobilien.html")}>Alle Immobilien</Button>
-        </div>
+    <section data-screen-label="Stoerer Immobilien" style={{ position: "relative", zIndex: 1, height: mob ? 380 : "clamp(340px, 44vh, 460px)", overflow: "hidden", background: "var(--ink)" }}>
+      <LebBild bild={bild} pos={pos} stil={{ position: "absolute", inset: 0 }} />
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.74), rgba(11,10,9,0.42) 34%, rgba(11,10,9,0) 62%)" }}></div>
+      <div style={{ position: "absolute", left: "6vw", right: "6vw", top: mob ? 28 : "clamp(30px, 5vh, 52px)", display: "flex", flexDirection: mob ? "column" : "row", alignItems: mob ? "flex-start" : "center", justifyContent: "space-between", gap: 20 }}>
+        <p style={{ margin: 0, font: `500 ${mob ? "clamp(26px, 7.4vw, 34px)" : "clamp(30px, 3.2vw, 52px)"}/1.04 var(--font-display)`, letterSpacing: "-0.03em", color: "var(--text-inverse)" }}>Entdecke weitere Immobilien<br />in unserer Suche.</p>
+        <Button size="lg" variant="paper" knob data-track="stoerer_immobilien" onClick={() => location.assign("immobilien.html")}>Alle Immobilien</Button>
       </div>
     </section>
   );
 }
-
 
 Object.assign(window, {
   UNIO_APP_URL: APP_URL, UNIO_BEWERTUNG_URL: BEWERTUNG_URL, UNIO_SEARCH_URL: SEARCH_URL,

@@ -99,6 +99,155 @@ function Reihen1C() {
   );
 }
 
+/* ---------- 1D bis 1H: weitere Formen fuer die Highlight-Objekte der Startseite ----------
+   Vorbilder, selbst angesehen am 22.11.2026: themodernhouse.com (ein Objekt des Tages, darunter Reihen ohne Karten),
+   inigo.com (Reihen mit kleinem Etikett), plumguide.com (Kacheln nach Thema), onefinestay.com (Liste auf einem grossen Bild). */
+const hlPreis = (o) => (o.projekt && o.price !== "Auf Anfrage" ? "ab " : "") + o.price;
+const hlDaten = (o) => (o.projekt ? o.projekt.einheiten + " Einheiten" : o.qm + " m², " + o.zi + " Zimmer");
+const hlEtikett = ({ links, rechts }) => (
+  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 24, paddingBottom: 14, marginBottom: 22, borderBottom: "1px solid var(--hairline-dark)" }}>
+    <span style={{ font: "500 22px/1.2 " + G, letterSpacing: "-0.015em", color: "var(--ink)" }}>{links}</span>
+    {rechts && <a href="immobilien.html" style={{ font: "500 15px " + G, color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid currentColor", paddingBottom: 2 }}>{rechts}</a>}
+  </div>
+);
+/* Schlichte Kachel ohne Kartenrahmen: Bild, darunter zwei Zeilen */
+function Schlicht({ o, format = "4 / 3" }) {
+  const m = vMakler(o);
+  return (
+    <a href="projekt.html" style={{ display: "block", textDecoration: "none", color: "var(--ink)" }}>
+      <div style={{ position: "relative", aspectRatio: format, borderRadius: 14, overflow: "hidden", background: "var(--paper-2)" }}>
+        <img src={o.img} alt={o.t} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        {m && <span style={{ position: "absolute", right: 12, top: 12 }}><VKreis m={m} size={36} /></span>}
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, marginTop: 14 }}>
+        <span style={{ font: "500 18px/1.2 " + G, letterSpacing: "-0.015em", whiteSpace: "nowrap" }}>{o.t}</span>
+        <span style={{ flex: "none", font: "500 16px/1.2 " + G }}>{hlPreis(o)}</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, marginTop: 5, font: "400 14.5px/1.4 " + G, color: "var(--text-muted)" }}>
+        <span>{o.adr}</span><span style={{ flex: "none" }}>{hlDaten(o)}</span>
+      </div>
+    </a>
+  );
+}
+function Reihen1D() {
+  const mob = vMob();
+  const o = VDB[0], m = vMakler(o);
+  return (
+    <div style={{ padding: "56px 6vw" }}>
+      <a href="projekt.html" style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : `${vsp(8)} minmax(0, 1fr)`, gap: 24, textDecoration: "none", color: "var(--ink)", alignItems: "center" }}>
+        <div style={{ position: "relative", aspectRatio: "16 / 10", borderRadius: 24, overflow: "hidden" }}>
+          <img src={A + "albrecht-dusk.jpg"} alt={o.t} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        </div>
+        <div style={{ paddingLeft: mob ? 0 : "clamp(0px, 2vw, 32px)" }}>
+          <span className="u-label" style={{ fontSize: 10, color: "var(--signal-deep)" }}>Heute bei UNIO</span>
+          <div style={{ font: "500 clamp(30px, 3.1vw, 50px)/1.02 " + G, letterSpacing: "-0.03em", marginTop: 14, whiteSpace: "nowrap" }}>{o.t}</div>
+          <div style={{ font: "400 17px/1.6 " + G, color: "var(--text-muted)", marginTop: 12 }}>{o.adr}<br />{hlDaten(o)}, {hlPreis(o)}</div>
+          {m && <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 22, paddingTop: 18, borderTop: "1px solid var(--hairline-dark)" }}>
+            <VKreis m={m} size={44} />
+            <span><span style={{ display: "block", font: "400 13.5px " + G, color: "var(--text-muted)" }}>Dein Makler</span><span style={{ display: "block", font: "500 16px " + G, whiteSpace: "nowrap" }}>{m.name}</span></span>
+          </div>}
+          <div style={{ marginTop: 24 }}><VBtn knob>Objekt ansehen</VBtn></div>
+        </div>
+      </a>
+      <div style={{ marginTop: 64 }}>
+        {hlEtikett({ links: "Neu bei UNIO", rechts: "Alle Immobilien" })}
+        <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, minmax(0, 1fr))", gap: 24 }}>{[VDB[1], VDB[2], VDB[4]].map((x) => <Schlicht key={x.t} o={x} />)}</div>
+      </div>
+    </div>
+  );
+}
+const HL_THEMEN = [["Dachgeschoss und Penthouse", "obenzwei-terrasse.jpg"], ["Mit Garten", "vienna-garden.jpg"], ["Projekte", "albrecht-dusk.jpg"], ["Altbau mit Charakter", "maxingstrasse-zimmer.jpg"]];
+function Reihen1E() {
+  const mob = vMob();
+  return (
+    <div style={{ padding: "56px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr 1fr" : "repeat(4, minmax(0, 1fr))", gap: 24 }}>
+      {HL_THEMEN.map(([t, b]) => (
+        <a key={t} href="immobilien.html" style={{ position: "relative", display: "block", aspectRatio: "3 / 4", borderRadius: 18, overflow: "hidden", textDecoration: "none", color: "var(--text-inverse)" }}>
+          <img src={A + b} alt="" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+          <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 45%, rgba(11,10,9,0.72))" }}></span>
+          <span style={{ position: "absolute", left: 20, right: 20, bottom: 20 }}>
+            <span style={{ display: "block", font: "500 clamp(19px, 1.7vw, 26px)/1.12 " + G, letterSpacing: "-0.02em" }}>{t}</span>
+            <span style={{ display: "inline-block", marginTop: 12, font: "500 14.5px " + G, borderBottom: "1px solid currentColor", paddingBottom: 2 }}>Objekte ansehen</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}
+function Reihen1F() {
+  const mob = vMob();
+  const liste = [VDB[0], VDB[1], VDB[2], VDB[4], VDB[5]];
+  const [i, setI] = React.useState(0);
+  const o = liste[i], m = vMakler(o);
+  return (
+    <div style={{ padding: "56px 6vw" }}>
+      <div style={{ position: "relative", minHeight: mob ? 560 : 600, borderRadius: 24, overflow: "hidden", background: "var(--ink)", color: "var(--text-inverse)" }}>
+        {liste.map((x, k) => <img key={x.t} src={x.img} alt={k === i ? x.t : ""} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: k === i ? 1 : 0, transition: "opacity 600ms " + V_EASE }} />)}
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(11,10,9,0.78), rgba(11,10,9,0.35) 48%, rgba(11,10,9,0.1))" }}></div>
+        <div style={{ position: "absolute", left: mob ? 22 : 40, top: mob ? 26 : 40, bottom: mob ? 150 : 40, display: "flex", flexDirection: "column" }}>
+          <span className="u-label" style={{ fontSize: 10, color: "rgba(247,245,241,0.8)" }}>Ausgewählte Objekte</span>
+          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            {liste.map((x, k) => (
+              <button key={x.t} type="button" onMouseEnter={() => setI(k)} onFocus={() => setI(k)} onClick={() => setI(k)} aria-pressed={k === i} style={{ padding: "7px 0", border: 0, background: "none", cursor: "pointer", textAlign: "left", font: `500 ${mob ? "22px" : "clamp(24px, 2.5vw, 40px)"}/1.1 ` + G, letterSpacing: "-0.025em", whiteSpace: "nowrap", color: "var(--text-inverse)", opacity: k === i ? 1 : 0.5, transition: "opacity 300ms ease" }}>{x.t}</button>
+            ))}
+          </div>
+        </div>
+        <div style={{ position: "absolute", right: mob ? 22 : 40, left: mob ? 22 : "auto", bottom: mob ? 24 : 40, display: "flex", alignItems: "center", gap: 18, padding: 10, paddingRight: 12, borderRadius: 999, background: "rgba(253,252,250,0.94)", color: "var(--ink)" }}>
+          {m && <VKreis m={m} size={44} />}
+          <span style={{ minWidth: 0, flex: 1 }}><span style={{ display: "block", font: "500 15px/1.25 " + G, whiteSpace: "nowrap" }}>{hlPreis(o)}</span><span style={{ display: "block", font: "400 13.5px/1.3 " + G, color: "var(--text-muted)", whiteSpace: "nowrap" }}>{o.adr}</span></span>
+          <VBtn size="sm" knob>Ansehen</VBtn>
+        </div>
+      </div>
+    </div>
+  );
+}
+function Reihen1G() {
+  const mob = vMob();
+  return (
+    <div style={{ padding: "56px 6vw", display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(3, minmax(0, 1fr))", gap: 24 }}>
+      {[VDB[0], VDB[1], VDB[2]].map((o) => { const m = vMakler(o); return (
+        <a key={o.t} href="projekt.html" style={{ display: "block", textDecoration: "none", color: "var(--ink)" }}>
+          <div style={{ position: "relative", aspectRatio: "4 / 5", borderRadius: 18, overflow: "hidden", background: "var(--paper-2)" }}>
+            <img src={o.img} alt={o.t} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+            <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0) 55%, rgba(11,10,9,0.6))" }}></span>
+            <span style={{ position: "absolute", left: 14, bottom: 14, right: 14, display: "flex", alignItems: "flex-end", gap: 14, color: "var(--text-inverse)" }}>
+              <span style={{ position: "relative", flex: "none", width: "30%", aspectRatio: "4 / 5", borderRadius: 12, overflow: "hidden", boxShadow: "0 0 0 2px rgba(253,252,250,0.95)" }}><img src={m.ed + ".jpg"} alt={"Porträt von " + m.name} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></span>
+              <span style={{ minWidth: 0, paddingBottom: 4 }}><span style={{ display: "block", font: "400 13px " + G, color: "rgba(247,245,241,0.8)" }}>Dein Makler</span><span style={{ display: "block", font: "500 clamp(14px, 1.15vw, 17px)/1.2 " + G, whiteSpace: "nowrap", marginTop: 2 }}>{m.name}</span></span>
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, marginTop: 14 }}>
+            <span style={{ font: "500 20px/1.2 " + G, letterSpacing: "-0.015em", whiteSpace: "nowrap" }}>{o.t}</span>
+            <span style={{ flex: "none", font: "500 16px " + G }}>{hlPreis(o)}</span>
+          </div>
+          <div style={{ font: "400 14.5px/1.4 " + G, color: "var(--text-muted)", marginTop: 5 }}>{o.adr}</div>
+        </a>); })}
+    </div>
+  );
+}
+function Reihen1H() {
+  const mob = vMob();
+  const [an, setAn] = React.useState(-1);
+  const spalten1h = mob ? "72px minmax(0, 1fr) auto" : "112px minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1.2fr) 130px 24px";
+  const kopf = { fontSize: 10, color: "var(--text-muted)" };
+  return (
+    <div style={{ padding: "56px 6vw" }}>
+      {!mob && <div style={{ display: "grid", gridTemplateColumns: spalten1h, gap: 24, paddingBottom: 12, borderBottom: "2px solid var(--ink)" }}>
+        <span></span><span className="u-label" style={kopf}>Objekt</span><span className="u-label" style={kopf}>Daten</span><span className="u-label" style={kopf}>Makler</span><span className="u-label" style={{ ...kopf, textAlign: "right" }}>Preis</span><span></span>
+      </div>}
+      {VDB.map((o, k) => { const m = vMakler(o); return (
+        <a key={o.t} href="projekt.html" onMouseEnter={() => setAn(k)} onMouseLeave={() => setAn(-1)} style={{ display: "grid", gridTemplateColumns: spalten1h, gap: mob ? 14 : 24, alignItems: "center", padding: "12px 0", borderBottom: "1px solid var(--hairline-dark)", textDecoration: "none", color: "var(--ink)", background: an === k ? "var(--surface-raised)" : "transparent", transition: "background 200ms ease" }}>
+          <span style={{ position: "relative", display: "block", aspectRatio: "4 / 3", borderRadius: 10, overflow: "hidden" }}><img src={o.img} alt="" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></span>
+          <span style={{ minWidth: 0 }}><span style={{ display: "block", font: `500 ${mob ? 16 : 19}px/1.2 ` + G, letterSpacing: "-0.015em", whiteSpace: mob ? "normal" : "nowrap" }}>{o.t}</span><span style={{ display: "block", font: "400 14.5px/1.4 " + G, color: "var(--text-muted)", marginTop: 3 }}>{o.adr}</span></span>
+          {!mob && <span style={{ font: "400 15px " + G, color: "var(--text-muted)" }}>{hlDaten(o)}</span>}
+          {!mob && <span style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>{m && <VKreis m={m} size={32} />}<span style={{ font: "400 15px " + G, whiteSpace: "nowrap" }}>{m ? m.name : ""}</span></span>}
+          <span style={{ font: "500 16px " + G, textAlign: "right", whiteSpace: "nowrap" }}>{hlPreis(o)}</span>
+          {!mob && <span aria-hidden="true" style={{ font: "14px var(--font-mono)", color: an === k ? "var(--ink)" : "var(--text-muted)" }}>→</span>}
+        </a>); })}
+      <div style={{ marginTop: 24 }}><a href="immobilien.html" style={{ font: "500 15px " + G, color: "var(--ink)", textDecoration: "none", borderBottom: "1px solid currentColor", paddingBottom: 2 }}>Alle Immobilien</a></div>
+    </div>
+  );
+}
+
 /* ---------- 2 Zahlenzeile ---------- */
 const ZAHLEN = [["100 %", "Transparenz", "Jede Anfrage live in LENS", "Wenn du baust"], ["80 %", "weniger Aufwand", "Vermarktung, Prüfung und Abwicklung übernehmen wir", "Wenn du verkaufst"], ["100 %", "Provision", "Ab € 150.000 Jahresumsatz im CIRCLE", "Wenn du makelst"]];
 function Zahlen2A() {
@@ -646,10 +795,15 @@ function VorlagenSeite() {
       </div>
 
       {r === "start" && <div>
-        <Gruppe nr="1" titel="Objekte auf der Startseite" text="Heute drei Beispielkarten. Vorschlag: Reihen zum seitlichen Schieben, je Reihe ein Thema." />
+        <Gruppe nr="1" titel="Objekte auf der Startseite" text="Heute drei Beispielkarten. Acht Formen zur Auswahl: von Reihen zum Schieben bis zur Liste auf einem großen Bild." />
         <Vorlage nr="1" variante="A" titel="Drei Reihen" was="Je Thema eine eigene Reihe mit Pfeilen" vorbild="airbnb.com"><Reihen1A /></Vorlage>
         <Vorlage nr="1" variante="B" titel="Eine Reihe, Themen als Reiter" was="Kürzer, die Themen sind die Überschrift" vorbild="airbnb.com, apple.com"><Reihen1B /></Vorlage>
         <Vorlage nr="1" variante="C" titel="Ein großes, vier kleine" was="Ein Objekt führt, daneben ein ruhiges Raster" vorbild="compass.com"><Reihen1C /></Vorlage>
+        <Vorlage nr="1" variante="D" titel="Heute bei UNIO" was="Ein Objekt des Tages mit Makler, darunter eine Reihe ohne Kartenrahmen" vorbild="themodernhouse.com"><Reihen1D /></Vorlage>
+        <Vorlage nr="1" variante="E" titel="Nach Thema" was="Vier Kacheln führen in die gefilterte Suche statt auf einzelne Objekte" vorbild="plumguide.com"><Reihen1E /></Vorlage>
+        <Vorlage nr="1" variante="F" titel="Liste auf dem Bild" was="Mit der Maus über einen Namen fahren, das Bild wechselt" vorbild="onefinestay.com"><Reihen1F /></Vorlage>
+        <Vorlage nr="1" variante="G" titel="Objekt mit Mensch" was="Das Porträt des Maklers sitzt im Objektbild" vorbild="themodernhouse.com, compass.com"><Reihen1G /></Vorlage>
+        <Vorlage nr="1" variante="H" titel="Liste zum schnellen Lesen" was="Alle Angaben in einer Zeile, für Besucher, die vergleichen wollen" vorbild="inigo.com, linear.app"><Reihen1H /></Vorlage>
 
         <Gruppe nr="2" titel="Das UNIO-Versprechen" text="Heute zählen drei Zahlen unscharf ein. Vorschlag: sofort lesbar, mit Haarlinien." />
         <Vorlage nr="2" variante="A" titel="Zeitungs-Zahlen" was="Drei Spalten, dicke Linie oben, Haarlinien dazwischen" vorbild="thefold.news"><Zahlen2A /></Vorlage>

@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 20.11.2026, Version 14 (zusätzlich: Variante 3 unter Adressen mit 3, gleich wie Variante 2, aber mit den schnelleren Filmen) |
+| Stand dieses Dokuments | 22.11.2026, Version 15 (zusätzlich: keine Trennpunkte in Variante 2 und 3, Störer-Band über die volle Breite, fünf weitere Formen für Highlight-Objekte) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -183,6 +183,22 @@ CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
 
+### MP-28 Keine Trennpunkte, weitere Formen für Highlight-Objekte (Version 15)
+
+Status: Trennpunkte umgesetzt in Variante 2 und 3 · Highlight-Formen zur Auswahl auf `/vorlagen2`
+
+**Keine Trennpunkte.** Vorgabe von Daniel vom 22.11.2026: Der Mittelpunkt als Trenner ("Verfügbar · 131 m² · 4 Zi.") wird nirgends mehr verwendet. In Variante 2 und 3 ersetzt der Bau-Schritt ihn überall durch ein Komma ("Verfügbar, 131 m², 4 Zi."): Funktion `ohneStriche` in `build/build.mjs`, sie greift für Seiten, Skripte, das Designsystem-Bundle (eigene bereinigte Kopie unter `assets/js2/`) und die UX-Vorschauen `explore2` und `objekt2`. Seitentitel nutzen einen senkrechten Strich. Die Lagedaten der Objektseite (`assets/data/lage/*.json`) werden beim Laden bereinigt. Geprüft: 29 Seitenzustände im Browser, kein Fund. Für die Plattform heißt das: in allen Aufzählungen Komma oder eigene Zeile statt Mittelpunkt, auch in Karten, Etiketten, Fußzeile und Seitentiteln. Variante 1 ist unverändert.
+
+**Highlight-Objekte auf der Startseite**, fünf weitere Formen (Vorlagen 1D bis 1H, Quelle `page-vorlagen.jsx`):
+
+| Vorlage | Form | Vorbild |
+|---|---|---|
+| 1D | "Heute bei UNIO": ein Objekt groß (acht Spalten Bild, vier Spalten Text mit Makler und Knopf), darunter eine Reihe aus drei Kacheln ohne Kartenrahmen | themodernhouse.com |
+| 1E | Vier Hochformat-Kacheln nach Thema, führen in die gefilterte Suche | plumguide.com |
+| 1F | Großes Bild mit einer Liste von Objektnamen, das Bild wechselt beim Darüberfahren, unten rechts Preis, Lage, Makler und Knopf | onefinestay.com |
+| 1G | Objektbild im Hochformat, das Porträt des Maklers sitzt unten links im Bild | themodernhouse.com, compass.com |
+| 1H | Liste mit einer Zeile je Objekt: Bild, Name, Daten, Makler, Preis | inigo.com, linear.app |
+
 ### MP-27 Bewegte Bilder: Störer in der Suche, Startscreens, Teaser (Version 12)
 
 Status: Störer gebaut auf `/immobilien2` · übrige Vorlagen zur Auswahl auf `/vorlagen2#effekt` · Aufwand: klein
@@ -214,7 +230,7 @@ Auf Bauträger und Story bleibt der Startscreen am Desktop stehen und der nächs
 
 **Variante 3 (Version 14)**: Jede Seite der Variante 2 gibt es zusätzlich unter einer Adresse mit 3 (`/3`, `/makler3`, `/bautraeger3`, `/immobilien3`, `/story3`, `/kontakt3`, `/projekt3`, `/partner3`, `/vorlagen3`). Einziger Unterschied sind die Filme: `leb-<name>-circle` statt `leb-<name>`. Technik: `build/build.mjs` kopiert am Ende die fertigen Seiten und Skripte der Variante 2 (Schritt 6, `assets/js3/`), schreibt die Links auf 3 um und setzt `window.UNIO_FILM = "circle"`. `LebBild` hängt dann `-circle` an den Filmnamen. Es gibt keine eigene Quelle für Variante 3, jede Änderung an Variante 2 gilt automatisch für beide.
 
-**Störer auf der Startseite (Version 13)**: `StoererBand` direkt nach dem Abschnitt "Das UNIO-Versprechen": flaches Band (260 bis 340 Pixel hoch) mit Film, Satz "Entdecke weitere Immobilien in unserer Suche." und Knopf "Alle Immobilien", führt auf die Immobilien-Seite.
+**Störer auf der Startseite (Version 13, geändert in Version 15)**: `StoererBand` direkt nach dem Abschnitt "Das UNIO-Versprechen". Seit Version 15 läuft das Band über die ganze Seitenbreite, ohne Kasten und ohne runde Ecken (340 bis 460 Pixel hoch). Der Film sitzt unten bündig (`object-position: center 100%`), damit die Menschen auf dem Gehsteig im Ausschnitt bleiben. Satz und Knopf "Alle Immobilien" stehen oben auf dem Seitenraster (Rand 6vw), ein Verlauf von oben macht sie lesbar. Führt auf die Immobilien-Seite.
 
 **Filme**: `assets/video/leb-<name>.mp4` mit Standbild `leb-<name>.jpg` (erstes Bild des Films, deshalb springt beim Start nichts). Namen: `fruehling`, `herbst`, `cafe` (ruhig) und `fruehling-circle`, `herbst-circle`, `cafe-circle` (warmes Licht, große unscharfe Passanten vorn, wie die Makler-Filme). Erzeugt per Bild-KI aus drei Bildern von Daniel, 4,4 Sekunden, Schleife mit Überblendung, je 0,3 bis 0,6 MB. Für die Plattform: am Objekt optionale Felder `film` und `film_poster`.
 
@@ -504,3 +520,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 20.11.2026 | 13 | Suche `/immobilien2`: nur noch zwei Störer, elf Beispielobjekte. Startseite: Störer-Band mit Film nach dem UNIO-Versprechen. Startscreens mit Film eingebaut und umschaltbar: Bauträger (Herbst), Story (Straße), Startseite zum Test (Eckhaus). Nebenbei behoben: Der Filter Objektart ließ die Suche abstürzen, weil den Objekten das Feld `tags` fehlt. |
 | 20.11.2026 | 14 | Variante 3 angelegt: alle Seiten der Variante 2 unter Adressen mit 3, mit den Filmen im Stil der Makler-Filme. Variante 2 zeigt nur noch die ruhigen Filme, der Umschalter kennt nur noch Film und Bisher. |
 | 20.11.2026 | 14a | Menüpunkt Immobilien führt in Variante 2 und 3 auf die neue Suche (`/immobilien2`, `/immobilien3`) statt in die App. Variante 1 unverändert. |
+| 22.11.2026 | 15 | Trennpunkte in Variante 2 und 3 überall durch Kommas ersetzt (MP-28). Störer-Band der Startseite über die volle Breite, ohne Kasten, Film unten bündig. Fünf weitere Vorlagen für die Highlight-Objekte (1D bis 1H). |

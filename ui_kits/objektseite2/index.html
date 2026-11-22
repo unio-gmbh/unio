@@ -1718,7 +1718,8 @@ like.addEventListener('click',()=>{like.classList.toggle('liked');
   /* Die Lage-Datei folgt der Objekt-Kennung aus der URL. So zeigt jedes Objekt
      seine eigene Adresse und nicht die eines anderen. */
   var lgObj = new URLSearchParams(location.search).get("obj") || "beheim";
-  fetch("/assets/data/lage/" + lgObj + ".json").then(function(a){ return a.ok ? a.json() : null; })
+  /* Variante 2: keine Trennpunkte, auch nicht in den geladenen Lagedaten (Zeichen 183 und 8226 werden zu einem Komma) */
+  fetch("/assets/data/lage/" + lgObj + ".json").then(function(a){ return a.ok ? a.text().then(function(t){ return JSON.parse(t.replace(new RegExp("\\s*[" + String.fromCharCode(183, 8226) + "]\\s*", "g"), ", ")); }) : null; })
     .then(function(d){
       if (!d || !d.scores) return; /* keine Daten: Sektion bleibt versteckt */
       document.getElementById("lage").hidden = false;
