@@ -879,7 +879,8 @@ const LEB_ALT = { fruehling: "Straßenansicht mit Altbau und ausgebautem Dach", 
 function LebBild({ bild: wunsch, wann = "sicht", an, pos, stil, genau, langsam }) {
   /* Variante 3 (window.UNIO_FILM === "circle") zeigt die Fassung im Stil der Makler-Filme. langsam: die ruhigere
      8-Sekunden-Fassung derselben Szene (fuer Startscreens, Rueckmeldung Daniel 23.11.2026). genau: Name unveraendert. */
-  const bild = !genau && window.UNIO_FILM === "circle" && !/-(circle|langsam)$/.test(wunsch) ? wunsch + (langsam ? "-langsam" : "-circle") : wunsch;
+  /* Variante 4 (window.UNIO_FILM === "warm"): Bewegung der ruhigen Filme aus Variante 2, Farben aus Variante 3 */
+  const bild = genau || /-(circle|langsam|warm)$/.test(wunsch) ? wunsch : window.UNIO_FILM === "circle" ? wunsch + (langsam ? "-langsam" : "-circle") : window.UNIO_FILM === "warm" ? wunsch + "-warm" : wunsch;
   const ruhig = U_RM;
   const ref = React.useRef(null);
   const vid = React.useRef(null);
@@ -896,9 +897,12 @@ function LebBild({ bild: wunsch, wann = "sicht", an, pos, stil, genau, langsam }
   React.useEffect(() => { setBereit(false); }, [bild]);
   const voll = { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: pos || "center" };
   const basis = "../../assets/video/leb-" + bild;
+  /* Standbild der ruhigeren Fassung = Standbild der schnellen (gleiche Szene). So bleibt das vorgerenderte Bild beim
+     Laden stehen, statt getauscht zu werden. */
+  const standbild = "../../assets/video/leb-" + bild.replace(/-langsam$/, "-circle") + ".jpg";
   return (
     <div ref={ref} style={{ position: "relative", overflow: "hidden", background: "var(--paper-2)", ...stil }}>
-      <img src={basis + ".jpg"} alt={LEB_ALT[bild.replace("-circle", "")] || ""} loading="lazy" style={voll} />
+      <img src={standbild} alt={LEB_ALT[bild.replace("-circle", "")] || ""} loading="lazy" style={voll} />
       {!ruhig && wann !== "nie" && (sicht || an || bereit) && <video key={bild} ref={vid} src={basis + ".mp4"} muted loop playsInline preload="auto" aria-hidden="true" onCanPlay={() => setBereit(true)} style={{ ...voll, opacity: bereit && (laeuft || wann === "sicht") ? 1 : 0, transition: "opacity 500ms ease" }}></video>}
     </div>
   );
@@ -947,10 +951,31 @@ function StoererZeile({ bild = "cafe", pos = "60% 70%", stil }) {
 
 
 /* Startscreen mit Film (Variante 2). Karte so breit wie die Navigation, bleibt am Desktop stehen, der naechste Abschnitt schiebt sich darueber. */
+/* Feststehender Hero: sobald der naechste Abschnitt ihn ganz verdeckt, wird er unsichtbar und seine Filme pausieren.
+   Sonst laeuft der Film verdeckt weiter, und Safari zeichnet ihn beim Scrollen gelegentlich kurz ueber den Inhalt. */
+function useHeroVerdeckt(an) {
+  const ref = React.useRef(null);
+  const [weg, setWeg] = React.useState(false);
+  React.useEffect(() => {
+    if (!an) return;
+    let raf = 0;
+    const pruef = () => { raf = 0; const el = ref.current; if (!el) return; setWeg(scrollY > el.offsetHeight + 40); };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(pruef); };
+    pruef();
+    addEventListener("scroll", onScroll, { passive: true });
+    return () => { removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, [an]);
+  React.useEffect(() => {
+    const el = ref.current; if (!el || !an) return;
+    el.querySelectorAll("video").forEach((v) => { if (weg) v.pause(); else { const q = v.play(); if (q && q.catch) q.catch(() => {}); } });
+  }, [weg, an]);
+  return [ref, an && weg ? { visibility: "hidden" } : null];
+}
 function HeroFilm({ bild, zeilen, marke, text, knoepfe = [], unten, klein, fest }) {
   const mob = useMobile();
+  const [heroRef, verdeckt] = useHeroVerdeckt(fest && !mob && !U_RM);
   return (
-    <section id="top" data-screen-label="Hero" style={{ position: fest && !mob && !U_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : `98px 40px ${unten || "0"}` }}>
+    <section id="top" ref={heroRef} data-screen-label="Hero" style={{ position: fest && !mob && !U_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : `98px 40px ${unten || "0"}`, ...verdeckt }}>
       <div style={{ position: "relative", height: mob ? "min(78svh, 620px)" : "calc(100svh - 120px)", minHeight: mob ? 480 : 520, borderRadius: mob ? 18 : 22, overflow: "hidden", background: "var(--ink)" }}>
         <LebBild bild={bild} langsam={!/[?&]hero=schnell(&|$)/.test(location.search)} stil={{ position: "absolute", inset: 0 }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.3), rgba(11,10,9,0.04) 30%, rgba(11,10,9,0.5) 68%, rgba(11,10,9,0.82))" }}></div>
@@ -1011,5 +1036,5 @@ Object.assign(window, {
   MAKLER_DB, maklerVon, MaklerKreis, MaklerMarke, CircleGesichter, CirclePortraet, spalten, RASTER_ABSTAND, IST_V2,
   U_RM, LivePill, Annotation, SignalRaster, UIMiniLens, usePinProgress, StatFrame, EmberGlow,
   submitLead, validEmail, LeadError,
-  LebBild, StoererBreit, StoererKarte, StoererZeile, StoererBand, HeroFilm, HeroSchalter, OBJEKT_MEHR,
+  LebBild, useHeroVerdeckt, StoererBreit, StoererKarte, StoererZeile, StoererBand, HeroFilm, HeroSchalter, OBJEKT_MEHR,
 });

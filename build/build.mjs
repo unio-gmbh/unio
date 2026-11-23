@@ -164,8 +164,8 @@ const SYMBOL_STIL = `<style>
 </style>`;
 
 /* Variante 2 und 3: Bewegung und Klickflaechen nach den "20 Principles of UX & Animation" (Video von Daniel, 23.11.2026).
-   Snappy timing: Rueckmeldung auf Hover, Druck und Fokus unter 300 ms (vorher 450 ms), Einblenden von Inhalt 560 ms
-   (vorher 800 ms), Bild-Zoom beim Ueberfahren 420 ms (vorher 1100 ms).
+   Die verkuerzten Bewegungsdauern (Snappy timing) und der staerkere Knopf-Druck sind am 23.11.2026 auf Wunsch von Daniel
+   zurueckgenommen: Laufband und Produkt-Karten liefen damit schlechter. Es gelten wieder die Dauern aus tokens/materials.css.
    Fitts und groessere Klickflaechen: Links in Navigation und Fuss sowie alle Knoepfe bekommen eine unsichtbare Flaeche
    rund um sich (Ziel mindestens 44 Pixel), sichtbar bleibt alles gleich.
    Exaggerated feedback: Fehlermeldungen (role=alert) erscheinen mit einem kurzen Ruetteln.
@@ -173,7 +173,6 @@ const SYMBOL_STIL = `<style>
    (balance), gleich breite Ziffern in Etiketten (Outfit kann das, Power Grotesk nicht).
    Nur fuer die Seiten der Homepage, nicht fuer die UX-Vorschauen (die haben eigene Zusatz-Ebenen). */
 const BEWEGUNG_STIL = `<style>
-:root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
 :where(nav a, footer a, button){position:relative;}
 :where(nav a, footer a)::after,.u-ziel::after{content:"";position:absolute;inset:-14px -10px;}
 :where(button)::after{content:"";position:absolute;inset:-7px;}
@@ -281,8 +280,7 @@ async function main() {
   cpSync(join(ROOT, "tokens"), join(DIST, "tokens"), { recursive: true });
   cpSync(join(ROOT, "_ds_bundle.js"), join(DIST, "assets", "js", "_ds_bundle.js"));
   mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-  /* Variante 2: Knopf gibt beim Druecken deutlicher nach (0,96 statt 0,985), Prinzip Anticipation und Squash */
-  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")).replaceAll('press ? "scale(0.985)"', 'press ? "scale(0.96)"').replace(/rgba\(0,\s?0,\s?0,/g, "rgba(11,10,9,"));
+    writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")).replace(/rgba\(0,\s?0,\s?0,/g, "rgba(11,10,9,"));
   console.log("✓ Assets kopiert");
 
   /* 3) HTML-Seiten transformieren */
@@ -318,6 +316,11 @@ async function main() {
     s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} | Variante 2</title>`);
     s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
     s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n" + SYMBOL_STIL + "\n" + BEWEGUNG_STIL + "\n</head>");
+    /* Vorgerendert ist der voreingestellte Hero. Ist per Adresse ein anderer gewaehlt (?hero=alt, a, d ...), wird der
+       vorgerenderte Inhalt vor dem ersten Zeichnen geleert, sonst blitzt kurz der falsche Hero auf. */
+    s = s.replace("</head>", `<style>.u-hero-anders #root{visibility:hidden}</style>
+<script>(function(){var d=document.documentElement;if(!/[?&]hero=(?!film(&|$)|schnell(&|$))/.test(location.search))return;d.classList.add("u-hero-anders");var frei=function(){d.classList.remove("u-hero-anders")};setTimeout(frei,3000);addEventListener("DOMContentLoaded",function(){var r=document.getElementById("root");if(!r)return frei();var erst=r.firstElementChild;new MutationObserver(function(m,o){if(r.firstElementChild!==erst){frei();o.disconnect()}}).observe(r,{childList:true})})})();</script>
+</head>`);
     s = ohneStriche(s);
     writeFileSync(join(DIST, p.out), s);
   }
@@ -503,24 +506,27 @@ ${wissenLinks.join("\n")}
     console.log("· Prerender übersprungen (--no-prerender)");
   }
 
-  /* 6) Variante 3: dieselben Seiten wie Variante 2 unter Adressen mit 3 (/3, /makler3 ...).
-        Einziger Unterschied: die Filme laufen in der schnelleren Fassung im Stil der Makler-Filme
-        (leb-<name>-circle statt leb-<name>). Gesteuert ueber window.UNIO_FILM, siehe LebBild in site-shared.jsx. */
-  const zuDrei = (t) => t
-    .replace(new RegExp("([\"'`(=])/(" + V2_SEITEN + ")2(?=[\"'`#?)])", "g"), "$1/$23")
-    .replace(/(["'`=])\/2(?=["'`#?])/g, "$1/3");
-  mkdirSync(join(DIST, "assets", "js3"), { recursive: true });
-  for (const f of readdirSync(join(DIST, "assets", "js2"))) writeFileSync(join(DIST, "assets", "js3", f), zuDrei(readFileSync(join(DIST, "assets", "js2", f), "utf8")));
-  for (const p of V2_PAGES) {
-    let s = zuDrei(readFileSync(join(DIST, p.out), "utf8"));
-    s = s.replaceAll("/assets/js2/", "/assets/js3/");
-    s = s.replace("window.UNIO_V2=true;", 'window.UNIO_V2=true;window.UNIO_FILM="circle";');
-    s = s.replace(/leb-(fruehling|herbst|cafe)\.(jpg|mp4)/g, "leb-$1-circle.$2");
-    s = s.replace(" | Variante 2</title>", " | Variante 3</title>");
-    s = s.replace(new RegExp("(" + ORIGIN.replace(/[.]/g, "\\.") + ")/(" + V2_SEITEN + ")2(?=\")", "g"), "$1/$23");
-    writeFileSync(join(DIST, p.out === "2.html" ? "3.html" : p.out.replace("2.html", "3.html")), s);
+  /* 6) Varianten 3 und 4: dieselben Seiten wie Variante 2 unter Adressen mit 3 bzw. 4 (/3, /makler3, /4, /makler4 ...).
+        Einziger Unterschied sind die Filme, gesteuert ueber window.UNIO_FILM (siehe LebBild in site-shared.jsx):
+        3 = schnellere Filme im Stil der Makler-Filme (leb-<name>-circle, Startscreens ruhiger: leb-<name>-langsam),
+        4 = Bewegung der ruhigen Filme aus Variante 2, Farben aus Variante 3 (leb-<name>-warm). */
+  for (const [n, film, endung] of [["3", "circle", "-circle"], ["4", "warm", "-warm"]]) {
+    const zuN = (t) => t
+      .replace(new RegExp("([\"'`(=])/(" + V2_SEITEN + ")2(?=[\"'`#?)])", "g"), "$1/$2" + n)
+      .replace(/(["'`=])\/2(?=["'`#?])/g, "$1/" + n);
+    mkdirSync(join(DIST, "assets", "js" + n), { recursive: true });
+    for (const f of readdirSync(join(DIST, "assets", "js2"))) writeFileSync(join(DIST, "assets", "js" + n, f), zuN(readFileSync(join(DIST, "assets", "js2", f), "utf8")));
+    for (const p of V2_PAGES) {
+      let s = zuN(readFileSync(join(DIST, p.out), "utf8"));
+      s = s.replaceAll("/assets/js2/", "/assets/js" + n + "/");
+      s = s.replace("window.UNIO_V2=true;", 'window.UNIO_V2=true;window.UNIO_FILM="' + film + '";');
+      s = s.replace(/leb-(fruehling|herbst|cafe)\.(jpg|mp4)/g, "leb-$1" + endung + ".$2");
+      s = s.replace(" | Variante 2</title>", " | Variante " + n + "</title>");
+      s = s.replace(new RegExp("(" + ORIGIN.replace(/[.]/g, "\\.") + ")/(" + V2_SEITEN + ")2(?=\")", "g"), "$1/$2" + n);
+      writeFileSync(join(DIST, p.out === "2.html" ? n + ".html" : p.out.replace("2.html", n + ".html")), s);
+    }
+    console.log("✓ Variante " + n + ":", V2_PAGES.map((p) => (p.path === "/2" ? "/" + n : p.path.replace(/2$/, n))).join(" "));
   }
-  console.log("✓ Variante 3:", V2_PAGES.map((p) => (p.path === "/2" ? "/3" : p.path.replace(/2$/, "3"))).join(" "));
 
   console.log("\nBuild fertig → dist/");
 }

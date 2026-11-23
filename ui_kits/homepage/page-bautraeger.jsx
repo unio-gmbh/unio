@@ -32,6 +32,7 @@ function DockPoint({ top, right, label, show, delay }) {
 }
 
 function HeroBt() {
+  const [btRef, btVerdeckt] = window.useHeroVerdeckt(!!window.IST_V2 && !window.useMobile() && !window.BT.BT_RM);
   const [reveal, setReveal] = React.useState(window.BT.BT_RM ? 1 : 0.06);
   const [docked, setDocked] = React.useState(window.BT.BT_RM);
   const mob = window.useMobile();
@@ -43,7 +44,7 @@ function HeroBt() {
   }, []);
   const statSize = mob ? "clamp(60px, 16vw, 80px)" : "clamp(84px, 8.4vw, 148px)";
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" style={{ position: window.IST_V2 && !mob && !window.BT.BT_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : (window.IST_V2 ? "98px 40px 6vh" : "98px 40px 0") }}>
+    <section id="top" ref={btRef} data-track="chapter_view_01" data-screen-label="Hero" style={{ position: window.IST_V2 && !mob && !window.BT.BT_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : (window.IST_V2 ? "98px 40px 6vh" : "98px 40px 0") , ...btVerdeckt}}>
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : "minmax(0, 52fr) minmax(0, 48fr)", minHeight: mob ? "auto" : "calc(100svh - 120px)", borderRadius: mob ? 18 : 22, overflow: "hidden", border: "0.5px solid var(--hairline-dark)", boxShadow: "0 1px 0 rgba(255,255,255,.6) inset" }}>
         {/* Links: Off-White, Treppen-Satz */}
         <div className="u-grain" style={{ position: "relative", overflow: "hidden", background: "var(--paper)", display: "flex", flexDirection: "column", justifyContent: "center", padding: mob ? "56px 24px 44px" : "175px 4vw 120px 7vw" }}>

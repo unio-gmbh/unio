@@ -13,7 +13,7 @@
 
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script src="/assets/js3/_ds_bundle.js?v=mwtf5uxq"></script>
+<script src="/assets/js3/_ds_bundle.js?v=mwtg70zj"></script>
 <style>html { scroll-behavior: auto; } body { background: var(--paper); }</style>
 <meta name="description" content="Vorlagen für die Abstimmung: Elemente der UNIO Website in mehreren Varianten.">
 <meta name="robots" content="noindex, follow">
@@ -35,7 +35,6 @@
 :where(button,input,select,textarea){font-family:inherit;}
 </style>
 <style>
-:root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
 :where(nav a, footer a, button){position:relative;}
 :where(nav a, footer a)::after,.u-ziel::after{content:"";position:absolute;inset:-14px -10px;}
 :where(button)::after{content:"";position:absolute;inset:-7px;}
@@ -53,11 +52,13 @@ div:has(> .u-suchfeld:focus-visible){box-shadow:0 0 0 2px var(--signal), var(--s
 [role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
 @media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
 </style>
+<style>.u-hero-anders #root{visibility:hidden}</style>
+<script>(function(){var d=document.documentElement;if(!/[?&]hero=(?!film(&|$)|schnell(&|$))/.test(location.search))return;d.classList.add("u-hero-anders");var frei=function(){d.classList.remove("u-hero-anders")};setTimeout(frei,3000);addEventListener("DOMContentLoaded",function(){var r=document.getElementById("root");if(!r)return frei();var erst=r.firstElementChild;new MutationObserver(function(m,o){if(r.firstElementChild!==erst){frei();o.disconnect()}}).observe(r,{childList:true})})})();</script>
 </head>
 <body>
 <div id="root"><style>@keyframes uBoot{from{opacity:.3}to{opacity:.9}}</style><div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#F7F5F1;"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO wird geladen" style="height:22px;animation:uBoot 1.4s ease-in-out infinite alternate"></div></div>
-<script src="/assets/js3/site-shared.js?v=mwtf5uxq"></script>
-<script src="/assets/js3/hero-neu.js?v=mwtf5uxq"></script>
-<script src="/assets/js3/page-vorlagen.js?v=mwtf5uxq"></script>
+<script src="/assets/js3/site-shared.js?v=mwtg70zj"></script>
+<script src="/assets/js3/hero-neu.js?v=mwtg70zj"></script>
+<script src="/assets/js3/page-vorlagen.js?v=mwtg70zj"></script>
 </body>
 </html>

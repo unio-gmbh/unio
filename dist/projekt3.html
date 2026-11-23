@@ -384,7 +384,6 @@
 :where(button,input,select,textarea){font-family:inherit;}
 </style>
 <style>
-:root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
 :where(nav a, footer a, button){position:relative;}
 :where(nav a, footer a)::after,.u-ziel::after{content:"";position:absolute;inset:-14px -10px;}
 :where(button)::after{content:"";position:absolute;inset:-7px;}
@@ -402,6 +401,8 @@ div:has(> .u-suchfeld:focus-visible){box-shadow:0 0 0 2px var(--signal), var(--s
 [role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
 @media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
 </style>
+<style>.u-hero-anders #root{visibility:hidden}</style>
+<script>(function(){var d=document.documentElement;if(!/[?&]hero=(?!film(&|$)|schnell(&|$))/.test(location.search))return;d.classList.add("u-hero-anders");var frei=function(){d.classList.remove("u-hero-anders")};setTimeout(frei,3000);addEventListener("DOMContentLoaded",function(){var r=document.getElementById("root");if(!r)return frei();var erst=r.firstElementChild;new MutationObserver(function(m,o){if(r.firstElementChild!==erst){frei();o.disconnect()}}).observe(r,{childList:true})})})();</script>
 </head>
 <body>
 

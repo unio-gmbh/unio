@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 23.11.2026, Version 17a (zusätzlich: Prinzipien aus vier weiteren Reels, Karte wieder sichtbar) |
+| Stand dieses Dokuments | 23.11.2026, Version 18 (zusätzlich: Bewegungsdauern zurückgenommen, Hero ohne Durchblitzen, Variante 4 mit warmen ruhigen Filmen) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,18 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-31 Zurückgenommen, Hero ohne Durchblitzen, Variante 4 (Version 18)
+
+Status: umgesetzt · 23.11.2026
+
+**Zurückgenommen.** Die verkürzten Bewegungsdauern aus MP-30 (180, 560 und 420 ms) und der stärkere Knopf-Druck (0,96) sind wieder raus. Laut Daniel liefen damit das Laufband im Abschnitt "Marke" der CIRCLE-Seite und der Reiterwechsel der Produkt-Karten auf der Startseite schlechter. Es gelten wieder 450, 800 und 1100 ms aus `tokens/materials.css`. Alles andere aus MP-30 bleibt (Klickflächen, Rütteln bei Fehlern, Suche, leerer Zustand, Karte).
+
+**Kein Durchblitzen im Hero.** Feststehende Heroes (Bauträger und Story mit Film, CIRCLE-Seite, Bauträger "Bisher") werden unsichtbar, sobald der nächste Abschnitt sie ganz verdeckt, und ihr Film pausiert (`useHeroVerdeckt` in `site-shared.jsx`). Vorher lief der Film verdeckt weiter, Safari zeichnet ihn dann beim Scrollen gelegentlich kurz über den Inhalt. Außerdem:
+- Variante 3 nutzt für die ruhigere Startscreen-Fassung dasselbe Standbild wie die schnelle, damit das vorgerenderte Bild beim Laden nicht getauscht wird.
+- Wird per Adresse ein anderer Hero gewählt (`?hero=alt` usw.), bleibt der vorgerenderte Inhalt unsichtbar, bis die Seite den gewählten Hero gezeichnet hat (Klasse `u-hero-anders`, höchstens 3 Sekunden). Vorher blitzte kurz der voreingestellte Hero auf.
+
+**Variante 4** (`/4`, `/makler4`, `/bautraeger4`, `/immobilien4`, `/story4` usw.): Bewegung der ruhigen Filme aus Variante 2, Farben und Lichtstimmung aus Variante 3. Die Filme `leb-<name>-warm` sind die Filme aus Variante 2, Bild für Bild gleich, per Farbabgleich (Kurven je Kanal, abgeleitet aus den Bildern der Variante 3, dazu leichte Vignette und Korn) warm eingefärbt. Gilt für Startscreens und Störer. Entsteht wie Variante 3 automatisch im Bau-Schritt aus Variante 2 (`window.UNIO_FILM = "warm"`).
 
 ### MP-30 Bewegung und Bedienung nach "20 Principles of UX & Animation" (Version 17)
 
@@ -582,3 +594,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 22.11.2026 | 16 | Schriften geprüft: keine Claude- oder Anthropic-Schriften. Symbole, die Power Grotesk und Outfit fehlen, kommen in Variante 2 und 3 aus der eigenen Schrift "UNIO Symbole" statt aus der Systemschrift. Knöpfe und Kartensteuerung nutzen die Marken-Schrift (MP-29). |
 | 23.11.2026 | 17 | Bewegung und Bedienung nach "20 Principles of UX & Animation": kürzere Reaktionszeiten, größere Klickflächen, Rütteln bei Fehlern, tolerante Suche, Suchknopf sucht (MP-30). Variante 3: ruhigere Startscreen-Filme, schnelle Fassung umschaltbar. |
 | 23.11.2026 | 17a | Prinzipien aus vier weiteren Reels: ausgeglichene Zeilen, getönte Schatten, Platzhalter beim Laden, leerer Zustand der Suche, Karten gleiten beim Filtern, gleich breite Ziffern. Karte in Variante 2 und 3 auf OpenStreetMap, weil CARTO einen Schlüssel verlangt. |
+| 23.11.2026 | 18 | Kürzere Bewegungsdauern und stärkerer Knopf-Druck zurückgenommen. Feststehende Heroes verschwinden, wenn sie verdeckt sind, ihr Film pausiert. Kein Bildtausch beim Laden in Variante 3, kein Aufblitzen des falschen Heros bei `?hero=`. Neu: Variante 4 mit Bewegung aus 2 und Farben aus 3 (MP-31). |

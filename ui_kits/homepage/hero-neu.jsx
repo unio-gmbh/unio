@@ -145,6 +145,7 @@ function CircleFilm({ stil }) {
 }
 function HeroMkV2() {
   const mob = window.useMobile();
+  const [mkRef, mkVerdeckt] = window.useHeroVerdeckt(!mob && !H2_RUHIG);
   const [da, setDa] = React.useState(H2_RUHIG);
   React.useEffect(() => {
     if (H2_RUHIG) return;
@@ -152,7 +153,7 @@ function HeroMkV2() {
     return () => clearTimeout(t);
   }, []);
   return (
-    <section id="top" data-track="chapter_view_01" data-screen-label="Hero" className="u-grain" style={{ position: mob || H2_RUHIG ? "relative" : "sticky", top: 0, zIndex: 0, minHeight: mob ? 0 : "100svh", display: "flex", alignItems: "center", background: "var(--paper)", padding: mob ? "112px 6vw 64px" : "clamp(104px, 13vh, 150px) 6vw clamp(56px, 9vh, 110px)" }}>
+    <section id="top" ref={mkRef} data-track="chapter_view_01" data-screen-label="Hero" className="u-grain" style={{ position: mob || H2_RUHIG ? "relative" : "sticky", top: 0, zIndex: 0, minHeight: mob ? 0 : "100svh", display: "flex", alignItems: "center", background: "var(--paper)", padding: mob ? "112px 6vw 64px" : "clamp(104px, 13vh, 150px) 6vw clamp(56px, 9vh, 110px)" , ...mkVerdeckt}}>
       <div style={{ position: "relative", zIndex: 1, width: "100%", display: "grid", gridTemplateColumns: mob ? "1fr" : `${window.spalten(7)} minmax(0, 1fr)`, gap: mob ? 36 : 24, alignItems: "end" }}>
         <div>
           <h1 style={{ margin: 0, font: `500 ${mob ? "clamp(40px, 12vw, 58px)" : "clamp(52px, 6.6vw, 120px)"}/0.96 var(--font-display)`, letterSpacing: "-0.04em", color: "var(--ink)" }}>
