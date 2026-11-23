@@ -3246,7 +3246,7 @@ function Zielgruppen() {
       margin: "18px 0 0",
       font: "500 clamp(28px, 2.6vw, 42px)/1.05 var(--font-display)",
       letterSpacing: "-0.03em",
-      textShadow: "0 2px 24px rgba(0,0,0,0.4)"
+      textShadow: "0 2px 24px rgba(11,10,9,0.4)"
     }
   }, "Nicht die Agentur.", /*#__PURE__*/React.createElement("br", null), "Nicht das Portal. Du."), /*#__PURE__*/React.createElement("p", {
     style: {
@@ -3858,7 +3858,7 @@ function ProofBt() {
       margin: 0,
       font: "500 clamp(32px, 4vw, 64px)/1 var(--font-display)",
       letterSpacing: "-0.03em",
-      textShadow: "0 2px 40px rgba(0,0,0,0.45)"
+      textShadow: "0 2px 40px rgba(11,10,9,0.45)"
     }
   }, "Verkauft, bevor der", /*#__PURE__*/React.createElement("br", null), "Markt es glaubte."))), /*#__PURE__*/React.createElement("a", {
     href: "#funnel",
@@ -7111,7 +7111,7 @@ function AdminMk() {
       top: 14,
       fontSize: 9,
       color: "var(--text-inverse)",
-      textShadow: "0 1px 8px rgba(0,0,0,0.6)"
+      textShadow: "0 1px 8px rgba(11,10,9,0.6)"
     }
   }, "[PLATZHALTER: Partner:in im Gespr\xE4ch]"), chips.map((c, i) => {
     const [sx, sy, rot] = scatter[i];
@@ -7160,7 +7160,7 @@ function AdminMk() {
       bottom: 14,
       color: "var(--text-inverse)",
       fontSize: 10,
-      textShadow: "0 1px 8px rgba(0,0,0,0.5)"
+      textShadow: "0 1px 8px rgba(11,10,9,0.5)"
     }
   }, done ? "Sortiert, Automatisch" : "Dein Alltag heute")))), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -8934,7 +8934,7 @@ function HeroSt() {
       bottom: 16,
       fontSize: 9,
       color: "var(--text-inverse)",
-      textShadow: "0 1px 10px rgba(0,0,0,0.6)"
+      textShadow: "0 1px 10px rgba(11,10,9,0.6)"
     }
   }, reveal > 0.85 ? "Gegenwart, Das Albrecht" : "Herkunft"))));
 }
@@ -9841,7 +9841,7 @@ function TeamSt() {
       margin: 0,
       font: "500 clamp(40px, 5vw, 88px)/1 var(--font-display)",
       letterSpacing: "-0.03em",
-      textShadow: "0 2px 40px rgba(0,0,0,0.4)"
+      textShadow: "0 2px 40px rgba(11,10,9,0.4)"
     }
   }, "Die Menschen dahinter."), /*#__PURE__*/React.createElement("p", {
     style: {
@@ -10434,7 +10434,7 @@ function PageHero({
       margin: 0,
       font: "500 clamp(44px, 5.6vw, 96px)/1 var(--font-display)",
       letterSpacing: "-0.03em",
-      textShadow: "0 2px 40px rgba(0,0,0,0.4)",
+      textShadow: "0 2px 40px rgba(11,10,9,0.4)",
       maxWidth: 980
     }
   }, headline), sub && /*#__PURE__*/React.createElement("p", {
@@ -11156,7 +11156,7 @@ function StatFrame({
       justifyContent: "space-between",
       padding: "16px 16px 12px",
       color: "#FFFFFF",
-      textShadow: "0 1px 14px rgba(0,0,0,0.45)",
+      textShadow: "0 1px 14px rgba(11,10,9,0.45)",
       opacity: show ? 1 : 0,
       transition: `opacity 800ms var(--ease-unio) ${delay}ms`,
       ...style
@@ -12245,7 +12245,7 @@ function ImmoGalerie({
       left: 26,
       color: "var(--text-inverse)",
       fontSize: 10,
-      textShadow: "0 1px 10px rgba(0,0,0,0.5)"
+      textShadow: "0 1px 10px rgba(11,10,9,0.5)"
     }
   }, o.loc), /*#__PURE__*/React.createElement("span", {
     className: "u-label",
@@ -12255,7 +12255,7 @@ function ImmoGalerie({
       right: 26,
       color: "var(--text-inverse)",
       fontSize: 10,
-      textShadow: "0 1px 10px rgba(0,0,0,0.5)"
+      textShadow: "0 1px 10px rgba(11,10,9,0.5)"
     }
   }, o.live ? "LIVE VERMARKTET" : o.price), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -12273,7 +12273,7 @@ function ImmoGalerie({
       font: "500 clamp(26px, 3vw, 44px)/1.02 var(--font-display)",
       letterSpacing: "-0.03em",
       color: "var(--text-inverse)",
-      textShadow: "0 2px 30px rgba(0,0,0,0.4)"
+      textShadow: "0 2px 30px rgba(11,10,9,0.4)"
     }
   }, o.t), /*#__PURE__*/React.createElement("span", {
     style: {
@@ -12366,7 +12366,7 @@ function Galerie({
     className: "u-label",
     style: {
       color: "var(--text-inverse)",
-      textShadow: "0 1px 10px rgba(0,0,0,0.5)"
+      textShadow: "0 1px 10px rgba(11,10,9,0.5)"
     }
   }, String(idx + 1).padStart(2, "0"), " / ", String(GALERIE.length).padStart(2, "0"), ", ", GALERIE[idx].label), /*#__PURE__*/React.createElement(IconButton, {
     glyph: "\u2190",
@@ -12391,7 +12391,7 @@ function Galerie({
       margin: "12px 0 0",
       font: "500 clamp(44px, 5vw, 84px)/0.98 var(--font-display)",
       letterSpacing: "-0.03em",
-      textShadow: "0 2px 40px rgba(0,0,0,0.4)"
+      textShadow: "0 2px 40px rgba(11,10,9,0.4)"
     }
   }, "Refugium", /*#__PURE__*/React.createElement("br", null), "am Waldrand")));
 }
@@ -12509,7 +12509,7 @@ function Daten() {
       justifySelf: "end",
       maxWidth: 460,
       color: "var(--text-inverse)",
-      textShadow: "0 2px 30px rgba(0,0,0,0.35)"
+      textShadow: "0 2px 30px rgba(11,10,9,0.35)"
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
@@ -16709,7 +16709,7 @@ function HeroB({
       fontWeight: 700,
       fontSize: 18,
       letterSpacing: '-.01em',
-      textShadow: '0 2px 14px rgba(0,0,0,.4)'
+      textShadow: '0 2px 14px rgba(11,10,9,.4)'
     }
   }, "Penthouse, Wien")))));
 }
@@ -17788,7 +17788,7 @@ function ProofBand() {
       fontSize: 'clamp(24px,3vw,38px)',
       letterSpacing: '-.02em',
       lineHeight: 1.08,
-      textShadow: '0 2px 20px rgba(0,0,0,.4)'
+      textShadow: '0 2px 20px rgba(11,10,9,.4)'
     }
   }, "Premium-Projekte, datenbasiert zum Abverkauf gef\xFChrt.")), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -19053,7 +19053,7 @@ function HumanBand() {
       fontSize: 'clamp(28px,3.8vw,52px)',
       lineHeight: 1.04,
       marginTop: 14,
-      textShadow: '0 2px 24px rgba(0,0,0,.4)',
+      textShadow: '0 2px 24px rgba(11,10,9,.4)',
       color: '#fff'
     }
   }, "Daten als Beweis.", /*#__PURE__*/React.createElement("br", null), "Menschen als Herz."), /*#__PURE__*/React.createElement("p", {
@@ -19209,7 +19209,7 @@ function HeroI() {
       fontWeight: 700,
       fontSize: 20,
       letterSpacing: '-.01em',
-      textShadow: '0 2px 14px rgba(0,0,0,.4)'
+      textShadow: '0 2px 14px rgba(11,10,9,.4)'
     }
   }, "Das Albrecht, Townh\xE4user"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -19329,7 +19329,7 @@ function Featured() {
       fontWeight: 700,
       fontSize: 22,
       letterSpacing: '-.01em',
-      textShadow: '0 2px 14px rgba(0,0,0,.4)'
+      textShadow: '0 2px 14px rgba(11,10,9,.4)'
     }
   }, "Das Albrecht"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -19959,7 +19959,7 @@ function HeroM({
       fontWeight: 700,
       fontSize: 18,
       letterSpacing: '-.01em',
-      textShadow: '0 2px 14px rgba(0,0,0,.4)'
+      textShadow: '0 2px 14px rgba(11,10,9,.4)'
     }
   }, "Unternehmer. Nicht Einzelk\xE4mpfer.")))));
 }
@@ -21537,7 +21537,7 @@ function ViennaBand() {
       fontSize: 'clamp(26px,3.4vw,46px)',
       lineHeight: 1.06,
       marginTop: 14,
-      textShadow: '0 2px 22px rgba(0,0,0,.4)'
+      textShadow: '0 2px 22px rgba(11,10,9,.4)'
     }
   }, "Gebaut f\xFCr den Wiener Wohnbau."), /*#__PURE__*/React.createElement("p", {
     style: {

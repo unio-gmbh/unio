@@ -13,7 +13,7 @@
 
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script src="/assets/js2/_ds_bundle.js?v=mwtepvt9"></script>
+<script src="/assets/js2/_ds_bundle.js?v=mwtf5uxq"></script>
 <style>html { scroll-behavior: auto; } body { background: var(--paper); }</style>
 <meta name="description" content="Vorlagen für die Abstimmung: Elemente der UNIO Website in mehreren Varianten.">
 <meta name="robots" content="noindex, follow">
@@ -42,6 +42,13 @@
 .u-ziel{position:relative;}
 .u-ziel-rund::after{content:"";position:absolute;inset:-4px;border-radius:999px;}
 .leaflet-bar a{width:44px !important;height:44px !important;line-height:44px !important;}
+:where(p, li, figcaption){text-wrap:pretty;}
+:where(h1, h2, h3, h4){text-wrap:balance;}
+.u-label{font-variant-numeric:tabular-nums;}
+.u-kacheln{filter:grayscale(1) sepia(0.14) brightness(1.05) contrast(0.88);}
+input.u-suchfeld:focus-visible{outline:none !important;}
+.leaflet-top.leaflet-left .leaflet-control-zoom{margin-top:52px !important;}
+div:has(> .u-suchfeld:focus-visible){box-shadow:0 0 0 2px var(--signal), var(--shadow-float) !important;}
 @keyframes uWackeln{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 [role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
 @media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
@@ -49,8 +56,8 @@
 </head>
 <body>
 <div id="root"><style>@keyframes uBoot{from{opacity:.3}to{opacity:.9}}</style><div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#F7F5F1;"><img src="/assets/logo/unio-logo-black.svg" alt="UNIO wird geladen" style="height:22px;animation:uBoot 1.4s ease-in-out infinite alternate"></div></div>
-<script src="/assets/js2/site-shared.js?v=mwtepvt9"></script>
-<script src="/assets/js2/hero-neu.js?v=mwtepvt9"></script>
-<script src="/assets/js2/page-vorlagen.js?v=mwtepvt9"></script>
+<script src="/assets/js2/site-shared.js?v=mwtf5uxq"></script>
+<script src="/assets/js2/hero-neu.js?v=mwtf5uxq"></script>
+<script src="/assets/js2/page-vorlagen.js?v=mwtf5uxq"></script>
 </body>
 </html>

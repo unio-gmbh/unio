@@ -169,6 +169,8 @@ const SYMBOL_STIL = `<style>
    Fitts und groessere Klickflaechen: Links in Navigation und Fuss sowie alle Knoepfe bekommen eine unsichtbare Flaeche
    rund um sich (Ziel mindestens 44 Pixel), sichtbar bleibt alles gleich.
    Exaggerated feedback: Fehlermeldungen (role=alert) erscheinen mit einem kurzen Ruetteln.
+   Aus den Reels vom 23.11.2026: keine einzelnen Woerter am Absatzende (text-wrap pretty) und ausgeglichene Ueberschriften
+   (balance), gleich breite Ziffern in Etiketten (Outfit kann das, Power Grotesk nicht).
    Nur fuer die Seiten der Homepage, nicht fuer die UX-Vorschauen (die haben eigene Zusatz-Ebenen). */
 const BEWEGUNG_STIL = `<style>
 :root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
@@ -178,6 +180,13 @@ const BEWEGUNG_STIL = `<style>
 .u-ziel{position:relative;}
 .u-ziel-rund::after{content:"";position:absolute;inset:-4px;border-radius:999px;}
 .leaflet-bar a{width:44px !important;height:44px !important;line-height:44px !important;}
+:where(p, li, figcaption){text-wrap:pretty;}
+:where(h1, h2, h3, h4){text-wrap:balance;}
+.u-label{font-variant-numeric:tabular-nums;}
+.u-kacheln{filter:grayscale(1) sepia(0.14) brightness(1.05) contrast(0.88);}
+input.u-suchfeld:focus-visible{outline:none !important;}
+.leaflet-top.leaflet-left .leaflet-control-zoom{margin-top:52px !important;}
+div:has(> .u-suchfeld:focus-visible){box-shadow:0 0 0 2px var(--signal), var(--shadow-float) !important;}
 @keyframes uWackeln{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 [role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
 @media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
@@ -261,7 +270,8 @@ async function main() {
     writeFileSync(join(DIST, "assets", "js", f.replace(".jsx", ".js")), "(()=>{" + rewriteUrls(out.code) + "})();");
     /* Variante 2: eigener Satz Skripte, interne Links zeigen auf die 2er-Adressen */
     mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + ohneStriche(aufRaster(einRand(rewriteUrls(out.code, true), f))) + "})();");
+    /* Variante 2, Tinted neutral: Schatten und Verlaeufe aus reinem Schwarz nehmen den warmen Tintenton der Marke an */
+    writeFileSync(join(DIST, "assets", "js2", f.replace(".jsx", ".js")), "(()=>{" + ohneStriche(aufRaster(einRand(rewriteUrls(out.code, true), f))).replace(/rgba\(0,\s?0,\s?0,/g, "rgba(11,10,9,") + "})();");
   }
   console.log("✓ JSX precompiled:", JSX_FILES.length, "Dateien");
 
@@ -272,7 +282,7 @@ async function main() {
   cpSync(join(ROOT, "_ds_bundle.js"), join(DIST, "assets", "js", "_ds_bundle.js"));
   mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
   /* Variante 2: Knopf gibt beim Druecken deutlicher nach (0,96 statt 0,985), Prinzip Anticipation und Squash */
-  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")).replaceAll('press ? "scale(0.985)"', 'press ? "scale(0.96)"'));
+  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")).replaceAll('press ? "scale(0.985)"', 'press ? "scale(0.96)"').replace(/rgba\(0,\s?0,\s?0,/g, "rgba(11,10,9,"));
   console.log("✓ Assets kopiert");
 
   /* 3) HTML-Seiten transformieren */

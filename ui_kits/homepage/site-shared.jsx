@@ -456,7 +456,7 @@ function PropCard({ o, hov, onHov }) {
       onMouseEnter={onHov} onMouseLeave={() => onHov && onHov(false)}
       style={{ position: "relative", background: "var(--surface-raised)", borderRadius: "var(--r-card)", padding: 8, boxShadow: hov ? "inset 0 0 0 1px var(--hairline-dark), var(--shadow-soft)" : "inset 0 0 0 1px var(--hairline-dark)", transform: hov ? "translateY(-4px)" : "none", transition: "all var(--dur-fast) var(--ease-unio)" }}>
       <a href={PROJEKT_URL} style={{ textDecoration: "none", display: "block" }}>
-        <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden" }}>
+        <div style={{ position: "relative", borderRadius: "calc(var(--r-card) - 8px)", overflow: "hidden", background: IST_V2 ? "var(--paper-2)" : undefined, minHeight: IST_V2 ? 210 : undefined }}>
           <img src={o.img} alt={o.t} loading="lazy" style={{ display: "block", width: "100%", height: 210, objectFit: "cover", transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform var(--dur-slow) var(--ease-unio)" }} />
           {pr && (
             <span className="u-label" style={{ position: "absolute", left: 12, top: 12, fontSize: 10, padding: "7px 12px", borderRadius: 8, background: "var(--ink)", color: "var(--paper)" }}>Projekt</span>

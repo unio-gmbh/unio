@@ -16,8 +16,12 @@ function MapPanel({ items, activeIdx, onPick }) {
   React.useEffect(() => {
     if (!window.L || !divRef.current || mapRef.current) return;
     const map = window.L.map(divRef.current, { scrollWheelZoom: false, zoomControl: true });
-    window.L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
+    /* Variante 2: CARTO verlangt seit November 2026 einen Schluessel und liefert sonst nur "API key required".
+       Vorschau daher mit OpenStreetMap, warm-grau getoent ueber die Klasse u-kacheln. Fuer den Betrieb einen Anbieter
+       mit Schluessel nehmen (CARTO, MapTiler oder Stadia). */
+    window.L.tileLayer(window.IST_V2 ? "https://tile.openstreetmap.org/{z}/{x}/{y}.png" : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      className: window.IST_V2 ? "u-kacheln" : "",
+      attribution: window.IST_V2 ? '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>' : '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
       maxZoom: 19,
     }).addTo(map);
     layerRef.current = window.L.layerGroup().addTo(map);
@@ -52,6 +56,10 @@ function SucheIm() {
   const [hov, setHov] = React.useState(-1);
   const [showMap, setShowMap] = React.useState(false);
   const suchFeld = React.useRef(null);
+  /* Variante 2, Object constancy (Reel "age picker"): beim Filtern gleiten Karten an ihren neuen Platz statt zu springen,
+     neue Karten blenden kurz auf. 260 ms, Abbrems-Kurve, bei reduzierter Bewegung gar nicht. */
+  const listeRef = React.useRef(null);
+  const altePos = React.useRef({});
   const zuTreffern = () => { if (suchFeld.current) suchFeld.current.blur(); const el = document.getElementById("objekt-0") || document.getElementById("treffer-leer"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); };
   const typen = ["Alle", "Penthouse", "Haus", "Wohnung", "Neubau"];
   const priceVal = (o) => { const m = (o.price || "").match(/([\d.,]+)\s*Mio/); if (m) return parseFloat(m[1].replace(".", "").replace(",", ".")) * 1e6; const n = (o.price || "").replace(/[^\d]/g, ""); return n ? +n : null; };
@@ -73,6 +81,18 @@ function SucheIm() {
     if (preis !== "Alle") { const v = priceVal(o); if (v == null) return false; if (preis === "bis 1 Mio" && v > 1e6) return false; if (preis === "1–2 Mio" && (v < 1e6 || v > 2e6)) return false; if (preis === "ab 2 Mio" && v < 2e6) return false; }
     return true;
   });
+  React.useLayoutEffect(() => {
+    const box = listeRef.current; if (!box || !window.IST_V2) return;
+    const b0 = box.getBoundingClientRect(); const neu = {}; const hatteAlte = Object.keys(altePos.current).length > 0;
+    box.querySelectorAll("[data-flip]").forEach((el) => {
+      const r = el.getBoundingClientRect(); const k = el.getAttribute("data-flip"); neu[k] = [r.left - b0.left, r.top - b0.top];
+      if (window.U_RM || !el.animate) return;
+      const a = altePos.current[k];
+      if (a) { const dx = a[0] - neu[k][0], dy = a[1] - neu[k][1]; if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], { duration: 260, easing: "cubic-bezier(0.32, 0.72, 0, 1)" }); }
+      else if (hatteAlte) el.animate([{ opacity: 0, transform: "scale(0.97)" }, { opacity: 1, transform: "none" }], { duration: 200, easing: "cubic-bezier(0.32, 0.72, 0, 1)" });
+    });
+    altePos.current = neu;
+  }, [treffer.map((o) => o.t).join("|")]);
   const selStyle = { appearance: "none", WebkitAppearance: "none", font: "500 14px var(--font-display)", padding: window.IST_V2 ? "14px 34px 14px 16px" : "11px 34px 11px 16px", borderRadius: "var(--r-pill)", border: "none", cursor: "pointer", background: "var(--surface-raised)", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", outline: "none" };
   const wrapSel = (val, set, opts, label) => (
     <span style={{ position: "relative", display: "inline-flex" }}>
@@ -91,7 +111,7 @@ function SucheIm() {
           kennt (Jakob's law), statt in die App zu springen. Enter tut dasselbe. Der Weg in die App steht unter der Liste. */}
       <div onClick={() => { if (window.IST_V2 && suchFeld.current) suchFeld.current.focus(); }} style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", cursor: window.IST_V2 ? "text" : "auto" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
-        <input ref={suchFeld} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (window.IST_V2 && e.key === "Enter") zuTreffern(); }} placeholder="Bezirk, Projekt oder Objektart" aria-label="Immobilien durchsuchen"
+        <input ref={suchFeld} className="u-suchfeld" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (window.IST_V2 && e.key === "Enter") zuTreffern(); }} placeholder="Bezirk, Projekt oder Objektart" aria-label="Immobilien durchsuchen"
           style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)", padding: window.IST_V2 ? "12px 0" : 0 }} />
         {window.IST_V2
           ? <Bi variant="signal" knob onClick={(e) => { e.stopPropagation(); zuTreffern(); }}>Suchen</Bi>
@@ -114,12 +134,12 @@ function SucheIm() {
         </div>
       )}
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (window.IST_V2 ? `${window.spalten(7)} minmax(0, 1fr)` : "minmax(0, 1.08fr) minmax(0, 0.92fr)"), gap: window.IST_V2 ? 24 : 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
-        <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: window.IST_V2 ? 24 : 20 }}>
+        <div ref={listeRef} style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: window.IST_V2 ? 24 : 20 }}>
           {treffer.map((o, i) => {
             /* Variante 2, Frequency of use: die Trefferliste wird staendig benutzt und neu gefiltert, deshalb erscheinen
                die Karten ohne Einblenden. */
             const karte = window.IST_V2 ? (
-              <div key={o.t} id={"objekt-" + i}>
+              <div key={o.t} id={"objekt-" + i} data-flip={o.t}>
                 <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
               </div>
             ) : (
@@ -141,9 +161,21 @@ function SucheIm() {
             );
           })}
           {treffer.length === 0 && (
+            window.IST_V2 ? (
+            /* Variante 2, Empty state (Reel "design terms"): sagt, was passiert ist, und bietet zwei Wege weiter */
+            <div id="treffer-leer" style={{ gridColumn: mob ? "auto" : "span 2", padding: mob ? "28px 24px" : "40px 40px", borderRadius: "var(--r-card)", background: "var(--surface-raised)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)" }}>
+              <div style={{ font: "500 24px/1.15 var(--font-display)", letterSpacing: "-0.02em", color: "var(--ink)" }}>Kein Objekt passt zu dieser Suche.</div>
+              <p style={{ margin: "10px 0 22px", maxWidth: 460, font: "400 16px/1.6 var(--font-display)", color: "var(--text-muted)" }}>Lockere einen Filter oder beschreib uns, was du suchst. Ein Makler aus dem CIRCLE meldet sich, sobald es passt.</p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <Bi variant="signal" knob onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }}>Alle Objekte zeigen</Bi>
+                <Bi variant="ghost" onClick={() => location.assign("kontakt.html")}>Suche beschreiben</Bi>
+              </div>
+            </div>
+            ) : (
             <div id="treffer-leer" style={{ gridColumn: mob ? "auto" : "span 2", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
               Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
             </div>
+            )
           )}
         </div>
         {(!mob || showMap) && window.L && (

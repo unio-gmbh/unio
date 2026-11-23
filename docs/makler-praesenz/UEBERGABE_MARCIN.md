@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 23.11.2026, Version 17 (zusätzlich: Bewegung und Bedienung nach den 20 UX-Prinzipien, ruhigere Startscreen-Filme in Variante 3) |
+| Stand dieses Dokuments | 23.11.2026, Version 17a (zusätzlich: Prinzipien aus vier weiteren Reels, Karte wieder sichtbar) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -204,6 +204,23 @@ Status: umgesetzt in Variante 2 und 3 · Grundlage: Video von Daniel vom 23.11.2
 Technik: Stilblock `BEWEGUNG_STIL` in `build/build.mjs`, nur für die Homepage-Seiten der Varianten 2 und 3. Tolerante Suche in `page-immobilien.jsx` (`norm`, `flach`, `passt`). Für die Plattform: dieselben Dauern als Token, Klickflächen über Pseudo-Elemente oder Padding, dieselbe Normalisierung in der Suche von `/listing`.
 
 **Ruhigere Startscreen-Filme in Variante 3.** Die schnellen Filme wirkten im Startscreen hektisch. Neu: `leb-fruehling-langsam`, `leb-herbst-langsam`, `leb-cafe-langsam` (gleiche Szene und gleicher Stil, 7,2 Sekunden Schleife statt 4,4, nur zwei bis drei Passanten im Schritttempo). Gemessene Bildunruhe: ein Viertel bis ein Fünftel der schnellen Fassung. Variante 3 zeigt sie in den Startscreens voreingestellt ("Ruhiger"), die schnelle Fassung bleibt über den Umschalter ("Schnell", `?hero=schnell`) erreichbar. Störer und übrige Elemente zeigen weiter die schnelle Fassung.
+
+**Ergänzung aus vier weiteren Reels (Version 17a, 23.11.2026).** Daniel hat vier Reels desselben Autors nachgereicht. Ausgewertet wurden die Beschreibungen: "Design terms" (Dfh24cUh4KF) und "Age picker" (DfPruJSxggG) vollständig, "Unslop" (DfcssAvBG7L) enthält nur einen Satz ohne Inhalt, das vierte Reel (DfSbDWhR2bi) war von Instagram gesperrt. Die Videos selbst konnten nicht geladen werden.
+
+| Prinzip | Umsetzung in Variante 2 und 3 |
+|---|---|
+| Orphan (einzelnes Wort oder Zeile am Absatzende) | Absätze mit `text-wrap: pretty`, Überschriften mit `text-wrap: balance` |
+| Tinted neutral | Palette war schon warm getönt. Schatten und Verläufe aus reinem Schwarz (`rgba(0,0,0,…)`, 33 Stellen in Seiten und Designsystem) nehmen im Bau-Schritt den Tintenton `rgba(11,10,9,…)` an. Die Karte ist warm-grau getönt (`.u-kacheln`) |
+| Skeleton screen | Bildfläche der Objektkarte zeigt beim Laden eine warme Fläche (`--paper-2`) in voller Höhe, nichts springt. Filme hatten schon ein Standbild |
+| Ease-out für Eintretendes | war schon so (`--ease-unio`), neue Bewegungen nutzen dieselbe Kurve |
+| Empty state | Suche ohne Treffer: eigene Fläche "Kein Objekt passt zu dieser Suche." mit "Alle Objekte zeigen" und "Suche beschreiben" statt einer grauen Textzeile |
+| Object constancy, nur das Geänderte bewegen | Beim Filtern gleiten die verbleibenden Karten an ihren neuen Platz (260 ms), neue blenden kurz auf (200 ms), der Rest bleibt stehen. Umsetzung als FLIP mit `element.animate` in `page-immobilien.jsx` |
+| Tabular figures | Etiketten (Outfit) mit gleich breiten Ziffern, damit "11 von 11 Objekten" beim Filtern nicht wackelt. Power Grotesk hat keine gleich breiten Ziffern, die großen Zahlen bleiben proportional |
+| Visual cues, Fitts | siehe oben: Hover-Zustände an Karten und Kreisen bestehen, Klickflächen vergrößert, der Fokusrahmen liegt um die ganze Suchleiste |
+| Von Restorff (eine Akzentfarbe) | Orange bleibt Handlungen vorbehalten. Hinweis: die orange Störer-Karte in der Suche war Daniels Wunsch und ist bewusst die einzige Ausnahme |
+| Snapping, Inertia, Natural mapping | Reihen zum Schieben rasten ein, Pfeile zeigen in Bewegungsrichtung, keine Änderung |
+
+**Karte.** CARTO liefert seit November 2026 ohne Schlüssel nur noch "API key required". Variante 2 und 3 nutzen deshalb für die Vorschau OpenStreetMap, warm-grau getönt. Variante 1 hat das Problem weiterhin. Für den Betrieb einen Kartenanbieter mit Schlüssel nehmen (CARTO, MapTiler oder Stadia), die OSM-Kacheln sind nur für geringe Last gedacht.
 
 ### MP-29 Schriften: nur Marken-Schriften, eigene Symbol-Schrift (Version 16)
 
@@ -564,3 +581,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 22.11.2026 | 15b | Bauträger, Abschnitt "Projekte planbar und erfolgreich machen." (System): senkrechte Linien im Hintergrund entfernt, in Variante 2 und 3. |
 | 22.11.2026 | 16 | Schriften geprüft: keine Claude- oder Anthropic-Schriften. Symbole, die Power Grotesk und Outfit fehlen, kommen in Variante 2 und 3 aus der eigenen Schrift "UNIO Symbole" statt aus der Systemschrift. Knöpfe und Kartensteuerung nutzen die Marken-Schrift (MP-29). |
 | 23.11.2026 | 17 | Bewegung und Bedienung nach "20 Principles of UX & Animation": kürzere Reaktionszeiten, größere Klickflächen, Rütteln bei Fehlern, tolerante Suche, Suchknopf sucht (MP-30). Variante 3: ruhigere Startscreen-Filme, schnelle Fassung umschaltbar. |
+| 23.11.2026 | 17a | Prinzipien aus vier weiteren Reels: ausgeglichene Zeilen, getönte Schatten, Platzhalter beim Laden, leerer Zustand der Suche, Karten gleiten beim Filtern, gleich breite Ziffern. Karte in Variante 2 und 3 auf OpenStreetMap, weil CARTO einen Schlüssel verlangt. |

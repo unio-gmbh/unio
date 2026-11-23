@@ -391,6 +391,13 @@
 .u-ziel{position:relative;}
 .u-ziel-rund::after{content:"";position:absolute;inset:-4px;border-radius:999px;}
 .leaflet-bar a{width:44px !important;height:44px !important;line-height:44px !important;}
+:where(p, li, figcaption){text-wrap:pretty;}
+:where(h1, h2, h3, h4){text-wrap:balance;}
+.u-label{font-variant-numeric:tabular-nums;}
+.u-kacheln{filter:grayscale(1) sepia(0.14) brightness(1.05) contrast(0.88);}
+input.u-suchfeld:focus-visible{outline:none !important;}
+.leaflet-top.leaflet-left .leaflet-control-zoom{margin-top:52px !important;}
+div:has(> .u-suchfeld:focus-visible){box-shadow:0 0 0 2px var(--signal), var(--shadow-float) !important;}
 @keyframes uWackeln{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 [role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
 @media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
