@@ -172,7 +172,7 @@ function SiteNav({ active, cta }) {
             boxShadow: "0 8px 30px rgba(20,18,16,.1), inset 0 1px 0 rgba(255,255,255,.6)",
             transition: "border-radius .55s var(--ease-unio)",
           }}>
-            <a href="index.html" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+            <a href="index.html" className="u-ziel" aria-label="UNIO Startseite" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
               <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 16, width: "auto", display: "block" }} />
             </a>
             <button aria-label={open ? "Menü schließen" : "Menü öffnen"} aria-expanded={open} onClick={() => setOpen((o) => !o)} style={{
@@ -206,7 +206,7 @@ function SiteNav({ active, cta }) {
         transition: "background .65s var(--ease-unio), border-color .65s var(--ease-unio), padding .65s var(--ease-unio), max-width .65s var(--ease-unio), box-shadow .65s var(--ease-unio), border-radius .65s var(--ease-unio)",
       }}>
         <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
-          <a href="index.html" style={{ display: "flex", alignItems: "center", flex: "0 0 auto", textDecoration: "none" }}>
+          <a href="index.html" className="u-ziel" aria-label="UNIO Startseite" style={{ display: "flex", alignItems: "center", flex: "0 0 auto", textDecoration: "none" }}>
             <img src="../../assets/logo/unio-logo-black.svg" alt="UNIO" style={{ height: 18, width: "auto", display: "block" }} />
           </a>
         </div>
@@ -347,7 +347,7 @@ function MaklerMarke({ m, oben = 20, rechts = 20 }) {
   const st = { position: "absolute", top: oben, right: rechts, zIndex: 3, display: "flex", flexDirection: "row-reverse", alignItems: "center", textDecoration: "none", borderRadius: 999 };
   const ev = { onMouseEnter: () => setH(true), onMouseLeave: () => setH(false), onFocus: () => setH(true), onBlur: () => setH(false) };
   return m.url
-    ? <a href={m.url} aria-label={m.name + ", betreut dieses Objekt. Profil ansehen"} style={st} {...ev}>{inhalt}</a>
+    ? <a href={m.url} className="u-ziel-rund" aria-label={m.name + ", betreut dieses Objekt. Profil ansehen"} style={st} {...ev}>{inhalt}</a>
     : <span title={m.name} style={st} {...ev}>{inhalt}</span>;
 }
 
@@ -419,7 +419,7 @@ function CircleGesichter({ fuer = "suchende" }) {
               {makler
                 ? <Button variant="signal" knob onClick={() => (location.hash = "bewerben")}>Platz im CIRCLE anfragen</Button>
                 : <Button variant="solid" knob onClick={() => location.assign("makler.html")}>CIRCLE entdecken</Button>}
-              <a href="partner.html" style={{ font: "500 14.5px var(--font-display)", color: "var(--ink)", textDecoration: "underline", textDecorationColor: "rgba(11,10,9,0.25)", textUnderlineOffset: 4 }}>Alle Partner ansehen</a>
+              <a href="partner.html" className="u-ziel" style={{ font: "500 14.5px var(--font-display)", color: "var(--ink)", textDecoration: "underline", textDecorationColor: "rgba(11,10,9,0.25)", textUnderlineOffset: 4 }}>Alle Partner ansehen</a>
             </div>
           </div>
         </div>
@@ -876,9 +876,10 @@ function FaqBlock({ nr = "10", label = "Fragen", title, subline, items = [], anc
    von leb-<name>.mp4). wann: "sicht" (laeuft, solange sichtbar), "hover" (laeuft nur bei an=true), "nie".
    Namen: fruehling, herbst, cafe, dazu je eine Fassung im Stil der Makler-Filme: fruehling-circle, herbst-circle, cafe-circle. */
 const LEB_ALT = { fruehling: "Straßenansicht mit Altbau und ausgebautem Dach", herbst: "Straßenansicht im Herbst mit Neubau und Altbau", cafe: "Eckhaus mit Café im Erdgeschoss" };
-function LebBild({ bild: wunsch, wann = "sicht", an, pos, stil, genau }) {
-  /* Variante 3 (window.UNIO_FILM === "circle") zeigt ueberall die schnellere Fassung. genau: Name unveraendert nehmen. */
-  const bild = !genau && window.UNIO_FILM === "circle" && !/-circle$/.test(wunsch) ? wunsch + "-circle" : wunsch;
+function LebBild({ bild: wunsch, wann = "sicht", an, pos, stil, genau, langsam }) {
+  /* Variante 3 (window.UNIO_FILM === "circle") zeigt die Fassung im Stil der Makler-Filme. langsam: die ruhigere
+     8-Sekunden-Fassung derselben Szene (fuer Startscreens, Rueckmeldung Daniel 23.11.2026). genau: Name unveraendert. */
+  const bild = !genau && window.UNIO_FILM === "circle" && !/-(circle|langsam)$/.test(wunsch) ? wunsch + (langsam ? "-langsam" : "-circle") : wunsch;
   const ruhig = U_RM;
   const ref = React.useRef(null);
   const vid = React.useRef(null);
@@ -951,7 +952,7 @@ function HeroFilm({ bild, zeilen, marke, text, knoepfe = [], unten, klein, fest 
   return (
     <section id="top" data-screen-label="Hero" style={{ position: fest && !mob && !U_RM ? "sticky" : "relative", top: 0, zIndex: 0, background: "var(--paper)", padding: mob ? "82px 14px 0" : `98px 40px ${unten || "0"}` }}>
       <div style={{ position: "relative", height: mob ? "min(78svh, 620px)" : "calc(100svh - 120px)", minHeight: mob ? 480 : 520, borderRadius: mob ? 18 : 22, overflow: "hidden", background: "var(--ink)" }}>
-        <LebBild bild={bild} stil={{ position: "absolute", inset: 0 }} />
+        <LebBild bild={bild} langsam={!/[?&]hero=schnell(&|$)/.test(location.search)} stil={{ position: "absolute", inset: 0 }} />
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(11,10,9,0.3), rgba(11,10,9,0.04) 30%, rgba(11,10,9,0.5) 68%, rgba(11,10,9,0.82))" }}></div>
         <div style={{ position: "absolute", left: mob ? 22 : "calc(6vw - 40px)", right: mob ? 22 : "calc(6vw - 40px)", bottom: mob ? 26 : "clamp(36px, 6vh, 64px)", display: "grid", gridTemplateColumns: mob ? "1fr" : `${spalten(7)} minmax(0, 1fr)`, gap: 24, alignItems: "end" }}>
           <h1 style={{ margin: 0, font: `500 ${mob ? (klein ? "clamp(30px, 8.4vw, 42px)" : "clamp(36px, 10.5vw, 54px)") : (klein ? "clamp(38px, 4.3vw, 78px)" : "clamp(48px, 6vw, 108px)")}/${klein ? 1.02 : 0.96} var(--font-display)`, letterSpacing: "-0.04em", color: "var(--text-inverse)" }}>
@@ -972,8 +973,11 @@ function HeroFilm({ bild, zeilen, marke, text, knoepfe = [], unten, klein, fest 
 /* Umschalter unten links: Film oder bisheriger Hero. Adresse: ?hero=film | alt.
    Welche Film-Fassung laeuft, bestimmt die Variante: /…2 ruhig, /…3 schneller im Stil der Makler-Filme. */
 function HeroSchalter({ alt, film }) {
-  const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] === "alt" ? "alt" : "film";
-  const liste = [["film", "Film", "Startscreen mit Film"], ["alt", "Bisher", "Bisheriger Hero"]];
+  const w = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1];
+  const drei = window.UNIO_FILM === "circle";
+  const m = w === "alt" ? "alt" : drei && w === "schnell" ? "schnell" : "film";
+  /* Variante 3: ruhigere Fassung voreingestellt, die schnelle bleibt zum Vergleich */
+  const liste = drei ? [["film", "Ruhiger", "Film, ruhigere Fassung"], ["schnell", "Schnell", "Film, schnelle Fassung"], ["alt", "Bisher", "Bisheriger Hero"]] : [["film", "Film", "Startscreen mit Film"], ["alt", "Bisher", "Bisheriger Hero"]];
   return (
     <React.Fragment>
       {m === "alt" ? alt : film("")}

@@ -51,16 +51,29 @@ function SucheIm() {
   const [preis, setPreis] = React.useState("Alle");
   const [hov, setHov] = React.useState(-1);
   const [showMap, setShowMap] = React.useState(false);
+  const suchFeld = React.useRef(null);
+  const zuTreffern = () => { if (suchFeld.current) suchFeld.current.blur(); const el = document.getElementById("objekt-0") || document.getElementById("treffer-leer"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); };
   const typen = ["Alle", "Penthouse", "Haus", "Wohnung", "Neubau"];
   const priceVal = (o) => { const m = (o.price || "").match(/([\d.,]+)\s*Mio/); if (m) return parseFloat(m[1].replace(".", "").replace(",", ".")) * 1e6; const n = (o.price || "").replace(/[^\d]/g, ""); return n ? +n : null; };
+  /* Variante 2, Postel's law: tolerante Suche. Gross und klein, Umlaute (ae, oe, ue, ss), Satzzeichen und Reihenfolge
+     der Woerter sind egal: "Penthaus 1170", "Doebling" oder "hernals, terrasse" finden ihr Objekt. */
+  const norm = (t) => (t || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, " ").trim();
+  const passt = (o) => {
+    if (!window.IST_V2) return (o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase());
+    /* zweite Schreibweise ohne Umlaut-Ersatz (ä wird a), damit auch "Gärten" das Garten-Refugium findet */
+    const flach = (t) => norm((t || "").replace(/[äöü]/gi, (c) => ({ ä: "a", ö: "o", ü: "u", Ä: "a", Ö: "o", Ü: "u" })[c]));
+    const heu = norm(o.q + " " + o.t + " " + o.adr) + " " + flach(o.q + " " + o.t + " " + o.adr);
+    const woerter = flach(q).split(" ").map((w, k) => [w, norm(q).split(" ")[k]]).filter(([w]) => w);
+    return woerter.every(([w, w2]) => [w, w2].some((x) => x && (heu.includes(x) || (x.length > 4 && heu.includes(x.slice(0, -2))))));
+  };
   const treffer = OBJEKT_DB.filter((o) => {
-    if (q.trim() && !(o.q + " " + o.t + " " + o.adr).toLowerCase().includes(q.trim().toLowerCase())) return false;
+    if (q.trim() && !passt(o)) return false;
     if (typ !== "Alle" && !((o.tags || []).join(" ") + " " + o.q).toLowerCase().includes(typ.toLowerCase())) return false;
     if (bezirk !== "Alle" && !(o.adr || "").includes(bezirk.replace("Wien ", ""))) return false;
     if (preis !== "Alle") { const v = priceVal(o); if (v == null) return false; if (preis === "bis 1 Mio" && v > 1e6) return false; if (preis === "1–2 Mio" && (v < 1e6 || v > 2e6)) return false; if (preis === "ab 2 Mio" && v < 2e6) return false; }
     return true;
   });
-  const selStyle = { appearance: "none", WebkitAppearance: "none", font: "500 14px var(--font-display)", padding: "11px 34px 11px 16px", borderRadius: "var(--r-pill)", border: "none", cursor: "pointer", background: "var(--surface-raised)", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", outline: "none" };
+  const selStyle = { appearance: "none", WebkitAppearance: "none", font: "500 14px var(--font-display)", padding: window.IST_V2 ? "14px 34px 14px 16px" : "11px 34px 11px 16px", borderRadius: "var(--r-pill)", border: "none", cursor: "pointer", background: "var(--surface-raised)", color: "var(--ink-2)", boxShadow: "inset 0 0 0 1px var(--hairline-dark)", outline: "none" };
   const wrapSel = (val, set, opts, label) => (
     <span style={{ position: "relative", display: "inline-flex" }}>
       <select value={val} onChange={(e) => set(e.target.value)} style={selStyle}>
@@ -74,11 +87,15 @@ function SucheIm() {
     <section id="suche" className="u-grain" style={{ background: "var(--paper)", padding: mob ? (window.IST_V2 ? "120px 6vw 110px" : "100px 6vw 110px") : (window.IST_V2 ? "150px 6vw 140px" : "175px 6vw 175px") }}>
       <Chapter title={<span>{window.IST_V2 ? "Immobilien." : "Ich suche."}</span>} copy="Jedes Objekt hier wird von einem Menschen betreut und mit Live-Daten vermarktet. Du siehst, was dahintersteckt, bevor du anfragst." style={{ marginBottom: mob ? 40 : 72 }} />
       {/* Suchfeld */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)" }}>
+      {/* Variante 2: die ganze Pille ist Klickflaeche fuer das Feld (Fitts). Der Knopf im Suchfeld sucht, wie man es
+          kennt (Jakob's law), statt in die App zu springen. Enter tut dasselbe. Der Weg in die App steht unter der Liste. */}
+      <div onClick={() => { if (window.IST_V2 && suchFeld.current) suchFeld.current.focus(); }} style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 720, background: "var(--surface-raised)", borderRadius: "var(--r-pill)", padding: "8px 8px 8px 24px", boxShadow: "inset 0 0 0 1px var(--hairline-dark), var(--shadow-float)", cursor: window.IST_V2 ? "text" : "auto" }}>
         <span aria-hidden="true" style={{ font: "15px var(--font-mono)", color: "var(--text-muted)" }}>→</span>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Bezirk, Projekt oder Objektart"
-          style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)" }} />
-        <Bi variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL, "_blank")}>Zur App</Bi>
+        <input ref={suchFeld} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (window.IST_V2 && e.key === "Enter") zuTreffern(); }} placeholder="Bezirk, Projekt oder Objektart" aria-label="Immobilien durchsuchen"
+          style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "none", font: "400 16px var(--font-display)", color: "var(--ink-2)", padding: window.IST_V2 ? "12px 0" : 0 }} />
+        {window.IST_V2
+          ? <Bi variant="signal" knob onClick={(e) => { e.stopPropagation(); zuTreffern(); }}>Suchen</Bi>
+          : <Bi variant="signal" knob onClick={() => window.open(window.UNIO_SEARCH_URL, "_blank")}>Zur App</Bi>}
       </div>
       {/* Filterleiste */}
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18, alignItems: "center" }}>
@@ -99,7 +116,13 @@ function SucheIm() {
       <div style={{ display: "grid", gridTemplateColumns: mob ? "1fr" : (window.IST_V2 ? `${window.spalten(7)} minmax(0, 1fr)` : "minmax(0, 1.08fr) minmax(0, 0.92fr)"), gap: window.IST_V2 ? 24 : 20, marginTop: mob ? 16 : 28, alignItems: "start" }}>
         <div style={{ order: mob ? 2 : 1, display: "grid", gridTemplateColumns: mob ? "1fr" : "repeat(2, 1fr)", gap: window.IST_V2 ? 24 : 20 }}>
           {treffer.map((o, i) => {
-            const karte = (
+            /* Variante 2, Frequency of use: die Trefferliste wird staendig benutzt und neu gefiltert, deshalb erscheinen
+               die Karten ohne Einblenden. */
+            const karte = window.IST_V2 ? (
+              <div key={o.t} id={"objekt-" + i}>
+                <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
+              </div>
+            ) : (
               <Reveal key={o.t} delay={(i % 2) * 70}>
                 <div id={"objekt-" + i}>
                   <PropCard o={o} hov={hov === i} onHov={(v) => setHov(v === false ? -1 : i)} />
@@ -118,7 +141,7 @@ function SucheIm() {
             );
           })}
           {treffer.length === 0 && (
-            <div style={{ gridColumn: mob ? "auto" : "span 2", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
+            <div id="treffer-leer" style={{ gridColumn: mob ? "auto" : "span 2", padding: "48px 0", textAlign: "center", color: "var(--text-muted)", font: "400 16px var(--font-display)" }}>
               Kein Treffer mit diesen Filtern — <button onClick={() => { setQ(""); setTyp("Alle"); setBezirk("Alle"); setPreis("Alle"); }} style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", color: "var(--signal-deep)", textDecoration: "underline" }}>Filter zurücksetzen</button>
             </div>
           )}

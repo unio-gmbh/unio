@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 22.11.2026, Version 16 (zusätzlich: Schriften geprüft, keine Claude-Schriften, eigene Symbol-Schrift für fehlende Zeichen) |
+| Stand dieses Dokuments | 23.11.2026, Version 17 (zusätzlich: Bewegung und Bedienung nach den 20 UX-Prinzipien, ruhigere Startscreen-Filme in Variante 3) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -182,6 +182,28 @@ Startseite:
 CIRCLE-Seite:
 - Links über sieben Spalten Überschrift, Absatz, Knöpfe und drei Aussagen als Zeile mit Haarlinien (kein Glas mehr).
 - Rechts über fünf Spalten eine Karte im Format 4:5, in der die Makler nacheinander als Film erscheinen (alle fünf Sekunden, weiche Überblendung), mit Name, Region und Zähler im Bild.
+
+### MP-30 Bewegung und Bedienung nach "20 Principles of UX & Animation" (Version 17)
+
+Status: umgesetzt in Variante 2 und 3 · Grundlage: Video von Daniel vom 23.11.2026 (charles.unemployed, "20 Principles of UX & Animation")
+
+| Prinzip | Befund | Umsetzung |
+|---|---|---|
+| Snappy timing (UI unter 300 ms) | Kürzeste Bewegungsdauer im System 450 ms, sonst 800 und 1100 ms | Variante 2 und 3: `--dur-fast` 180 ms (Hover, Druck, Fokus), `--dur-base` 560 ms (Einblenden), `--dur-slow` 420 ms (Bild-Zoom) |
+| Anticipation, Squash | Knopf gab beim Drücken kaum nach (0,985) | Knopf gibt auf 0,96 nach, in 180 ms |
+| Fitts, größere Klickflächen (mind. 44 Pixel) | Navigation 20 Pixel hoch, Fuß 16 bis 18, kleine Knöpfe 30, Logo 18, Social-Icons 17, Kartenzoom 30 | Unsichtbare Klickfläche rund um Links in Navigation und Fuß, Logo, Partner-Link (`.u-ziel`), Knöpfe (7 Pixel rundum), Makler-Kreis (`.u-ziel-rund`), Filterfelder und Kartenzoom 44 Pixel. Sichtbar bleibt alles gleich. Gemessen: auf Startseite, Story, Kontakt, Partner keine zu kleine Fläche mehr |
+| Exaggerated feedback | Fehlerhinweise erschienen still | Alles mit `role="alert"` erscheint mit einem kurzen Rütteln (360 ms), bei reduzierter Bewegung ohne |
+| Postel's law | Suche fand nur exakte Teilstrings | Suche ignoriert Groß und klein, Umlaute (ä, ae, a), ß und ss, Satzzeichen, Reihenfolge und Mehrzahl: "1170 terrasse", "Gärten", "Maxingstrasse" finden ihr Objekt |
+| Jakob's law | Knopf im Suchfeld hieß "Zur App" und sprang weg | Knopf heißt "Suchen" und führt zu den Treffern, Enter ebenso. Der Weg in die App steht unter der Liste. Die ganze Suchleiste setzt den Cursor ins Feld |
+| Frequency of use | Trefferkarten blendeten bei jedem Filtern neu ein | Trefferliste ohne Einblenden |
+| Doherty threshold | Suche filtert sofort, Formulare zeigen sofort "Wird gesendet" | erfüllt, keine Änderung |
+| Miller's law | Zahlen schon gruppiert ("48 200", "€ 1,85 Mio"), Telefonnummer nur im Anruf-Link | erfüllt |
+| Staging, Slow in and out, Follow through | Startscreens: Poster zuerst, Film blendet weich ein, Übergänge mit Abbrems-Kurve | erfüllt. Ein gestaffeltes Einblenden der Hero-Texte habe ich bewusst nicht gebaut, weil der vorgerenderte Text sonst kurz verschwindet und wieder erscheint |
+| Squash and stretch, Arcs, 3D, Secondary action | betreffen vor allem Illustration und Spiele | keine Änderung nötig |
+
+Technik: Stilblock `BEWEGUNG_STIL` in `build/build.mjs`, nur für die Homepage-Seiten der Varianten 2 und 3. Tolerante Suche in `page-immobilien.jsx` (`norm`, `flach`, `passt`). Für die Plattform: dieselben Dauern als Token, Klickflächen über Pseudo-Elemente oder Padding, dieselbe Normalisierung in der Suche von `/listing`.
+
+**Ruhigere Startscreen-Filme in Variante 3.** Die schnellen Filme wirkten im Startscreen hektisch. Neu: `leb-fruehling-langsam`, `leb-herbst-langsam`, `leb-cafe-langsam` (gleiche Szene und gleicher Stil, 7,2 Sekunden Schleife statt 4,4, nur zwei bis drei Passanten im Schritttempo). Gemessene Bildunruhe: ein Viertel bis ein Fünftel der schnellen Fassung. Variante 3 zeigt sie in den Startscreens voreingestellt ("Ruhiger"), die schnelle Fassung bleibt über den Umschalter ("Schnell", `?hero=schnell`) erreichbar. Störer und übrige Elemente zeigen weiter die schnelle Fassung.
 
 ### MP-29 Schriften: nur Marken-Schriften, eigene Symbol-Schrift (Version 16)
 
@@ -541,3 +563,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 22.11.2026 | 15a | Störer-Band: Text und Knopf unten links statt oben. |
 | 22.11.2026 | 15b | Bauträger, Abschnitt "Projekte planbar und erfolgreich machen." (System): senkrechte Linien im Hintergrund entfernt, in Variante 2 und 3. |
 | 22.11.2026 | 16 | Schriften geprüft: keine Claude- oder Anthropic-Schriften. Symbole, die Power Grotesk und Outfit fehlen, kommen in Variante 2 und 3 aus der eigenen Schrift "UNIO Symbole" statt aus der Systemschrift. Knöpfe und Kartensteuerung nutzen die Marken-Schrift (MP-29). |
+| 23.11.2026 | 17 | Bewegung und Bedienung nach "20 Principles of UX & Animation": kürzere Reaktionszeiten, größere Klickflächen, Rütteln bei Fehlern, tolerante Suche, Suchknopf sucht (MP-30). Variante 3: ruhigere Startscreen-Filme, schnelle Fassung umschaltbar. |

@@ -383,6 +383,18 @@
 .leaflet-container,.leaflet-container .leaflet-bar a,.leaflet-container .leaflet-control-attribution{font-family:var(--font-mono);}
 :where(button,input,select,textarea){font-family:inherit;}
 </style>
+<style>
+:root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
+:where(nav a, footer a, button){position:relative;}
+:where(nav a, footer a)::after,.u-ziel::after{content:"";position:absolute;inset:-14px -10px;}
+:where(button)::after{content:"";position:absolute;inset:-7px;}
+.u-ziel{position:relative;}
+.u-ziel-rund::after{content:"";position:absolute;inset:-4px;border-radius:999px;}
+.leaflet-bar a{width:44px !important;height:44px !important;line-height:44px !important;}
+@keyframes uWackeln{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+[role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
+@media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
+</style>
 </head>
 <body>
 

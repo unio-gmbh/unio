@@ -161,7 +161,7 @@ function Button({
       display: "inline-flex",
       alignItems: "center",
       gap: knob ? 12 : 10,
-      transform: press ? "scale(0.985)" : "scale(1)",
+      transform: press ? "scale(0.96)" : "scale(1)",
       transition: "all var(--dur-fast) var(--ease-unio)",
       ...(variants[variant] || variants.solid),
       ...style
@@ -297,7 +297,7 @@ function IconButton({
       WebkitBackdropFilter: variant === "glass" ? "blur(var(--blur-card))" : "none",
       backdropFilter: variant === "glass" ? "blur(var(--blur-card))" : "none",
       boxShadow: variant === "glass" ? `inset 0 0 0 1px ${hover ? "var(--hairline-light-strong)" : "var(--hairline-light)"}` : "none",
-      transform: press ? "scale(0.985)" : "scale(1)",
+      transform: press ? "scale(0.96)" : "scale(1)",
       transition: "all var(--dur-fast) var(--ease-unio)",
       ...style
     }

@@ -498,8 +498,8 @@ function HeroWahl({ alt }) {
   const m = (location.search.match(/[?&]hero=([a-z]+)/) || [])[1] || "film";
   const filmHero = (s) => <window.HeroFilm bild={"cafe" + s} unten="22px" zeilen={["Real Estate", "Finally Simple"]} text="Technologie, damit Menschen besser kaufen, verkaufen und beraten können. Damit du findest, was du wirklich suchst." knoepfe={[["Immobilie finden", () => (location.hash = "suche")], ["Wie es funktioniert", () => (location.hash = "produkte")]]} />;
   /* B, C und G sind nach Rueckmeldung vom 20.11.2026 aus der Auswahl genommen (Code bleibt als Referenz). */
-  const liste = [["film", "Film", "Eckhaus als Film"], ["a", "A", "Film wird zur Karte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["alt", "Alt", "Bisheriger Hero"]];
-  const hero = m === "film" || m === "filmc" ? filmHero("") : m === "alt" ? alt : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : <HeroV2 />;
+  const liste = [["film", window.UNIO_FILM === "circle" ? "Ruhiger" : "Film", "Eckhaus als Film"]].concat(window.UNIO_FILM === "circle" ? [["schnell", "Schnell", "Eckhaus, schnelle Fassung"]] : []).concat([["a", "A", "Film wird zur Karte"], ["d", "D", "Schrift zuerst"], ["e", "E", "Schrift zuerst, Film wächst"], ["f", "F", "Film mit Suche"], ["alt", "Alt", "Bisheriger Hero"]]);
+  const hero = m === "film" || m === "filmc" || m === "schnell" ? filmHero("") : m === "alt" ? alt : m === "d" ? <HeroD /> : m === "e" ? <HeroE /> : m === "f" ? <HeroF /> : <HeroV2 />;
   return (
     <React.Fragment>
       {hero}

@@ -163,6 +163,26 @@ const SYMBOL_STIL = `<style>
 :where(button,input,select,textarea){font-family:inherit;}
 </style>`;
 
+/* Variante 2 und 3: Bewegung und Klickflaechen nach den "20 Principles of UX & Animation" (Video von Daniel, 23.11.2026).
+   Snappy timing: Rueckmeldung auf Hover, Druck und Fokus unter 300 ms (vorher 450 ms), Einblenden von Inhalt 560 ms
+   (vorher 800 ms), Bild-Zoom beim Ueberfahren 420 ms (vorher 1100 ms).
+   Fitts und groessere Klickflaechen: Links in Navigation und Fuss sowie alle Knoepfe bekommen eine unsichtbare Flaeche
+   rund um sich (Ziel mindestens 44 Pixel), sichtbar bleibt alles gleich.
+   Exaggerated feedback: Fehlermeldungen (role=alert) erscheinen mit einem kurzen Ruetteln.
+   Nur fuer die Seiten der Homepage, nicht fuer die UX-Vorschauen (die haben eigene Zusatz-Ebenen). */
+const BEWEGUNG_STIL = `<style>
+:root{--dur-fast:180ms;--dur-base:560ms;--dur-slow:420ms;}
+:where(nav a, footer a, button){position:relative;}
+:where(nav a, footer a)::after,.u-ziel::after{content:"";position:absolute;inset:-14px -10px;}
+:where(button)::after{content:"";position:absolute;inset:-7px;}
+.u-ziel{position:relative;}
+.u-ziel-rund::after{content:"";position:absolute;inset:-4px;border-radius:999px;}
+.leaflet-bar a{width:44px !important;height:44px !important;line-height:44px !important;}
+@keyframes uWackeln{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+[role=alert]{animation:uWackeln 360ms cubic-bezier(.36,.07,.19,.97) both;}
+@media (prefers-reduced-motion: reduce){[role=alert]{animation:none;}}
+</style>`;
+
 /* Variante 2, Raster innen: zweispaltige Aufteilungen mit freien Verhaeltnissen (1.4fr zu 1fr,
    0.9fr zu 1.1fr ...) werden auf ganze Spalten des 12er-Rasters gelegt, der Abstand auf 24 Pixel.
    Gleich breite Kartenreihen (repeat(n, 1fr)) bekommen ebenfalls 24 Pixel Abstand.
@@ -251,7 +271,8 @@ async function main() {
   cpSync(join(ROOT, "tokens"), join(DIST, "tokens"), { recursive: true });
   cpSync(join(ROOT, "_ds_bundle.js"), join(DIST, "assets", "js", "_ds_bundle.js"));
   mkdirSync(join(DIST, "assets", "js2"), { recursive: true });
-  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")));
+  /* Variante 2: Knopf gibt beim Druecken deutlicher nach (0,96 statt 0,985), Prinzip Anticipation und Squash */
+  writeFileSync(join(DIST, "assets", "js2", "_ds_bundle.js"), ohneStriche(readFileSync(join(ROOT, "_ds_bundle.js"), "utf8")).replaceAll('press ? "scale(0.985)"', 'press ? "scale(0.96)"'));
   console.log("✓ Assets kopiert");
 
   /* 3) HTML-Seiten transformieren */
@@ -286,7 +307,7 @@ async function main() {
     s = s.replace("/assets/js/_ds_bundle.js", `/assets/js2/_ds_bundle.js?v=${V2_STAMP}`);
     s = s.replace(/<title>[\s\S]*?<\/title>/, `<title>${p.title} | Variante 2</title>`);
     s = s.replace(/<meta name="robots"[^>]*>\n?/g, "");
-    s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n" + SYMBOL_STIL + "\n</head>");
+    s = s.replace("</head>", metaBlock(p) + "\n<script>window.UNIO_V2=true;</script>\n" + SYMBOL_STIL + "\n" + BEWEGUNG_STIL + "\n</head>");
     s = ohneStriche(s);
     writeFileSync(join(DIST, p.out), s);
   }
