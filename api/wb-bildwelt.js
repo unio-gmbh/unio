@@ -15,9 +15,12 @@
      KV_REST_API_URL, KV_REST_API_TOKEN  Upstash Redis (Vercel Marketplace, legt beide selbst an)
      WB_WORKER_TOKEN                     langer Zufallswert, derselbe in der Routine
      WB_BW_MONATSBUDGET                  optional, Credits pro Monat, Standard 150
-     UX_PASSWORT                         optional, sonst das Passwort aus middleware.js */
+     UX_PASSWORT                         Pflicht für das Team, dasselbe Passwort wie für /ux (middleware.js).
+                                         Ohne die Variable kommt nur die Routine mit ihrem Token durch. */
 
-const PASSWORT = process.env.UX_PASSWORT || "UnioUX";
+import { createHash, timingSafeEqual } from "node:crypto";
+
+const PASSWORT = process.env.UX_PASSWORT || "";
 const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "";
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
 const WORKER = process.env.WB_WORKER_TOKEN || "";
@@ -34,10 +37,17 @@ const lesen = async (k) => { const v = await kv("GET", k); return v ? JSON.parse
 const schreiben = (k, v) => kv("SET", k, JSON.stringify(v), "EX", TAGE_90);
 const monat = () => new Date().toISOString().slice(0, 7);
 
+/* Ohne UX_PASSWORT kein Zugriff. Vergleich über Prüfsummen, damit die Dauer nichts über das Passwort verrät */
+const pruefsumme = (t) => createHash("sha256").update(String(t), "utf8").digest();
 function team(req) {
+  if (!PASSWORT) return false;
   const auth = String(req.headers.authorization || "");
-  if (!auth.startsWith("Basic ")) return false;
-  try { const d = Buffer.from(auth.slice(6), "base64").toString("utf8"); return d.slice(d.indexOf(":") + 1) === PASSWORT; } catch (e) { return false; }
+  if (!/^basic /i.test(auth)) return false;
+  try {
+    const d = Buffer.from(auth.slice(6).trim(), "base64").toString("utf8");
+    const i = d.indexOf(":");
+    return i >= 0 && timingSafeEqual(pruefsumme(d.slice(i + 1)), pruefsumme(PASSWORT));
+  } catch (e) { return false; }
 }
 const routine = (req) => !!WORKER && String(req.headers["x-wb-token"] || "") === WORKER;
 
@@ -58,7 +68,8 @@ export default async function handler(req, res) {
   const body = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch (e) { return {}; } })() : (req.body || {});
   const aktion = q.aktion || body.aktion;
   const istRoutine = routine(req);
-  if (!istRoutine && !team(req)) { res.setHeader("WWW-Authenticate", 'Basic realm="UNIO UX-Vorschau", charset="UTF-8"'); return res.status(401).json({ ok: false, fehler: "Passwort fehlt" }); }
+  if (!istRoutine && !PASSWORT) return res.status(503).json({ ok: false, bereit: false, fehler: "Zugang nicht eingerichtet: UX_PASSWORT fehlt in Vercel" });
+  if (!istRoutine && !team(req)) { res.setHeader("WWW-Authenticate", 'Basic realm="UNIO UX-Vorschau", charset="UTF-8"'); return res.status(401).json({ ok: false, fehler: "Passwort fehlt oder falsch" }); }
   if (!KV_URL || !KV_TOKEN) return res.status(503).json({ ok: false, bereit: false, fehler: "Speicher fehlt: Upstash Redis in Vercel verbinden" });
   try {
     if (req.method === "GET" && aktion === "status") {

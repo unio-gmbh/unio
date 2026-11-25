@@ -360,7 +360,7 @@ async function main() {
     console.log("✓ Social-Vorschau kopiert (nicht in Sitemap)");
   }
 
-  /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort UnioUX):
+  /* 3f) Passwortgeschuetzte UX-Vorschauen unter /ux/* (Schutz: middleware.js, Passwort aus der Umgebungsvariable UX_PASSWORT in Vercel):
         Dashboard-Backend + Objekt-Detailseite, dev-style mit Babel zur Laufzeit. */
   const BUILD_STAMP = Date.now().toString(36);
   const UX_KITS = [["ux-hub", ""], ["dashboard", "backend"], ["objektseite", "objekt"], ["projektseite", "projekt"], ["explore", "explore"], ["print", "pager"], ["werkbank", "human"],

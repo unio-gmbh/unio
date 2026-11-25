@@ -4,7 +4,7 @@ Für: Marcin · Von: Daniel (Ad Boutique) · Laufendes Dokument
 
 | | |
 |---|---|
-| Stand dieses Dokuments | 23.11.2026, Version 18 (zusätzlich: Bewegungsdauern zurückgenommen, Hero ohne Durchblitzen, Variante 4 mit warmen ruhigen Filmen) |
+| Stand dieses Dokuments | 25.11.2026, Version 18a (zusätzlich: Passwort der UX-Vorschauen liegt als Umgebungsvariable in Vercel, nicht mehr im Code) |
 | Verglichener Live-Stand | www.unio.at am 20.11.2026, Deployment `dpl_CjXtyb5bsAm9Vs9dmkvNDpfTyuJ7` |
 | Repo-Stand | Branch `claude/vibrant-edison-th7jx0`, aufbauend auf `bf80781` |
 | Plan dazu | [PLAN.md](PLAN.md) |
@@ -535,11 +535,13 @@ Die Entwürfe liegen als Variante 2 auf der Vorschau-Seite des Repos, `unio-vers
 | CIRCLE-Seite mit Gesichtern | `/makler` | `/makler2` |
 | Objektsuche mit Makler-Kreis auf den Karten | `/immobilien` (leitet in die App) | `/immobilien2` |
 | Objektseite mit Makler-Zeile | `/projekt` | `/projekt2` |
-| Explore-Feed (Passwort wie bisher) | `/ux/explore` | `/ux/explore2` |
-| Objektseite mit Chat (Passwort wie bisher) | `/ux/objekt` | `/ux/objekt2` |
+| Explore-Feed (mit Passwort, siehe unten) | `/ux/explore` | `/ux/explore2` |
+| Objektseite mit Chat (mit Passwort, siehe unten) | `/ux/objekt` | `/ux/objekt2` |
 | Übersicht aller Partner | gibt es nicht | `/partner2` |
 | Vorlagen zur Auswahl | gibt es nicht | `/vorlagen2` |
 | Übrige Seiten | `/bautraeger`, `/story`, `/kontakt` | `/bautraeger2`, `/story2`, `/kontakt2` (inhaltlich gleich) |
+
+Zugang zu `/ux`: Alle Adressen unter `/ux` fragen ein Passwort ab, der Benutzername ist beliebig. Seit 25.11.2026 steht das Passwort nicht mehr im Code, sondern in Vercel als Umgebungsvariable `UX_PASSWORT` (Production und Preview, nach dem Setzen neu deployen). `middleware.js` und die Schnittstellen `api/wb-marke.js` und `api/wb-bildwelt.js` lesen nur noch diese Variable. Ist sie nicht gesetzt, bleibt `/ux` gesperrt (Antwort 503). Das bisherige Passwort stand im öffentlichen Repo, gilt als bekannt und wird durch ein neues ersetzt, das Daniel vergibt. Auf der Plattform ändert sich dadurch nichts.
 
 Technik: Der Build (`build/build.mjs`) erzeugt die 2er-Seiten aus denselben Quellen, mit eigenem Skript-Satz unter `/assets/js2/` und dem Schalter `window.UNIO_V2`. Eigene Quelldateien für Variante 2 gibt es nur dort, wo ganze Seiten abweichen: `ui_kits/homepage/projekt2.html`, `ui_kits/explore2/`, `ui_kits/objektseite2/`. Die 2er-Seiten sind von Suchmaschinen ausgeschlossen und stehen nicht in der Sitemap.
 
@@ -595,3 +597,4 @@ Diese Vorschau-Seite ist nicht www.unio.at. Auf der Plattform ändert sich dadur
 | 23.11.2026 | 17 | Bewegung und Bedienung nach "20 Principles of UX & Animation": kürzere Reaktionszeiten, größere Klickflächen, Rütteln bei Fehlern, tolerante Suche, Suchknopf sucht (MP-30). Variante 3: ruhigere Startscreen-Filme, schnelle Fassung umschaltbar. |
 | 23.11.2026 | 17a | Prinzipien aus vier weiteren Reels: ausgeglichene Zeilen, getönte Schatten, Platzhalter beim Laden, leerer Zustand der Suche, Karten gleiten beim Filtern, gleich breite Ziffern. Karte in Variante 2 und 3 auf OpenStreetMap, weil CARTO einen Schlüssel verlangt. |
 | 23.11.2026 | 18 | Kürzere Bewegungsdauern und stärkerer Knopf-Druck zurückgenommen. Feststehende Heroes verschwinden, wenn sie verdeckt sind, ihr Film pausiert. Kein Bildtausch beim Laden in Variante 3, kein Aufblitzen des falschen Heros bei `?hero=`. Neu: Variante 4 mit Bewegung aus 2 und Farben aus 3 (MP-31). |
+| 25.11.2026 | 18a | Passwortschutz der UX-Vorschauen unter `/ux`: Das Passwort steht nicht mehr im Code, sondern in Vercel als Umgebungsvariable `UX_PASSWORT`. Ohne die Variable bleibt `/ux` gesperrt, ebenso der Team-Zugang zu `api/wb-marke.js` und `api/wb-bildwelt.js`. Kein Gestaltungspaket, an Aussehen und Verhalten der Seiten ändert sich nichts (Abschnitt 7). |

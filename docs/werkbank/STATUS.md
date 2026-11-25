@@ -47,7 +47,7 @@
 
 - Upstash Redis in Vercel verbinden, `WB_WORKER_TOKEN` setzen, danach Routine für `/bildwelt warteschlange` anlegen lassen.
 - `ANTHROPIC_API_KEY` und `@anthropic-ai/sdk` für `api/wb-marke.js`, sonst läuft die Marke über die Regeln.
-- Repo `unio-gmbh/unio` auf privat stellen (Konto unio-gmbh), das UX-Passwort ändern.
+- Repo `unio-gmbh/unio` auf privat stellen (Konto unio-gmbh). Neues UX-Passwort in Vercel als `UX_PASSWORT` setzen (Production und Preview, danach neu deployen): Seit 25.11.2026 steht es nicht mehr im Code, ohne die Variable bleibt `/ux` gesperrt. Das alte Passwort steht im Git-Verlauf und gilt als bekannt.
 
 ## Später
 

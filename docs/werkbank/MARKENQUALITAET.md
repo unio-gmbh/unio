@@ -340,7 +340,7 @@ Hook-Formel: "[Eine Zahl] in [Grätzl]. Was das für Ihr [Objekt] heißt."
 ## 6. Einbindung
 
 - `ui_kits/werkbank/wb-plattform.jsx` in `index.html` nach `wb-markenwelten.jsx` und vor `wb-markenbuch.jsx` laden. Die Datei braucht `wb-data.jsx` und `wb-store.jsx`. Die Bildwelt kommt aus `hmWeltVorschlag` in `wb-markenwelten.jsx`, falls geladen: Leitbild, Bildregeln und Zeichen der Welt, ergänzt um Orte, Grenzen und das eigene Zeichen des Maklers. Ohne diese Datei greift die eigene Zuordnung aus Figur, Bildpaaren und Wohnwelten.
-- `package.json`: `"@anthropic-ai/sdk"` als Abhängigkeit ergänzen. Vercel: `ANTHROPIC_API_KEY` setzen, optional `HUMAN_MODEL` und `UX_PASSWORT`.
+- `package.json`: `"@anthropic-ai/sdk"` als Abhängigkeit ergänzen. Vercel: `ANTHROPIC_API_KEY` und `UX_PASSWORT` setzen (dasselbe Passwort wie für `/ux`, ohne die Variable antwortet die Funktion mit 503), optional `HUMAN_MODEL`.
 - Im Browser das Passwort für den Aufruf setzen: `sessionStorage.setItem("unio_hm_ux_pw", "...")` oder `window.HM_UX_PASSWORT`. Ohne Passwort fällt der Aufruf auf die Regeln zurück.
 - Selbsttest: `hmSelbsttestPlattform()` in der Konsole, 17 Prüfungen.
 

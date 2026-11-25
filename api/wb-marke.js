@@ -9,18 +9,20 @@
            phase "voll"      alles in einem Aufruf (Standard)
    Antwort 200 { ok, plattform, pruefung, kette }  oder  { ok, gate1, kette }
            401 ohne gültiges Passwort, 429 über 20 Aufrufe pro Stunde je IP,
-           503 { fallback: "regeln" } ohne ANTHROPIC_API_KEY oder ohne SDK, 502 { fallback: "regeln" } bei Fehlern der Kette.
+           503 { fallback: "regeln" } ohne UX_PASSWORT, ohne ANTHROPIC_API_KEY oder ohne SDK, 502 { fallback: "regeln" } bei Fehlern der Kette.
 
    Umgebung (Vercel > Settings > Environment Variables):
      ANTHROPIC_API_KEY  Pflicht, nie im Code
      WB_MODEL        optional, Standard "claude-opus-5-5"
-     UX_PASSWORT        optional, sonst das Passwort aus middleware.js
+     UX_PASSWORT        Pflicht, dasselbe Passwort wie für /ux (middleware.js). Ohne die Variable kein Zugriff
    Abhängigkeit: "@anthropic-ai/sdk" in package.json ergänzen. Fehlt sie, antwortet die Funktion mit 503 und fallback. */
+
+import { createHash, timingSafeEqual } from "node:crypto";
 
 export const config = { maxDuration: 300 };
 
 const MODELL = process.env.WB_MODEL || "claude-opus-5-5";
-const PASSWORT = process.env.UX_PASSWORT || "UnioUX";
+const PASSWORT = process.env.UX_PASSWORT || "";
 const LIMIT = 20;
 const FENSTER_MS = 3600 * 1000;
 const aufrufe = new Map();
@@ -153,10 +155,17 @@ function begrenzt(ip) {
   l.push(jetzt); aufrufe.set(ip, l);
   return 0;
 }
+/* Ohne UX_PASSWORT kein Zugriff. Vergleich über Prüfsummen, damit die Dauer nichts über das Passwort verrät */
+const pruefsumme = (t) => createHash("sha256").update(String(t), "utf8").digest();
 function erlaubt(req) {
+  if (!PASSWORT) return false;
   const auth = String(req.headers.authorization || "");
-  if (!auth.startsWith("Basic ")) return false;
-  try { const d = Buffer.from(auth.slice(6), "base64").toString("utf8"); return d.slice(d.indexOf(":") + 1) === PASSWORT; } catch (e) { return false; }
+  if (!/^basic /i.test(auth)) return false;
+  try {
+    const d = Buffer.from(auth.slice(6).trim(), "base64").toString("utf8");
+    const i = d.indexOf(":");
+    return i >= 0 && timingSafeEqual(pruefsumme(d.slice(i + 1)), pruefsumme(PASSWORT));
+  } catch (e) { return false; }
 }
 /* Letzte Sicherung der Stilregeln: Gedankenstriche und Ausrufezeichen werden ersetzt */
 function saeubern(v) {
@@ -214,6 +223,7 @@ async function schritt(client, Anthropic, name, dossierText, kontext, protokoll,
 /* ---------- Handler ---------- */
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ ok: false, fehler: "Nur POST" });
+  if (!PASSWORT) return res.status(503).json({ ok: false, fallback: "regeln", fehler: "Zugang nicht eingerichtet: UX_PASSWORT fehlt in Vercel" });
   if (!erlaubt(req)) { res.setHeader("WWW-Authenticate", 'Basic realm="UNIO", charset="UTF-8"'); return res.status(401).json({ ok: false, fehler: "Passwort fehlt oder falsch" }); }
   const warte = begrenzt(ipVon(req));
   if (warte) { res.setHeader("Retry-After", String(warte)); return res.status(429).json({ ok: false, fehler: `Höchstens ${LIMIT} Aufrufe pro Stunde`, fallback: "regeln" }); }

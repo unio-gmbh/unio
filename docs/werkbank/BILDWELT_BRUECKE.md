@@ -79,7 +79,7 @@ Claude-Routine   GET ?aktion=offen      ──▶  (x-wb-token)
 
 Einrichtung (einmalig):
 1. Vercel, Projekt unio, Storage: Upstash Redis aus dem Marketplace anlegen und mit dem Projekt verbinden. Das setzt `KV_REST_API_URL` und `KV_REST_API_TOKEN`.
-2. Vercel, Environment Variables: `WB_WORKER_TOKEN` mit einem langen Zufallswert anlegen, danach neu deployen.
+2. Vercel, Environment Variables: `WB_WORKER_TOKEN` mit einem langen Zufallswert anlegen, danach neu deployen. Für das Team im Browser muss dort auch `UX_PASSWORT` gesetzt sein (dasselbe Passwort wie für `/ux`), sonst antwortet die Schnittstelle mit 503.
 3. Routine anlegen: eine geplante Claude-Sitzung mit Higgsfield-Connector, alle 15 bis 30 Minuten, Auftrag `/bildwelt warteschlange`, derselbe `WB_WORKER_TOKEN` in ihrer Umgebung.
 
 ## Nächste Stufe
